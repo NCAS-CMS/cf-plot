@@ -11,5 +11,5 @@ and source code.
 '''
 
 __author__      = 'Andy Heaps'
-__date__        = '10 December 2012'
-__version__     = '0.3'
+__date__        = '25 June 2013'
+__version__     = '0.6'
