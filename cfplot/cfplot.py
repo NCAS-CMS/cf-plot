@@ -1120,8 +1120,8 @@ def cf_data_assign(f=None, title=None, colorbar_title=None):
   ptype=2
   x=lats
   y=height
-  xunits=str(f.space['dim1'].Units)
-  yunits=str(f.space['dim0'].Units)
+  xunits=str(f.domain['dim1'].Units)
+  yunits=str(f.domain['dim0'].Units)
   if (xunits == 'degrees_north' or  xunits == 'degrees_south'): xunits='degrees'
   xlabel=axes_names[3] + ' (' + xunits + ')'
   ylabel=axes_names[2] + ' (' + yunits + ')'
