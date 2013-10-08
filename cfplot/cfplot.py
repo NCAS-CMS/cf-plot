@@ -24,7 +24,10 @@ from subprocess import call
 import sys
 import os
 from scipy import interpolate
- 
+import time
+
+
+
 #####################################
 #plotvars - global plotting variables
 #####################################
@@ -50,7 +53,8 @@ plotvars=pvars(lonmin=-180, lonmax=180, latmin=-90, latmax=90, proj='cyl', \
 
 def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=None, \
         colorbar_title=None, colorbar=1, colorbar_label_skip=1, ptype=0, \
-        negative_linestyle=None, blockfill=None, zero_thick=None):
+        negative_linestyle=None, blockfill=None, zero_thick=None, colorbar_shrink=None, \
+        colorbar_orientation=None, image=True):
    """
     | con is the interface to contouring in cfplot. The minimum use is con(f) 
     | where f is a 2 dimensional array. If a cf field is passed then an 
@@ -58,7 +62,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
     | latitude-height plot for example. If a 2d numeric array is passed then 
     | the optional arrays x and y can be used to describe the x and y data 
     | point locations.
-
+    |
     | f - array to contour
     | x - x locations of data in f (optional)
     | y - y locations of data in f (optional)
@@ -66,37 +70,92 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
     | lines=True - draw contour lines and labels
     | line_labels=True - label contour lines
     | title=title - title for the plot
-    | colbar_title=colbar_title - title for the colour bar
-    | colorbar=1 - add a colour bar if a filled contour plot
-    | colorbar_label_skip=1 - skip colour bar labels
     | ptype=0 - plot type - not needed for cf fields.  1 = longitude-latitude,
     |           2 = latitude - height, 3 = no specific plot type
     | negative_linestyle=None - set to 1 to get dashed negative contours
     | zero_thick=None - add a thick zero contour line. Set to 3 for example.
-  
+    | blockfill=None - set to 1 for a blockfill plot
+    | colbar_title=colbar_title - title for the colour bar
+    | colorbar=1 - add a colour bar if a filled contour plot
+    | colorbar_label_skip=1 - skip colour bar labels
+    | colorbar_orientation=None - options are 'horizontal' and 'vertical'
+    |                      The default for most plots is horizontal but
+    |                      for polar stereographic plots this is vertical.
+    | colorbar_shrink=None - value to shrink the colorbar by.  If the colorbar 
+                             exceeds the plot area then values of 1.0, 0.55 or 0.5
+                             may help it better fit the plot area.
+
     :Returns:
      None
 
    """ 
 
 
-   if negative_linestyle is None: matplotlib.rcParams['contour.negative_linestyle'] = 'solid'
-   else: matplotlib.rcParams['contour.negative_linestyle'] = negative_linestyle
 
    #Extract required data for contouring
    #If a cf-python field
    if isinstance(f[0], cf.Field):
-      field, x, y, ptype, title, colorbar_title, xlabel, ylabel=cf_data_assign(f, title, colorbar_title)
+      field, x, y, ptype, colorbar_title, xlabel, ylabel=cf_data_assign(f, colorbar_title)
    else:
       field=f #field data passed in as f
       check_data(field, x, y)
       xlabel=''
       ylabel=''
 
+   #Set contour line styles
+   if negative_linestyle is None: matplotlib.rcParams['contour.negative_linestyle'] = 'solid'
+   else: matplotlib.rcParams['contour.negative_linestyle'] = negative_linestyle
+
+   #Set contour lines off on block plots
+   if blockfill == 1: 
+      fill=False
+      if lines is True: lines=False
+      field_orig=field  
+      x_orig=x
+      y_orig=y   
+
+      if (plotvars.proj == 'npstere' or plotvars.proj == 'spstere'):
+         print ''
+         print 'blockfill not supported for polar stereograpic plots'
+         print ''
+         return
+
+   if fill == 0 and blockfill is None: colorbar=0
 
    #Revert to default colour scale if user_cs flag is set
    if plotvars.user_cs == 0:
       plotvars.cs=cscale1
+
+
+   #Set the orientation of the colorbar
+   if plotvars.plot_type == 1:
+      if plotvars.proj == 'npstere' or plotvars.proj == 'spstere':
+         if colorbar_orientation is None: colorbar_orientation='vertical'
+
+   if colorbar_orientation is None: colorbar_orientation='horizontal'
+
+
+   #Set size of color bar if not specified
+   if colorbar_shrink is None:
+      colorbar_shrink=1.0
+      if plotvars.plot_type == 1:
+         scale=(plotvars.lonmax-plotvars.lonmin)/(plotvars.latmax-plotvars.latmin)
+         if scale <= 1: colorbar_shrink=0.55
+         if plotvars.orientation == 'landscape':
+            if (plotvars.proj == 'cyl' and colorbar_orientation == 'vertical'): colorbar_shrink=0.5
+            if (plotvars.proj == 'cyl' and colorbar_orientation == 'horizontal'): colorbar_shrink=1.0
+         if plotvars.orientation == 'portrait':
+            if (plotvars.proj == 'cyl' and colorbar_orientation == 'vertical'): colorbar_shrink=0.25
+            if (plotvars.proj == 'cyl' and colorbar_orientation == 'horizontal'): colorbar_shrink=1.0       
+
+         if plotvars.proj == 'npstere' or plotvars.proj == 'spstere': 
+            if plotvars.orientation == 'landscape':
+               if colorbar_orientation == 'horizontal': colorbar_shrink=0.55
+               if colorbar_orientation == 'vertical': colorbar_shrink=1.0
+            if plotvars.orientation == 'portrait':
+               if colorbar_orientation == 'horizontal': colorbar_shrink=1.0
+               if colorbar_orientation == 'vertical': colorbar_shrink=0.5
+
 
 
 
@@ -149,12 +208,15 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
    else: 
       colorbar_labels=clevs
 
-   #Add mult to title if used and catch null titles
-   if (title == None): 
-      title=''
+   #Add mult to colorbar_title if used 
+   if (colorbar_title == None): 
+      colorbar_title=''
    else:
-      if (mult != 0): title=title+' *10$^{'+str(mult)+'}$' 
-      if colorbar_title == None: colorbar_title=''
+      if (mult != 0): colorbar_title=colorbar_title+' *10$^{'+str(mult)+'}$' 
+
+
+   #Catch null titles and replace
+   if (title == None): title=''
   
 
 
@@ -187,7 +249,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
       #Shift grid if needed
       if plotvars.lonmin < np.min(x): x=x-360
       if plotvars.lonmin > np.max(x): x=x+360
-  
+
       field, x=shiftgrid(plotvars.lonmin, field, x)   
   
 
@@ -201,56 +263,8 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
       #Create the meshgrid
       lons, lats=mymap(*np.meshgrid(x, y))
 
-      if blockfill is None:
-         #Filled contours
-         if fill == True:
-            #Get colour scale for use in contouring
-            #If colour bar extensions are enabled then the colour map goes
-            #from 1 to ncols-2.  The colours for the colour bar extensions are then 
-            #changed on the colourbar and plot after the plot is made 
-            cscale_ncols=np.size(plotvars.cs)
-            colmap=cscale_get_map()
-  
+      gset(xmin=plotvars.lonmin, xmax=plotvars.lonmax, ymin=plotvars.latmin, ymax=plotvars.latmax)
 
-            #filled colour contours
-            cfill = mymap.contourf(lons,lats,field*fmult,clevs,extend=plotvars.levels_extend,\
-                    colors=colmap)
-
-            #add colour scale extensions if required
-            if (plotvars.levels_extend == 'both' or plotvars.levels_extend == 'min'):
-               cfill.cmap.set_under(plotvars.cs[0])
-            if (plotvars.levels_extend == 'both' or plotvars.levels_extend == 'max'):
-               cfill.cmap.set_over(plotvars.cs[cscale_ncols-1])
-
-            #Contour lines and labels  
-            if lines == True:
-               cs = mymap.contour(lons,lats,field*fmult,clevs,colors='k')
-            if line_labels == True:
-               nd=ndecs(clevs)
-               fmt='%d'
-               if nd != 0: fmt='%1.'+str(nd)+'f'
-               plotvars.plot.clabel(cs, fmt=fmt, colors = 'k', fontsize=plotvars.fontsize) 
-
-            #Thick zero contour line   
-            if zero_thick is not None:
-               cs = mymap.contour(lons,lats,field*fmult,[1e-32, 0], colors='k', linewidths=zero_thick)
-
-
-         else:
-            #Block fill
-            #fill = mymap.contourf(lons,lats,field*fmult,[-1e32, -1e31] ,extend=plotvars.levels_extend)
-            bfill(f=field, x=x,y=y, clevs=clevs, mymap=mymap)
-
-
-      #Color bar
-      if fill == True and colorbar == 1: pad=0.10
-      if plotvars.rows >= 3: pad=0.15
-      if plotvars.rows >= 5: pad=0.20 
-      cbar=plotvars.master_plot.colorbar(cfill, orientation='horizontal', aspect=75, \
-                                         pad=pad, ticks=colorbar_labels)
-      cbar.set_label(colorbar_title, fontsize=plotvars.fontsize)
-      for t in cbar.ax.get_xticklabels(): t.set_fontsize(plotvars.fontsize)
- 
       #axes
       if plotvars.proj == 'cyl':
          lonticks,lonlabels=mapaxis(min=plotvars.lonmin, max=plotvars.lonmax, type=1)
@@ -263,7 +277,88 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
          if 90-abs(plotvars.boundinglat) <= 50: latstep=10
          mymap.drawparallels(np.arange(-90,120,latstep))
          mymap.drawmeridians(np.arange(0,420,60),labels=[1,1,1,1,1,1]) 
+
+
+      #Filled contours
+      if fill == True or blockfill == 1:
+         #Get colour scale for use in contouring
+         #If colour bar extensions are enabled then the colour map goes
+         #from 1 to ncols-2.  The colours for the colour bar extensions are then 
+         #changed on the colourbar and plot after the plot is made 
+         cscale_ncols=np.size(plotvars.cs)
+         colmap=cscale_get_map()
   
+         #filled colour contours
+         cfill = mymap.contourf(lons,lats,field*fmult,clevs,extend=plotvars.levels_extend,\
+                 colors=colmap)
+
+         #add colour scale extensions if required
+         if (plotvars.levels_extend == 'both' or plotvars.levels_extend == 'min'):
+            cfill.cmap.set_under(plotvars.cs[0])
+         if (plotvars.levels_extend == 'both' or plotvars.levels_extend == 'max'):
+            cfill.cmap.set_over(plotvars.cs[cscale_ncols-1])
+
+
+
+      #Block fill
+      if blockfill == 1:  
+         if isinstance(f[0], cf.Field):  
+            if f[0].coord('lon').isbounded:
+               xpts=np.squeeze(f.coord('lon').bounds.array)[:,0]
+               ypts=np.squeeze(f.coord('lat').bounds.array)[:,0]   
+               bfill(f=field_orig*fmult, x=xpts, y=ypts, clevs=clevs, lonlat=1, bound=1)  
+            else:
+               bfill(f=field_orig*fmult, x=x_orig, y=y_orig, clevs=clevs, lonlat=1, bound=0)  
+
+
+         else:
+            bfill(f=field_orig*fmult, x=x_orig, y=y_orig, clevs=clevs, lonlat=1, bound=0)  
+
+
+
+      #Contour lines and labels  
+      if lines == True:
+         cs = mymap.contour(lons,lats,field*fmult,clevs,colors='k')
+         if line_labels == True:
+            nd=ndecs(clevs)
+            fmt='%d'
+            if nd != 0: fmt='%1.'+str(nd)+'f'
+            plotvars.plot.clabel(cs, fmt=fmt, colors = 'k', fontsize=plotvars.fontsize) 
+
+         #Thick zero contour line   
+         if zero_thick is not None:
+            cs = mymap.contour(lons,lats,field*fmult,[1e-32, 0], colors='k', linewidths=zero_thick) 
+
+
+
+
+
+      #Color bar
+      if colorbar == 1:        
+         pad=0.10
+         if plotvars.rows >= 3: pad=0.15
+         if plotvars.rows >= 5: pad=0.20 
+         cbar=plotvars.master_plot.colorbar(cfill, orientation=colorbar_orientation, aspect=75, \
+                                            pad=pad, ticks=colorbar_labels, drawedges=True, \
+                                            shrink=colorbar_shrink)
+         cbar.set_label(colorbar_title, fontsize=plotvars.fontsize)
+         for t in cbar.ax.get_xticklabels(): t.set_fontsize(plotvars.fontsize)
+
+
+      #axes
+      if plotvars.proj == 'cyl':
+         lonticks,lonlabels=mapaxis(min=plotvars.lonmin, max=plotvars.lonmax, type=1)
+         latticks,latlabels=mapaxis(min=plotvars.latmin, max=plotvars.latmax, type=2)
+         axes(xticks=lonticks, xticklabels=lonlabels)
+         axes(yticks=latticks, yticklabels=latlabels)
+   
+      if plotvars.proj == 'npstere' or plotvars.proj == 'spstere': 
+         latstep=30
+         if 90-abs(plotvars.boundinglat) <= 50: latstep=10
+         mymap.drawparallels(np.arange(-90,120,latstep))
+         mymap.drawmeridians(np.arange(0,420,60),labels=[1,1,1,1,1,1]) 
+
+
       #Coastlines and title
       mymap.drawcoastlines(linewidth=1.0)
       plotvars.plot.set_title(title, y=1.03, fontsize=plotvars.fontsize)
@@ -320,7 +415,6 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
 
       #Log y axis 
       if plotvars.ylog == 1:
-         print 'log pressure'
          gset(xmin=xmin, xmax=xmax, ymin=ymax, ymax=ymin, ylog=1)
          axes(xticks=gvals(dmin=xmin, dmax=xmax, tight=1, mystep=xstep)[0],\
               xlabel=xlabel, ylabel=ylabel)
@@ -334,44 +428,59 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
 
 
       #Filled contours
-      if blockfill is None:
-         if fill == True:
-            cfill=plotvars.plot.contourf(x,y,field*fmult,clevs, \
-                     extend=plotvars.levels_extend, colors=colmap)
+      if fill == True or blockfill == 1:
+         cfill=plotvars.plot.contourf(x,y,field*fmult,clevs, \
+               extend=plotvars.levels_extend, colors=colmap)
 
-      #add colour scale extensions if required
-      if (plotvars.levels_extend == 'both' or plotvars.levels_extend == 'min'):
-         cfill.cmap.set_under(plotvars.cs[0])
-      if (plotvars.levels_extend == 'both' or plotvars.levels_extend == 'max'):
-          cfill.cmap.set_over(plotvars.cs[cscale_ncols-1])
+         #add colour scale extensions if required
+         if (plotvars.levels_extend == 'both' or plotvars.levels_extend == 'min'):
+            cfill.cmap.set_under(plotvars.cs[0])
+         if (plotvars.levels_extend == 'both' or plotvars.levels_extend == 'max'):
+            cfill.cmap.set_over(plotvars.cs[cscale_ncols-1])
   
-      #Contour lines and labels
-      if lines == True: cs=plotvars.plot.contour(x,y,field*fmult,clevs,colors='k')
-      if line_labels == True:  
-         nd=ndecs(clevs)
-         fmt='%d'
-         if nd != 0: fmt='%1.'+str(nd)+'f'
-         plotvars.plot.clabel(cs, fmt=fmt, colors = 'k', fontsize=plotvars.fontsize) 
-
-         #Thick zero contour line
-         if zero_thick is not None:
-            cs = plotvars.plot.contour(x,y,field*fmult,[1e-32, 0],colors='k', linewidths=zero_thick)
-     
-
       #Block fill
-      if blockfill is not None:   bfill(f=field, x=x,y=y, clevs=clevs)
+      if blockfill == 1:   
+         if isinstance(f[0], cf.Field):  
+            if f[0].coord('lon').isbounded:
+               xpts=np.squeeze(f.coord('lat').bounds.array)[:,0]
+               ypts=np.squeeze(f.coord('pressure').bounds.array)[:,0]   
+               bfill(f=field_orig*fmult, x=xpts, y=ypts, clevs=clevs, lonlat=0, bound=1)  
+            else:
+               bfill(f=field_orig*fmult, x=x_orig, y=y_orig, clevs=clevs, lonlat=0, bound=0)  
+
+         else:
+            bfill(f=field_orig*fmult, x=x_orig, y=y_orig, clevs=clevs, lonlat=0, bound=0)  
+ 
+
+
+      #Contour lines and labels
+      if lines == True: 
+         cs=plotvars.plot.contour(x,y,field*fmult,clevs,colors='k')
+         if line_labels == True:  
+            nd=ndecs(clevs)
+            fmt='%d'
+            if nd != 0: fmt='%1.'+str(nd)+'f'
+            plotvars.plot.clabel(cs, fmt=fmt, colors = 'k', fontsize=plotvars.fontsize) 
+
+            #Thick zero contour line
+            if zero_thick is not None:
+               cs = plotvars.plot.contour(x,y,field*fmult,[1e-32, 0],colors='k', linewidths=zero_thick)
+     
   
 
       #Colorbar
-      if fill == True and colorbar == 1:  
+      if colorbar == 1:  
+
          pad=0.15
          if plotvars.rows >= 3: pad=0.25
          if plotvars.rows >= 5: pad=0.3
-         cbar=plotvars.master_plot.colorbar(cfill, orientation='horizontal', aspect=75, \
-                                            pad=pad, ticks=colorbar_labels)
+         cbar=plotvars.master_plot.colorbar(cfill, orientation=colorbar_orientation, aspect=75, \
+                                            pad=pad, ticks=colorbar_labels, drawedges=True, \
+                                            shrink=colorbar_shrink)
          cbar.set_label(colorbar_title, fontsize=plotvars.fontsize)
          for t in cbar.ax.get_xticklabels():
             t.set_fontsize(plotvars.fontsize)
+
 
       #Title
       plotvars.plot.set_title(title, y=1.03, fontsize=plotvars.fontsize)
@@ -407,41 +516,51 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
       cscale_ncols=np.size(plotvars.cs)
       colmap=cscale_get_map()
 
+
       #Filled contours
-      if fill == True:
+      if fill == True or blockfill == 1:
          cfill=plotvars.plot.contourf(x,y,field*fmult,clevs,extend=plotvars.levels_extend,\
                colors=colmap)
 
-      #add colour scale extensions if required
-      if (plotvars.levels_extend == 'both' or plotvars.levels_extend == 'min'):
-          cfill.cmap.set_under(plotvars.cs[0])
-      if (plotvars.levels_extend == 'both' or plotvars.levels_extend == 'max'):
-          cfill.cmap.set_over(plotvars.cs[cscale_ncols-1])
+         #add colour scale extensions if required
+         if (plotvars.levels_extend == 'both' or plotvars.levels_extend == 'min'):
+             cfill.cmap.set_under(plotvars.cs[0])
+         if (plotvars.levels_extend == 'both' or plotvars.levels_extend == 'max'):
+             cfill.cmap.set_over(plotvars.cs[cscale_ncols-1])
 
 
-      #Colorbar
-      if fill == True and colorbar == 1:  
-         pad=0.15
-         if plotvars.rows >= 3: pad=0.25
-         if plotvars.rows >= 5: pad=0.3
-         cbar=plotvars.master_plot.colorbar(cfill, orientation='horizontal', aspect=75, \
-                                            pad=pad, ticks=colorbar_labels)
-         cbar.set_label(colorbar_title, fontsize=plotvars.fontsize)
-         for t in cbar.ax.get_xticklabels():
-            t.set_fontsize(plotvars.fontsize)
-  
+      #Block fill
+      if blockfill == 1:  
+         bfill(f=field_orig*fmult, x=x_orig, y=y_orig, clevs=clevs, lonlat=0, bound=0)  
+ 
+
       #Contour lines and labels 
       if lines == True:
          cs=plotvars.plot.contour(x,y,field*fmult,clevs,colors='k')
-      if line_labels == True:     
-         nd=ndecs(clevs)
-         fmt='%d'
-         if nd != 0: fmt='%1.'+str(nd)+'f'
-         plotvars.plot.clabel(cs, fmt=fmt, colors = 'k', fontsize=plotvars.fontsize) 
+         if line_labels == True:     
+            nd=ndecs(clevs)
+            fmt='%d'
+            if nd != 0: fmt='%1.'+str(nd)+'f'
+            plotvars.plot.clabel(cs, fmt=fmt, colors = 'k', fontsize=plotvars.fontsize) 
    
-      #Thick zero contour line
-      if zero_thick is not None:
-         cs = plotvars.plot.contour(x,y,field*fmult,[1e-32, 0],colors='k', linewidths=zero_thick)
+         #Thick zero contour line
+         if zero_thick is not None:
+            cs = plotvars.plot.contour(x,y,field*fmult,[1e-32, 0],colors='k', linewidths=zero_thick)
+
+
+      #Colorbar
+      if colorbar == 1:     
+
+         pad=0.15
+         if plotvars.rows >= 3: pad=0.25
+         if plotvars.rows >= 5: pad=0.3
+         cbar=plotvars.master_plot.colorbar(cfill, orientation=colorbar_orientation, aspect=75, \
+                                            pad=pad, ticks=colorbar_labels, drawedges=True, \
+                                            shrink=colorbar_shrink)
+         cbar.set_label(colorbar_title, fontsize=plotvars.fontsize)
+         for t in cbar.ax.get_xticklabels():
+            t.set_fontsize(plotvars.fontsize)
+
 
       #Title
       plotvars.plot.set_title(title, y=1.03, fontsize=plotvars.fontsize)
@@ -1018,9 +1137,9 @@ def supscr(text=None):
          else: tform=tform+'}$'+i; sup=0
       if (sup == 2): tform=tform+'$^{' ; sup=3
 
-      if (sup == 3): tform=tform+'}$'
+   if (sup == 3): tform=tform+'}$'
  
-      return tform
+   return tform
 
 
 
@@ -1135,12 +1254,11 @@ def gvals(dmin=None, dmax=None, tight=0, mystep=None):
 
 
 
-def cf_data_assign(f=None, title=None, colorbar_title=None):
+def cf_data_assign(f=None, colorbar_title=None):
    """
     | Check cf input data is okay and return data for contour plot.
     | This is an internal routine not used by the user.
     | f=None - input cf field
-    | title=None - input title
     | colorbar_title=None - input colour bar title
 
     :Returns:
@@ -1148,7 +1266,6 @@ def cf_data_assign(f=None, title=None, colorbar_title=None):
      | x - x coordinates of data (optional)
      | y - y coordinates of data (optional)
      | ptype - plot type
-     | title - title
      | colorbar_title - colour bar title
      | xlabel - xlabel for plot
      | ylabel - y labels for plot
@@ -1236,15 +1353,14 @@ def cf_data_assign(f=None, title=None, colorbar_title=None):
 
    if (np.size(lats) > 1 and np.size(time) > 1):ptype=4 
 
-   if (title == None):
-      if hasattr(f, 'name'): title=f.name
-      if hasattr(f, 'standard_name'): title=f.standard_name
-      if hasattr(f, 'long_name'): title=f.long_name 
 
    if (colorbar_title == None):   
-      if hasattr(f, 'Units'): colorbar_title=supscr(str(f.Units))
+      if hasattr(f, 'name'): colorbar_title=f.name
+      if hasattr(f, 'standard_name'): colorbar_title=f.standard_name
+      if hasattr(f, 'long_name'): colorbar_title=f.long_name 
+      if hasattr(f, 'Units'): colorbar_title=colorbar_title+'('+supscr(str(f.Units))+')'
     
-   return(field, x, y, ptype, title, colorbar_title, xlabel, ylabel)
+   return(field, x, y, ptype, colorbar_title, xlabel, ylabel)
 
 
 
@@ -1307,71 +1423,6 @@ def check_data(field=None, x=None, y=None):
       print ''
       return;
 
-
-def bfill(f=None, x=None, y=None, clevs=None, mymap=None):
-   """ 
-    | bfill - block fill a field with colour rectangles
-    | This is an internal routine and is not used by the user.
-    | 
-    | f=None - field
-    | x=None - x points for field
-    | y=None - y points for field 
-    | clevs=None -levels for filling
-    | 
-    | 
-    | 
-    | 
-    | 
-    |  
-    | 
-    | 
-    |  
-   """
-   print np.min(f), np.max(f)
- 
-   #Make local copy of contour levels and prepend a large negative
-   #value so that a value is found when seraching for the correct colour
-   levs=np.insert(clevs,0, -1000000000)
-
-
-   for ix in np.arange(np.size(x)): 
-      for iy in np.arange(np.size(y)):
-
-         #x points
-         if ix == 0:  
-            xmin=x[ix]-(x[1]-x[0])/2.0
-            xmax=x[ix]+(x[1]-x[0])/2.0
-         if ((ix > 0) and (ix < np.size(x)-1)): 
-            xmin=x[ix]-(x[ix]-x[ix-1])/2.0
-            xmax=x[ix]+(x[ix+1]-x[ix])/2.0
-         if (ix == np.size(x)-1): 
-            xmin=x[ix]-(x[ix]-x[ix-1])/2.0
-            xmax=x[ix]+(x[ix]-x[ix-1])/2.0   
-
-         #y points
-         if iy == 0: 
-            ymin=y[iy]-(y[1]-y[0])/2.0
-            ymax=y[iy]+(y[1]-y[0])/2.0
-         if ((iy > 0) and (iy < np.size(y)-1)):
-            ymin=y[iy]-(y[iy]-y[iy-1])/2.0
-            ymax=y[iy]+(y[iy+1]-y[iy])/2.0
-         if (iy == np.size(y)-1):
-            ymin=y[iy]-(y[iy]-y[iy-1])/2.0
-            ymax=y[iy]+(y[iy]-y[iy-1])/2.0      
-
-         #Box points
-         xpts=[xmin,xmin,xmax,xmax,xmin]
-         ypts=[ymin,ymax,ymax,ymin,ymin]
-         #print 'value, mycol, clevs are ', ix, iy, f[iy,ix], levs
-         mycol=np.max(np.where(f[iy,ix] > levs))
-         #print 'mycol is ', mycol
-         #IF (mycol GE 0) THEN POLYFILL, boxxpts, boxypts, COLOR=mycol+2, NOCLIP=0
-         if mymap is not None:
-            if f[iy,ix] > 273: mymap.plot(xpts,ypts, color='red')
-            else: mymap.plot(xpts,ypts, color='blue')
-         else:
-            if f[iy,ix] > 273: plotvars.plot.plot(xpts,ypts, color='red')
-            else: plotvars.plot.plot(xpts,ypts, color='blue')
 
 
 
@@ -1544,6 +1595,101 @@ class myerror(Exception):
          self.value = value
      def __str__(self):
          return repr(self.value)
+
+
+def bfill(f=None, x=None, y=None, clevs=False, lonlat=False, bound=False):
+   """ 
+    | bfill - block fill a field with colour rectangles
+    | This is an internal routine and is not used by the user.
+    | 
+    | f=None - field
+    | x=None - x points for field
+    | y=None - y points for field 
+    | clevs=None - levels for filling
+    | lonlat=False - lonlat data
+    | bound=False - x and y are cf data boundaries
+    | 
+    | 
+    | 
+    |  
+    | 
+    | 
+    |  
+   """
+
+
+   #Assign f to field as this may be modified in lat-lon plots
+   field=f
+ 
+   #Add in extra levels for colour bar extensions if present.
+   levs=clevs.astype(float)
+   if (plotvars.levels_extend == 'min' or plotvars.levels_extend == 'both'):
+      levs=np.insert(levs,0, -1e30)
+   if (plotvars.levels_extend == 'max' or plotvars.levels_extend == 'both'):
+      levs=np.append(levs, 1e30)
+
+
+
+   if bound == 1:
+      xpts=x
+      ypts=y
+
+
+   if bound == 0:
+      #Find x box boundaries
+      xpts=x[0]-(x[1]-x[0])/2.0
+      for ix in np.arange(np.size(x)-1): 
+         xpts=np.append(xpts, x[ix]+(x[ix+1]-x[ix])/2.0)
+      #xpts=np.append(xpts, x[ix+1]+(x[ix+1]-x[ix])/2.0) 
+
+
+      #Find y box boundaries
+      ypts=y[0]-(y[1]-y[0])/2.0
+      for iy in np.arange(np.size(y)-1): 
+         ypts=np.append(ypts, y[iy]+(y[iy+1]-y[iy])/2.0)
+      ypts=np.append(ypts, y[iy+1]+(y[iy+1]-y[iy])/2.0) 
+
+
+
+   #Shift lon grid if needed
+   if lonlat == 1:
+      if plotvars.lonmin < np.min(xpts): xpts=xpts-360
+      if plotvars.lonmin > np.max(xpts): xpts=xpts+360
+
+      #Add cyclic information if missing.
+      lonrange=np.max(xpts)-np.min(xpts)
+      if lonrange < 360:
+         field, xpts = addcyclic(field, xpts)
+
+      field, xpts=shiftgrid(plotvars.lonmin, field, xpts) 
+
+
+
+   #Make plot
+   #Set colour map
+   cmin=0
+   cmax=np.size(plotvars.cs)
+   if (plotvars.levels_extend == 'min' or plotvars.levels_extend == 'both'): cmin=1
+   if (plotvars.levels_extend == 'max' or plotvars.levels_extend == 'both'): cmax=np.size(plotvars.cs)-1
+
+   cmap = matplotlib.colors.ListedColormap(plotvars.cs[cmin:cmax])
+   if (plotvars.levels_extend == 'min' or plotvars.levels_extend == 'both'):
+      cmap.set_under(plotvars.cs[0])
+   if (plotvars.levels_extend == 'max' or plotvars.levels_extend == 'both'):
+      cmap.set_over(plotvars.cs[-1])
+
+   norm = matplotlib.colors.BoundaryNorm(clevs, ncolors=cmap.N, clip=False)
+   im = plotvars.plot.pcolormesh(xpts, ypts, field, cmap=cmap, norm=norm)
+
+   
+
+
+
+
+
+
+
+
 
 
 
