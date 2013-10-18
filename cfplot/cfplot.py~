@@ -1759,15 +1759,7 @@ def stipple(f=None, x=None, y=None, min=None, max=None, size=80, color='k', pts=
    """
     | stipple - put dots on the plot to indicate value of interest
     | 
-    | f=None - cf field or field
-    | x=None - x points for field
-    | y=None - y points for field    
-    | min=None - minimum threshold for stipple
-    | max=None - maximum threshold for stipple
-    | size=80 - default size for stipples
-    | color='k' - default colour for stipples
-    | pts=50 - number of points in the x direction
-    | marker='.' - default marker for stipples
+    | 
     | 
     | 
     | 
