@@ -42,8 +42,8 @@ cscale1=['#0a3278', '#0f4ba5', '#1e6ec8', '#3ca0f0', '#50b4fa', '#82d2ff', '#a0f
 plotvars=pvars(lonmin=-180, lonmax=180, latmin=-90, latmax=90, proj='cyl', \
                resolution='c', plot_type=1, boundinglat=0, lon_0=0, \
                levels=None, levels_min=None, levels_max=None, levels_step=None, \
-               levels_extend='both', xmin=None, \
-               xmax=None, ymin=None, ymax=None, xlog=None, ylog=None,\
+               levels_extend='both', xmin=None, xmax=None, ymin=None, ymax=None, \
+               xlog=None, ylog=None,\
                rows=1, columns=1, file='python', orientation='landscape', gtype='png',\
                user_plot=0, master_plot=None, plot=None, fontsize=None, cs=cscale1, \
                user_cs=0, user_levs=0, mymap=None)
@@ -54,7 +54,7 @@ plotvars=pvars(lonmin=-180, lonmax=180, latmin=-90, latmax=90, proj='cyl', \
 def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=None, \
         colorbar_title=None, colorbar=1, colorbar_label_skip=1, ptype=0, \
         negative_linestyle=None, blockfill=None, zero_thick=None, colorbar_shrink=None, \
-        colorbar_orientation=None, image=True):
+        colorbar_orientation=None, image=True, xlog=None, ylog=None):
    """
     | con is the interface to contouring in cfplot. The minimum use is con(f) 
     | where f is a 2 dimensional array. If a cf field is passed then an 
@@ -82,9 +82,12 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
     |                      The default for most plots is horizontal but
     |                      for polar stereographic plots this is vertical.
     | colorbar_shrink=None - value to shrink the colorbar by.  If the colorbar 
-                             exceeds the plot area then values of 1.0, 0.55 or 0.5
-                             may help it better fit the plot area.
-
+    |                        exceeds the plot area then values of 1.0, 0.55 or 0.5
+    |                        may help it better fit the plot area.
+    | xlog=None - logarithmic x axis
+    | ylog=None - logarithmic y axis
+    |
+    |
     :Returns:
      None
 
@@ -231,22 +234,9 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
       if plotvars.user_plot == 0: gopen(user_plot=0)
 
       #Set up mapping
-      lon_mid=plotvars.lonmin+(plotvars.lonmax-plotvars.lonmin)/2.0
-      lat_mid=plotvars.latmin+(plotvars.latmax-plotvars.latmin)/2.0
+      set_map()    
+      mymap=plotvars.mymap    
 
-      if plotvars.proj == 'cyl':
-         mymap = Basemap(projection='cyl',llcrnrlon=plotvars.lonmin, urcrnrlon=plotvars.lonmax, \
-                         llcrnrlat=plotvars.latmin, urcrnrlat=plotvars.latmax, \
-                         lon_0=lon_mid, lat_0=lat_mid, resolution=plotvars.resolution)  
-      else:	 
-         if plotvars.proj == 'npstere':
-            mymap = Basemap(projection='npstere', boundinglat=plotvars.boundinglat, \
-                            lon_0=plotvars.lon_0, lat_0=90, resolution=plotvars.resolution)
-         if plotvars.proj == 'spstere':
-            mymap = Basemap(projection='spstere', boundinglat=plotvars.boundinglat, \
-                            lon_0=plotvars.lon_0, lat_0=-90, resolution=plotvars.resolution)
-      #Store map 
-      plotvars.mymap=mymap
       #Shift grid if needed
       if plotvars.lonmin < np.min(x): x=x-360
       if plotvars.lonmin > np.max(x): x=x+360
@@ -265,19 +255,6 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
       lons, lats=mymap(*np.meshgrid(x, y))
 
       gset(xmin=plotvars.lonmin, xmax=plotvars.lonmax, ymin=plotvars.latmin, ymax=plotvars.latmax)
-
-      #axes
-      if plotvars.proj == 'cyl':
-         lonticks,lonlabels=mapaxis(min=plotvars.lonmin, max=plotvars.lonmax, type=1)
-         latticks,latlabels=mapaxis(min=plotvars.latmin, max=plotvars.latmax, type=2)
-         axes(xticks=lonticks, xticklabels=lonlabels)
-         axes(yticks=latticks, yticklabels=latlabels)
-   
-      if plotvars.proj == 'npstere' or plotvars.proj == 'spstere': 
-         latstep=30
-         if 90-abs(plotvars.boundinglat) <= 50: latstep=10
-         mymap.drawparallels(np.arange(-90,120,latstep))
-         mymap.drawmeridians(np.arange(0,420,60),labels=[1,1,1,1,1,1]) 
 
 
       #Filled contours
@@ -401,7 +378,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
       if 'theta' in ylabel.split(' '): ytype=1
 
       #Set plot limits and draw axes
-      if plotvars.ylog != 1:   
+      if ylog != 1:   
          if ytype == 1: 
             gset(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax)
             axes(xticks=gvals(dmin=xmin, dmax=xmax, tight=1, mystep=xstep)[0],\
@@ -414,7 +391,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
                  xlabel=xlabel, ylabel=ylabel)  
 
       #Log y axis 
-      if plotvars.ylog == 1:
+      if ylog == 1:
          gset(xmin=xmin, xmax=xmax, ymin=ymax, ymax=ymin, ylog=1)
          axes(xticks=gvals(dmin=xmin, dmax=xmax, tight=1, mystep=xstep)[0],\
               xlabel=xlabel, ylabel=ylabel)
@@ -624,7 +601,7 @@ def mapset(lonmin=-180, lonmax=180, latmin=-90, latmax=90, proj='cyl', boundingl
    plotvars.boundinglat=boundinglat 
    plotvars.lon_0=lon_0
    plotvars.resolution=resolution 
- 
+   set_map()   
 
   
 
@@ -1617,6 +1594,8 @@ def bfill(f=None, x=None, y=None, clevs=False, lonlat=False, bound=False):
     | 
     | 
     | 
+    :Returns:
+       None
     |  
     | 
     | 
@@ -1706,16 +1685,30 @@ def regrid(f=None, x=None, y=None, xnew=None, ynew=None, lonlat=None):
     |     xnew=None - new x points
     |     ynew=None - new y points
     | 
-    | 
+    :Returns:
+       field values at requested locations
     | 
     | 
    """
+
+   #reassign input arrays
+   regrid_f=f
+   regrid_x=x
+   regrid_y=y
 
    import numpy as np
 
    fieldout=[]
 
+   #Reverse xpts and field if necessary
+   if regrid_x[0] > regrid_x[-1]:
+      regrid_x=regrid_x[::-1]            
+      field=np.fliplr(regrid_f)
 
+   #Reverse ypts and field if necessary
+   if regrid_y[0] > regrid_y[-1]:
+      regrid_y=regrid_y[::-1]         
+      regrid_f=np.flipud(regrid_f)
 
    #Iterate over the new grid to get the new grid values.
    for i in np.arange(np.size(xnew)):
@@ -1724,8 +1717,8 @@ def regrid(f=None, x=None, y=None, xnew=None, ynew=None, lonlat=None):
       yval=ynew[i]
 
       #Find position of new grid point in the x and y arrays
-      myxpos=find_pos_in_array(vals=x, val=xval)
-      myypos=find_pos_in_array(vals=y, val=yval) 
+      myxpos=find_pos_in_array(vals=regrid_x, val=xval)
+      myypos=find_pos_in_array(vals=regrid_y, val=yval) 
 
 
       myxpos2=myxpos+1
@@ -1735,17 +1728,24 @@ def regrid(f=None, x=None, y=None, xnew=None, ynew=None, lonlat=None):
       #print 'myypos, myypos2 ', myypos, myypos2
 
       if (myxpos2 != myxpos): 
-         alpha=(xnew[i]-x[myxpos])/(x[myxpos2]-x[myxpos]) 
+         alpha=(xnew[i]-regrid_x[myxpos])/(regrid_x[myxpos2]-regrid_x[myxpos]) 
+         #print 'alpha is', alpha
       else: 
-         alpha=(xnew[i]-x[myxpos])/1E-30
+         alpha=(xnew[i]-regrid_x[myxpos])/1E-30
 
-      newval1=f[myypos,myxpos]-(f[myypos,myxpos]-f[myypos,myxpos2])*alpha
-      newval2=f[myypos2,myxpos]-(f[myypos2,myxpos]-f[myypos2,myxpos2])*alpha
-      if (myypos2 != myypos): alpha2=(ynew[i]-y[myypos])/(y[myypos2]-(y[myypos]))
-      else: alpha2=(ynew[i]-y[myypos])/1E-30
+      newval1=regrid_f[myypos,myxpos]-(regrid_f[myypos,myxpos]-regrid_f[myypos,myxpos2])*alpha
+      newval2=regrid_f[myypos2,myxpos]-(regrid_f[myypos2,myxpos]-regrid_f[myypos2,myxpos2])*alpha
+      #print 'newval1, newval2 are', newval1, newval2
+
+      if (myypos2 != myypos): alpha2=(ynew[i]-regrid_y[myypos])/(regrid_y[myypos2]-regrid_y[myypos])
+      else: alpha2=(ynew[i]-regrid_y[myypos])/1E-30
+
+      #print 'ynew[i], y[myypos], y[myypos2], y[myypos]', ynew[i], regrid_y[myypos], \
+      #                           regrid_y[myypos2], regrid_y[myypos]
+      #print 'alpha2 is ', alpha2
    
       newval3=newval1-(newval1-newval2)*alpha2
-
+      #print 'xval, yval, newval3 are', xval, yval, newval3
   
       fieldout=np.append(fieldout, newval3)
 
@@ -1769,7 +1769,9 @@ def stipple(f=None, x=None, y=None, min=None, max=None, size=80, color='k', pts=
     | pts=50 - number of points in the x direction
     | marker='.' - default marker for stipples
     | 
-    | 
+    |     
+    :Returns:
+       None
     | 
     | 
    """
@@ -1802,56 +1804,53 @@ def stipple(f=None, x=None, y=None, min=None, max=None, size=80, color='k', pts=
 
       field, xpts=shiftgrid(plotvars.lonmin, field, xpts)   
 
-      #Calculate interpolation points
-      xnew, ynew=stipple_points(xmin=np.min(xpts), xmax=np.max(xpts),\
-                                ymin=np.min(ypts), ymax=np.max(ypts), pts=pts)
-
-      #Calculate points in map space
-      xnew_map,ynew_map=plotvars.mymap(xnew,ynew)
-
-   else:
-
-      #Reverse xpts and field if necessary
-      if xpts[0] > xpts[-1]:
-         xpts=xpts[::-1]            
-         field=np.fliplr(field)
-
-      #Reverse ypts and field if necessary
-      if ypts[0] > ypts[-1]:
-         ypts=ypts[::-1]         
-         field=np.flipud(field)
+      if plotvars.proj == 'cyl':
+         #Calculate interpolation points
+         xnew, ynew=stipple_points(xmin=np.min(xpts), xmax=np.max(xpts),\
+                                   ymin=np.min(ypts), ymax=np.max(ypts), pts=pts, stype=2)
+  
+         #Calculate points in map space
+         xnew_map,ynew_map=plotvars.mymap(xnew,ynew)
 
 
 
-      #Calculate interpolation points
-      xnew, ynew=stipple_points(xmin=np.min(xpts), xmax=np.max(xpts),\
-                                ymin=np.min(ypts), ymax=np.max(ypts), pts=pts)
+      if plotvars.proj == 'npstere' or plotvars.proj == 'spstere':
+         #Calculate interpolation points
+         xnew, ynew, xnew_map, ynew_map=polar_regular_grid()
 
 
 
-   vals=regrid(f=field, x=xpts, y=ypts, xnew=xnew, ynew=ynew)
+
+      if plotvars.plot_type == 2:
+         #Calculate interpolation points
+         xnew, ynew=stipple_points(xmin=np.min(xpts), xmax=np.max(xpts),\
+                                   ymin=np.min(ypts), ymax=np.max(ypts), pts=pts, stype=2)
 
 
-   #Work out which of the points are valid
-   valid_points=np.array([], dtype='int32')
-   for i in np.arange(np.size(vals)):
-      if vals[i] >=min and vals[i] <=max:
-         valid_points=np.append(valid_points, i)
+      #Get values at the new points
+      vals=regrid(f=field, x=xpts, y=ypts, xnew=xnew, ynew=ynew)
 
+      #Work out which of the points are valid
+      valid_points=np.array([], dtype='int32')
+      for i in np.arange(np.size(vals)):
+         if vals[i] >=min and vals[i] <=max:
+            valid_points=np.append(valid_points, i)
 
 
 
    
    if plotvars.plot_type == 1:
       plotvars.plot.scatter(xnew_map[valid_points], ynew_map[valid_points], s=size, c=color, marker=marker)
-   else:
+
+
+   if plotvars.plot_type == 2:
       plotvars.plot.scatter(xnew[valid_points], ynew[valid_points], s=size, c=color, marker=marker)
 
 
 
 
 
-def stipple_points(xmin=None, xmax=None, ymin=None, ymax=None, pts=None):
+def stipple_points(xmin=None, xmax=None, ymin=None, ymax=None, pts=None, stype=None):
     
    """
     | stipple_points - calculate interpolation points 
@@ -1860,17 +1859,29 @@ def stipple_points(xmin=None, xmax=None, ymin=None, ymax=None, pts=None):
     | ymax=None - plot x maximum
     | ymin=None - plot y minimum
     | ymax=None - plot x maximum
-    | pts=None - number of points in the x and y directions
+    | pts=None -  number of points in the x and y directions
+    |             one number gives the same in both directions
+    |             
+    | stype=None - type of grid.  1=regular, 2=offset
     | 
     | 
+    |     
+    :Returns:
+       stipple locations in x and y
     | 
     | 
-    | 
-    | 
-   """
+   """      
+
+   #Work out number of points in x and y directions
+   if np.size(pts) == 1:
+      pts_x=pts
+      pts_y=pts
+   if np.size(pts) == 2:
+      pts_x=pts[0]
+      pts_y=pts[1]
 
    #Create regularly spaced points
-   xstep=(xmax-xmin)/float(pts)
+   xstep=(xmax-xmin)/float(pts_x)
    x1=[xmin+xstep/4]
    while (np.max(x1)+xstep) < xmax-xstep/10:
       x1=np.append(x1,  np.max(x1)+xstep)
@@ -1880,7 +1891,7 @@ def stipple_points(xmin=None, xmax=None, ymin=None, ymax=None, pts=None):
    while (np.max(x2)+xstep) < xmax-xstep/10:
       x2=np.append(x2,  np.max(x2)+xstep)
 
-   ystep=(ymax-ymin)/float(pts)
+   ystep=(ymax-ymin)/float(pts_y)
    y1=[ymin+ystep/2]
    while (np.max(y1)+ystep) < ymax-ystep/10:
       y1=np.append(y1,  np.max(y1)+ystep)
@@ -1894,16 +1905,23 @@ def stipple_points(xmin=None, xmax=None, ymin=None, ymax=None, pts=None):
 
    for y in y1:
       iy=iy+1
-      if iy%2 == 0: 
+      if stype == 1:
          xnew=np.append(xnew, x1)
          y2=np.zeros(np.size(x1))
          y2.fill(y)
          ynew=np.append(ynew, y2)
-      if iy%2 == 1: 
-         xnew=np.append(xnew, x2)
-         y2=np.zeros(np.size(x2))
-         y2.fill(y)
-         ynew=np.append(ynew, y2)
+
+      if stype == 2:
+         if iy%2 == 0: 
+            xnew=np.append(xnew, x1)
+            y2=np.zeros(np.size(x1))
+            y2.fill(y)
+            ynew=np.append(ynew, y2)
+         if iy%2 == 1: 
+            xnew=np.append(xnew, x2)
+            y2=np.zeros(np.size(x2))
+            y2.fill(y)
+            ynew=np.append(ynew, y2)
       
 
 
@@ -1925,7 +1943,7 @@ def find_pos_in_array(vals=None, val=None):
     | 
     | 
     | 
-   :Returns:
+    :Returns:
       position in array
     | 
     | 
@@ -1938,6 +1956,260 @@ def find_pos_in_array(vals=None, val=None):
       if val > myval: pos=pos+1
 
    return pos
+
+
+
+def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
+         key_length=None, key_label=None):
+
+   """
+    | vect - plot vectors
+    | 
+    | u=None - u wind
+    | v=None - v wind
+    | x=None - x locations of u and v
+    | y=None - y locations of u and v
+    | scale=None - 
+    | stride=None - plot vector every stride points. Can take two values
+    |                one for x and one for y
+    | pts=None - use bilinear interpolation to interpolate vectors
+    |            onto a new grid.
+    |
+    |
+    |
+    :Returns:
+     None
+    | 
+    | 
+    | 
+   """
+
+   colorbar_title=''
+
+
+   #Extract required data for contouring
+   #If a cf-python field
+   if isinstance(u[0], cf.Field):
+      u_data, u_x, u_y, ptype, colorbar_title, xlabel, ylabel=cf_data_assign(u, colorbar_title)
+   else:
+      field=f #field data passed in as f
+      check_data(u, x, y)
+      u_data=u
+      u_x=x
+      u_y=y
+      xlabel=''
+      ylabel=''
+
+
+   if isinstance(v[0], cf.Field):
+      v_data, v_x, v_y, ptype, colorbar_title, xlabel, ylabel=cf_data_assign(v, colorbar_title)
+   else:
+      field=f #field data passed in as f
+      check_data(v, x, y)
+      v_data=v
+      v_x=x
+      v_y=y
+      xlabel=''
+      ylabel=''
+
+   
+   if scale is None: scale=np.max(u_data)/4.0
+   if key_length is None: key_length=scale
+   if key_label is None: key_label=str(key_length)+u.units
+   key_label=supscr(key_label)
+
+   #Open a new plot is necessary
+   if plotvars.user_plot == 0: gopen(user_plot=0)
+
+ 
+   
+   if plotvars.plot_type == 1:
+      #Set up mapping
+      set_map()    
+      mymap=plotvars.mymap   
+    
+      #add cyclic and shift grid 
+      u_data, u_x = addcyclic(u_data, u_x)
+      v_data, v_x = addcyclic(v_data, v_x)
+      if plotvars.lonmin < np.min(u_x): u_x=u_x-360.0
+      if plotvars.lonmin < np.min(v_x): v_x=v_x-360.0
+      u_data, u_x = shiftgrid(plotvars.lonmin, u_data, u_x)
+      v_data, v_x = shiftgrid(plotvars.lonmin, v_data, v_x)
+
+
+      #stride data points to reduce vector density
+      if stride is not None:
+         if np.size(stride) == 1:
+            xstride=stride
+            ystride=stride
+         if np.size(stride) == 2:
+            xstride=stride[0]
+            ystride=stride[1]
+
+
+         iskip=1
+         for ix in np.arange(np.size(u_x)):
+            if iskip != xstride: u_x[ix]=float('nan') 
+            iskip=iskip+1
+            if iskip > xstride: iskip=1     
+         iskip=1
+         for iy in np.arange(np.size(u_y)):
+            if iskip != ystride: u_y[iy]=float('nan') 
+            iskip=iskip+1
+            if iskip > ystride: iskip=1 
+
+      
+      #Use bilinear interpolation to plot vectors
+      if pts is not None:
+
+         if plotvars.proj != 'npstere' and plotvars.proj != 'spstere': 
+            #Calculate interpolation points and values
+            xnew, ynew=stipple_points(xmin=plotvars.lonmin, xmax=plotvars.lonmax,\
+                                      ymin=plotvars.latmin, ymax=plotvars.latmax, pts=pts, stype=1)
+
+            u_vals=regrid(f=u_data, x=u_x, y=u_y, xnew=xnew, ynew=ynew)
+            v_vals=regrid(f=v_data, x=u_x, y=u_y, xnew=xnew, ynew=ynew)
+
+            #Plot vectors
+            quiv=plotvars.mymap.quiver(xnew,ynew,u_vals,v_vals, pivot='middle',units='inches', scale=scale)
+         else:
+            print 'polar vectors with pts'
+            #Calculate interpolation points and values
+            xnew, ynew, xnew_map, ynew_map=polar_regular_grid()
+
+            u_vals=regrid(f=u_data, x=u_x, y=u_y, xnew=xnew, ynew=ynew)
+            v_vals=regrid(f=v_data, x=u_x, y=u_y, xnew=xnew, ynew=ynew)
+            print 'min / max u_vals ', np.min(u_vals), np.max(u_vals)
+            print 'min / max v_vals ', np.min(v_vals), np.max(v_vals)
+            print 'number of u values is ', np.size(u_vals)
+
+
+            #Plot vectors
+            quiv=plotvars.mymap.quiver(xnew_map,ynew_map,u_vals,v_vals, pivot='middle',\
+                                       units='inches', scale=scale)
+
+
+         quiv_key=plotvars.plot.quiverkey(quiv, 0.9, -0.06, key_length, key_label, labelpos='W')
+
+
+      if pts is None:
+         #convert lons, lats into map coordinates
+         x,y=plotvars.mymap(*np.meshgrid(u_x, u_y))
+
+         #plot vectors and key
+         quiv=plotvars.mymap.quiver(u_x,u_y,u_data,v_data, pivot='middle',units='inches', scale=scale)
+         quiv_key=plotvars.plot.quiverkey(quiv, 0.9, -0.06, key_length, key_label, labelpos='W')
+
+
+
+
+      #axes
+      if plotvars.proj == 'cyl':
+         lonticks,lonlabels=mapaxis(min=plotvars.lonmin, max=plotvars.lonmax, type=1)
+         latticks,latlabels=mapaxis(min=plotvars.latmin, max=plotvars.latmax, type=2)
+         axes(xticks=lonticks, xticklabels=lonlabels)
+         axes(yticks=latticks, yticklabels=latlabels)
+   
+      if plotvars.proj == 'npstere' or plotvars.proj == 'spstere': 
+         latstep=30
+         if 90-abs(plotvars.boundinglat) <= 50: latstep=10
+         mymap.drawparallels(np.arange(-90,120,latstep))
+         mymap.drawmeridians(np.arange(0,420,60),labels=[1,1,1,1,1,1]) 
+
+
+      #Coastlines and title
+      mymap.drawcoastlines(linewidth=1.0)
+      #plotvars.plot.set_title(title, y=1.03, fontsize=plotvars.fontsize)
+
+      ##########
+      #Save plot
+      ##########
+ 
+      if plotvars.user_plot == 0: gclose()
+  
+
+
+def set_map():
+   """
+    | set_map - set map and write into plotvars.mymap
+    | 
+    | No inputs
+    | 
+    | 
+    | 
+    |
+    |
+    |
+    :Returns:
+     None
+    | 
+    | 
+    | 
+   """
+   
+   #Set up mapping
+   lon_mid=plotvars.lonmin+(plotvars.lonmax-plotvars.lonmin)/2.0
+   lat_mid=plotvars.latmin+(plotvars.latmax-plotvars.latmin)/2.0
+
+   if plotvars.proj == 'cyl':
+      mymap = Basemap(projection='cyl',llcrnrlon=plotvars.lonmin, urcrnrlon=plotvars.lonmax, \
+                      llcrnrlat=plotvars.latmin, urcrnrlat=plotvars.latmax, \
+                      lon_0=lon_mid, lat_0=lat_mid, resolution=plotvars.resolution)  
+   else:	 
+      if plotvars.proj == 'npstere':
+         mymap = Basemap(projection='npstere', boundinglat=plotvars.boundinglat, \
+                         lon_0=plotvars.lon_0, lat_0=90, resolution=plotvars.resolution)
+      if plotvars.proj == 'spstere':
+         mymap = Basemap(projection='spstere', boundinglat=plotvars.boundinglat, \
+                         lon_0=plotvars.lon_0, lat_0=-90, resolution=plotvars.resolution)
+   #Store map 
+   plotvars.mymap=mymap
+
+
+
+def polar_regular_grid(pts=50):
+   """
+    | polar_regular_grid - return a regular grid over a polar stereographic area
+    | 
+    | pts=50 - number  of grid points in the x and y directions
+    | 
+    | 
+    | 
+    |
+    |
+    |
+    :Returns:
+     lons, lats of grid in degrees
+     x, y locations of lons and lats
+    | 
+    | 
+    | 
+   """
+
+
+   mymap=plotvars.mymap
+
+   boundinglat=plotvars.boundinglat
+   lon_0=plotvars.lon_0
+
+   x, ymin=mymap(lon_0, boundinglat)
+   x, ymax=mymap(lon_0+180, boundinglat)
+   xmin, y=mymap(lon_0-90, boundinglat)
+   xmax, y=mymap(lon_0+90, boundinglat)
+
+
+   xnew, ynew = stipple_points(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax, pts=pts, stype=2)
+   lons, lats=mymap(xnew, ynew, inverse=True)
+
+   #Work out which of the points are valid
+   #valid_points=np.array([], dtype='int32')
+   #for i in np.arange(np.size(lats)):
+   #   if lats[i] >=boundinglat :
+   #      valid_points=np.append(valid_points, i)
+
+
+   return lons, lats, xnew, ynew
+
 
 
 
