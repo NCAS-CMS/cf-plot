@@ -1599,7 +1599,7 @@ def bfill(f=None, x=None, y=None, clevs=False, lonlat=False, bound=False):
     |  
     | 
     | 
-    |  
+    |
    """
 
 
@@ -2157,10 +2157,10 @@ def set_map():
                       lon_0=lon_mid, lat_0=lat_mid, resolution=plotvars.resolution)  
    else:	 
       if plotvars.proj == 'npstere':
-         mymap = Basemap(projection='npstere', boundinglat=plotvars.boundinglat, \
+         mymap = Basemap(projection='npstere', boundinglat=plotvars.boundinglat, round='True',\
                          lon_0=plotvars.lon_0, lat_0=90, resolution=plotvars.resolution)
       if plotvars.proj == 'spstere':
-         mymap = Basemap(projection='spstere', boundinglat=plotvars.boundinglat, \
+         mymap = Basemap(projection='spstere', boundinglat=plotvars.boundinglat, round='True',\
                          lon_0=plotvars.lon_0, lat_0=-90, resolution=plotvars.resolution)
    #Store map 
    plotvars.mymap=mymap
@@ -2202,13 +2202,18 @@ def polar_regular_grid(pts=50):
    lons, lats=mymap(xnew, ynew, inverse=True)
 
    #Work out which of the points are valid
-   #valid_points=np.array([], dtype='int32')
-   #for i in np.arange(np.size(lats)):
-   #   if lats[i] >=boundinglat :
-   #      valid_points=np.append(valid_points, i)
+   valid_points=np.array([], dtype='int32')
+   if plotvars.proj == 'npstere':
+      for i in np.arange(np.size(lats)):
+         if lats[i] >=boundinglat :
+            valid_points=np.append(valid_points, i)
+   if plotvars.proj == 'spstere':
+      for i in np.arange(np.size(lats)):
+         if lats[i] <=boundinglat :
+            valid_points=np.append(valid_points, i)
 
 
-   return lons, lats, xnew, ynew
+   return lons[valid_points], lats[valid_points], xnew[valid_points], ynew[valid_points]
 
 
 
