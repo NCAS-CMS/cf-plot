@@ -1,6 +1,6 @@
 """
 Routines for making climate contour/vector plots using cf-python, matplotlib and basemap.
-Andy Heaps NCAS-CMS October 2013.
+Andy Heaps NCAS-CMS Novemver 2013.
 """
 
 class pvars(object):
@@ -44,7 +44,7 @@ plotvars=pvars(lonmin=-180, lonmax=180, latmin=-90, latmax=90, proj='cyl', \
                levels=None, levels_min=None, levels_max=None, levels_step=None, \
                levels_extend='both', xmin=None, xmax=None, ymin=None, ymax=None, \
                xlog=None, ylog=None,\
-               rows=1, columns=1, file='python', orientation='landscape', gtype='png',\
+               rows=1, columns=1, file=None, orientation='landscape',\
                user_plot=0, master_plot=None, plot=None, fontsize=None, cs=cscale1, \
                user_cs=0, user_levs=0, mymap=None)
        
@@ -121,7 +121,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
          print ''
          print 'blockfill not supported for polar stereograpic plots'
          print ''
-         return
+         raise  Warning()
 
    if fill == 0 and blockfill is None: colorbar=0
 
@@ -235,23 +235,50 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
 
       #Set up mapping
       set_map()    
-      mymap=plotvars.mymap    
-
-      #Shift grid if needed
-      if plotvars.lonmin < np.min(x): x=x-360
-      if plotvars.lonmin > np.max(x): x=x+360
-
-      field, x=shiftgrid(plotvars.lonmin, field, x)   
-  
+      mymap=plotvars.mymap      
 
       #Add cyclic information if missing.
       lonrange=np.max(x)-np.min(x)
       if lonrange < 360:
          field, x = addcyclic(field, x)
          lonrange=np.max(x)-np.min(x)
+
+
+      #Shift grid if needed
+      if plotvars.lonmin < np.min(x): x=x-360
+      if plotvars.lonmin > np.max(x): x=x+360
+
+      field, x=shiftgrid(plotvars.lonmin, field, x)   
+
+      #Add cyclic information if missing.
+      lonrange=np.max(x)-plotvars.lonmin
+      if lonrange < 360:
+         field, x = addcyclic(field, x)
+         lonrange=np.max(x)-np.min(x)
+
+      #if np.max(x)-plotvars.lonmin < 360:
+      #   field, x = addcyclic(field, x)
+
+
+
+      #Flip latitudes and field if latitudes are in descending order
+      if y[0] > y[-1]:
+         y=y[::-1] 
+         field=np.flipud(field)
    
-   
-      #Create the meshgrid
+      #Plotting a sub-area of the grid produces stray contour labels
+      #Subsample the grid to remove this problem
+      if plotvars.proj == 'npstere':
+         myypos=find_pos_in_array(vals=y, val=plotvars.boundinglat)
+         y=y[myypos:]
+         field=field[myypos:, :]
+
+      if plotvars.proj == 'spstere':
+         myypos=find_pos_in_array(vals=y, val=plotvars.boundinglat, above=1)     
+         y=y[0:myypos+1]
+         field=field[0:myypos+1, :]
+
+      #Create the meshgrid         
       lons, lats=mymap(*np.meshgrid(x, y))
 
       gset(xmin=plotvars.lonmin, xmax=plotvars.lonmax, ymin=plotvars.latmin, ymax=plotvars.latmax)
@@ -333,7 +360,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
          latstep=30
          if 90-abs(plotvars.boundinglat) <= 50: latstep=10
          mymap.drawparallels(np.arange(-90,120,latstep))
-         mymap.drawmeridians(np.arange(0,420,60),labels=[1,1,1,1,1,1]) 
+         mymap.drawmeridians(np.arange(0,360,60),labels=[1,1,1,1,1,1]) 
 
 
       #Coastlines and title
@@ -373,6 +400,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
       if (xmin == -90 and xmax == 90): xstep=30
       ystep=None
       if (ymax == 1000): ystep=100
+      if (ymax == 100000): ystep=10000
 
       ytype=0 #pressure or similar y axis
       if 'theta' in ylabel.split(' '): ytype=1
@@ -386,8 +414,8 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
                  xlabel=xlabel, ylabel=ylabel)
          else: 
             gset(xmin=xmin, xmax=xmax, ymin=ymax, ymax=ymin)
-            axes(xticks=gvals(dmin=xmin, dmax=xmax, tight=1, mystep=xstep)[0],\
-                 yticks=gvals(dmin=ymin, dmax=ymax, tight=1, mystep=ystep)[0],\
+            axes(xticks=gvals(dmin=xmin, dmax=xmax, tight=1, mystep=xstep, mod=0)[0],\
+                 yticks=gvals(dmin=ymin, dmax=ymax, tight=1, mystep=ystep, mod=0)[0],\
                  xlabel=xlabel, ylabel=ylabel)  
 
       #Log y axis 
@@ -635,7 +663,6 @@ def levs(min=None, max=None, step=None, manual=None, extend='both'):
       plotvars.levels_step=None 
       plotvars.extend='both'
       plotvars.user_levs=0
-      raise myerror(2*2)
       return
     
    if manual is not None:
@@ -646,9 +673,13 @@ def levs(min=None, max=None, step=None, manual=None, extend='both'):
       plotvars.user_levs=1
    else:
       if [min,max,step].count(None) > 0:
-         print 'min, max and step or manual need to be passed to levs to generate \
-              a set of contour levels'
-         return
+         errstr='\n\
+                 levs error\n\
+                 min, max and step or manual need to be passed to levs to generate \n\
+                 a set of contour levels\
+                 \n'
+              
+         raise  Warning(errstr)
       else:
          plotvars.levels_min=min
          plotvars.levels_max=max
@@ -871,8 +902,10 @@ def gset(xmin=None, xmax=None, ymin=None, ymax=None, xlog=None, ylog=None):
       return
 
    if [xmin,xmax,ymin,ymax].count(None) > 0:
-      print 'xmin, xmax, ymin, ymax all need to be passed to gset to set the plot limits'
-      return
+      errstr='gset error\n\
+              xmin, xmax, ymin, ymax all need to be passed to gset to set the plot limits\n'
+      raise  Warning(errstr)     
+      
   
    plotvars.xmin=xmin
    plotvars.xmax=xmax
@@ -891,8 +924,7 @@ def gset(xmin=None, xmax=None, ymin=None, ymax=None, xlog=None, ylog=None):
   
 
 def gopen(rows=1, columns=1, user_plot=1, file='python', \
-          orientation='landscape', gtype='png', \
-          fontsize=None):
+          orientation='landscape', fontsize=None):
    """
     | gopen is used to open a graphic file.  
 
@@ -901,7 +933,6 @@ def gopen(rows=1, columns=1, user_plot=1, file='python', \
     | user_plot=1 - internal plot variable - do not use.
     | file='python' - default file name
     | orientation='landscape' - orientation - also takes 'portrait'
-    | gtype='png' - default graphics type
     | fontsize=None - font size - default is 11 for a single plot
 
     :Returns:
@@ -920,17 +951,15 @@ def gopen(rows=1, columns=1, user_plot=1, file='python', \
    plotvars.columns=columns 
    if file != 'python': plotvars.file=file
    plotvars.orientation=orientation
-   plotvars.type=gtype
    plotvars.user_plot=user_plot
 
    if orientation != 'landscape':
       if orientation != 'portrait':
-         print ''
-         print 'Error - orientation incorrectly set'
-         print 'Input value was ', orientation
-         print 'Valid options are portrait or landscape'
-         print ''
-         return
+         errstr='gopen error\n\
+                 orientation incorrectly set\n\
+                 Input value was '\
+                 +orientation+'\nValid options are portrait or landscape\n'
+         raise  Warning(errstr)    
 
    #Set master plot size
    if orientation == 'landscape': plotvars.master_plot=plot.figure(figsize=(11.7, 8.3))
@@ -977,23 +1006,22 @@ def gclose(view=True):
     |
 
    """
+
    plotvars.user_plot=0
 
    file=plotvars.file
-   type=1
-   if file[-3:] == '.ps': type=2
-   if file[-4:] == '.eps': type=2
-   if file[-4:] == '.png': type=3
-
-   if type == 1: file=file+'.'+plotvars.gtype
-
-   plotvars.master_plot.savefig(file, papertype='a4',\
-                                orientation=plotvars.orientation)
- 
-   if view is True:
-      if (type == 2): call(["display", "-rotate", "90", file])
-      else: call(["display", file])
-
+   if file is not None:
+      type=1
+      if file[-3:] == '.ps': type=1
+      if file[-4:] == '.eps': type=1
+      if file[-4:] == '.png': type=1
+      if file[-4:] == '.pdf': type=1
+      if type is None: file=file+'.png'
+      plotvars.master_plot.savefig(file, papertype='a4',\
+                                   orientation=plotvars.orientation)
+   else:
+      plot.show()
+      
 
 
 
@@ -1021,13 +1049,11 @@ def gpos(pos=1):
 
    #Check inputs are okay
    if pos < 1 or pos > plotvars.rows*plotvars.columns:
-      print ''
-      print 'Error - pos out of range:'
-      print 'range = 1 - ', plotvars.rows*plotvars.columns
-      print 'input pos was', pos
-      print ''
-      return
-
+      errstr='pos error - pos out of range:\n range = 1 - '
+      errstr=errstr+str(plotvars.rows*plotvars.columns)
+      errstr=errstr+'\n input pos was '+ str(pos)
+      errstr=errstr+'\n'
+      raise  Warning(errstr)    
 
    plotvars.plot=plotvars.master_plot.add_subplot(plotvars.rows, plotvars.columns, pos)
    plotvars.plot.tick_params(which='both', direction='out')
@@ -1066,9 +1092,9 @@ def pcon(mb=None, km=None, h=7.0, p0=1000):
      | height(km) if pressure(mb) input
     """  
 
-   if [mb, km].count(None) == 0:
-      print 'pcon must have mb or km input'
-      return
+   if [mb, km].count(None) == 2:
+      errstr='pcon error - pcon must have mb or km input\n'
+      raise  Warning(errstr)      
  
    if mb is not None: return h*(np.log(p0)-np.log(mb))
    if km is not None: return np.exp(-1.0*(np.array(km)/h-np.log(p0)))
@@ -1096,16 +1122,17 @@ def supscr(text=None):
    """  
 
    if [text].count(None) == 1:
-      print 'supscr must have text input'
-      return
+         errstr='\n supscr error - supscr must have text input\n'
+         raise  Warning(errstr)        
+
 
    tform=''
-   sup=0
 
+   sup=0
    for i in text:
       if (i == '^'): sup=2
       if (i == '*'): sup=sup+1
-
+   
       if (sup == 0): tform=tform+i
       if (sup == 1):
          if (i not in '*'): tform=tform+'*'+i; sup=0
@@ -1113,15 +1140,24 @@ def supscr(text=None):
          if i in '-0123456789': tform=tform+i
          else: tform=tform+'}$'+i; sup=0
       if (sup == 2): tform=tform+'$^{' ; sup=3
-
+   
    if (sup == 3): tform=tform+'}$'
- 
+
+
+   tform=tform.replace('m2', 'm$^{2}$')   
+   tform=tform.replace('m3', 'm$^{3}$')   
+   tform=tform.replace('m-2', 'm$^{-2}$')
+   tform=tform.replace('m-3', 'm$^{-3}$')
+   tform=tform.replace('s-1', 's$^{-1}$')
+   tform=tform.replace('s-2', 's$^{-2}$')
+
+
    return tform
 
 
 
 
-def gvals(dmin=None, dmax=None, tight=0, mystep=None): 
+def gvals(dmin=None, dmax=None, tight=0, mystep=None, mod=1): 
    """
     | gvals - work out a sensible set of values between two limits
     | This is an internal routine used for contour levels and axis 
@@ -1131,7 +1167,7 @@ def gvals(dmin=None, dmax=None, tight=0, mystep=None):
     | dmax=None - maximum
     | tight=0 - return values tight to input min and max
     | mystep=None - use this step
-    | 
+    | mod=1 - modify data to make use of a multipler 
     | 
     | 
     | 
@@ -1141,8 +1177,9 @@ def gvals(dmin=None, dmax=None, tight=0, mystep=None):
    """
 
    if [dmin, dmax].count(None) > 0:
-      print 'gvals must have dmin and dmax input'
-      return
+      errstr='\n gvals error - gvals must have dmin and dmax input\n'
+      raise  Warning(errstr)          
+
 
 
    mult=0 #field multiplyer
@@ -1156,24 +1193,23 @@ def gvals(dmin=None, dmax=None, tight=0, mystep=None):
  
    #Generate reasonable step 
    step=(dmax-dmin)/16.0
-   if (mystep != None): step=mystep
+   if mod == 1:
+      if (mystep != None): step=mystep
 
-   if step < 1:
-      while dmax < 1:
-         step=step*10.0
-         dmin=dmin*10.0
-         dmax=dmax*10.0
-         mult=mult-1
+      if step < 1:
+         while dmax < 1:
+            step=step*10.0
+            dmin=dmin*10.0
+            dmax=dmax*10.0
+            mult=mult-1
 
-   if step > 100:
-       while step >= 1 or dmax >10:
-          step=step/10.0
-          dmin=dmin/10.0
-          dmax=dmax/10.0
-          mult=mult+1
-
-
-
+      if step > 100:
+         while step >= 1 or dmax >10:
+            step=step/10.0
+            dmin=dmin/10.0
+            dmax=dmax/10.0
+            mult=mult+1
+     
 
    #Change step to be a sensible one
    step=int(dmax-dmin)/16
@@ -1244,58 +1280,57 @@ def cf_data_assign(f=None, colorbar_title=None):
      | y - y coordinates of data (optional)
      | ptype - plot type
      | colorbar_title - colour bar title
-     | xlabel - xlabel for plot
-     | ylabel - y labels for plot
+     | xlabel - x label for plot
+     | ylabel - y label for plot
    """
 
 
    #Check if this is a cf.Fieldlist
    if isinstance(f, cf.FieldList):
-      print ''
-      print 'Error - this is a cf.Fieldlist'
-      print 'Please pass one field for contouring'
-      print 'i.e. f[0]'
-      print ''
-      return
-
-   #Find out axis names and check input data has the correct dimensions
-   naxes=0
-   data_dims=0
-   axes_names=[]
-   axes_size=[]
-   axes_keys=[]
-   for key, value in f.domain.iteritems():
-     axes_names.append(value.ncvar)
-     axes_size=np.append(axes_size, value.size)
-     axes_keys.append(key)
-     if (axes_size[naxes] > 1): data_dims=data_dims+1
-     naxes=naxes+1
+      errstr='\n cf_data_assign error - passed field is a cf.Fieldlist\n'
+      errstr=errstr+'Please pass one field for contouring\n'
+      errstr=errstr+'i.e. f[0]\n'
+      raise  Warning(errstr) 
 
 
+   #Check input data has the correct number of dimensions
+   ndim=len(f.axes(size=cf.gt(1)))
+   if (ndim > 2 or ndim < 2):
+      print ''
+      if (ndim > 2): errstr='cf_data_assign error - data has too many dimensions'
+      if (ndim < 2): errstr='cf_data_assign error - data has too few dimensions'
+      errstr=errstr+'\n cfplot requires two dimensional data \n'
+      for mydim in f.items():
+         sn=getattr(f.item(mydim), 'standard_name', False)
+         ln=getattr(f.item(mydim), 'long_name', False)
+         if sn: 
+            errstr=errstr+str(mydim)+','+str(sn)+','+str(f.item(mydim).size)+'\n'
+         else:
+            if ln: errstr=errstr+str(mydim)+','+str(ln)+','+str(f.item(mydim).size)+'\n'
+      raise  Warning(errstr) 
 
-   #Check input data has the correct dimensions
-   if (data_dims > 2):
-      print ''
-      print 'Error - data has too many dimensions'
-      for i in np.arange(naxes):
-         print axes_names[i], int(axes_size[i])
-      print ''
-      return
    
  
-   #Default to nothing for height and time
+   #Set up data arrays
+   lons=None
+   lats=None
    height=None 
    time=None 
+    
    xlabel=''
    ylabel=''
- 
-   lons=np.squeeze(f.coord('lon').array)
-   lats=np.squeeze(f.coord('lat').array)
-   if 'theta' in axes_names: height=np.squeeze(f.coord('theta').array)
-   if 'p' in axes_names: height=np.squeeze(f.coord('pressure').array)
-   time=np.squeeze(f.coord('time').array)
-   field=np.squeeze(f.array)
 
+   for mydim in f.items():
+      name=cf_var_name(field=f, dim=mydim)
+      if name[0:3] == 'lon': lons=np.squeeze(f.item(mydim).array)
+      if name[0:3] == 'lat': lats=np.squeeze(f.item(mydim).array)
+      if name[0:5] == 'theta': height=np.squeeze(f.item(mydim).array)
+      if name[0:1] == 'p': height=np.squeeze(f.item(mydim).array)
+      if name == 'air_pressure': height=np.squeeze(f.item(mydim).array)
+      if name[0:1] == 't': time=np.squeeze(f.item(mydim).array)
+
+
+   field=np.squeeze(f.array)
 
 
    #Check what plot type is required.
@@ -1310,38 +1345,60 @@ def cf_data_assign(f=None, colorbar_title=None):
       ptype=2
       x=lats
       y=height
-      xunits=str(f.domain['dim2'].Units)
-      yunits=str(f.domain['dim1'].Units)
-      if (xunits == 'degrees_north' or  xunits == 'degrees_south'): xunits='degrees'
-      xlabel=axes_names[axes_keys.index('dim2')] + ' (' + xunits + ')'
-      ylabel=axes_names[axes_keys.index('dim1')] + ' (' + yunits + ')'
+      for mydim in f.items():
+         name=cf_var_name(field=f, dim=mydim)
+         if name[0:3] == 'lat': 
+            xunits=str(getattr(f.item(mydim), 'Units', ''))
+            if (xunits == 'degrees_north' or  xunits == 'degrees_south'): xunits='degrees'
+            xlabel=name + ' (' + xunits + ')'
+         if name[0:1] == 'p' or name[0:5] == 'theta': 
+            yunits=str(getattr(f.item(mydim), 'Units', ''))
+            ylabel=name + ' (' + yunits + ')'
+
+
 
    if (np.size(lons) > 1 and np.size(time) > 1):
       ptype=3
       x=lons
       y=time
+      for mydim in f.items():
+         name=cf_var_name(field=f, dim=mydim)
+         if name[0:3] == 'lon': 
+            xunits=str(getattr(f.item(mydim), 'Units', ''))
+            if (xunits == 'degrees_east' or  xunits == 'degrees_west'): xunits='degrees'
+            xlabel=name + ' (' + xunits + ')'
+         if name[0:1] == 't': 
+            xunits=str(getattr(f.item(mydim), 'Units', ''))
+            xlabel=name + ' (' + xunits + ')'
+
 
    if np.size(lats) > 1 and np.size(time) > 1:
       x=lats
       y=time 
-      xlabel='Latitude'
-      ylabel='Time'  
       ptype=4 
+      for mydim in f.items():
+         name=cf_var_name(field=f, dim=mydim)
+         if name[0:3] == 'lat': 
+            xunits=str(getattr(f.item(mydim), 'Units', ''))
+            if (xunits == 'degrees_south' or  xunits == 'degrees_north'): xunits='degrees'
+            xlabel=name + ' (' + xunits + ')'
+         if name[0:1] == 't': 
+            xunits=str(getattr(f.item(mydim), 'Units', ''))
+            xlabel=name + ' (' + xunits + ')'
 
-   if np.size(lons) > 1 and np.size(height) > 1:
-      x=lons
-      y=height 
-      xlabel='Longitude'
-      ylabel='height'  
-      ptype=5
+
 
 
 
    if (colorbar_title == None):   
-      if hasattr(f, 'name'): colorbar_title=f.name
-      if hasattr(f, 'standard_name'): colorbar_title=f.standard_name
+      colorbar_title=''
+      if hasattr(f, 'ncvar'): colorbar_title=f.ncvar
+      if hasattr(f, 'short_name'): colorbar_title=f.short_name 
       if hasattr(f, 'long_name'): colorbar_title=f.long_name 
-      if hasattr(f, 'Units'): colorbar_title=colorbar_title+'('+supscr(str(f.Units))+')'
+      if hasattr(f, 'standard_name'): colorbar_title=f.standard_name
+      if hasattr(f, 'Units'): 
+         if str(f.Units) == '': colorbar_title=colorbar_title+''
+         else: colorbar_title=colorbar_title+'('+supscr(str(f.Units))+')'
     
    return(field, x, y, ptype, colorbar_title, xlabel, ylabel)
 
@@ -1351,7 +1408,7 @@ def check_data(field=None, x=None, y=None):
    """
     | check_data - check user input contour data is correct.
     | This is an internal routine and is not used by the user.
-
+    | 
     | field=None - field
     | x=None - x points for field
     | y=None - y points for field
@@ -1363,28 +1420,23 @@ def check_data(field=None, x=None, y=None):
     | 
    """
 
+   #Input error trapping
    args = True
-
+   errstr='\n'
    if np.size(field) == 1:
       if field == None:
-         err='con error - a field for contouring must be passed with the f= flag'
+         errstr=errstr+'con error - a field for contouring must be passed with the f= flag\n'
          args = False   
-  
    if np.size(x) == 1:
       if x == None:
-         err='con error - x coordinates must be passed with the x= flag'
+         errstr=errstr+'con error - x coordinates must be passed with the x= flag\n'
          args = False
-
    if np.size(y) == 1:
       if y == None:
-         err='con error - y coordinates must be passed with the y= flag'
-         args = False
-  
+         errstr=errstr+'con error - y coordinates must be passed with the y= flag\n'
+         args = False  
    if args == False:
-      print ''
-      print err
-      print ''
-      return
+      raise  Warning(errstr)  
   
   
    #Check input dimensions look okay.
@@ -1397,15 +1449,12 @@ def check_data(field=None, x=None, y=None):
    
   
    if args is False:
-      print ''
-      print 'Input arguments incorrectly shaped:'
-      print 'x has shape:', np.shape(x)
-      print 'y has shape:', np.shape(y)
-      print 'field has shape:', np.shape(field)
-      print 'Expected x=xpts, y=ypts, field=(xpts,ypts)'
-      print ''
-      return;
-
+      errstr=errstr+'Input arguments incorrectly shaped:\n'
+      errstr=errstr+'x has shape:'+str(np.shape(x))+'\n'
+      errstr=errstr+'y has shape:'+str(np.shape(y))+'\n'
+      errstr=errstr+'field has shape'+str(np.shape(field))+'\n\n'
+      errstr=errstr+'Expected x=xpts, y=ypts, field=(xpts,ypts)\n'
+      raise  Warning(errstr)  
 
 
 
@@ -1448,11 +1497,10 @@ def cscale(cmap=None, ncols=None, white=None, below=None, above=None):
    file = sysconfig.get_python_lib()+'/cfplot/colourmaps/'+cmap+'.rgb'
    if os.path.isfile(file) is False:
       if os.path.isfile(cmap) is False:
-         print 'Colour scale not found:'
-         print 'File ', file, 'doesn\'t exist'
-         print 'File ', cmap, 'doesn\'t exist'
-         print ''
-         return
+         errstr='\ncscale error - colour scale not found:\n'
+         errstr=errstr+'File '+file+ ' not found\n'
+         errstr=errstr+'File '+cmap+' not found\n'
+         raise  Warning(errstr)  
       else:
          file=cmap
 
@@ -1570,14 +1618,6 @@ def cscale_get_map():
    if (plotvars.levels_extend == 'neither'): colmap=plotvars.cs  
    return (colmap)
 
-
-
-
-class myerror(Exception):
-     def __init__(self, value):
-         self.value = value
-     def __str__(self):
-         return repr(self.value)
 
 
 def bfill(f=None, x=None, y=None, clevs=False, lonlat=False, bound=False):
@@ -1724,28 +1764,20 @@ def regrid(f=None, x=None, y=None, xnew=None, ynew=None, lonlat=None):
       myxpos2=myxpos+1
       myypos2=myypos+1
       
-      #print 'myxpos, myxpos2 ', myxpos, myxpos2
-      #print 'myypos, myypos2 ', myypos, myypos2
 
       if (myxpos2 != myxpos): 
          alpha=(xnew[i]-regrid_x[myxpos])/(regrid_x[myxpos2]-regrid_x[myxpos]) 
-         #print 'alpha is', alpha
       else: 
          alpha=(xnew[i]-regrid_x[myxpos])/1E-30
 
       newval1=regrid_f[myypos,myxpos]-(regrid_f[myypos,myxpos]-regrid_f[myypos,myxpos2])*alpha
       newval2=regrid_f[myypos2,myxpos]-(regrid_f[myypos2,myxpos]-regrid_f[myypos2,myxpos2])*alpha
-      #print 'newval1, newval2 are', newval1, newval2
 
       if (myypos2 != myypos): alpha2=(ynew[i]-regrid_y[myypos])/(regrid_y[myypos2]-regrid_y[myypos])
       else: alpha2=(ynew[i]-regrid_y[myypos])/1E-30
 
-      #print 'ynew[i], y[myypos], y[myypos2], y[myypos]', ynew[i], regrid_y[myypos], \
-      #                           regrid_y[myypos2], regrid_y[myypos]
-      #print 'alpha2 is ', alpha2
    
       newval3=newval1-(newval1-newval2)*alpha2
-      #print 'xval, yval, newval3 are', xval, yval, newval3
   
       fieldout=np.append(fieldout, newval3)
 
@@ -1821,23 +1853,25 @@ def stipple(f=None, x=None, y=None, min=None, max=None, size=80, color='k', pts=
 
 
 
-      if plotvars.plot_type == 2:
-         #Calculate interpolation points
-         xnew, ynew=stipple_points(xmin=np.min(xpts), xmax=np.max(xpts),\
-                                   ymin=np.min(ypts), ymax=np.max(ypts), pts=pts, stype=2)
-
-
-      #Get values at the new points
-      vals=regrid(f=field, x=xpts, y=ypts, xnew=xnew, ynew=ynew)
-
-      #Work out which of the points are valid
-      valid_points=np.array([], dtype='int32')
-      for i in np.arange(np.size(vals)):
-         if vals[i] >=min and vals[i] <=max:
-            valid_points=np.append(valid_points, i)
+   if plotvars.plot_type == 2:
+   #Calculate interpolation points
+         
+      xnew, ynew=stipple_points(xmin=np.min(xpts), xmax=np.max(xpts),\
+                                ymin=np.min(ypts), ymax=np.max(ypts), pts=pts, stype=2)
 
 
 
+   #Get values at the new points
+   vals=regrid(f=field, x=xpts, y=ypts, xnew=xnew, ynew=ynew)
+
+   #Work out which of the points are valid
+   valid_points=np.array([], dtype='int32')
+   for i in np.arange(np.size(vals)):
+      if vals[i] >=min and vals[i] <=max:
+         valid_points=np.append(valid_points, i)
+
+
+      
    
    if plotvars.plot_type == 1:
       plotvars.plot.scatter(xnew_map[valid_points], ynew_map[valid_points], s=size, c=color, marker=marker)
@@ -1930,7 +1964,7 @@ def stipple_points(xmin=None, xmax=None, ymin=None, ymax=None, pts=None, stype=N
 
 
 
-def find_pos_in_array(vals=None, val=None):
+def find_pos_in_array(vals=None, val=None, above=False):
     
    """
     | find_pos_in_array - find the position of a point in an array 
@@ -1952,8 +1986,15 @@ def find_pos_in_array(vals=None, val=None):
 
 
    pos=-1
-   for myval in vals:
-      if val > myval: pos=pos+1
+   if above is False:
+      for myval in vals:
+         if val > myval: pos=pos+1
+
+   if above is 1:
+      for myval in vals:
+         if val >= myval: pos=pos+1
+
+      if np.size(vals)-1 > pos: pos=pos+1
 
    return pos
 
@@ -2192,10 +2233,16 @@ def polar_regular_grid(pts=50):
    boundinglat=plotvars.boundinglat
    lon_0=plotvars.lon_0
 
-   x, ymin=mymap(lon_0, boundinglat)
-   x, ymax=mymap(lon_0+180, boundinglat)
+   if plotvars.proj == 'npstere':
+      x, ymin=mymap(lon_0, boundinglat)
+      x, ymax=mymap(lon_0+180, boundinglat)
+   if plotvars.proj == 'spstere':
+      x, ymin=mymap(lon_0+180, boundinglat)
+      x, ymax=mymap(lon_0, boundinglat)
    xmin, y=mymap(lon_0-90, boundinglat)
    xmax, y=mymap(lon_0+90, boundinglat)
+
+
 
 
    xnew, ynew = stipple_points(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax, pts=pts, stype=2)
@@ -2205,15 +2252,58 @@ def polar_regular_grid(pts=50):
    valid_points=np.array([], dtype='int32')
    if plotvars.proj == 'npstere':
       for i in np.arange(np.size(lats)):
-         if lats[i] >=boundinglat :
+         if lats[i] >= boundinglat :
             valid_points=np.append(valid_points, i)
    if plotvars.proj == 'spstere':
       for i in np.arange(np.size(lats)):
-         if lats[i] <=boundinglat :
+         if lats[i] <= boundinglat :
             valid_points=np.append(valid_points, i)
 
 
    return lons[valid_points], lats[valid_points], xnew[valid_points], ynew[valid_points]
+
+
+
+def cf_var_name(field=None, dim=None):
+   """
+    | cf_var_name - return the name from a supplied dimension
+    |               in the following order
+    |               ncvar
+    |               short_name
+    |               long_name
+    |               standard_name
+    | 
+    | field=None - field
+    | dim=None - dimension required - 'dim0', 'dim1' etc.
+    | 
+    | 
+    |
+    |
+    |
+    :Returns:
+     name
+    | 
+    | 
+    | 
+   """
+
+
+   ncvar=getattr(field.item(dim), 'ncvar', False)
+   short_name=getattr(field.item(dim), 'short_name', False)
+   long_name=getattr(field.item(dim), 'long_name', False)
+   standard_name=getattr(field.item(dim), 'standard_name', False)
+
+   if ncvar: name=ncvar 
+   if short_name: name=short_name
+   if long_name: name=long_name
+   if standard_name: name=standard_name
+
+   return name
+
+
+
+
+
 
 
 

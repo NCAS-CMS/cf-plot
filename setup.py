@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
     name="cfplot",
-    version="0.9",
+    version="1.1",
     author="Andy Heaps",
     author_email="a.j.heaps@reading.ac.uk",
     packages=['cfplot'],
