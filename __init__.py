@@ -10,6 +10,15 @@ and source code.
 
 '''
 
-__author__      = 'Andy Heaps'
-__date__        = '25 June 2013'
-__version__     = '0.6'
+__author__      = 'Andy Heaps - a.j.heaps@reading.ac.uk'
+__date__        = '11 December 2013'
+__version__     = '1.1'
+
+from cfplot import *
+
+
+
+
+
+
+
