@@ -54,7 +54,7 @@ plotvars=pvars(lonmin=-180, lonmax=180, latmin=-90, latmax=90, proj='cyl', \
 def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=None, \
         colorbar_title=None, colorbar=1, colorbar_label_skip=1, ptype=0, \
         negative_linestyle=None, blockfill=None, zero_thick=None, colorbar_shrink=None, \
-        colorbar_orientation=None, image=True, xlog=None, ylog=None):
+        colorbar_orientation=None, xlog=None, ylog=None, verbose=None):
    """
     | con is the interface to contouring in cfplot. The minimum use is con(f) 
     | where f is a 2 dimensional array. If a cf field is passed then an 
@@ -98,7 +98,8 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
    #Extract required data for contouring
    #If a cf-python field
    if isinstance(f[0], cf.Field):
-      field, x, y, ptype, colorbar_title, xlabel, ylabel=cf_data_assign(f, colorbar_title)
+      field, x, y, ptype, colorbar_title, xlabel, ylabel, time_opts=\
+             cf_data_assign(f, colorbar_title, verbose=verbose)
    else:
       field=f #field data passed in as f
       check_data(field, x, y)
@@ -572,6 +573,149 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
 
 
 
+
+
+
+   #################
+   # Hovmuller plots
+   #################
+   if (ptype == 3 or ptype ==4): 
+      ylabel='Time'
+      if ptype ==3: xlabel='Longitude'
+      if ptype ==4: xlabel='Latitude'
+
+      ref_time=time_opts[0]
+      ref_calendar=time_opts[1]
+      ref_time_origin=time_opts[2]
+
+
+      #Time strings set to None initially
+      tmin=None
+      tmax=None
+      #Set plot limits
+      if [plotvars.xmin,plotvars.xmax,plotvars.ymin,plotvars.ymax].count(None) == 0:
+
+         #Store time strings for later use
+         tmin=plotvars.ymin
+         tmax=plotvars.ymax
+
+         #Change from date string in ymin and ymax to date as a float
+         time_units = cf.Units(ref_time, ref_calendar)
+         t = cf.Data(cf.dt(plotvars.ymin), units=time_units)
+         ymin=t.array
+         t = cf.Data(cf.dt(plotvars.ymax), units=time_units)
+         ymax=t.array
+         xmin=plotvars.xmin
+         xmax=plotvars.xmax
+      else:
+         xmin=np.min(x)
+         xmax=np.max(x)
+         ymin=np.min(y)
+         ymax=np.max(y)
+
+
+
+      #Set plot limits and draw axes
+      if plotvars.user_plot == 0: gopen(user_plot=0)
+      gset(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax)
+      #Revert to time strings if set
+      if [tmin, tmax].count(None) == 0:
+         plotvars.ymin=tmin
+         plotvars.ymax=tmax
+ 
+
+
+      time_units = cf.Units(ref_time, ref_calendar)
+      #t = cf.Data(cf.dt(ref_time_origin), units=time_units)
+      t = cf.Data(cf.dt('1980-1-1'), units=time_units)
+
+
+      times=gvals(dmin=ymin, dmax=ymax, tight=1, mod=0)[0]
+      T = cf.Data(times, units=t.Units)
+      time_ticks=T.array
+      time_tick_labels=T.year.array
+
+
+      if ptype == 3: xticks, xticklabels=mapaxis(min=xmin, max=xmax, type=1)
+      if ptype == 4: xticks, xticklabels=mapaxis(min=xmin, max=xmax, type=2)
+
+
+      axes(xticks=xticks, xticklabels=xticklabels,\
+           yticks=time_ticks, yticklabels=time_tick_labels,\
+           xlabel=xlabel, ylabel=ylabel)
+
+
+      #Get colour scale for use in contouring
+      #If colour bar extensions are enabled then the colour map goes
+      #from 1 to ncols-2.  The colours for the colour bar extensions are then
+      #changed on the colourbar and plot after the plot is made
+      cscale_ncols=np.size(plotvars.cs)
+      colmap=cscale_get_map()
+
+
+      #Filled contours
+      if fill == True or blockfill == 1:
+         cfill=plotvars.plot.contourf(x,y,field*fmult,clevs, \
+               extend=plotvars.levels_extend, colors=colmap)
+
+         #add colour scale extensions if required
+         if (plotvars.levels_extend == 'both' or plotvars.levels_extend == 'min'):
+            cfill.cmap.set_under(plotvars.cs[0])
+         if (plotvars.levels_extend == 'both' or plotvars.levels_extend == 'max'):
+            cfill.cmap.set_over(plotvars.cs[cscale_ncols-1])
+  
+      #Block fill
+      if blockfill == 1:   
+         if isinstance(f[0], cf.Field):  
+            if f[0].coord('lon').isbounded:
+               xpts=np.squeeze(f.coord('lat').bounds.array)[:,0]
+               ypts=np.squeeze(f.coord('time').bounds.array)[:,0]   
+               bfill(f=field_orig*fmult, x=xpts, y=ypts, clevs=clevs, lonlat=0, bound=1)  
+            else:
+               bfill(f=field_orig*fmult, x=x_orig, y=y_orig, clevs=clevs, lonlat=0, bound=0)  
+
+         else:
+            bfill(f=field_orig*fmult, x=x_orig, y=y_orig, clevs=clevs, lonlat=0, bound=0)  
+ 
+
+
+      #Contour lines and labels
+      if lines == True: 
+         cs=plotvars.plot.contour(x,y,field*fmult,clevs,colors='k')
+         if line_labels == True:  
+            nd=ndecs(clevs)
+            fmt='%d'
+            if nd != 0: fmt='%1.'+str(nd)+'f'
+            plotvars.plot.clabel(cs, fmt=fmt, colors = 'k', fontsize=plotvars.fontsize) 
+
+            #Thick zero contour line
+            if zero_thick is not None:
+               cs = plotvars.plot.contour(x,y,field*fmult,[1e-32, 0],colors='k', linewidths=zero_thick)
+     
+
+
+      #Colorbar
+      if colorbar == 1:  
+
+         pad=0.15
+         if plotvars.rows >= 3: pad=0.25
+         if plotvars.rows >= 5: pad=0.3
+         cbar=plotvars.master_plot.colorbar(cfill, orientation=colorbar_orientation, aspect=75, \
+                                            pad=pad, ticks=colorbar_labels, drawedges=True, \
+                                            shrink=colorbar_shrink)
+         cbar.set_label(colorbar_title, fontsize=plotvars.fontsize)
+         for t in cbar.ax.get_xticklabels():
+            t.set_fontsize(plotvars.fontsize)
+
+
+      #Title
+      plotvars.plot.set_title(title, y=1.03, fontsize=plotvars.fontsize)
+
+
+
+
+
+
    ##########
    #Save plot
    ##########
@@ -656,15 +800,15 @@ def levs(min=None, max=None, step=None, manual=None, extend='both'):
 
    """ 
 
-   if min is None and max is None and step is None and manual is None:
+   if [min,max,step,manual].count(None) == 4:
       plotvars.levels=None
       plotvars.levels_min=None
       plotvars.levels_max=None
       plotvars.levels_step=None 
       plotvars.extend='both'
       plotvars.user_levs=0
-      return
-    
+      return   
+
    if manual is not None:
       plotvars.levels=manual
       plotvars.levels_min=None
@@ -1022,6 +1166,8 @@ def gclose(view=True):
    else:
       plot.show()
       
+   #Reset plotting
+   plotvars.plot=None
 
 
 
@@ -1176,20 +1322,20 @@ def gvals(dmin=None, dmax=None, tight=0, mystep=None, mod=1):
     | 
    """
 
+
    if [dmin, dmax].count(None) > 0:
       errstr='\n gvals error - gvals must have dmin and dmax input\n'
       raise  Warning(errstr)          
 
 
-
    mult=0 #field multiplyer
 
    #return user selected levels
-   if [plotvars.levels_min, plotvars.levels_max,\
-       plotvars.levels_step].count(None) == 0:
-      vals=np.arange(plotvars.levels_min, plotvars.levels_max\
-           +plotvars.levels_step, plotvars.levels_step)
-      return vals, mult
+   #if [plotvars.levels_min, plotvars.levels_max,\
+   #    plotvars.levels_step].count(None) == 0:
+   #   vals=np.arange(plotvars.levels_min, plotvars.levels_max\
+   #        +plotvars.levels_step, plotvars.levels_step)
+   #   return vals, mult
  
    #Generate reasonable step 
    step=(dmax-dmin)/16.0
@@ -1225,10 +1371,12 @@ def gvals(dmin=None, dmax=None, tight=0, mystep=None, mod=1):
    while (np.max(vals)+step) <= dmax:
       vals=np.append(vals, np.max(vals)+step)
 
+
    #Remove upper and lower limits if tight=0 - i.e. a contour plot
    if tight == 0 and np.size(vals) > 1:
       if np.max(vals) >= dmax: vals=vals[0:-1]
       if np.min(vals) <= dmin: vals=vals[1:]
+
 
    if mystep is not None:
       if int(mystep) == mystep:
@@ -1267,7 +1415,7 @@ def gvals(dmin=None, dmax=None, tight=0, mystep=None, mod=1):
 
 
 
-def cf_data_assign(f=None, colorbar_title=None):
+def cf_data_assign(f=None, colorbar_title=None, verbose=None):
    """
     | Check cf input data is okay and return data for contour plot.
     | This is an internal routine not used by the user.
@@ -1319,19 +1467,96 @@ def cf_data_assign(f=None, colorbar_title=None):
     
    xlabel=''
    ylabel=''
+   ref_time=None
+   ref_calendar=None
+   ref_time_origin=None
+   time_opts=None
 
+
+   #Extract coordinate data if a matching CF standard_name or axis is found
+   for mydim in f.items():
+       sn=getattr(f.item(mydim), 'standard_name', 'NoName')
+       an=getattr(f.item(mydim), 'axis', 'NoName')
+
+       standard_name_x=['longitude']
+       if (sn in standard_name_x or an == 'X'):
+          if verbose: print 'standard_name, axis - assigned lons -', sn, an
+          lons=np.squeeze(f.item(mydim).array)
+
+       standard_name_y=['latitude']
+       if (sn in standard_name_y or an == 'Y'):
+          if verbose: print 'standard_name, axis - assigned lats -', sn, an
+          lats=np.squeeze(f.item(mydim).array)
+
+       standard_name_z=['pressure', 'air_pressure', 'height', 'depth']
+       if (sn in standard_name_z or an == 'Z'):
+          if verbose: print 'standard_name, axis - assigned height -', sn, an
+          height=np.squeeze(f.item(mydim).array)
+
+       standard_name_t=['time']
+       if (sn in standard_name_t or an == 'T'):
+          if verbose: print 'standard_name, axis - assigned time -', sn, an
+          time=np.squeeze(f.item(mydim).array)
+
+
+
+   
+   #CF defined units
+   lon_units=['degrees_east', 'degree_east', 'degree_E', 'degrees_E', 'degreeE', 'degreesE']
+   lat_units=['degrees_north', 'degree_north', 'degree_N', 'degrees_N', 'degreeN', 'degreesN']
+   height_units=['millibar', 'decibar', 'atmosphere', 'atm', 'pascal','Pa', 'hPa',\
+                 'meter', 'metre', 'm', 'kilometer', 'kilometre', 'km'] 
+   time_units=['day', 'days', 'd', 'hour', 'hours', 'hr', 'h', 'minute', 'minutes', 'min', 'mins',\
+               'second', 'seconds', 'sec', 'secs', 's']
+
+
+
+   #Extract coordinate data if a matching CF set of units is found
+   for mydim in f.items():
+      units=getattr(f.item(mydim), 'units', False)
+      if units in lon_units:
+         if lons is None:
+            if verbose: print 'units - assigned lons -', units
+            lons=np.squeeze(f.item(mydim).array)
+      if units in lat_units:         
+         if lats is None:
+            if verbose: print 'units - assigned lats -', units
+            lats=np.squeeze(f.item(mydim).array)
+      if units in height_units:         
+         if height is None:
+            if verbose: print 'units - assigned height -', units
+            height=np.squeeze(f.item(mydim).array)
+      if units in time_units:         
+         if time is None:
+            if verbose: print 'units - assigned time -', units
+            time=np.squeeze(f.item(mydim).array)
+
+   
+   #Extract coordinate data from variable name if not already assigned
    for mydim in f.items():
       name=cf_var_name(field=f, dim=mydim)
-      if name[0:3] == 'lon': lons=np.squeeze(f.item(mydim).array)
-      if name[0:3] == 'lat': lats=np.squeeze(f.item(mydim).array)
-      if name[0:5] == 'theta': height=np.squeeze(f.item(mydim).array)
-      if name[0:1] == 'p': height=np.squeeze(f.item(mydim).array)
-      if name == 'air_pressure': height=np.squeeze(f.item(mydim).array)
-      if name[0:1] == 't': time=np.squeeze(f.item(mydim).array)
+      if name[0:3] == 'lon': 
+         if lons is None:
+            if verbose: print 'dimension name - assigned lons -', name
+            lons=np.squeeze(f.item(mydim).array)
 
+      if name[0:3] == 'lat': 
+         if lats is None:
+            if verbose: print 'dimension name - assigned lats -', name
+            lats=np.squeeze(f.item(mydim).array)
 
+      if (name[0:5] == 'theta' or name[0:1] == 'p' or name == 'air_pressure'): 
+         if height is None:
+            if verbose: print 'dimension name - assigned height -', name
+            height=np.squeeze(f.item(mydim).array)
+
+      if name[0:1] == 't': 
+         if time is None:
+            if verbose: print 'dimension name - assigned time -', name
+            time=np.squeeze(f.item(mydim).array)
+
+   #assign field data
    field=np.squeeze(f.array)
-
 
    #Check what plot type is required.
    #0=simple contour plot, 1=map plot, 2=latitude-height plot,
@@ -1341,6 +1566,7 @@ def cf_data_assign(f=None, colorbar_title=None):
       x=lons
       y=lats
 
+
    if (np.size(lats) > 1 and np.size(height) > 1): 
       ptype=2
       x=lats
@@ -1349,7 +1575,7 @@ def cf_data_assign(f=None, colorbar_title=None):
          name=cf_var_name(field=f, dim=mydim)
          if name[0:3] == 'lat': 
             xunits=str(getattr(f.item(mydim), 'Units', ''))
-            if (xunits == 'degrees_north' or  xunits == 'degrees_south'): xunits='degrees'
+            if (xunits in lon_units): xunits='degrees'
             xlabel=name + ' (' + xunits + ')'
          if name[0:1] == 'p' or name[0:5] == 'theta': 
             yunits=str(getattr(f.item(mydim), 'Units', ''))
@@ -1361,32 +1587,22 @@ def cf_data_assign(f=None, colorbar_title=None):
       ptype=3
       x=lons
       y=time
-      for mydim in f.items():
-         name=cf_var_name(field=f, dim=mydim)
-         if name[0:3] == 'lon': 
-            xunits=str(getattr(f.item(mydim), 'Units', ''))
-            if (xunits == 'degrees_east' or  xunits == 'degrees_west'): xunits='degrees'
-            xlabel=name + ' (' + xunits + ')'
-         if name[0:1] == 't': 
-            xunits=str(getattr(f.item(mydim), 'Units', ''))
-            xlabel=name + ' (' + xunits + ')'
+      ref_time=f.item('time').units
+      ref_calendar=f.item('time').calendar
+      #ref_time_origin=str(f.item('time').Units._utime.origin)
+      ref_time_origin=str(f.item('time').Units.reftime)
+      time_opts=[ref_time,ref_calendar,ref_time_origin]
 
 
    if np.size(lats) > 1 and np.size(time) > 1:
+      ptype=4     
       x=lats
-      y=time 
-      ptype=4 
-      for mydim in f.items():
-         name=cf_var_name(field=f, dim=mydim)
-         if name[0:3] == 'lat': 
-            xunits=str(getattr(f.item(mydim), 'Units', ''))
-            if (xunits == 'degrees_south' or  xunits == 'degrees_north'): xunits='degrees'
-            xlabel=name + ' (' + xunits + ')'
-         if name[0:1] == 't': 
-            xunits=str(getattr(f.item(mydim), 'Units', ''))
-            xlabel=name + ' (' + xunits + ')'
-
-
+      y=time
+      ref_time=f.item('time').units
+      ref_calendar=f.item('time').calendar
+      #ref_time_origin=str(f.item('time').Units._utime.origin)
+      ref_time_origin=str(f.item('time').Units.reftime)
+      time_opts=[ref_time,ref_calendar,ref_time_origin]
 
 
 
@@ -1400,7 +1616,7 @@ def cf_data_assign(f=None, colorbar_title=None):
          if str(f.Units) == '': colorbar_title=colorbar_title+''
          else: colorbar_title=colorbar_title+'('+supscr(str(f.Units))+')'
     
-   return(field, x, y, ptype, colorbar_title, xlabel, ylabel)
+   return(field, x, y, ptype, colorbar_title, xlabel, ylabel, time_opts)
 
 
 
@@ -1814,7 +2030,8 @@ def stipple(f=None, x=None, y=None, min=None, max=None, size=80, color='k', pts=
    if isinstance(f[0], cf.Field):
       colorbar_title=''
       
-      field, xpts, ypts, ptype, colorbar_title, xlabel, ylabel=cf_data_assign(f, colorbar_title)
+      field, xpts, ypts, ptype, colorbar_title, xlabel, ylabel, time_opts=\
+         cf_data_assign(f, colorbar_title)
    else:
       field=f #field data passed in as f
       check_data(field, x, y)
@@ -2031,7 +2248,8 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
    #Extract required data for contouring
    #If a cf-python field
    if isinstance(u[0], cf.Field):
-      u_data, u_x, u_y, ptype, colorbar_title, xlabel, ylabel=cf_data_assign(u, colorbar_title)
+      u_data, u_x, u_y, ptype, colorbar_title, xlabel, ylabel,time_opts=\
+         cf_data_assign(u, colorbar_title)
    else:
       field=f #field data passed in as f
       check_data(u, x, y)
@@ -2043,7 +2261,8 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
 
 
    if isinstance(v[0], cf.Field):
-      v_data, v_x, v_y, ptype, colorbar_title, xlabel, ylabel=cf_data_assign(v, colorbar_title)
+      v_data, v_x, v_y, ptype, colorbar_title, xlabel, ylabel, time_opts=\
+         cf_data_assign(v, colorbar_title)
    else:
       field=f #field data passed in as f
       check_data(v, x, y)
