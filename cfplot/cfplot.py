@@ -1,6 +1,6 @@
 """
 Routines for making climate contour/vector plots using cf-python, matplotlib and basemap.
-Andy Heaps NCAS-CMS Novemver 2013.
+Andy Heaps NCAS-CMS February 2014.
 """
 
 class pvars(object):
@@ -15,16 +15,25 @@ class pvars(object):
       for a, v in self.__dict__.iteritems():
          return '\n'.join(out)
 
+import os
+import sys
 import cf
-from mpl_toolkits.basemap import Basemap, shiftgrid, addcyclic
-import matplotlib
-import matplotlib.pyplot as plot
 import numpy as np
 from subprocess import call
-import sys
-import os
 from scipy import interpolate
 import time
+from subprocess import call
+import matplotlib
+
+#Check for a display and use the Agg backing store if none is present
+#This is for batch mode processing
+try:
+   disp=os.environ["DISPLAY"]
+except:
+   matplotlib.use('Agg')
+import matplotlib.pyplot as plot
+from mpl_toolkits.basemap import Basemap, shiftgrid, addcyclic
+
 
 
 
@@ -32,10 +41,15 @@ import time
 #plotvars - global plotting variables
 #####################################
 
-#Default colour scale - blue to red with 18 colours
+#Default colour scales
+#cscale1 is a differential data scale - blue to red
 cscale1=['#0a3278', '#0f4ba5', '#1e6ec8', '#3ca0f0', '#50b4fa', '#82d2ff', '#a0f0ff', \
          '#c8faff', '#e6ffff', '#fffadc', '#ffe878', '#ffc03c', '#ffa000', '#ff6000', \
          '#ff3200', '#e11400', '#c00000', '#a50000']
+
+#cosam is a continuous data scale - purple, blue, green, yellow, red
+cosam=['#780088', '#5a00b8', '#4600f5', '#00aae1', '#00c8c8', '#00c87d', '#c3ff00', \
+         '#ffff00', '#ff9b00', '#ff0000']
 
 
 
@@ -45,7 +59,8 @@ plotvars=pvars(lonmin=-180, lonmax=180, latmin=-90, latmax=90, proj='cyl', \
                levels_extend='both', xmin=None, xmax=None, ymin=None, ymax=None, \
                xlog=None, ylog=None,\
                rows=1, columns=1, file=None, orientation='landscape',\
-               user_plot=0, master_plot=None, plot=None, fontsize=None, cs=cscale1, \
+               user_plot=0,\
+               master_plot=None, plot=None, fontsize=None, cs=cscale1, \
                user_cs=0, user_levs=0, mymap=None)
        
 
@@ -86,6 +101,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
     |                        may help it better fit the plot area.
     | xlog=None - logarithmic x axis
     | ylog=None - logarithmic y axis
+    | verbose=None - change to 1 to get a verbose listing of what con is doing
     |
     |
     :Returns:
@@ -93,50 +109,50 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
 
    """ 
 
-
-
    #Extract required data for contouring
    #If a cf-python field
    if isinstance(f[0], cf.Field):
+      if verbose: print 'con - calling cf_data_assign'
       field, x, y, ptype, colorbar_title, xlabel, ylabel, time_opts=\
              cf_data_assign(f, colorbar_title, verbose=verbose)
    else:
+      if verbose: print 'con - using user assigned data'
       field=f #field data passed in as f
       check_data(field, x, y)
       xlabel=''
       ylabel=''
 
+
    #Set contour line styles
    if negative_linestyle is None: matplotlib.rcParams['contour.negative_linestyle'] = 'solid'
    else: matplotlib.rcParams['contour.negative_linestyle'] = negative_linestyle
 
+
    #Set contour lines off on block plots
-   if blockfill == 1: 
+   if blockfill: 
       fill=False
       if lines is True: lines=False
       field_orig=field  
       x_orig=x
       y_orig=y   
 
-      if (plotvars.proj == 'npstere' or plotvars.proj == 'spstere'):
-         print ''
-         print 'blockfill not supported for polar stereograpic plots'
-         print ''
-         raise  Warning()
+      if (plotvars.proj == 'npstere' or plotvars.proj == 'spstere'):         
+         errstr='\n\n con error - blockfill not supported for polar stereograpic plots\n\n'
+         raise  Warning(errstr)
 
+   #Turn off colorbar if fill is turned off
    if fill == 0 and blockfill is None: colorbar=0
 
    #Revert to default colour scale if user_cs flag is set
-   if plotvars.user_cs == 0:
-      plotvars.cs=cscale1
+   if plotvars.user_cs == 0: plotvars.cs=cscale1
 
 
    #Set the orientation of the colorbar
    if plotvars.plot_type == 1:
       if plotvars.proj == 'npstere' or plotvars.proj == 'spstere':
          if colorbar_orientation is None: colorbar_orientation='vertical'
-
    if colorbar_orientation is None: colorbar_orientation='horizontal'
+
 
 
    #Set size of color bar if not specified
@@ -162,13 +178,14 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
 
 
 
-
+   #Set plot type if user specified
    if (ptype != None): plotvars.plot_type=ptype
  
  
-   #get contour levels
+   #Get contour levels
    if plotvars.user_levs == 1:
-      #User defined
+      #User defined    
+      if verbose: print 'con - using user defined contour levels'
       clevs=plotvars.levels
       mult=0
       fmult=1
@@ -187,7 +204,8 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
          plotvars.user_cs=0 #Revert to standard colour scale after plot
 
    else:
-      #Automatic levels
+      #Automatic levels     
+      if verbose: print 'con - generating automatic contour levels'
       clevs, mult = gvals(dmin=np.min(field), dmax=np.max(field), tight=0)
       fmult=10**-mult
 
@@ -204,7 +222,8 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
          else:
             cscale('cosam', ncols=np.size(clevs)+1)
 
-         plotvars.user_cs=0 #Revert to standard colour scale after plot
+         #Revert to standard colour scale after plot
+         plotvars.user_cs=0 
 
    #Set colorbar labels
    if colorbar_label_skip > 1:
@@ -219,7 +238,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
       if (mult != 0): colorbar_title=colorbar_title+' *10$^{'+str(mult)+'}$' 
 
 
-   #Catch null titles and replace
+   #Catch null titles
    if (title == None): title=''
   
 
@@ -230,7 +249,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
    # Map plot
    ##########
    if ptype == 1: 
-  
+      if verbose: print 'con - making a map plot'
       #Open a new plot is necessary
       if plotvars.user_plot == 0: gopen(user_plot=0)
 
@@ -248,7 +267,6 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
       #Shift grid if needed
       if plotvars.lonmin < np.min(x): x=x-360
       if plotvars.lonmin > np.max(x): x=x+360
-
       field, x=shiftgrid(plotvars.lonmin, field, x)   
 
       #Add cyclic information if missing.
@@ -257,17 +275,13 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
          field, x = addcyclic(field, x)
          lonrange=np.max(x)-np.min(x)
 
-      #if np.max(x)-plotvars.lonmin < 360:
-      #   field, x = addcyclic(field, x)
-
-
 
       #Flip latitudes and field if latitudes are in descending order
       if y[0] > y[-1]:
          y=y[::-1] 
          field=np.flipud(field)
    
-      #Plotting a sub-area of the grid produces stray contour labels
+      #Plotting a sub-area of the grid produces stray contour labels in polar plots
       #Subsample the grid to remove this problem
       if plotvars.proj == 'npstere':
          myypos=find_pos_in_array(vals=y, val=plotvars.boundinglat)
@@ -282,11 +296,13 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
       #Create the meshgrid         
       lons, lats=mymap(*np.meshgrid(x, y))
 
+      #Set the plot limits
       gset(xmin=plotvars.lonmin, xmax=plotvars.lonmax, ymin=plotvars.latmin, ymax=plotvars.latmax)
 
 
       #Filled contours
       if fill == True or blockfill == 1:
+         if verbose: print 'con - adding filled contours'
          #Get colour scale for use in contouring
          #If colour bar extensions are enabled then the colour map goes
          #from 1 to ncols-2.  The colours for the colour bar extensions are then 
@@ -307,9 +323,10 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
 
 
       #Block fill
-      if blockfill == 1:  
+      if blockfill == 1:
+         if verbose: print 'con - adding blockfill'
          if isinstance(f[0], cf.Field):  
-            if f[0].coord('lon').isbounded:
+            if f[0].coord('lon').hasbounds:
                xpts=np.squeeze(f.coord('lon').bounds.array)[:,0]
                ypts=np.squeeze(f.coord('lat').bounds.array)[:,0]   
                bfill(f=field_orig*fmult, x=xpts, y=ypts, clevs=clevs, lonlat=1, bound=1)  
@@ -323,7 +340,8 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
 
 
       #Contour lines and labels  
-      if lines == True:
+      if lines == True: 
+         if verbose: print 'con - adding contour lines and labels'
          cs = mymap.contour(lons,lats,field*fmult,clevs,colors='k')
          if line_labels == True:
             nd=ndecs(clevs)
@@ -337,31 +355,34 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
 
       
 
-
-      #Color bar
-      if colorbar == 1:        
-         pad=0.10
-         if plotvars.rows >= 3: pad=0.15
-         if plotvars.rows >= 5: pad=0.20 
-         cbar=plotvars.master_plot.colorbar(cfill, orientation=colorbar_orientation, aspect=75, \
-                                            pad=pad, ticks=colorbar_labels, drawedges=True, \
-                                            shrink=colorbar_shrink)
-         cbar.set_label(colorbar_title, fontsize=plotvars.fontsize)
-         for t in cbar.ax.get_xticklabels(): t.set_fontsize(plotvars.fontsize)
-
-
       #axes
-      if plotvars.proj == 'cyl':
+      if plotvars.proj == 'cyl':      
+         if verbose: print 'con - adding cylindrical axes'
          lonticks,lonlabels=mapaxis(min=plotvars.lonmin, max=plotvars.lonmax, type=1)
          latticks,latlabels=mapaxis(min=plotvars.latmin, max=plotvars.latmax, type=2)
          axes(xticks=lonticks, xticklabels=lonlabels)
          axes(yticks=latticks, yticklabels=latlabels)
    
       if plotvars.proj == 'npstere' or plotvars.proj == 'spstere': 
+         if verbose: print 'con - adding stereograpic axes'
          latstep=30
          if 90-abs(plotvars.boundinglat) <= 50: latstep=10
          mymap.drawparallels(np.arange(-90,120,latstep))
          mymap.drawmeridians(np.arange(0,360,60),labels=[1,1,1,1,1,1]) 
+
+
+      #Color bar
+      if colorbar == 1: 
+         if verbose: print 'con - adding colour bar'    
+         pad=0.10
+         if plotvars.rows >= 3: pad=0.15
+         if plotvars.rows >= 5: pad=0.20 
+         #cbar=plotvars.master_plot.colorbar(cfill, orientation=colorbar_orientation, aspect=75, \
+         #                                   pad=pad, ticks=colorbar_labels, drawedges=True, \
+         #                                   shrink=colorbar_shrink)
+         cbar=plotvars.master_plot.colorbar(cfill, ticks=clevs, orientation='horizontal', aspect=75, pad=0.08)
+         cbar.set_label(colorbar_title, fontsize=plotvars.fontsize)
+         for t in cbar.ax.get_xticklabels(): t.set_fontsize(plotvars.fontsize)
 
 
       #Coastlines and title
@@ -374,7 +395,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
    # Latitude-pressure plot
    ########################
    if ptype == 2:
-
+      if verbose: print 'con - making a latitude-pressure plot'
       if plotvars.user_plot == 0: gopen(user_plot=0)
 
       #Set plot limits
@@ -385,6 +406,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
          xmax=np.max(x)
          if xmax > 80 and xmax <= 90: xmax=90 
          ymin=np.min(y)
+         if ymin <= 10: ymin=0
          ymax=np.max(y)
       else:
          #User specified plot limits
@@ -447,7 +469,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
       #Block fill
       if blockfill == 1:   
          if isinstance(f[0], cf.Field):  
-            if f[0].coord('lon').isbounded:
+            if f[0].coord('lon').hasbounds:
                xpts=np.squeeze(f.coord('lat').bounds.array)[:,0]
                ypts=np.squeeze(f.coord('pressure').bounds.array)[:,0]   
                bfill(f=field_orig*fmult, x=xpts, y=ypts, clevs=clevs, lonlat=0, bound=1)  
@@ -493,12 +515,146 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
 
 
 
+
+   #################
+   # Hovmuller plots
+   #################
+   if (ptype == 3 or ptype ==4): 
+      if verbose: print 'con - making a Hovmuller plot'
+      ylabel='Time'
+      if ptype ==3: xlabel='Longitude'
+      if ptype ==4: xlabel='Latitude'
+
+      ref_time=time_opts[0]
+      ref_calendar=time_opts[1]
+      ref_time_origin=time_opts[2]
+
+
+      #Time strings set to None initially
+      tmin=None
+      tmax=None
+      #Set plot limits
+      if [plotvars.xmin,plotvars.xmax,plotvars.ymin,plotvars.ymax].count(None) == 0:
+
+         #Store time strings for later use
+         tmin=plotvars.ymin
+         tmax=plotvars.ymax
+
+         #Change from date string in ymin and ymax to date as a float
+         time_units = cf.Units(ref_time, ref_calendar)
+         t = cf.Data(cf.dt(plotvars.ymin), units=time_units)
+         ymin=t.array
+         t = cf.Data(cf.dt(plotvars.ymax), units=time_units)
+         ymax=t.array
+         xmin=plotvars.xmin
+         xmax=plotvars.xmax
+      else:
+         xmin=np.min(x)
+         xmax=np.max(x)
+         ymin=np.min(y)
+         ymax=np.max(y)
+
+
+
+      #Set plot limits
+      if plotvars.user_plot == 0: gopen(user_plot=0)
+      gset(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax)
+
+      #Revert to time strings if set
+      if [tmin, tmax].count(None) == 0:
+         plotvars.ymin=tmin
+         plotvars.ymax=tmax
  
+      time_units = cf.Units(ref_time, ref_calendar)
+      #t = cf.Data(cf.dt(ref_time_origin), units=time_units)
+      t = cf.Data(cf.dt('1980-1-1'), units=time_units)
+
+      times=gvals(dmin=ymin, dmax=ymax, tight=1, mod=0)[0]
+      T = cf.Data(times, units=t.Units)
+      time_ticks=T.array
+      time_tick_labels=T.year.array
+
+      if ptype == 3: xticks, xticklabels=mapaxis(min=xmin, max=xmax, type=1)
+      if ptype == 4: xticks, xticklabels=mapaxis(min=xmin, max=xmax, type=2)
+
+      #Draw axes
+      axes(xticks=xticks, xticklabels=xticklabels,\
+           yticks=time_ticks, yticklabels=time_tick_labels,\
+           xlabel=xlabel, ylabel=ylabel)
+
+
+      #Get colour scale for use in contouring
+      #If colour bar extensions are enabled then the colour map goes
+      #from 1 to ncols-2.  The colours for the colour bar extensions are then
+      #changed on the colourbar and plot after the plot is made
+      cscale_ncols=np.size(plotvars.cs)
+      colmap=cscale_get_map()
+
+
+      #Filled contours
+      if fill == True or blockfill == 1:
+         cfill=plotvars.plot.contourf(x,y,field*fmult,clevs, \
+               extend=plotvars.levels_extend, colors=colmap)
+
+         #add colour scale extensions if required
+         if (plotvars.levels_extend == 'both' or plotvars.levels_extend == 'min'):
+            cfill.cmap.set_under(plotvars.cs[0])
+         if (plotvars.levels_extend == 'both' or plotvars.levels_extend == 'max'):
+            cfill.cmap.set_over(plotvars.cs[cscale_ncols-1])
+  
+      #Block fill
+      if blockfill == 1:   
+         if isinstance(f[0], cf.Field):  
+            if f[0].coord('lon').hasbounds:
+               xpts=np.squeeze(f.coord('lat').bounds.array)[:,0]
+               ypts=np.squeeze(f.coord('time').bounds.array)[:,0]   
+               bfill(f=field_orig*fmult, x=xpts, y=ypts, clevs=clevs, lonlat=0, bound=1)  
+            else:
+               bfill(f=field_orig*fmult, x=x_orig, y=y_orig, clevs=clevs, lonlat=0, bound=0)  
+
+         else:
+            bfill(f=field_orig*fmult, x=x_orig, y=y_orig, clevs=clevs, lonlat=0, bound=0)  
+ 
+
+
+      #Contour lines and labels
+      if lines == True: 
+         cs=plotvars.plot.contour(x,y,field*fmult,clevs,colors='k')
+         if line_labels == True:  
+            nd=ndecs(clevs)
+            fmt='%d'
+            if nd != 0: fmt='%1.'+str(nd)+'f'
+            plotvars.plot.clabel(cs, fmt=fmt, colors = 'k', fontsize=plotvars.fontsize) 
+
+            #Thick zero contour line
+            if zero_thick is not None:
+               cs = plotvars.plot.contour(x,y,field*fmult,[1e-32, 0],colors='k', linewidths=zero_thick)
+     
+
+
+      #Colorbar
+      if colorbar == 1:  
+
+         pad=0.15
+         if plotvars.rows >= 3: pad=0.25
+         if plotvars.rows >= 5: pad=0.3
+         cbar=plotvars.master_plot.colorbar(cfill, orientation=colorbar_orientation, aspect=75, \
+                                            pad=pad, ticks=colorbar_labels, drawedges=True, \
+                                            shrink=colorbar_shrink)
+         cbar.set_label(colorbar_title, fontsize=plotvars.fontsize)
+         for t in cbar.ax.get_xticklabels():
+            t.set_fontsize(plotvars.fontsize)
+
+
+      #Title
+      plotvars.plot.set_title(title, y=1.03, fontsize=plotvars.fontsize)
+
+
    ############
    #Other plots
    ############
    if ptype == 0: 
-
+      if verbose: print 'con - making an other plot'
       if plotvars.user_plot == 0: gopen(user_plot=0)
 
       #Work out axes if none are supplied
@@ -510,10 +666,6 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
          ymax=np.shape(field)[1]
          ystep=(ymax-ymin)/5  
    
-      #Draw axes
-      #plotvars.plot=plot
-      #axes()
-      #plot=plotvars.plot  
 
       #Get colour scale for use in contouring
       #If colour bar extensions are enabled then the colour map goes
@@ -574,153 +726,15 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
 
 
 
+   ##################
+   #Save or view plot
+   ##################
 
-
-   #################
-   # Hovmuller plots
-   #################
-   if (ptype == 3 or ptype ==4): 
-      ylabel='Time'
-      if ptype ==3: xlabel='Longitude'
-      if ptype ==4: xlabel='Latitude'
-
-      ref_time=time_opts[0]
-      ref_calendar=time_opts[1]
-      ref_time_origin=time_opts[2]
-
-
-      #Time strings set to None initially
-      tmin=None
-      tmax=None
-      #Set plot limits
-      if [plotvars.xmin,plotvars.xmax,plotvars.ymin,plotvars.ymax].count(None) == 0:
-
-         #Store time strings for later use
-         tmin=plotvars.ymin
-         tmax=plotvars.ymax
-
-         #Change from date string in ymin and ymax to date as a float
-         time_units = cf.Units(ref_time, ref_calendar)
-         t = cf.Data(cf.dt(plotvars.ymin), units=time_units)
-         ymin=t.array
-         t = cf.Data(cf.dt(plotvars.ymax), units=time_units)
-         ymax=t.array
-         xmin=plotvars.xmin
-         xmax=plotvars.xmax
-      else:
-         xmin=np.min(x)
-         xmax=np.max(x)
-         ymin=np.min(y)
-         ymax=np.max(y)
-
-
-
-      #Set plot limits and draw axes
-      if plotvars.user_plot == 0: gopen(user_plot=0)
-      gset(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax)
-      #Revert to time strings if set
-      if [tmin, tmax].count(None) == 0:
-         plotvars.ymin=tmin
-         plotvars.ymax=tmax
- 
-
-
-      time_units = cf.Units(ref_time, ref_calendar)
-      #t = cf.Data(cf.dt(ref_time_origin), units=time_units)
-      t = cf.Data(cf.dt('1980-1-1'), units=time_units)
-
-
-      times=gvals(dmin=ymin, dmax=ymax, tight=1, mod=0)[0]
-      T = cf.Data(times, units=t.Units)
-      time_ticks=T.array
-      time_tick_labels=T.year.array
-
-
-      if ptype == 3: xticks, xticklabels=mapaxis(min=xmin, max=xmax, type=1)
-      if ptype == 4: xticks, xticklabels=mapaxis(min=xmin, max=xmax, type=2)
-
-
-      axes(xticks=xticks, xticklabels=xticklabels,\
-           yticks=time_ticks, yticklabels=time_tick_labels,\
-           xlabel=xlabel, ylabel=ylabel)
-
-
-      #Get colour scale for use in contouring
-      #If colour bar extensions are enabled then the colour map goes
-      #from 1 to ncols-2.  The colours for the colour bar extensions are then
-      #changed on the colourbar and plot after the plot is made
-      cscale_ncols=np.size(plotvars.cs)
-      colmap=cscale_get_map()
-
-
-      #Filled contours
-      if fill == True or blockfill == 1:
-         cfill=plotvars.plot.contourf(x,y,field*fmult,clevs, \
-               extend=plotvars.levels_extend, colors=colmap)
-
-         #add colour scale extensions if required
-         if (plotvars.levels_extend == 'both' or plotvars.levels_extend == 'min'):
-            cfill.cmap.set_under(plotvars.cs[0])
-         if (plotvars.levels_extend == 'both' or plotvars.levels_extend == 'max'):
-            cfill.cmap.set_over(plotvars.cs[cscale_ncols-1])
-  
-      #Block fill
-      if blockfill == 1:   
-         if isinstance(f[0], cf.Field):  
-            if f[0].coord('lon').isbounded:
-               xpts=np.squeeze(f.coord('lat').bounds.array)[:,0]
-               ypts=np.squeeze(f.coord('time').bounds.array)[:,0]   
-               bfill(f=field_orig*fmult, x=xpts, y=ypts, clevs=clevs, lonlat=0, bound=1)  
-            else:
-               bfill(f=field_orig*fmult, x=x_orig, y=y_orig, clevs=clevs, lonlat=0, bound=0)  
-
-         else:
-            bfill(f=field_orig*fmult, x=x_orig, y=y_orig, clevs=clevs, lonlat=0, bound=0)  
- 
-
-
-      #Contour lines and labels
-      if lines == True: 
-         cs=plotvars.plot.contour(x,y,field*fmult,clevs,colors='k')
-         if line_labels == True:  
-            nd=ndecs(clevs)
-            fmt='%d'
-            if nd != 0: fmt='%1.'+str(nd)+'f'
-            plotvars.plot.clabel(cs, fmt=fmt, colors = 'k', fontsize=plotvars.fontsize) 
-
-            #Thick zero contour line
-            if zero_thick is not None:
-               cs = plotvars.plot.contour(x,y,field*fmult,[1e-32, 0],colors='k', linewidths=zero_thick)
-     
-
-
-      #Colorbar
-      if colorbar == 1:  
-
-         pad=0.15
-         if plotvars.rows >= 3: pad=0.25
-         if plotvars.rows >= 5: pad=0.3
-         cbar=plotvars.master_plot.colorbar(cfill, orientation=colorbar_orientation, aspect=75, \
-                                            pad=pad, ticks=colorbar_labels, drawedges=True, \
-                                            shrink=colorbar_shrink)
-         cbar.set_label(colorbar_title, fontsize=plotvars.fontsize)
-         for t in cbar.ax.get_xticklabels():
-            t.set_fontsize(plotvars.fontsize)
-
-
-      #Title
-      plotvars.plot.set_title(title, y=1.03, fontsize=plotvars.fontsize)
-
-
-
-
-
-
-   ##########
-   #Save plot
-   ##########
-
-   if plotvars.user_plot == 0: gclose()
+   if plotvars.user_plot == 0:       
+      if verbose: print 'con - saving or viewing plot'
+      gset()
+      cscale()
+      gclose()
   
 
 
@@ -793,7 +807,9 @@ def levs(min=None, max=None, step=None, manual=None, extend='both'):
     | the default is to extend the minimum and maximum contours coloured for out of 
     | range values - extend='both'.
 
-    | Use levs() To reset to undefined levels.
+    | Once a user call is made to levs the levels are persistent.  i.e. the next plot
+    | will use the same set of levels.
+    | Use levs() to reset to undefined levels.
 
     :Returns:
      None
@@ -1009,7 +1025,7 @@ def axes(xticks=None, xticklabels=None, yticks=None, yticklabels=None,\
    if title is not None: plotvars.plot.set_title(title, y=1.03, fontsize=plotvars.fontsize)
     
 
-def gset(xmin=None, xmax=None, ymin=None, ymax=None, xlog=None, ylog=None):
+def gset(xmin=None, xmax=None, ymin=None, ymax=None, xlog=None, ylog=None, default_limits=0):
    """
     | Set plot limits for all non longitude-latitide plots. 
     | xmin, xmax, ymin, ymax are all needed to set the plot limits.  
@@ -1022,6 +1038,9 @@ def gset(xmin=None, xmax=None, ymin=None, ymax=None, xlog=None, ylog=None):
     | xlog=None - log x
     | ylog=None - log y
 
+    | Once a user call is made to gset the plot limits are persistent. i.e. the next plot
+    | will use the same set of plot limits.
+    | Use gset() to reset to undefined plot limits i.e. the full range of the data.
 
     :Returns:
      None
@@ -1119,7 +1138,6 @@ def gopen(rows=1, columns=1, user_plot=1, file='python', \
    else: plotvars.fontsize=fontsize
 
    #Set initial subplot
-   #if user_plot == 0:
    gpos(pos=1)
 
    #Change tick length for plots > 2x2
@@ -1132,7 +1150,7 @@ def gopen(rows=1, columns=1, user_plot=1, file='python', \
 def gclose(view=True):
    """
     | gclose saves a graphics file.  The default is to view the file as well
-    | using the ImageMagick display command.  Use view=0 to turn this off.
+    | - use view=0 to turn this off.
   
     | view=True - view graphics file
 
@@ -1327,15 +1345,12 @@ def gvals(dmin=None, dmax=None, tight=0, mystep=None, mod=1):
       errstr='\n gvals error - gvals must have dmin and dmax input\n'
       raise  Warning(errstr)          
 
+   if dmin > dmax:
+      errstr='\n gvals error - gvals must have dmin must be less than dmax'
+      errstr=errstr+'\n input dmin, dmax were '+str(dmin)+','+str(dmax)+'\n'
+      raise  Warning(errstr)          
 
    mult=0 #field multiplyer
-
-   #return user selected levels
-   #if [plotvars.levels_min, plotvars.levels_max,\
-   #    plotvars.levels_step].count(None) == 0:
-   #   vals=np.arange(plotvars.levels_min, plotvars.levels_max\
-   #        +plotvars.levels_step, plotvars.levels_step)
-   #   return vals, mult
  
    #Generate reasonable step 
    step=(dmax-dmin)/16.0
@@ -1359,6 +1374,8 @@ def gvals(dmin=None, dmax=None, tight=0, mystep=None, mod=1):
 
    #Change step to be a sensible one
    step=int(dmax-dmin)/16
+
+
    if (step == 8 or step == 9): step=10
    if (step == 7 or step == 6 or step == 4): step=5
    if step == 3: step=2
@@ -1366,11 +1383,15 @@ def gvals(dmin=None, dmax=None, tight=0, mystep=None, mod=1):
    if (step == 0): step=1
    if (mystep != None): step=mystep
 
+
    #Make integer step
-   vals=(int(dmin)/step)*step
+   if tight ==0:
+      vals=(int(dmin)/step)*step
+   else:
+      vals=dmin
    while (np.max(vals)+step) <= dmax:
       vals=np.append(vals, np.max(vals)+step)
-
+   
 
    #Remove upper and lower limits if tight=0 - i.e. a contour plot
    if tight == 0 and np.size(vals) > 1:
@@ -1421,6 +1442,7 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None):
     | This is an internal routine not used by the user.
     | f=None - input cf field
     | colorbar_title=None - input colour bar title
+    | verbose=None - set to 1 to get a verbose idea of what the cf_data_assign is doing
 
     :Returns:
      | f - data for contouring
@@ -1430,6 +1452,11 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None):
      | colorbar_title - colour bar title
      | xlabel - x label for plot
      | ylabel - y label for plot
+     |
+     |
+     |
+     |
+     |
    """
 
 
@@ -1459,12 +1486,11 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None):
 
    
  
-   #Set up data arrays
+   #Set up data arrays and variables
    lons=None
    lats=None
    height=None 
    time=None 
-    
    xlabel=''
    ylabel=''
    ref_time=None
@@ -1480,22 +1506,22 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None):
 
        standard_name_x=['longitude']
        if (sn in standard_name_x or an == 'X'):
-          if verbose: print 'standard_name, axis - assigned lons -', sn, an
+          if verbose: print 'cf_data_assign standard_name, axis - assigned lons -', sn, an
           lons=np.squeeze(f.item(mydim).array)
 
        standard_name_y=['latitude']
        if (sn in standard_name_y or an == 'Y'):
-          if verbose: print 'standard_name, axis - assigned lats -', sn, an
+          if verbose: print 'cf_data_assign standard_name, axis - assigned lats -', sn, an
           lats=np.squeeze(f.item(mydim).array)
 
        standard_name_z=['pressure', 'air_pressure', 'height', 'depth']
        if (sn in standard_name_z or an == 'Z'):
-          if verbose: print 'standard_name, axis - assigned height -', sn, an
+          if verbose: print 'cf_data_assign standard_name, axis - assigned height -', sn, an
           height=np.squeeze(f.item(mydim).array)
 
        standard_name_t=['time']
        if (sn in standard_name_t or an == 'T'):
-          if verbose: print 'standard_name, axis - assigned time -', sn, an
+          if verbose: print 'cf_data_assign standard_name, axis - assigned time -', sn, an
           time=np.squeeze(f.item(mydim).array)
 
 
@@ -1516,19 +1542,19 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None):
       units=getattr(f.item(mydim), 'units', False)
       if units in lon_units:
          if lons is None:
-            if verbose: print 'units - assigned lons -', units
+            if verbose: print 'cf_data_assign units - assigned lons -', units
             lons=np.squeeze(f.item(mydim).array)
       if units in lat_units:         
          if lats is None:
-            if verbose: print 'units - assigned lats -', units
+            if verbose: print 'cf_data_assign units - assigned lats -', units
             lats=np.squeeze(f.item(mydim).array)
       if units in height_units:         
          if height is None:
-            if verbose: print 'units - assigned height -', units
+            if verbose: print 'cf_data_assign units - assigned height -', units
             height=np.squeeze(f.item(mydim).array)
       if units in time_units:         
          if time is None:
-            if verbose: print 'units - assigned time -', units
+            if verbose: print 'cf_data_assign units - assigned time -', units
             time=np.squeeze(f.item(mydim).array)
 
    
@@ -1537,22 +1563,22 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None):
       name=cf_var_name(field=f, dim=mydim)
       if name[0:3] == 'lon': 
          if lons is None:
-            if verbose: print 'dimension name - assigned lons -', name
+            if verbose: print 'cf_data_assign dimension name - assigned lons -', name
             lons=np.squeeze(f.item(mydim).array)
 
       if name[0:3] == 'lat': 
          if lats is None:
-            if verbose: print 'dimension name - assigned lats -', name
+            if verbose: print 'cf_data_assign dimension name - assigned lats -', name
             lats=np.squeeze(f.item(mydim).array)
 
       if (name[0:5] == 'theta' or name[0:1] == 'p' or name == 'air_pressure'): 
          if height is None:
-            if verbose: print 'dimension name - assigned height -', name
+            if verbose: print 'cf_data_assign dimension name - assigned height -', name
             height=np.squeeze(f.item(mydim).array)
 
       if name[0:1] == 't': 
          if time is None:
-            if verbose: print 'dimension name - assigned time -', name
+            if verbose: print 'cf_data_assign dimension name - assigned time -', name
             time=np.squeeze(f.item(mydim).array)
 
    #assign field data
@@ -1566,7 +1592,6 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None):
       x=lons
       y=lats
 
-
    if (np.size(lats) > 1 and np.size(height) > 1): 
       ptype=2
       x=lats
@@ -1575,13 +1600,11 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None):
          name=cf_var_name(field=f, dim=mydim)
          if name[0:3] == 'lat': 
             xunits=str(getattr(f.item(mydim), 'Units', ''))
-            if (xunits in lon_units): xunits='degrees'
+            if (xunits in lat_units): xunits='degrees'
             xlabel=name + ' (' + xunits + ')'
          if name[0:1] == 'p' or name[0:5] == 'theta': 
             yunits=str(getattr(f.item(mydim), 'Units', ''))
             ylabel=name + ' (' + yunits + ')'
-
-
 
    if (np.size(lons) > 1 and np.size(time) > 1):
       ptype=3
@@ -1589,10 +1612,8 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None):
       y=time
       ref_time=f.item('time').units
       ref_calendar=f.item('time').calendar
-      #ref_time_origin=str(f.item('time').Units._utime.origin)
       ref_time_origin=str(f.item('time').Units.reftime)
       time_opts=[ref_time,ref_calendar,ref_time_origin]
-
 
    if np.size(lats) > 1 and np.size(time) > 1:
       ptype=4     
@@ -1600,12 +1621,11 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None):
       y=time
       ref_time=f.item('time').units
       ref_calendar=f.item('time').calendar
-      #ref_time_origin=str(f.item('time').Units._utime.origin)
       ref_time_origin=str(f.item('time').Units.reftime)
       time_opts=[ref_time,ref_calendar,ref_time_origin]
 
 
-
+   #Assign colorbar_title
    if (colorbar_title == None):   
       colorbar_title=''
       if hasattr(f, 'ncvar'): colorbar_title=f.ncvar
@@ -1616,6 +1636,8 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None):
          if str(f.Units) == '': colorbar_title=colorbar_title+''
          else: colorbar_title=colorbar_title+'('+supscr(str(f.Units))+')'
     
+
+   #Return data
    return(field, x, y, ptype, colorbar_title, xlabel, ylabel, time_opts)
 
 
@@ -1709,30 +1731,55 @@ def cscale(cmap=None, ncols=None, white=None, below=None, above=None):
    else:
       plotvars.user_cs=1
 
-   import distutils.sysconfig as sysconfig
-   file = sysconfig.get_python_lib()+'/cfplot/colourmaps/'+cmap+'.rgb'
-   if os.path.isfile(file) is False:
-      if os.path.isfile(cmap) is False:
-         errstr='\ncscale error - colour scale not found:\n'
-         errstr=errstr+'File '+file+ ' not found\n'
-         errstr=errstr+'File '+cmap+' not found\n'
-         raise  Warning(errstr)  
-      else:
-         file=cmap
+   if cmap == 'scale1' or cmap == 'cosam':
+      if cmap == 'scale1': myscale=cscale1
+      if cmap == 'cosam': myscale=cosam
+      #convert cscale1 or cosam from hex to rgb
+      r=[]
+      g=[]
+      b=[]
+      for myhex in myscale:
+         myhex=myhex.lstrip('#')
+         mylen=len(myhex)
+         rgb=tuple(int(myhex[i:i+mylen/3], 16) for i in range(0, mylen, mylen/3))
+         r.append(rgb[0])
+         g.append(rgb[1])
+         b.append(rgb[2])  
 
-   #Read in rgb values and convert to hex
-   f = open(file, 'r')
-   lines = f.read()
-   lines = lines.splitlines()
-   r = []
-   g=[]
-   b=[]
-   hex=[]
-   for line in lines:
-       vals = line.split()
-       r.append(int(vals[0]))
-       g.append(int(vals[1]))
-       b.append(int(vals[2]))
+      #if cmap == 'cosam':
+      #   for myhex in cosam:
+      #      myhex=myhex.lstrip('#')
+      #      mylen=len(myhex)
+      #      rgb=tuple(int(myhex[i:i+mylen/3], 16) for i in range(0, mylen, mylen/3))
+      #      r.append(rgb[0])
+      #      g.append(rgb[1])
+      #      b.append(rgb[2])  
+
+   else:
+      import distutils.sysconfig as sysconfig
+      file = sysconfig.get_python_lib()+'/cfplot/colourmaps/'+cmap+'.rgb'
+      if os.path.isfile(file) is False:
+         if os.path.isfile(cmap) is False:
+            errstr='\ncscale error - colour scale not found:\n'
+            errstr=errstr+'File '+file+ ' not found\n'
+            errstr=errstr+'File '+cmap+' not found\n'
+            raise  Warning(errstr)  
+         else:
+            file=cmap
+
+      #Read in rgb values and convert to hex
+      f = open(file, 'r')
+      lines = f.read()
+      lines = lines.splitlines()
+      r=[]
+      g=[]
+      b=[]
+      hex=[]
+      for line in lines:
+          vals = line.split()
+          r.append(int(vals[0]))
+          g.append(int(vals[1]))
+          b.append(int(vals[2]))
 
 
 
@@ -1816,7 +1863,7 @@ def cscale_get_map():
    """ 
    | cscale_get_map - return colour map for use in contour plots.  
    |                   This depends on the colour bar extensions
-   | 
+   | This is an internal routine and is not used by the user. 
    |
    |
    :Returns:
@@ -2227,12 +2274,13 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
     | v=None - v wind
     | x=None - x locations of u and v
     | y=None - y locations of u and v
-    | scale=None - 
+    | scale=None - data units per arrow length unit
     | stride=None - plot vector every stride points. Can take two values
     |                one for x and one for y
     | pts=None - use bilinear interpolation to interpolate vectors
     |            onto a new grid.
-    |
+    | key_length=None - length of the key
+    | key_label=None - label for the key
     |
     |
     :Returns:
@@ -2385,16 +2433,18 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
       #Save plot
       ##########
  
-      if plotvars.user_plot == 0: gclose()
+      if plotvars.user_plot == 0: 
+         gset()
+         cscale()
+         gclose()
   
-
 
 def set_map():
    """
     | set_map - set map and write into plotvars.mymap
     | 
     | No inputs
-    | 
+    | This is an internal routine and not used by the user 
     | 
     | 
     |
@@ -2518,6 +2568,153 @@ def cf_var_name(field=None, dim=None):
    if standard_name: name=standard_name
 
    return name
+
+
+
+def process_color_scales():
+   """
+    | Process colour scales to generate images of them for the web
+    | documentation and the rst code for inclusion in the 
+    | colour_scale.rst file.
+    |
+    |
+    | No inputs
+    | This is an internal routine and not used by the user 
+    | 
+    | 
+    |
+    |
+    |
+    :Returns:
+     None
+    |
+    |
+    |
+   """
+   
+   #Define scale categories
+   ncl_large=['amwg256', 'BkBlAqGrYeOrReViWh200', 'BlAqGrYeOrRe', 'BlAqGrYeOrReVi200',\
+              'BlGrYeOrReVi200', 'BlRe', 'BlueRed', 'BlueRedGray', 'BlueWhiteOrangeRed',\
+              'BlueYellowRed', 'BlWhRe', 'cmp_b2r',\
+              'cmp_haxby', 'detail', 'extrema', 'GrayWhiteGray','GreenYellow',\
+              'helix', 'helix1', 'hotres', 'matlab_hot', 'matlab_hsv', 'matlab_jet',\
+              'matlab_lines', 'ncl_default', 'ncview_default', 'OceanLakeLandSnow',\
+              'rainbow', 'rainbow+white+gray',  'rainbow+white','rainbow+gray',\
+              'tbr_240-300', 'tbr_stdev_0-30', 'tbr_var_0-500', 'tbrAvg1',\
+              'tbrStd1', 'tbrVar1', 'thelix', 'ViBlGrWhYeOrRe',\
+              'wh-bl-gr-ye-re', 'WhBlGrYeRe', 'WhBlReWh', 'WhiteBlue',\
+              'WhiteBlueGreenYellowRed', 'WhiteGreen', 'WhiteYellowOrangeRed',\
+              'WhViBlGrYeOrRe', 'WhViBlGrYeOrReWh', 'wxpEnIR', '3gauss', '3saw']
+
+   ncl_meteoswiss=['hotcold_18lev', 'hotcolr_19lev', 'mch_default', 'perc2_9lev', 'percent_11lev',\
+                   'precip2_15lev', 'precip2_17lev', 'precip3_16lev', 'precip4_11lev', \
+                   'precip4_diff_19lev', 'precip_11lev', 'precip_diff_12lev', 'precip_diff_1lev',\
+                   'rh_19lev', 'spread_15lev']
+
+   ncl_color_blindness=['StepSeq25', 'posneg_2', 'posneg_1', 'BlueDarkOrange18', 'BlueDarkRed18',\
+                        'GreenMagenta16', 'BlueGreen14', 'BrownBlue12', 'Cat12']
+
+   ncl_small=['amwg', 'amwg_blueyellowred','BlueDarkRed18', 'BlueDarkOrange18','BlueGreen14',\
+              'BrownBlue12', 'Cat12', 'cmp_flux', 'cosam12', 'cosam',\
+              'GHRSST_anomaly', 'GreenMagenta16',\
+              'hotcold_18lev', 'hotcolr_19lev', 'mch_default', 'nrl_sirkes', \
+              'nrl_sirkes_nowhite', 'perc2_9lev', 'percent_11lev', 'posneg_2', 'prcp_1', 'prcp_2',\
+              'prcp_3', 'precip_11lev', 'precip_diff_12lev', 'precip_diff_1lev', 'precip2_15lev',\
+              'precip2_17lev', 'precip3_16lev', 'precip4_11lev', 'precip4_diff_19lev', 'radar',\
+              'radar_1', 'rh_19lev', 'seaice_1', 'seaice_2', 'so4_21', 'spread_15lev', 'StepSeq25',\
+              'sunshine_9lev', 'sunshine_diff_12lev', 'temp_19lev', 'temp_diff_18lev', 'temp_diff_1lev',\
+              'topo_15lev', 'wgne15', 'wind_17lev']
+
+
+   idl_guide=[]
+   for i in np.arange(1,45):
+      idl_guide.append('scale'+str(i))
+
+   for category in 'ncl_meteoswiss', 'ncl_small', 'ncl_large', 'ncl_color_blindness', 'idl_guide': 
+      if category == 'ncl_meteoswiss': 
+         scales=ncl_meteoswiss
+         div='================== ====='
+         chars=19
+         print 'NCAR Command Language - MeteoSwiss colour maps'
+         print '----------------------------------------------' 
+         print ''
+         print div
+         print 'Name               Scale'
+         print div
+      if category == 'ncl_small': 
+         scales=ncl_small
+         div='=================== ====='
+         chars=20
+         print 'NCAR Command Language - small color maps (<50 colours)'
+         print '------------------------------------------------------'
+         print ''
+         print div
+         print 'Name                Scale'
+         print div
+      if category == 'ncl_large': 
+         scales=ncl_large
+         div='======================= ====='
+         chars=24
+         print 'NCAR Command Language - large colour maps (>50 colours)'
+         print '-------------------------------------------------------'
+         print ''
+         print div
+         print 'Name                    Scale'
+         print div
+      if category == 'ncl_color_blindness': 
+         scales=ncl_color_blindness
+         div='================ ====='
+         chars=17
+         print 'NCAR Command Language - Enhanced to help with colour blindness'
+         print '--------------------------------------------------------------'
+         print ''
+         print div
+         print 'Name             Scale'
+         print div
+         chars=17
+      if category == 'idl_guide': 
+         scales=idl_guide
+         div='======= ====='
+         chars=8
+         print 'IDL guide scales'
+         print '----------------'
+         print ''
+         print div
+         print 'Name    Scale'
+         print div
+         chars=8
+       
+
+      for scale in scales:
+         #Make image of scale
+         fig = plot.figure(figsize=(8,0.5))
+         ax1 = fig.add_axes([0.05, 0.1, 0.9, 0.2])
+         cscale(scale)
+         ncols=np.size(plotvars.cs)
+         cmap = matplotlib.colors.ListedColormap(plotvars.cs)
+         cb1 = matplotlib.colorbar.ColorbarBase(ax1, cmap=cmap, orientation='horizontal', ticks=None)
+         cb1.set_ticks([0.0,1.0])
+         cb1.set_ticklabels(['',''])
+         file='/home/andy/public_html/cfplot_sphinx/images/colour_scales/'+scale+'.png'
+         plot.savefig(file)
+         plot.close()
+
+         #Use covert to trim the png file to remove white space
+         call(["convert", "-trim", file, file])
+
+         name_pad=scale
+         while len(name_pad) < chars: name_pad=name_pad+' '
+         print  name_pad+'.. image:: images/colour_scales/'+scale+'.png'
+
+      print div
+      print ''
+      print ''
+
+
+
+
+
+
 
 
 
