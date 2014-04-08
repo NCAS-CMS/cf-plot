@@ -326,13 +326,14 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
       if blockfill == 1:
          if verbose: print 'con - adding blockfill'
          if isinstance(f[0], cf.Field):  
-            if f[0].coord('lon').hasbounds:
-               xpts=np.squeeze(f.coord('lon').bounds.array)[:,0]
-               ypts=np.squeeze(f.coord('lat').bounds.array)[:,0]   
+            if getattr(f[0].coord('lon'), 'hasbounds', False):
+               xpts=np.squeeze(f.coord('lon').bounds.array[:,0])
+               xpts=np.append(xpts, f.coord('lon').bounds.array[-1,1]) # Add last longitude point
+               ypts=np.squeeze(f.coord('lat').bounds.array[:,0]) 
+               ypts=np.append(ypts, f.coord('lat').bounds.array[-1,1]) # Add last latitude point
                bfill(f=field_orig*fmult, x=xpts, y=ypts, clevs=clevs, lonlat=1, bound=1)  
             else:
                bfill(f=field_orig*fmult, x=x_orig, y=y_orig, clevs=clevs, lonlat=1, bound=0)  
-
 
          else:
             bfill(f=field_orig*fmult, x=x_orig, y=y_orig, clevs=clevs, lonlat=1, bound=0)  
@@ -469,7 +470,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
       #Block fill
       if blockfill == 1:   
          if isinstance(f[0], cf.Field):  
-            if f[0].coord('lon').hasbounds:
+            if getattr(f[0].coord('lat'), 'hasbounds', False):
                xpts=np.squeeze(f.coord('lat').bounds.array)[:,0]
                ypts=np.squeeze(f.coord('pressure').bounds.array)[:,0]   
                bfill(f=field_orig*fmult, x=xpts, y=ypts, clevs=clevs, lonlat=0, bound=1)  
@@ -1922,13 +1923,20 @@ def bfill(f=None, x=None, y=None, clevs=False, lonlat=False, bound=False):
       xpts=x
       ypts=y
 
+      
+      #print 'xpts are ', xpts
+      #print ''
+      #print 'ypts are ', ypts
+      #print ''
+      #print 'shape of data is ', np.shape(f)
+      #print 'shape of x , y are ', np.shape(x), np.shape(y)
 
    if bound == 0:
       #Find x box boundaries
       xpts=x[0]-(x[1]-x[0])/2.0
       for ix in np.arange(np.size(x)-1): 
          xpts=np.append(xpts, x[ix]+(x[ix+1]-x[ix])/2.0)
-      #xpts=np.append(xpts, x[ix+1]+(x[ix+1]-x[ix])/2.0) 
+      xpts=np.append(xpts, x[ix+1]+(x[ix+1]-x[ix])/2.0) 
 
 
       #Find y box boundaries
@@ -1941,6 +1949,18 @@ def bfill(f=None, x=None, y=None, clevs=False, lonlat=False, bound=False):
 
    #Shift lon grid if needed
    if lonlat == 1:
+
+      #Extract upper bound and original rhs of box longitude bounding points
+      upper_bound=ypts[-1]
+      xpts_orig=xpts
+      ypts_orig=ypts
+      
+      #Reduce xpts and ypts by 1 or shiftgrid fails
+      #The last points are the right / upper bounds for the last data box
+      xpts=xpts[0:-1]
+      ypts=ypts[0:-1]
+
+
       if plotvars.lonmin < np.min(xpts): xpts=xpts-360
       if plotvars.lonmin > np.max(xpts): xpts=xpts+360
 
@@ -1949,8 +1969,14 @@ def bfill(f=None, x=None, y=None, clevs=False, lonlat=False, bound=False):
       if lonrange < 360:
          field, xpts = addcyclic(field, xpts)
 
+      #shiftgrid on lons and data
       field, xpts=shiftgrid(plotvars.lonmin, field, xpts) 
 
+      right_bound=xpts[-1]+(xpts[-1]-xpts[-2])
+
+      #Add end x and y end points
+      xpts=np.append(xpts, right_bound)
+      ypts=np.append(ypts, upper_bound)
 
 
    #Make plot
