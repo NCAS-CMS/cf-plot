@@ -225,11 +225,14 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
          #Revert to standard colour scale after plot
          plotvars.user_cs=0 
 
+
    #Set colorbar labels
    if colorbar_label_skip > 1:
       colorbar_labels=clevs[np.arange(len(clevs)/colorbar_label_skip)*colorbar_label_skip]
    else: 
       colorbar_labels=clevs
+
+
 
    #Add mult to colorbar_title if used 
    if (colorbar_title == None): 
@@ -381,8 +384,15 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
          #cbar=plotvars.master_plot.colorbar(cfill, orientation=colorbar_orientation, aspect=75, \
          #                                   pad=pad, ticks=colorbar_labels, drawedges=True, \
          #                                   shrink=colorbar_shrink)
-         cbar=plotvars.master_plot.colorbar(cfill, ticks=clevs, orientation='horizontal', aspect=75, pad=0.08)
+         cbar=plotvars.master_plot.colorbar(cfill, ticks=clevs, \
+                                            orientation='horizontal', aspect=75, pad=0.08)
          cbar.set_label(colorbar_title, fontsize=plotvars.fontsize)
+         #Bug in Matplotlib colorbar labelling
+         #With clevs=[-1, 1, 10000, 20000, 30000, 40000, 50000, 60000]
+         #Labels are [0, 2, 10001, 20001, 30001, 40001, 50001, 60001]
+         #With a +1 near to the colorbar label
+         cbar.set_ticklabels([str(i) for i in clevs]) 
+         
          for t in cbar.ax.get_xticklabels(): t.set_fontsize(plotvars.fontsize)
 
 
@@ -507,6 +517,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
                                             pad=pad, ticks=colorbar_labels, drawedges=True, \
                                             shrink=colorbar_shrink)
          cbar.set_label(colorbar_title, fontsize=plotvars.fontsize)
+         cbar.set_ticklabels([str(i) for i in clevs]) #Bug in Matplotlib colorbar labelling
          for t in cbar.ax.get_xticklabels():
             t.set_fontsize(plotvars.fontsize)
 
@@ -643,6 +654,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
                                             pad=pad, ticks=colorbar_labels, drawedges=True, \
                                             shrink=colorbar_shrink)
          cbar.set_label(colorbar_title, fontsize=plotvars.fontsize)
+         cbar.set_ticklabels([str(i) for i in clevs]) #Bug in Matplotlib colorbar labelling
          for t in cbar.ax.get_xticklabels():
             t.set_fontsize(plotvars.fontsize)
 
@@ -717,6 +729,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
                                             pad=pad, ticks=colorbar_labels, drawedges=True, \
                                             shrink=colorbar_shrink)
          cbar.set_label(colorbar_title, fontsize=plotvars.fontsize)
+         cbar.set_ticklabels([str(i) for i in clevs]) #Bug in Matplotlib colorbar labelling
          for t in cbar.ax.get_xticklabels():
             t.set_fontsize(plotvars.fontsize)
 
@@ -1223,7 +1236,9 @@ def gpos(pos=1):
    plotvars.plot=plotvars.master_plot.add_subplot(plotvars.rows, plotvars.columns, pos)
    plotvars.plot.tick_params(which='both', direction='out')
 
-
+   if plotvars.user_plot == 0: 
+      gset()
+      cscale()
   
 
 #######################################
