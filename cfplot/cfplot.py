@@ -59,15 +59,15 @@ plotvars=pvars(lonmin=-180, lonmax=180, latmin=-90, latmax=90, proj='cyl', \
                levels_extend='both', xmin=None, xmax=None, ymin=None, ymax=None, \
                xlog=None, ylog=None,\
                rows=1, columns=1, file=None, orientation='landscape',\
-               user_plot=0,\
+               user_mapset=0, user_gset=0, user_cscale=0, user_levs=0, user_plot=0,\
                master_plot=None, plot=None, fontsize=None, cs=cscale1, \
-               user_cs=0, user_levs=0, mymap=None)
+               mymap=None)
        
 
 
 
 def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=None, \
-        colorbar_title=None, colorbar=1, colorbar_label_skip=1, ptype=0, \
+        colorbar_title=None, colorbar=1, colorbar_label_skip=None, ptype=0, \
         negative_linestyle=None, blockfill=None, zero_thick=None, colorbar_shrink=None, \
         colorbar_orientation=None, xlog=None, ylog=None, verbose=None):
    """
@@ -92,7 +92,8 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
     | blockfill=None - set to 1 for a blockfill plot
     | colbar_title=colbar_title - title for the colour bar
     | colorbar=1 - add a colour bar if a filled contour plot
-    | colorbar_label_skip=1 - skip colour bar labels
+    | colorbar_label_skip=None - skip colour bar labels. Set to 2 to skip every
+    |                            other label.
     | colorbar_orientation=None - options are 'horizontal' and 'vertical'
     |                      The default for most plots is horizontal but
     |                      for polar stereographic plots this is vertical.
@@ -109,12 +110,22 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
 
    """ 
 
+
    #Extract required data for contouring
    #If a cf-python field
    if isinstance(f[0], cf.Field):
+      #Check if this is a cf.Fieldlist and reject if it is
+      if isinstance(f, cf.FieldList):
+         if len(f) >1:
+            errstr='\n cf_data_assign error - passed field is a cf.Fieldlist\n'
+            errstr=errstr+'Please pass one field for contouring\n'
+            errstr=errstr+'i.e. f[0]\n'
+            raise  Warning(errstr) 
+
+      #Extract data
       if verbose: print 'con - calling cf_data_assign'
       field, x, y, ptype, colorbar_title, xlabel, ylabel, time_opts=\
-             cf_data_assign(f, colorbar_title, verbose=verbose)
+             cf_data_assign(f[0], colorbar_title, verbose=verbose)
    else:
       if verbose: print 'con - using user assigned data'
       field=f #field data passed in as f
@@ -143,8 +154,8 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
    #Turn off colorbar if fill is turned off
    if fill == 0 and blockfill is None: colorbar=0
 
-   #Revert to default colour scale if user_cs flag is set
-   if plotvars.user_cs == 0: plotvars.cs=cscale1
+   #Revert to default colour scale if user_cscale flag is set
+   if plotvars.user_cscale == 0: plotvars.cs=cscale1
 
 
    #Set the orientation of the colorbar
@@ -170,11 +181,12 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
 
          if plotvars.proj == 'npstere' or plotvars.proj == 'spstere': 
             if plotvars.orientation == 'landscape':
-               if colorbar_orientation == 'horizontal': colorbar_shrink=0.55
+               if colorbar_orientation == 'horizontal': colorbar_shrink=1.0
                if colorbar_orientation == 'vertical': colorbar_shrink=1.0
             if plotvars.orientation == 'portrait':
                if colorbar_orientation == 'horizontal': colorbar_shrink=1.0
-               if colorbar_orientation == 'vertical': colorbar_shrink=0.5
+               if colorbar_orientation == 'vertical': colorbar_shrink=1.0
+
 
 
 
@@ -182,26 +194,27 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
    if (ptype != None): plotvars.plot_type=ptype
  
  
-   #Get contour levels
+   #Get contour levels      
+   includes_zero=0
    if plotvars.user_levs == 1:
       #User defined    
       if verbose: print 'con - using user defined contour levels'
       clevs=plotvars.levels
       mult=0
       fmult=1
-      if plotvars.user_cs == 0:
-         is_zero=0
+      if plotvars.user_cscale == 0:
+         includes_zero=0
          col_zero=0
          for cval in clevs:
-            if is_zero == 0: col_zero=col_zero+1   
-            if cval == 0: is_zero=1
+            if includes_zero == 0: col_zero=col_zero+1   
+            if cval == 0: includes_zero=1
 
-         if is_zero == 1:
+         if includes_zero == 1:
             cscale('scale1', below=col_zero, above=np.size(clevs)-col_zero+1)
          else:
             cscale('cosam', ncols=np.size(clevs)+1)   
 
-         plotvars.user_cs=0 #Revert to standard colour scale after plot
+         plotvars.user_cscale=0 #Revert to standard colour scale after plot
 
    else:
       #Automatic levels     
@@ -210,28 +223,54 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
       fmult=10**-mult
 
       #Adjust colour table
-      if plotvars.user_cs == 0:
-         is_zero=0
+      if plotvars.user_cscale == 0:
          col_zero=0
          for cval in clevs:
-            if is_zero == 0: col_zero=col_zero+1   
-            if cval == 0: is_zero=1
+            if includes_zero == 0: col_zero=col_zero+1   
+            if cval == 0: includes_zero=1
 
-         if is_zero == 1:
+         if includes_zero == 1:
             cscale('scale1', below=col_zero, above=np.size(clevs)-col_zero+1)
          else:
             cscale('cosam', ncols=np.size(clevs)+1)
 
          #Revert to standard colour scale after plot
-         plotvars.user_cs=0 
+         plotvars.user_cscale=0 
 
 
    #Set colorbar labels
+   #Set a sensible label spacing if the user hasn't already done so   
+   if colorbar_label_skip is None:
+      if colorbar_orientation == 'horizontal':
+         nchars=0
+         for lev in clevs: nchars=nchars+len(str(lev))
+         colorbar_label_skip=nchars/80+1
+         if plotvars.columns > 1: colorbar_label_skip=nchars*(plotvars.columns)/80
+      else:
+         colorbar_label_skip=1
+      
    if colorbar_label_skip > 1:
-      colorbar_labels=clevs[np.arange(len(clevs)/colorbar_label_skip)*colorbar_label_skip]
+      if includes_zero: 
+         #include zero in the colorbar labels
+         zero_pos=[i for i,mylev in enumerate(clevs) if mylev == 0][0]
+         colorbar_labels=clevs[zero_pos]
+         i=zero_pos+colorbar_label_skip
+         while i <= len(clevs)-1:
+            colorbar_labels=np.append(colorbar_labels, clevs[i])
+            i=i+colorbar_label_skip
+         i=zero_pos-colorbar_label_skip
+         if i >=0:
+            while i >= 0:
+               colorbar_labels=np.append(clevs[i], colorbar_labels)
+               i=i-colorbar_label_skip
+      else: 
+         colorbar_labels=clevs[0]
+         i=colorbar_label_skip
+         while i <= len(clevs)-1:
+            colorbar_labels=np.append(colorbar_labels, clevs[i])
+            i=i+colorbar_label_skip        
    else: 
       colorbar_labels=clevs
-
 
 
    #Add mult to colorbar_title if used 
@@ -257,26 +296,41 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
       if plotvars.user_plot == 0: gopen(user_plot=0)
 
       #Set up mapping
-      set_map()    
-      mymap=plotvars.mymap      
-
-      #Add cyclic information if missing.
-      lonrange=np.max(x)-np.min(x)
-      if lonrange < 360:
-         field, x = addcyclic(field, x)
-         lonrange=np.max(x)-np.min(x)
-
-
-      #Shift grid if needed
-      if plotvars.lonmin < np.min(x): x=x-360
-      if plotvars.lonmin > np.max(x): x=x+360
-      field, x=shiftgrid(plotvars.lonmin, field, x)   
-
-      #Add cyclic information if missing.
       lonrange=np.max(x)-plotvars.lonmin
-      if lonrange < 360:
-         field, x = addcyclic(field, x)
-         lonrange=np.max(x)-np.min(x)
+      #Reset mapping
+      if plotvars.user_mapset == 0:
+         plotvars.lonmin=-180
+         plotvars.lonmax=180
+         plotvars.latmin=-90
+         plotvars.latmax=90
+      if lonrange > 350 or plotvars.user_mapset == 1:
+         set_map()  
+      else:
+         mapset(lonmin=np.min(x), lonmax=np.max(x), latmin=np.min(y), latmax=np.max(y), user_mapset=0)
+         set_map()  
+
+
+      mymap=plotvars.mymap   
+      user_mapset=plotvars.user_mapset
+   
+      lonrange=np.max(x)-np.min(x) 
+      if lonrange >350:
+      
+         #Add cyclic information if missing.
+         if lonrange < 360:
+            field, x = addcyclic(field, x)
+            lonrange=np.max(x)-np.min(x)
+
+         #Shift grid if needed
+         if plotvars.lonmin < np.min(x): x=x-360
+         if plotvars.lonmin > np.max(x): x=x+360
+         field, x=shiftgrid(plotvars.lonmin, field, x)   
+
+         #Add cyclic information if missing.
+         lonrange=np.max(x)-plotvars.lonmin
+         if lonrange < 360:
+            field, x = addcyclic(field, x)
+            lonrange=np.max(x)-np.min(x)
 
 
       #Flip latitudes and field if latitudes are in descending order
@@ -300,8 +354,17 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
       lons, lats=mymap(*np.meshgrid(x, y))
 
       #Set the plot limits
-      gset(xmin=plotvars.lonmin, xmax=plotvars.lonmax, ymin=plotvars.latmin, ymax=plotvars.latmax)
+      if lonrange > 350:
+         gset(xmin=plotvars.lonmin, xmax=plotvars.lonmax, ymin=plotvars.latmin, ymax=plotvars.latmax, user_gset=0)
+      else:
+         if user_mapset == 1:
+            gset(xmin=plotvars.lonmin, xmax=plotvars.lonmax, ymin=plotvars.latmin, ymax=plotvars.latmax, user_gset=0)
+         else:
+            gset(xmin=np.min(lons), xmax=np.max(lons), ymin=np.min(lats), ymax=np.max(lats), user_gset=0)
 
+
+
+         
 
       #Filled contours
       if fill == True or blockfill == 1:
@@ -384,14 +447,15 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
          #cbar=plotvars.master_plot.colorbar(cfill, orientation=colorbar_orientation, aspect=75, \
          #                                   pad=pad, ticks=colorbar_labels, drawedges=True, \
          #                                   shrink=colorbar_shrink)
-         cbar=plotvars.master_plot.colorbar(cfill, ticks=clevs, \
-                                            orientation='horizontal', aspect=75, pad=0.08)
+         cbar=plotvars.master_plot.colorbar(cfill, ticks=colorbar_labels,\
+                                            orientation=colorbar_orientation, aspect=75, pad=pad,\
+                                            shrink=colorbar_shrink)
          cbar.set_label(colorbar_title, fontsize=plotvars.fontsize)
          #Bug in Matplotlib colorbar labelling
          #With clevs=[-1, 1, 10000, 20000, 30000, 40000, 50000, 60000]
          #Labels are [0, 2, 10001, 20001, 30001, 40001, 50001, 60001]
          #With a +1 near to the colorbar label
-         cbar.set_ticklabels([str(i) for i in clevs]) 
+         cbar.set_ticklabels([str(i) for i in colorbar_labels]) 
          
          for t in cbar.ax.get_xticklabels(): t.set_fontsize(plotvars.fontsize)
 
@@ -408,9 +472,11 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
    if ptype == 2:
       if verbose: print 'con - making a latitude-pressure plot'
       if plotvars.user_plot == 0: gopen(user_plot=0)
+      user_gset=plotvars.user_gset
 
       #Set plot limits
-      if [plotvars.xmin, plotvars.xmax, plotvars.ymin, plotvars.ymax].count(None) == 4:
+      #if [plotvars.xmin, plotvars.xmax, plotvars.ymin, plotvars.ymax].count(None) == 4:
+      if user_gset == 0:
          #Program selected data plot limits
          xmin=np.min(x)
          if xmin < -80 and xmin >= -90: xmin=-90
@@ -442,19 +508,20 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
       #Set plot limits and draw axes
       if ylog != 1:   
          if ytype == 1: 
-            gset(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax)
+            gset(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax, user_gset=user_gset)
             axes(xticks=gvals(dmin=xmin, dmax=xmax, tight=1, mystep=xstep)[0],\
                  yticks=gvals(dmin=ymin, dmax=ymax, tight=1, mystep=ystep)[0],\
                  xlabel=xlabel, ylabel=ylabel)
          else: 
-            gset(xmin=xmin, xmax=xmax, ymin=ymax, ymax=ymin)
+            gset(xmin=xmin, xmax=xmax, ymin=ymax, ymax=ymin, user_gset=user_gset)
             axes(xticks=gvals(dmin=xmin, dmax=xmax, tight=1, mystep=xstep, mod=0)[0],\
                  yticks=gvals(dmin=ymin, dmax=ymax, tight=1, mystep=ystep, mod=0)[0],\
                  xlabel=xlabel, ylabel=ylabel)  
 
       #Log y axis 
       if ylog == 1:
-         gset(xmin=xmin, xmax=xmax, ymin=ymax, ymax=ymin, ylog=1)
+         if ymin == 0: ymin=1
+         gset(xmin=xmin, xmax=xmax, ymin=ymax, ymax=ymin, ylog=1, user_gset=user_gset)
          axes(xticks=gvals(dmin=xmin, dmax=xmax, tight=1, mystep=xstep)[0],\
               xlabel=xlabel, ylabel=ylabel)
 
@@ -514,10 +581,10 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
          if plotvars.rows >= 3: pad=0.25
          if plotvars.rows >= 5: pad=0.3
          cbar=plotvars.master_plot.colorbar(cfill, orientation=colorbar_orientation, aspect=75, \
-                                            pad=pad, ticks=colorbar_labels, drawedges=True, \
+                                            pad=pad, ticks=colorbar_labels, \
                                             shrink=colorbar_shrink)
          cbar.set_label(colorbar_title, fontsize=plotvars.fontsize)
-         cbar.set_ticklabels([str(i) for i in clevs]) #Bug in Matplotlib colorbar labelling
+         cbar.set_ticklabels([str(i) for i in colorbar_labels]) #Bug in Matplotlib colorbar labelling
          for t in cbar.ax.get_xticklabels():
             t.set_fontsize(plotvars.fontsize)
 
@@ -536,6 +603,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
       ylabel='Time'
       if ptype ==3: xlabel='Longitude'
       if ptype ==4: xlabel='Latitude'
+      user_gset=plotvars.user_gset
 
       ref_time=time_opts[0]
       ref_calendar=time_opts[1]
@@ -570,7 +638,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
 
       #Set plot limits
       if plotvars.user_plot == 0: gopen(user_plot=0)
-      gset(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax)
+      gset(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax, user_gset=user_gset)
 
       #Revert to time strings if set
       if [tmin, tmax].count(None) == 0:
@@ -651,10 +719,10 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
          if plotvars.rows >= 3: pad=0.25
          if plotvars.rows >= 5: pad=0.3
          cbar=plotvars.master_plot.colorbar(cfill, orientation=colorbar_orientation, aspect=75, \
-                                            pad=pad, ticks=colorbar_labels, drawedges=True, \
+                                            pad=pad, ticks=colorbar_labels, \
                                             shrink=colorbar_shrink)
          cbar.set_label(colorbar_title, fontsize=plotvars.fontsize)
-         cbar.set_ticklabels([str(i) for i in clevs]) #Bug in Matplotlib colorbar labelling
+         cbar.set_ticklabels([str(i) for i in colorbar_labels]) #Bug in Matplotlib colorbar labelling
          for t in cbar.ax.get_xticklabels():
             t.set_fontsize(plotvars.fontsize)
 
@@ -669,6 +737,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
    if ptype == 0: 
       if verbose: print 'con - making an other plot'
       if plotvars.user_plot == 0: gopen(user_plot=0)
+      user_gset=plotvars.user_gset
 
       #Work out axes if none are supplied
       if [plotvars.xmin, plotvars.xmax, plotvars.ymin, plotvars.ymax].count(None) > 0:
@@ -726,10 +795,10 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
          if plotvars.rows >= 3: pad=0.25
          if plotvars.rows >= 5: pad=0.3
          cbar=plotvars.master_plot.colorbar(cfill, orientation=colorbar_orientation, aspect=75, \
-                                            pad=pad, ticks=colorbar_labels, drawedges=True, \
+                                            pad=pad, ticks=colorbar_labels, \
                                             shrink=colorbar_shrink)
          cbar.set_label(colorbar_title, fontsize=plotvars.fontsize)
-         cbar.set_ticklabels([str(i) for i in clevs]) #Bug in Matplotlib colorbar labelling
+         cbar.set_ticklabels([str(i) for i in colorbar_labels]) #Bug in Matplotlib colorbar labelling
          for t in cbar.ax.get_xticklabels():
             t.set_fontsize(plotvars.fontsize)
 
@@ -746,8 +815,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
 
    if plotvars.user_plot == 0:       
       if verbose: print 'con - saving or viewing plot'
-      gset()
-      cscale()
+      gset(user_gset=0)
       gclose()
   
 
@@ -755,10 +823,10 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
 
 
 def mapset(lonmin=-180, lonmax=180, latmin=-90, latmax=90, proj='cyl', boundinglat=0,
-           lon_0=0, resolution='c'):
+           lon_0=0, resolution='c', user_mapset=1):
    """
     | mapset sets the mapping parameters.
-
+    |
     | lonmin=lonmin - minimum longitude
     | lonmax=lonmax - maximum longitude
     | latmin=latmin - minimum latitude
@@ -769,23 +837,25 @@ def mapset(lonmin=-180, lonmax=180, latmin=-90, latmax=90, proj='cyl', boundingl
     | lon_0=lon_0 - centre of desired map domain in a stereographic plot
     | resolution=resolution - the map resolution - can be one of 'c' (crude), 'l' (low), 
     |      'i' (intermediate), 'h' (high), 'f' (full) or 'None'
-
+    | user_mapset=user_mapset - variable to indicate whether a user call to mapset has been 
+    |             made. 
+    |
     | The default map plotting projection is the cyclindrical equidistant projection from 
     | -180 to 180 in longitude and -90 to 90 in latitude. To change the map view in this 
     | projection to over the United Kingdom, for example, you would use
     | mapset(lonmin=-6, lonmax=3, latmin=50, latmax=60) or mapset(-6, 3, 50, 60).
-
+    |
     | The limits are -360 to 720 in longitude so to look at the equatorial Pacific you 
     | could use
     | mapset(lonmin=90, lonmax=300, latmin=-30, latmax=30)
     | or
     | mapset(lonmin=-270, lonmax=-60, latmin=-30, latmax=30)
-
+    |
     | The proj parameter for the present accepts just two values - 'npstere' and 'spstere' 
     | for northern hemisphere or southern hemisphere polar stereographic projections. In 
     | addition to these the boundinglat parameter sets the edge of the viewable latitudes
     | and lat_0 sets the centre of desired map domain.
-
+    |
     | Map settings are persistent until a new call to mapset is made. To reset to the default
     | map settings use mapset().
 
@@ -802,6 +872,8 @@ def mapset(lonmin=-180, lonmax=180, latmin=-90, latmax=90, proj='cyl', boundingl
    plotvars.lon_0=lon_0
    plotvars.resolution=resolution 
    set_map()   
+
+
 
   
 
@@ -1039,7 +1111,7 @@ def axes(xticks=None, xticklabels=None, yticks=None, yticklabels=None,\
    if title is not None: plotvars.plot.set_title(title, y=1.03, fontsize=plotvars.fontsize)
     
 
-def gset(xmin=None, xmax=None, ymin=None, ymax=None, xlog=None, ylog=None, default_limits=0):
+def gset(xmin=None, xmax=None, ymin=None, ymax=None, xlog=None, ylog=None, user_gset=1):
    """
     | Set plot limits for all non longitude-latitide plots. 
     | xmin, xmax, ymin, ymax are all needed to set the plot limits.  
@@ -1068,6 +1140,7 @@ def gset(xmin=None, xmax=None, ymin=None, ymax=None, xlog=None, ylog=None, defau
 
    plotvars.xlog=xlog
    plotvars.ylog=ylog
+   plotvars.user_gset=user_gset
  
    if [xmin,xmax,ymin,ymax].count(None) == 4:
       plotvars.xmin=None
@@ -1076,6 +1149,7 @@ def gset(xmin=None, xmax=None, ymin=None, ymax=None, xlog=None, ylog=None, defau
       plotvars.ymax=None
       plotvars.xlog=None
       plotvars.ylog=None
+      plotvars.user_gset=0
       return
 
    if [xmin,xmax,ymin,ymax].count(None) > 0:
@@ -1183,6 +1257,7 @@ def gclose(view=True):
 
    """
 
+   #Reset the user_plot variable to off
    plotvars.user_plot=0
 
    file=plotvars.file
@@ -1238,7 +1313,7 @@ def gpos(pos=1):
 
    if plotvars.user_plot == 0: 
       gset()
-      cscale()
+
   
 
 #######################################
@@ -1474,14 +1549,6 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None):
      |
      |
    """
-
-
-   #Check if this is a cf.Fieldlist
-   if isinstance(f, cf.FieldList):
-      errstr='\n cf_data_assign error - passed field is a cf.Fieldlist\n'
-      errstr=errstr+'Please pass one field for contouring\n'
-      errstr=errstr+'i.e. f[0]\n'
-      raise  Warning(errstr) 
 
 
    #Check input data has the correct number of dimensions
@@ -1740,12 +1807,14 @@ def cscale(cmap=None, ncols=None, white=None, below=None, above=None):
    | 
    |  
    """   
+
+
    #If no map requested reset to default  
    if cmap == None:
       cmap='scale1'
-      plotvars.user_cs=0
+      plotvars.user_cscale=0
    else:
-      plotvars.user_cs=1
+      plotvars.user_cscale=1
 
    if cmap == 'scale1' or cmap == 'cosam':
       if cmap == 'scale1': myscale=cscale1
@@ -1762,14 +1831,6 @@ def cscale(cmap=None, ncols=None, white=None, below=None, above=None):
          g.append(rgb[1])
          b.append(rgb[2])  
 
-      #if cmap == 'cosam':
-      #   for myhex in cosam:
-      #      myhex=myhex.lstrip('#')
-      #      mylen=len(myhex)
-      #      rgb=tuple(int(myhex[i:i+mylen/3], 16) for i in range(0, mylen, mylen/3))
-      #      r.append(rgb[0])
-      #      g.append(rgb[1])
-      #      b.append(rgb[2])  
 
    else:
       import distutils.sysconfig as sysconfig
