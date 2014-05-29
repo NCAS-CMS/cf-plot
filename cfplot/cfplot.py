@@ -85,8 +85,13 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
     | lines=True - draw contour lines and labels
     | line_labels=True - label contour lines
     | title=title - title for the plot
-    | ptype=0 - plot type - not needed for cf fields.  1 = longitude-latitude,
-    |           2 = latitude - height, 3 = no specific plot type
+    | ptype=0 - plot type - not needed for cf fields.
+    |                       0 = no specific plot type,
+    |                       1 = longitude-latitude,
+    |                       2 = latitude - height, 
+    |                       3 = longitude - height, 
+    |                       4 = latitude - time,
+    |                       5 = longitude - time
     | negative_linestyle=None - set to 1 to get dashed negative contours
     | zero_thick=None - add a thick zero contour line. Set to 3 for example.
     | blockfill=None - set to 1 for a blockfill plot
@@ -109,7 +114,6 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
      None
 
    """ 
-
 
    #Extract required data for contouring
    #If a cf-python field
@@ -283,7 +287,6 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
    #Catch null titles
    if (title == None): title=''
   
-
 
 
  
@@ -471,11 +474,13 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
    ########################
    if ptype == 2:
       if verbose: print 'con - making a latitude-pressure plot'
+
+
       if plotvars.user_plot == 0: gopen(user_plot=0)
-      user_gset=plotvars.user_gset
 
       #Set plot limits
       #if [plotvars.xmin, plotvars.xmax, plotvars.ymin, plotvars.ymax].count(None) == 4:
+      user_gset=plotvars.user_gset
       if user_gset == 0:
          #Program selected data plot limits
          xmin=np.min(x)
@@ -496,6 +501,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
             ymin=plotvars.ymax
             ymax=plotvars.ymin
 
+
       xstep=None
       if (xmin == -90 and xmax == 90): xstep=30
       ystep=None
@@ -509,12 +515,14 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
       if ylog != 1:   
          if ytype == 1: 
             gset(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax, user_gset=user_gset)
-            axes(xticks=gvals(dmin=xmin, dmax=xmax, tight=1, mystep=xstep)[0],\
+            latticks,latlabels=mapaxis(min=xmin, max=xmax, type=2)
+            axes(xticks=latticks, xticklabels=latlabels,\
                  yticks=gvals(dmin=ymin, dmax=ymax, tight=1, mystep=ystep)[0],\
                  xlabel=xlabel, ylabel=ylabel)
          else: 
             gset(xmin=xmin, xmax=xmax, ymin=ymax, ymax=ymin, user_gset=user_gset)
-            axes(xticks=gvals(dmin=xmin, dmax=xmax, tight=1, mystep=xstep, mod=0)[0],\
+            latticks,latlabels=mapaxis(min=xmin, max=xmax, type=2)
+            axes(xticks=latticks, xticklabels=latlabels,\
                  yticks=gvals(dmin=ymin, dmax=ymax, tight=1, mystep=ystep, mod=0)[0],\
                  xlabel=xlabel, ylabel=ylabel)  
 
@@ -522,8 +530,137 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
       if ylog == 1:
          if ymin == 0: ymin=1
          gset(xmin=xmin, xmax=xmax, ymin=ymax, ymax=ymin, ylog=1, user_gset=user_gset)
-         axes(xticks=gvals(dmin=xmin, dmax=xmax, tight=1, mystep=xstep)[0],\
+         latticks,latlabels=mapaxis(min=xmin, max=xmax, type=2)
+         axes(xticks=latticks, xticklabels=latlabels,\
               xlabel=xlabel, ylabel=ylabel)
+
+
+      #Get colour scale for use in contouring
+      #If colour bar extensions are enabled then the colour map goes
+      #from 1 to ncols-2.  The colours for the colour bar extensions are then
+      #changed on the colourbar and plot after the plot is made
+      cscale_ncols=np.size(plotvars.cs)
+      colmap=cscale_get_map()
+
+
+      #Filled contours
+      if fill == True or blockfill == 1:
+         cfill=plotvars.plot.contourf(x,y,field*fmult,clevs, \
+               extend=plotvars.levels_extend, colors=colmap)
+
+         #add colour scale extensions if required
+         if (plotvars.levels_extend == 'both' or plotvars.levels_extend == 'min'):
+            cfill.cmap.set_under(plotvars.cs[0])
+         if (plotvars.levels_extend == 'both' or plotvars.levels_extend == 'max'):
+            cfill.cmap.set_over(plotvars.cs[cscale_ncols-1])
+  
+      #Block fill
+      if blockfill == 1:   
+         if isinstance(f[0], cf.Field):  
+            if getattr(f[0].coord('lat'), 'hasbounds', False):
+               xpts=np.squeeze(f.coord('lat').bounds.array)[:,0]
+               ypts=np.squeeze(f.coord('pressure').bounds.array)[:,0]   
+               bfill(f=field_orig*fmult, x=xpts, y=ypts, clevs=clevs, lonlat=0, bound=1)  
+            else:
+               bfill(f=field_orig*fmult, x=x_orig, y=y_orig, clevs=clevs, lonlat=0, bound=0)  
+
+         else:
+            bfill(f=field_orig*fmult, x=x_orig, y=y_orig, clevs=clevs, lonlat=0, bound=0)  
+ 
+
+
+      #Contour lines and labels
+      if lines == True: 
+         cs=plotvars.plot.contour(x,y,field*fmult,clevs,colors='k')
+         if line_labels == True:  
+            nd=ndecs(clevs)
+            fmt='%d'
+            if nd != 0: fmt='%1.'+str(nd)+'f'
+            plotvars.plot.clabel(cs, fmt=fmt, colors = 'k', fontsize=plotvars.fontsize) 
+
+            #Thick zero contour line
+            if zero_thick is not None:
+               cs = plotvars.plot.contour(x,y,field*fmult,[1e-32, 0],colors='k', linewidths=zero_thick)
+     
+  
+
+      #Colorbar
+      if colorbar == 1:  
+
+         pad=0.15
+         if plotvars.rows >= 3: pad=0.25
+         if plotvars.rows >= 5: pad=0.3
+         cbar=plotvars.master_plot.colorbar(cfill, orientation=colorbar_orientation, aspect=75, \
+                                            pad=pad, ticks=colorbar_labels, \
+                                            shrink=colorbar_shrink)
+         cbar.set_label(colorbar_title, fontsize=plotvars.fontsize)
+         cbar.set_ticklabels([str(i) for i in colorbar_labels]) #Bug in Matplotlib colorbar labelling
+         for t in cbar.ax.get_xticklabels():
+            t.set_fontsize(plotvars.fontsize)
+
+
+      #Title
+      plotvars.plot.set_title(title, y=1.03, fontsize=plotvars.fontsize)
+
+
+
+   ########################
+   # Longitude-pressure plot
+   ########################
+   if ptype == 3:
+      if verbose: print 'con - making a longitude-pressure plot'
+      if plotvars.user_plot == 0: gopen(user_plot=0)
+      user_gset=plotvars.user_gset
+
+      #Set plot limits
+      if user_gset == 0:
+         #Program selected data plot limits
+         xmin=np.min(x)
+         if xmin < -170 and xmin >= -180: xmin=-180
+         xmax=np.max(x)
+         if xmax > 170 and xmax <= 180: xmax=180 
+         ymin=np.min(y)
+         if ymin <= 10: ymin=0
+         ymax=np.max(y)
+      else:
+         #User specified plot limits
+         xmin=plotvars.xmin
+         xmax=plotvars.xmax
+         if plotvars.ymin < plotvars.ymax: 
+            ymin=plotvars.ymin
+            ymax=plotvars.ymax
+         else:
+            ymin=plotvars.ymax
+            ymax=plotvars.ymin
+
+      xstep=None
+      if (xmin == -180 and xmax == 180): xstep=60
+      ystep=None
+      if (ymax == 1000): ystep=100
+      if (ymax == 100000): ystep=10000
+
+      ytype=0 #pressure or similar y axis
+      if 'theta' in ylabel.split(' '): ytype=1
+
+      #Set plot limits and draw axes
+      lonticks,lonlabels=mapaxis(min=xmin, max=xmax, type=1)
+      if ylog != 1:   
+         if ytype == 1: 
+            gset(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax, user_gset=user_gset)         
+            axes(xticks=lonticks, xticklabels=lonlabels,\
+                 yticks=gvals(dmin=ymin, dmax=ymax, tight=1, mystep=ystep)[0],\
+                 xlabel=xlabel, ylabel=ylabel)
+         else: 
+            gset(xmin=xmin, xmax=xmax, ymin=ymax, ymax=ymin, user_gset=user_gset)
+            axes(xticks=lonticks, xticklabels=lonlabels,\
+                 yticks=gvals(dmin=ymin, dmax=ymax, tight=1, mystep=ystep, mod=0)[0],\
+                 xlabel=xlabel, ylabel=ylabel)  
+
+      #Log y axis 
+      if ylog == 1:
+         if ymin == 0: ymin=1
+         gset(xmin=xmin, xmax=xmax, ymin=ymax, ymax=ymin, ylog=1, user_gset=user_gset)
+         axes(xticks=lonticks, xticklabels=lonlabels, xlabel=xlabel, ylabel=ylabel)
 
       #Get colour scale for use in contouring
       #If colour bar extensions are enabled then the colour map goes
@@ -598,11 +735,11 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
    #################
    # Hovmuller plots
    #################
-   if (ptype == 3 or ptype ==4): 
+   if (ptype == 4 or ptype == 5): 
       if verbose: print 'con - making a Hovmuller plot'
       ylabel='Time'
-      if ptype ==3: xlabel='Longitude'
-      if ptype ==4: xlabel='Latitude'
+      if ptype == 4: xlabel='Longitude'
+      if ptype == 5: xlabel='Latitude'
       user_gset=plotvars.user_gset
 
       ref_time=time_opts[0]
@@ -654,8 +791,8 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
       time_ticks=T.array
       time_tick_labels=T.year.array
 
-      if ptype == 3: xticks, xticklabels=mapaxis(min=xmin, max=xmax, type=1)
-      if ptype == 4: xticks, xticklabels=mapaxis(min=xmin, max=xmax, type=2)
+      if ptype == 4: xticks, xticklabels=mapaxis(min=xmin, max=xmax, type=1)
+      if ptype == 5: xticks, xticklabels=mapaxis(min=xmin, max=xmax, type=2)
 
       #Draw axes
       axes(xticks=xticks, xticklabels=xticklabels,\
@@ -815,14 +952,14 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
 
    if plotvars.user_plot == 0:       
       if verbose: print 'con - saving or viewing plot'
-      gset(user_gset=0)
+      #gset(user_gset=0)
       gclose()
   
 
 
 
 
-def mapset(lonmin=-180, lonmax=180, latmin=-90, latmax=90, proj='cyl', boundinglat=0,
+def mapset(lonmin=None, lonmax=None, latmin=None, latmax=None, proj='cyl', boundinglat=0,
            lon_0=0, resolution='c', user_mapset=1):
    """
     | mapset sets the mapping parameters.
@@ -863,6 +1000,21 @@ def mapset(lonmin=-180, lonmax=180, latmin=-90, latmax=90, proj='cyl', boundingl
      None
    """
 
+   if [lonmin,lonmax,latmin,latmax].count(None) == 4:
+      plotvars.lonmin=-180
+      plotvars.lonmax=180
+      plotvars.latmin=-90 
+      plotvars.latmax=90
+      plotvars.user_mapset=0
+      return
+
+   if lonmin is None: lonmin=-180
+   if lonmax is None: lonmin=180
+   if latmin is None: lonmin=-90
+   if latmax is None: lonmin=90
+
+
+
    plotvars.lonmin=lonmin
    plotvars.lonmax=lonmax
    plotvars.latmin=latmin 
@@ -871,6 +1023,7 @@ def mapset(lonmin=-180, lonmax=180, latmin=-90, latmax=90, proj='cyl', boundingl
    plotvars.boundinglat=boundinglat 
    plotvars.lon_0=lon_0
    plotvars.resolution=resolution 
+   plotvars.user_mapset=user_mapset
    set_map()   
 
 
@@ -1311,8 +1464,9 @@ def gpos(pos=1):
    plotvars.plot=plotvars.master_plot.add_subplot(plotvars.rows, plotvars.columns, pos)
    plotvars.plot.tick_params(which='both', direction='out')
 
-   if plotvars.user_plot == 0: 
-      gset()
+   #if plotvars.user_plot == 0: 
+   #   if plotvars.user_gset == 1: gset(user_gset=plotvars.user_gset)
+   #   gset(user_gset=plotvars.user_gset)
 
   
 
@@ -1689,8 +1843,25 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None):
             yunits=str(getattr(f.item(mydim), 'Units', ''))
             ylabel=name + ' (' + yunits + ')'
 
-   if (np.size(lons) > 1 and np.size(time) > 1):
+
+   if (np.size(lons) > 1 and np.size(height) > 1): 
       ptype=3
+      x=lons
+      y=height
+      for mydim in f.items():
+         name=cf_var_name(field=f, dim=mydim)
+         if name[0:3] == 'lon': 
+            xunits=str(getattr(f.item(mydim), 'Units', ''))
+            if (xunits in lon_units): xunits='degrees'
+            xlabel=name + ' (' + xunits + ')'
+         if name[0:1] == 'p' or name[0:5] == 'theta': 
+            yunits=str(getattr(f.item(mydim), 'Units', ''))
+            ylabel=name + ' (' + yunits + ')'
+
+
+
+   if (np.size(lons) > 1 and np.size(time) > 1):
+      ptype=4
       x=lons
       y=time
       ref_time=f.item('time').units
@@ -1699,7 +1870,7 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None):
       time_opts=[ref_time,ref_calendar,ref_time_origin]
 
    if np.size(lats) > 1 and np.size(time) > 1:
-      ptype=4     
+      ptype=5     
       x=lats
       y=time
       ref_time=f.item('time').units
