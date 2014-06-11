@@ -914,15 +914,11 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
       #Set plot limits and draw axes
       gset(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax, user_gset=user_gset)    
          
-      print 'plotting axes'
-      print 'xmin, xmax are', xmin, xmax
-      print 'ymin, ymax are', ymin, ymax
       
       xticks=gvals(dmin=xmin, dmax=xmax, mystep=(xmax-xmin)/10.0, tight=1, mod=0)[0]
       if ymin < ymax: yticks=gvals(dmin=ymin, dmax=ymax, mystep=(ymax-ymin)/10.0, tight=1, mod=0)[0]
       if ymax < ymin: yticks=gvals(dmin=ymax, dmax=ymin, mystep=(ymin-ymax)/10.0, tight=1, mod=0)[0]
       axes_plot(xticks=xticks, yticks=yticks, xlabel=xlabel, ylabel=ylabel)
-      print 'after plotting axes'
 
 
       #Get colour scale for use in contouring
