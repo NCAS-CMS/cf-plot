@@ -60,10 +60,14 @@ plotvars=pvars(lonmin=-180, lonmax=180, latmin=-90, latmax=90, proj='cyl', \
                xlog=None, ylog=None,\
                rows=1, columns=1, file=None, orientation='landscape',\
                user_mapset=0, user_gset=0, user_cscale=0, user_levs=0, user_plot=0,\
-               master_plot=None, plot=None, fontsize=None, cs=cscale1, \
-               mymap=None)
-       
-
+               master_plot=None, plot=None, text_fontsize=None, cs=cscale1, \
+               mymap=None, \
+               xticks=None, yticks=None, xticklabels=None, yticklabels=None, \
+               xstep=None, ystep=None,xlabel=None, ylabel=None, title=None, \
+               title_fontsize=None, axis_label_fontsize=None, \
+               text_fontweight='normal', axis_label_fontweight='normal', \
+               title_fontweight='normal', \
+               continent_thickness=None, continent_color=None)
 
 
 def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=None, \
@@ -109,7 +113,6 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
     | ylog=None - logarithmic y axis
     | verbose=None - change to 1 to get a verbose listing of what con is doing
     |
-    |
     :Returns:
      None
 
@@ -119,17 +122,18 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
    #If a cf-python field
    if isinstance(f[0], cf.Field):
       #Check if this is a cf.Fieldlist and reject if it is
-      if isinstance(f, cf.FieldList):
-         if len(f) >1:
-            errstr='\n cf_data_assign error - passed field is a cf.Fieldlist\n'
-            errstr=errstr+'Please pass one field for contouring\n'
-            errstr=errstr+'i.e. f[0]\n'
-            raise  Warning(errstr) 
+      if len(f) > 1:
+         errstr='\n cf_data_assign error - passed field is a cf.Fieldlist\n'
+         errstr=errstr+'Please pass one field for contouring\n'
+         errstr=errstr+'i.e. f[0]\n'
+         raise  Warning(errstr) 
 
       #Extract data
       if verbose: print 'con - calling cf_data_assign'
+      f=f[0]
       field, x, y, ptype, colorbar_title, xlabel, ylabel, time_opts=\
-             cf_data_assign(f[0], colorbar_title, verbose=verbose)
+             cf_data_assign(f, colorbar_title, verbose=verbose)
+
    else:
       if verbose: print 'con - using user assigned data'
       field=f #field data passed in as f
@@ -221,10 +225,10 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
          plotvars.user_cscale=0 #Revert to standard colour scale after plot
 
    else:
-      #Automatic levels     
+      #Automatic levels  
       if verbose: print 'con - generating automatic contour levels'
       clevs, mult = gvals(dmin=np.min(field), dmax=np.max(field), tight=0)
-      fmult=10**-mult
+      fmult=10**-mult      
 
       #Adjust colour table
       if plotvars.user_cscale == 0:
@@ -285,9 +289,23 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
 
 
    #Catch null titles
-   if (title == None): title=''
+   if title is None: title=''
+   if plotvars.title is not None: title=plotvars.title
   
-
+   #Set plot variables
+   title_fontsize=plotvars.title_fontsize
+   text_fontsize=plotvars.text_fontsize
+   axis_label_fontsize=plotvars.axis_label_fontsize
+   continent_thickness=plotvars.continent_thickness
+   continent_color=plotvars.continent_color
+   if title_fontsize is None: title_fontsize=15
+   if text_fontsize is None: text_fontsize=11
+   if axis_label_fontsize is None: axis_label_fontsize=11
+   text_fontweight=plotvars.text_fontweight
+   title_fontweight=plotvars.title_fontweight
+   axis_label_fontweight=plotvars.axis_label_fontweight
+   if continent_thickness is None: continent_thickness=1.5
+   if continent_color is None: continent_color='k'
 
  
    ########## 
@@ -417,7 +435,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
             nd=ndecs(clevs)
             fmt='%d'
             if nd != 0: fmt='%1.'+str(nd)+'f'
-            plotvars.plot.clabel(cs, fmt=fmt, colors = 'k', fontsize=plotvars.fontsize) 
+            plotvars.plot.clabel(cs, fmt=fmt, colors = 'k', fontsize=text_fontsize, fontweight=text_fontweight) 
 
          #Thick zero contour line   
          if zero_thick is not None:
@@ -430,8 +448,8 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
          if verbose: print 'con - adding cylindrical axes'
          lonticks,lonlabels=mapaxis(min=plotvars.lonmin, max=plotvars.lonmax, type=1)
          latticks,latlabels=mapaxis(min=plotvars.latmin, max=plotvars.latmax, type=2)
-         axes(xticks=lonticks, xticklabels=lonlabels)
-         axes(yticks=latticks, yticklabels=latlabels)
+         axes_plot(xticks=lonticks, xticklabels=lonlabels)
+         axes_plot(yticks=latticks, yticklabels=latlabels)
    
       if plotvars.proj == 'npstere' or plotvars.proj == 'spstere': 
          if verbose: print 'con - adding stereograpic axes'
@@ -453,19 +471,21 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
          cbar=plotvars.master_plot.colorbar(cfill, ticks=colorbar_labels,\
                                             orientation=colorbar_orientation, aspect=75, pad=pad,\
                                             shrink=colorbar_shrink)
-         cbar.set_label(colorbar_title, fontsize=plotvars.fontsize)
+         cbar.set_label(colorbar_title, fontsize=text_fontsize, fontweight=title_fontweight)
          #Bug in Matplotlib colorbar labelling
          #With clevs=[-1, 1, 10000, 20000, 30000, 40000, 50000, 60000]
          #Labels are [0, 2, 10001, 20001, 30001, 40001, 50001, 60001]
          #With a +1 near to the colorbar label
          cbar.set_ticklabels([str(i) for i in colorbar_labels]) 
          
-         for t in cbar.ax.get_xticklabels(): t.set_fontsize(plotvars.fontsize)
+         for t in cbar.ax.get_xticklabels(): 
+            t.set_fontsize(text_fontsize)
+            t.set_fontweight(text_fontweight)
 
 
       #Coastlines and title
-      mymap.drawcoastlines(linewidth=1.0)
-      plotvars.plot.set_title(title, y=1.03, fontsize=plotvars.fontsize)
+      mymap.drawcoastlines(linewidth=continent_thickness, color=continent_color)
+      plotvars.plot.set_title(title, y=1.03, fontsize=title_fontsize, fontweight=title_fontweight)
 
 
   
@@ -516,13 +536,13 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
          if ytype == 1: 
             gset(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax, user_gset=user_gset)
             latticks,latlabels=mapaxis(min=xmin, max=xmax, type=2)
-            axes(xticks=latticks, xticklabels=latlabels,\
+            axes_plot(xticks=latticks, xticklabels=latlabels,\
                  yticks=gvals(dmin=ymin, dmax=ymax, tight=1, mystep=ystep)[0],\
                  xlabel=xlabel, ylabel=ylabel)
          else: 
             gset(xmin=xmin, xmax=xmax, ymin=ymax, ymax=ymin, user_gset=user_gset)
             latticks,latlabels=mapaxis(min=xmin, max=xmax, type=2)
-            axes(xticks=latticks, xticklabels=latlabels,\
+            axes_plot(xticks=latticks, xticklabels=latlabels,\
                  yticks=gvals(dmin=ymin, dmax=ymax, tight=1, mystep=ystep, mod=0)[0],\
                  xlabel=xlabel, ylabel=ylabel)  
 
@@ -531,7 +551,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
          if ymin == 0: ymin=1
          gset(xmin=xmin, xmax=xmax, ymin=ymax, ymax=ymin, ylog=1, user_gset=user_gset)
          latticks,latlabels=mapaxis(min=xmin, max=xmax, type=2)
-         axes(xticks=latticks, xticklabels=latlabels,\
+         axes_plot(xticks=latticks, xticklabels=latlabels,\
               xlabel=xlabel, ylabel=ylabel)
 
 
@@ -576,7 +596,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
             nd=ndecs(clevs)
             fmt='%d'
             if nd != 0: fmt='%1.'+str(nd)+'f'
-            plotvars.plot.clabel(cs, fmt=fmt, colors = 'k', fontsize=plotvars.fontsize) 
+            plotvars.plot.clabel(cs, fmt=fmt, colors = 'k', fontsize=text_fontsize, fontweight=text_fontweight) 
 
             #Thick zero contour line
             if zero_thick is not None:
@@ -593,14 +613,14 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
          cbar=plotvars.master_plot.colorbar(cfill, orientation=colorbar_orientation, aspect=75, \
                                             pad=pad, ticks=colorbar_labels, \
                                             shrink=colorbar_shrink)
-         cbar.set_label(colorbar_title, fontsize=plotvars.fontsize)
+         cbar.set_label(colorbar_title, fontsize=text_fontsize, fontweight=title_fontweight)
          cbar.set_ticklabels([str(i) for i in colorbar_labels]) #Bug in Matplotlib colorbar labelling
          for t in cbar.ax.get_xticklabels():
-            t.set_fontsize(plotvars.fontsize)
-
+            t.set_fontsize(text_fontsize)
+            t.set_fontweight(text_fontweight)
 
       #Title
-      plotvars.plot.set_title(title, y=1.03, fontsize=plotvars.fontsize)
+      plotvars.plot.set_title(title, y=1.03, fontsize=title_fontsize, fontweight=title_fontweight)
 
 
 
@@ -647,12 +667,12 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
       if ylog != 1:   
          if ytype == 1: 
             gset(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax, user_gset=user_gset)         
-            axes(xticks=lonticks, xticklabels=lonlabels,\
+            axes_plot(xticks=lonticks, xticklabels=lonlabels,\
                  yticks=gvals(dmin=ymin, dmax=ymax, tight=1, mystep=ystep)[0],\
                  xlabel=xlabel, ylabel=ylabel)
          else: 
             gset(xmin=xmin, xmax=xmax, ymin=ymax, ymax=ymin, user_gset=user_gset)
-            axes(xticks=lonticks, xticklabels=lonlabels,\
+            axes_plot(xticks=lonticks, xticklabels=lonlabels,\
                  yticks=gvals(dmin=ymin, dmax=ymax, tight=1, mystep=ystep, mod=0)[0],\
                  xlabel=xlabel, ylabel=ylabel)  
 
@@ -660,7 +680,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
       if ylog == 1:
          if ymin == 0: ymin=1
          gset(xmin=xmin, xmax=xmax, ymin=ymax, ymax=ymin, ylog=1, user_gset=user_gset)
-         axes(xticks=lonticks, xticklabels=lonlabels, xlabel=xlabel, ylabel=ylabel)
+         axes_plot(xticks=lonticks, xticklabels=lonlabels, xlabel=xlabel, ylabel=ylabel)
 
       #Get colour scale for use in contouring
       #If colour bar extensions are enabled then the colour map goes
@@ -703,7 +723,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
             nd=ndecs(clevs)
             fmt='%d'
             if nd != 0: fmt='%1.'+str(nd)+'f'
-            plotvars.plot.clabel(cs, fmt=fmt, colors = 'k', fontsize=plotvars.fontsize) 
+            plotvars.plot.clabel(cs, fmt=fmt, colors = 'k', fontsize=text_fontsize, fontweight=text_fontweight) 
 
             #Thick zero contour line
             if zero_thick is not None:
@@ -720,14 +740,14 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
          cbar=plotvars.master_plot.colorbar(cfill, orientation=colorbar_orientation, aspect=75, \
                                             pad=pad, ticks=colorbar_labels, \
                                             shrink=colorbar_shrink)
-         cbar.set_label(colorbar_title, fontsize=plotvars.fontsize)
+         cbar.set_label(colorbar_title, fontsize=text_fontsize, fontweight=title_fontweight)
          cbar.set_ticklabels([str(i) for i in colorbar_labels]) #Bug in Matplotlib colorbar labelling
          for t in cbar.ax.get_xticklabels():
-            t.set_fontsize(plotvars.fontsize)
-
+            t.set_fontsize(text_fontsize)
+            t.set_fontweight(text_fontweight)
 
       #Title
-      plotvars.plot.set_title(title, y=1.03, fontsize=plotvars.fontsize)
+      plotvars.plot.set_title(title, y=1.03, fontsize=title_fontsize, fontweight=title_fontweight)
 
 
 
@@ -795,7 +815,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
       if ptype == 5: xticks, xticklabels=mapaxis(min=xmin, max=xmax, type=2)
 
       #Draw axes
-      axes(xticks=xticks, xticklabels=xticklabels,\
+      axes_plot(xticks=xticks, xticklabels=xticklabels,\
            yticks=time_ticks, yticklabels=time_tick_labels,\
            xlabel=xlabel, ylabel=ylabel)
 
@@ -841,7 +861,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
             nd=ndecs(clevs)
             fmt='%d'
             if nd != 0: fmt='%1.'+str(nd)+'f'
-            plotvars.plot.clabel(cs, fmt=fmt, colors = 'k', fontsize=plotvars.fontsize) 
+            plotvars.plot.clabel(cs, fmt=fmt, colors = 'k', fontsize=text_fontsize, fontweight=text_fontweight) 
 
             #Thick zero contour line
             if zero_thick is not None:
@@ -858,14 +878,14 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
          cbar=plotvars.master_plot.colorbar(cfill, orientation=colorbar_orientation, aspect=75, \
                                             pad=pad, ticks=colorbar_labels, \
                                             shrink=colorbar_shrink)
-         cbar.set_label(colorbar_title, fontsize=plotvars.fontsize)
+         cbar.set_label(colorbar_title, fontsize=text_fontsize, fontweight=title_fontweight)
          cbar.set_ticklabels([str(i) for i in colorbar_labels]) #Bug in Matplotlib colorbar labelling
          for t in cbar.ax.get_xticklabels():
-            t.set_fontsize(plotvars.fontsize)
-
+            t.set_fontsize(text_fontsize)
+            t.set_fontweight(text_fontweight)
 
       #Title
-      plotvars.plot.set_title(title, y=1.03, fontsize=plotvars.fontsize)
+      plotvars.plot.set_title(title, y=1.03, fontsize=title_fontsize, fontweight=title_fontweight)
 
 
    ############
@@ -878,13 +898,32 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
 
       #Work out axes if none are supplied
       if [plotvars.xmin, plotvars.xmax, plotvars.ymin, plotvars.ymax].count(None) > 0:
-         xmin=0
-         xmax=np.shape(field)[0]
-         xstep=(xmax-xmin)/5
-         ymin=0
-         ymax=np.shape(field)[1]
-         ystep=(ymax-ymin)/5  
-   
+         xmin=np.min(x)
+         xmax=np.max(x)
+         ymin=np.min(y)
+         ymax=np.max(y)
+      else:
+         xmin=plotvars.xmin
+         xmax=plotvars.xmax
+         ymin=plotvars.ymin
+         ymax=plotvars.ymax
+
+      xstep=(xmax-xmin)/10.0
+      ystep=(ymax-ymin)/10.0
+
+      #Set plot limits and draw axes
+      gset(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax, user_gset=user_gset)    
+         
+      print 'plotting axes'
+      print 'xmin, xmax are', xmin, xmax
+      print 'ymin, ymax are', ymin, ymax
+      
+      xticks=gvals(dmin=xmin, dmax=xmax, mystep=(xmax-xmin)/10.0, tight=1, mod=0)[0]
+      if ymin < ymax: yticks=gvals(dmin=ymin, dmax=ymax, mystep=(ymax-ymin)/10.0, tight=1, mod=0)[0]
+      if ymax < ymin: yticks=gvals(dmin=ymax, dmax=ymin, mystep=(ymin-ymax)/10.0, tight=1, mod=0)[0]
+      axes_plot(xticks=xticks, yticks=yticks, xlabel=xlabel, ylabel=ylabel)
+      print 'after plotting axes'
+
 
       #Get colour scale for use in contouring
       #If colour bar extensions are enabled then the colour map goes
@@ -918,7 +957,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
             nd=ndecs(clevs)
             fmt='%d'
             if nd != 0: fmt='%1.'+str(nd)+'f'
-            plotvars.plot.clabel(cs, fmt=fmt, colors = 'k', fontsize=plotvars.fontsize) 
+            plotvars.plot.clabel(cs, fmt=fmt, colors = 'k', fontsize=text_fontsize, fontweight=text_fontweight) 
    
          #Thick zero contour line
          if zero_thick is not None:
@@ -934,14 +973,14 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
          cbar=plotvars.master_plot.colorbar(cfill, orientation=colorbar_orientation, aspect=75, \
                                             pad=pad, ticks=colorbar_labels, \
                                             shrink=colorbar_shrink)
-         cbar.set_label(colorbar_title, fontsize=plotvars.fontsize)
+         cbar.set_label(colorbar_title, fontsize=text_fontsize, fontweight=title_fontweight)
          cbar.set_ticklabels([str(i) for i in colorbar_labels]) #Bug in Matplotlib colorbar labelling
          for t in cbar.ax.get_xticklabels():
-            t.set_fontsize(plotvars.fontsize)
-
+            t.set_fontsize(text_fontsize)
+            t.set_fontweight(text_fontweight)
 
       #Title
-      plotvars.plot.set_title(title, y=1.03, fontsize=plotvars.fontsize)
+      plotvars.plot.set_title(title, y=1.03, fontsize=title_fontsize, fontweight=title_fontweight)
 
 
 
@@ -1197,12 +1236,10 @@ def ndecs(data=None):
    return maxdecs
 
 
-
-
 def axes(xticks=None, xticklabels=None, yticks=None, yticklabels=None,\
-         xstep=None, ystep=None, xlabel=None, ylabel=None, title=None):	    
+         xstep=None, ystep=None, xlabel=None, ylabel=None, title=None):	  
    """
-    | axes is a function to specify axes plotting parameters. The xstep and ystep 
+    | axes is a function to set axes plotting parameters. The xstep and ystep 
     | parameters are used to label the axes starting at the left hand side and 
     | bottom of the plot respectively. For tighter control over labelling use 
     | xticks, yticks to specify the tick positions and xticklabels, yticklabels 
@@ -1217,6 +1254,56 @@ def axes(xticks=None, xticklabels=None, yticks=None, yticklabels=None,\
     | yticks=yticks - values for y ticks 
     | yticklabels=yticklabels - labels for y tick marks 
     | title=None - set title
+    |
+    | Use axes() to reset all the axes plotting attributes to the default.
+
+    :Returns:
+     None
+   """ 
+     
+   if [xticks,yticks,xticklabels,yticklabels,xstep,ystep,xlabel,ylabel,title].count(None) == 9:
+      plotvars.xticks=None
+      plotvars.yticks=None
+      plotvars.xticklabels=None
+      plotvars.yticklabels=None
+      plotvars.xstep=None
+      plotvars.ystep=None
+      plotvars.xlabel=None
+      plotvars.ylabel=None
+      plotvars.title=None
+      return
+
+   plotvars.xticks=xticks
+   plotvars.yticks=yticks
+   plotvars.xticklabels=xticklabels
+   plotvars.yticklabels=yticklabels
+   plotvars.xstep=xstep
+   plotvars.ystep=ystep
+   plotvars.xlabel=xlabel
+   plotvars.ylabel=ylabel
+   plotvars.title=title
+
+
+
+def axes_plot(xticks=None, xticklabels=None, yticks=None, yticklabels=None,\
+         xstep=None, ystep=None, xlabel=None, ylabel=None, title=None):	    
+   """
+    | axes_plot is a system function to specify axes plotting parameters. The xstep and ystep 
+    | parameters are used to label the axes starting at the left hand side and 
+    | bottom of the plot respectively. For tighter control over labelling use 
+    | xticks, yticks to specify the tick positions and xticklabels, yticklabels 
+    | to specify the associated labels.
+
+    | xstep=xstep - x axis step 
+    | ystep=ystep - y axis step 
+    | xlabel=xlabel - label for the x-axis 
+    | ylabel=ylabel - label for the y-axis 
+    | xticks=xticks - values for x ticks 
+    | xticklabels=xticklabels - labels for x tick marks 
+    | yticks=yticks - values for y ticks 
+    | yticklabels=yticklabels - labels for y tick marks 
+    | title=None - set title
+    |
 
     :Returns:
      None
@@ -1233,9 +1320,41 @@ def axes(xticks=None, xticklabels=None, yticks=None, yticklabels=None,\
       ymin=plotvars.ymin
       ymax=plotvars.ymax
  
- 
-   if xlabel is not None: plotvars.plot.set_xlabel(xlabel, fontsize=plotvars.fontsize)
-   if ylabel is not None: plotvars.plot.set_ylabel(ylabel, fontsize=plotvars.fontsize)
+   #Retrieve any user set axes parameters
+   if plotvars.xticks is not None: 
+      xticks=plotvars.xticks
+      if plotvars.xticklabels is None: xticklabels=None
+   if plotvars.yticks is not None: 
+      yticks=plotvars.yticks
+      if plotvars.yticklabels is None: yticklabels=None
+   if plotvars.xticklabels is not None: xticklabels=plotvars.xticklabels
+   if plotvars.yticklabels is not None: yticklabels=plotvars.yticklabels
+   if plotvars.xstep is not None: 
+      xstep=plotvars.xstep
+      xticks=None
+      xticklabels=None
+   if plotvars.ystep is not None: 
+      ystep=plotvars.ystep
+      yticks=None
+      yticklabels=None
+   
+   if plotvars.xlabel is not None: xlabel=plotvars.xlabel
+   if plotvars.ylabel is not None: ylabel=plotvars.ylabel
+   if plotvars.title is not None: title=plotvars.title   
+   title_fontsize=plotvars.title_fontsize
+   text_fontsize=plotvars.text_fontsize
+   axis_label_fontsize=plotvars.axis_label_fontsize
+   if title_fontsize is None: title_fontsize=15
+   if text_fontsize is None: text_fontsize=11
+   if axis_label_fontsize is None: axis_label_fontsize=11
+   axis_label_fontweight=plotvars.axis_label_fontweight
+   title_fontweight=plotvars.title_fontweight
+   text_fontweight=plotvars.text_fontweight
+
+   if xlabel is not None: plotvars.plot.set_xlabel(xlabel, fontsize=axis_label_fontsize, \
+                          fontweight=axis_label_fontweight)
+   if ylabel is not None: plotvars.plot.set_ylabel(ylabel, fontsize=axis_label_fontsize, \
+                          fontweight=axis_label_fontweight)
 
    if xstep is not None:
       ticks, mult=gvals(plotvars.xmin, plotvars.xmax, tight=1, mystep=xstep)
@@ -1254,14 +1373,17 @@ def axes(xticks=None, xticklabels=None, yticks=None, yticklabels=None,\
       if yticklabels is not None: plotvars.plot.set_yticklabels(yticklabels)  
 
 
-   #Set font size
+   #Set font size and weight
    for label in plotvars.plot.xaxis.get_ticklabels():
-      label.set_fontsize(plotvars.fontsize)
+      label.set_fontsize(axis_label_fontsize)
+      label.set_fontweight(axis_label_fontweight)
    for label in plotvars.plot.yaxis.get_ticklabels():
-      label.set_fontsize(plotvars.fontsize)
+      label.set_fontsize(axis_label_fontsize)
+      label.set_fontweight(axis_label_fontweight)
        
    #Title
-   if title is not None: plotvars.plot.set_title(title, y=1.03, fontsize=plotvars.fontsize)
+   if title is not None: 
+      plotvars.plot.set_title(title, y=1.03, fontsize=title_fontsize, fontweight=title_fontweight)
     
 
 def gset(xmin=None, xmax=None, ymin=None, ymax=None, xlog=None, ylog=None, user_gset=1):
@@ -1291,8 +1413,8 @@ def gset(xmin=None, xmax=None, ymin=None, ymax=None, xlog=None, ylog=None, user_
 
    """
 
-   plotvars.xlog=xlog
-   plotvars.ylog=ylog
+   #plotvars.xlog=xlog
+   #plotvars.ylog=ylog
    plotvars.user_gset=user_gset
  
    if [xmin,xmax,ymin,ymax].count(None) == 4:
@@ -1374,9 +1496,9 @@ def gopen(rows=1, columns=1, user_plot=1, file='python', \
   
    #Set fontsize
    if fontsize is None:
-      if rows*columns == 1: plotvars.fontsize=11
-      else: plotvars.fontsize=8
-   else: plotvars.fontsize=fontsize
+      if rows*columns == 1: plotvars.text_fontsize=11
+      else: plotvars.text_fontsize=8
+   else: plotvars.text_fontsize=fontsize
 
    #Set initial subplot
    gpos(pos=1)
@@ -1585,15 +1707,18 @@ def gvals(dmin=None, dmax=None, tight=0, mystep=None, mod=1):
     | 
    """
 
-
    if [dmin, dmax].count(None) > 0:
       errstr='\n gvals error - gvals must have dmin and dmax input\n'
-      raise  Warning(errstr)          
+      raise  Warning(errstr)         
 
-   if dmin > dmax:
-      errstr='\n gvals error - gvals must have dmin must be less than dmax'
-      errstr=errstr+'\n input dmin, dmax were '+str(dmin)+','+str(dmax)+'\n'
-      raise  Warning(errstr)          
+
+   #Return some values if dmin = dmax
+   if dmin == dmax:
+      vals=[dmin-0.001, dmin, dmin+0.001]
+      mult=0
+      return vals, mult
+
+
 
    mult=0 #field multiplyer
  
@@ -1645,7 +1770,7 @@ def gvals(dmin=None, dmax=None, tight=0, mystep=None, mod=1):
 
 
    if mystep is not None:
-      if int(mystep) == mystep:
+      if int(mystep) == mystep:      
          return vals, mult
 
 
@@ -1734,6 +1859,10 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None):
    ref_calendar=None
    ref_time_origin=None
    time_opts=None
+   has_lons=None
+   has_lats=None
+   has_height=None
+   has_time=None
 
 
    #Extract coordinate data if a matching CF standard_name or axis is found
@@ -1818,6 +1947,13 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None):
             if verbose: print 'cf_data_assign dimension name - assigned time -', name
             time=np.squeeze(f.item(mydim).array)
 
+
+   if np.size(lons) > 1: has_lons=1
+   if np.size(lats) > 1: has_lats=1
+   if np.size(height) > 1: has_height=1
+   if np.size(time) > 1: has_time=1
+
+
    #assign field data
    field=np.squeeze(f.array)
 
@@ -1877,6 +2013,26 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None):
       ref_calendar=f.item('time').calendar
       ref_time_origin=str(f.item('time').Units.reftime)
       time_opts=[ref_time,ref_calendar,ref_time_origin]
+
+   
+
+   #None of the above
+   if [has_lons, has_lats, has_height, has_time].count(None) > 2:
+      ptype=0
+
+      for mydim in f.items():
+         if np.size(np.squeeze(f.item(mydim).array)) == np.shape(np.squeeze(f.array))[1]:
+            x=np.squeeze(f.item(mydim).array)
+            xunits=str(getattr(f.item(mydim), 'units', ''))
+            xlabel=cf_var_name(field=f, dim=mydim)
+
+         if np.size(np.squeeze(f.item(mydim).array)) == np.shape(np.squeeze(f.array))[0]:
+            y=np.squeeze(f.item(mydim).array)
+            yunits=str(getattr(f.item(mydim), 'Units', ''))
+            ylabel=cf_var_name(field=f, dim=mydim)+yunits     
+
+
+
 
 
    #Assign colorbar_title
@@ -2564,7 +2720,12 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
    """
 
    colorbar_title=''
-
+   text_fontsize=plotvars.text_fontsize
+   continent_thickness=plotvars.continent_thickness
+   continent_color=plotvars.continent_color
+   if text_fontsize is None: text_fontsize=11
+   if continent_thickness is None: continent_thickness=1.5
+   if continent_color is None: continent_color='k'
 
    #Extract required data for contouring
    #If a cf-python field
@@ -2688,8 +2849,8 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
       if plotvars.proj == 'cyl':
          lonticks,lonlabels=mapaxis(min=plotvars.lonmin, max=plotvars.lonmax, type=1)
          latticks,latlabels=mapaxis(min=plotvars.latmin, max=plotvars.latmax, type=2)
-         axes(xticks=lonticks, xticklabels=lonlabels)
-         axes(yticks=latticks, yticklabels=latlabels)
+         axes_plot(xticks=lonticks, xticklabels=lonlabels)
+         axes_plot(yticks=latticks, yticklabels=latlabels)
    
       if plotvars.proj == 'npstere' or plotvars.proj == 'spstere': 
          latstep=30
@@ -2699,7 +2860,7 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
 
 
       #Coastlines and title
-      mymap.drawcoastlines(linewidth=1.0)
+      mymap.drawcoastlines(linewidth=continent_thickness, color=continent_color)
       #plotvars.plot.set_title(title, y=1.03, fontsize=plotvars.fontsize)
 
       ##########
@@ -2985,14 +3146,86 @@ def process_color_scales():
 
 
 
+def reset():   
+   """
+    | reset all plotting variables
+    |
+    | 
+    | 
+    | 
+    |
+    |
+    |
+    :Returns:
+     name
+    | 
+    | 
+    | 
+   """
+   axes()
+   cscale()
+   levs()
+   gset()
+   mapset()
+   setvars()
 
 
 
+def setvars(file=None, title_fontsize=None, text_fontsize=None, axis_label_fontsize=None, \
+        title_fontweight='normal', text_fontweight='normal', axis_label_fontweight='normal', \
+        fontweight='normal', continent_thickness=None, continent_color=None):
+   """
+    | setvars - set plotting variables
+    |
+    | file=None - output file name
+    | text_fontsize=None - text fontsize, default=11
+    | title_fontsize=None - title fontsize, default=15
+    | axis_label_fontsize=None - default=11
+    | text_fontweight='normal' - text fontweight
+    | title_fontweight='normal' - title fontweight
+    | axis_label_fontweight='normal' - axis fontweight
+    | fontweight='normal' - all above fontweights
+    | continent_thickness=None - default=1.5
+    | continent_color=None - default='k' (black)
+    | 
+    | Use setvars() to reset to the defaults
+    |
+    |
+    |
+    :Returns:
+     name
+    | 
+    | 
+    | 
+   """
 
+   if (file, title_fontsize, text_fontsize, axis_label_fontsize, continent_thickness, \
+       title_fontweight, text_fontweight, axis_label_fontweight, fontweight, \
+       continent_color).count(None) == 10:
+      plotvars.file=None
+      title_fontsize=None
+      text_fontsize=None
+      axis_label_fontsize=None
+      title_fontweight='normal'
+      text_fontweight='normal'
+      axis_label_fontweight='normal',
+      fontweight='normal'
+      continent_thickness=None
+      continent_color=None
 
-
-
-
+   plotvars.file=file
+   plotvars.title_fontsize=title_fontsize
+   plotvars.axis_label_fontsize=axis_label_fontsize
+   plotvars.continent_thickness=continent_thickness
+   plotvars.continent_color=continent_color
+   plotvars.text_fontsize=text_fontsize
+   plotvars.text_fontweight=text_fontweight
+   plotvars.axis_label_fontweight=axis_label_fontweight
+   plotvars.title_fontweight=title_fontweight
+   if fontweight != 'normal':
+      plotvars.text_fontweight=fontweight
+      plotvars.axis_label_fontweight=fontweight
+      plotvars.title_fontweight=fontweight
 
 
 
