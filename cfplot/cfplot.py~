@@ -2505,7 +2505,7 @@ def stipple(f=None, x=None, y=None, min=None, max=None, size=80, color='k', pts=
    #If a cf-python field
    if isinstance(f[0], cf.Field):
       colorbar_title=''
-      f=f[0]
+      
       field, xpts, ypts, ptype, colorbar_title, xlabel, ylabel, time_opts=\
          cf_data_assign(f, colorbar_title)
    else:
@@ -2730,7 +2730,6 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
    #Extract required data for contouring
    #If a cf-python field
    if isinstance(u[0], cf.Field):
-      u=u[0]
       u_data, u_x, u_y, ptype, colorbar_title, xlabel, ylabel,time_opts=\
          cf_data_assign(u, colorbar_title)
    else:
@@ -2744,7 +2743,6 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
 
 
    if isinstance(v[0], cf.Field):
-      v=v[0]
       v_data, v_x, v_y, ptype, colorbar_title, xlabel, ylabel, time_opts=\
          cf_data_assign(v, colorbar_title)
    else:
