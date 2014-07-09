@@ -317,13 +317,14 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
       if plotvars.user_plot == 0: gopen(user_plot=0)
 
       #Set up mapping
-      lonrange=np.max(x)-plotvars.lonmin
+      lonrange=np.max(x)-np.min(x)
       #Reset mapping
       if plotvars.user_mapset == 0:
          plotvars.lonmin=-180
          plotvars.lonmax=180
          plotvars.latmin=-90
          plotvars.latmax=90
+
       if lonrange > 350 or plotvars.user_mapset == 1:
          set_map()  
       else:
@@ -1005,8 +1006,9 @@ def mapset(lonmin=None, lonmax=None, latmin=None, latmax=None, proj='cyl', bound
     | latmax=latmax - maximum latitude
     | proj=proj - 'cyl' for cylindrical projection. 'npstere' or 'spstere' for northern 
     |      hemisphere or southern hemisphere polar stereographic projection
+    |      'moll' for the mollweide projection
     | boundinglat=boundinglat - edge of the viewable latitudes in a stereographic plot
-    | lon_0=lon_0 - centre of desired map domain in a stereographic plot
+    | lon_0=lon_0 - centre of desired map domain in stereographic or   plots
     | resolution=resolution - the map resolution - can be one of 'c' (crude), 'l' (low), 
     |      'i' (intermediate), 'h' (high), 'f' (full) or 'None'
     | user_mapset=user_mapset - variable to indicate whether a user call to mapset has been 
@@ -1035,19 +1037,25 @@ def mapset(lonmin=None, lonmax=None, latmin=None, latmax=None, proj='cyl', bound
      None
    """
 
-   if [lonmin,lonmax,latmin,latmax].count(None) == 4:
+
+   if [lonmin,lonmax,latmin,latmax].count(None) == 4 and proj == 'cyl':
       plotvars.lonmin=-180
       plotvars.lonmax=180
       plotvars.latmin=-90 
       plotvars.latmax=90
+      plotvars.proj='cyl'
       plotvars.user_mapset=0
       return
 
-   if lonmin is None: lonmin=-180
-   if lonmax is None: lonmin=180
-   if latmin is None: lonmin=-90
-   if latmax is None: lonmin=90
 
+   if lonmin is None: lonmin=-180
+   if lonmax is None: lonmax=180
+   if latmin is None: latmin=-90
+   if latmax is None: latmax=90
+
+   if proj == 'moll':
+      lonmin=lon_0-180
+      lonmax=lon_0+180
 
 
    plotvars.lonmin=lonmin
@@ -2890,20 +2898,24 @@ def set_map():
    """
    
    #Set up mapping
-   lon_mid=plotvars.lonmin+(plotvars.lonmax-plotvars.lonmin)/2.0
-   lat_mid=plotvars.latmin+(plotvars.latmax-plotvars.latmin)/2.0
-
-   if plotvars.proj == 'cyl':
+   if plotvars.proj == 'cyl':   
+      lon_mid=plotvars.lonmin+(plotvars.lonmax-plotvars.lonmin)/2.0
+      lat_mid=plotvars.latmin+(plotvars.latmax-plotvars.latmin)/2.0
       mymap = Basemap(projection='cyl',llcrnrlon=plotvars.lonmin, urcrnrlon=plotvars.lonmax, \
                       llcrnrlat=plotvars.latmin, urcrnrlat=plotvars.latmax, \
                       lon_0=lon_mid, lat_0=lat_mid, resolution=plotvars.resolution)  
-   else:	 
-      if plotvars.proj == 'npstere':
-         mymap = Basemap(projection='npstere', boundinglat=plotvars.boundinglat, round='True',\
-                         lon_0=plotvars.lon_0, lat_0=90, resolution=plotvars.resolution)
-      if plotvars.proj == 'spstere':
-         mymap = Basemap(projection='spstere', boundinglat=plotvars.boundinglat, round='True',\
-                         lon_0=plotvars.lon_0, lat_0=-90, resolution=plotvars.resolution)
+ 
+   if plotvars.proj == 'npstere':
+      mymap = Basemap(projection='npstere', boundinglat=plotvars.boundinglat, round='True',\
+                      lon_0=plotvars.lon_0, lat_0=90, resolution=plotvars.resolution)
+
+   if plotvars.proj == 'spstere':
+      mymap = Basemap(projection='spstere', boundinglat=plotvars.boundinglat, round='True',\
+                      lon_0=plotvars.lon_0, lat_0=-90, resolution=plotvars.resolution)
+
+   if plotvars.proj == 'moll':
+      mymap = Basemap(projection='moll', lon_0=plotvars.lon_0, resolution=plotvars.resolution)
+
    #Store map 
    plotvars.mymap=mymap
 
