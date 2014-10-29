@@ -25,6 +25,7 @@ import time
 from subprocess import call
 import matplotlib
 
+
 #Check for a display and use the Agg backing store if none is present
 #This is for batch mode processing
 try:
@@ -96,6 +97,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
     |                       3 = longitude - height, 
     |                       4 = latitude - time,
     |                       5 = longitude - time
+    |                       6 = rotated pole
     | negative_linestyle=None - set to 1 to get dashed negative contours
     | zero_thick=None - add a thick zero contour line. Set to 3 for example.
     | blockfill=None - set to 1 for a blockfill plot
@@ -131,7 +133,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
       #Extract data
       if verbose: print 'con - calling cf_data_assign'
       f=f[0]
-      field, x, y, ptype, colorbar_title, xlabel, ylabel, time_opts=\
+      field, x, y, ptype, colorbar_title, xlabel, ylabel, time_opts, xpole, ypole=\
              cf_data_assign(f, colorbar_title, verbose=verbose)
 
    else:
@@ -356,9 +358,10 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
 
 
       #Flip latitudes and field if latitudes are in descending order
-      if y[0] > y[-1]:
-         y=y[::-1] 
-         field=np.flipud(field)
+      if np.ndim(y) == 1:
+         if y[0] > y[-1]:
+            y=y[::-1] 
+            field=np.flipud(field)
    
       #Plotting a sub-area of the grid produces stray contour labels in polar plots
       #Subsample the grid to remove this problem
@@ -531,6 +534,12 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
 
       ytype=0 #pressure or similar y axis
       if 'theta' in ylabel.split(' '): ytype=1
+      if 'height' in ylabel.split(' '): 
+         ytype=1
+         ystep=100
+         if (ymax - ymin) > 5000: ystep=500.0
+         if (ymax - ymin) > 10000: ystep=1000.0
+         if (ymax - ymin) > 50000: ystep=10000.0
 
       #Set plot limits and draw axes
       if ylog != 1:   
@@ -538,7 +547,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
             gset(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax, user_gset=user_gset)
             latticks,latlabels=mapaxis(min=xmin, max=xmax, type=2)
             axes_plot(xticks=latticks, xticklabels=latlabels,\
-                 yticks=gvals(dmin=ymin, dmax=ymax, tight=1, mystep=ystep)[0],\
+                 yticks=gvals(dmin=ymin, dmax=ymax, tight=1, mystep=ystep, mod=0)[0],\
                  xlabel=xlabel, ylabel=ylabel)
          else: 
             gset(xmin=xmin, xmax=xmax, ymin=ymax, ymax=ymin, user_gset=user_gset)
@@ -662,6 +671,12 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
 
       ytype=0 #pressure or similar y axis
       if 'theta' in ylabel.split(' '): ytype=1
+      if 'height' in ylabel.split(' '): 
+         ytype=1
+         ystep=100
+         if (ymax - ymin) > 5000: ystep=500.0
+         if (ymax - ymin) > 10000: ystep=1000.0
+         if (ymax - ymin) > 50000: ystep=10000.0
 
       #Set plot limits and draw axes
       lonticks,lonlabels=mapaxis(min=xmin, max=xmax, type=1)
@@ -669,7 +684,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
          if ytype == 1: 
             gset(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax, user_gset=user_gset)         
             axes_plot(xticks=lonticks, xticklabels=lonlabels,\
-                 yticks=gvals(dmin=ymin, dmax=ymax, tight=1, mystep=ystep)[0],\
+                 yticks=gvals(dmin=ymin, dmax=ymax, tight=1, mystep=ystep, mod=0)[0],\
                  xlabel=xlabel, ylabel=ylabel)
          else: 
             gset(xmin=xmin, xmax=xmax, ymin=ymax, ymax=ymin, user_gset=user_gset)
@@ -887,6 +902,90 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
 
       #Title
       plotvars.plot.set_title(title, y=1.03, fontsize=title_fontsize, fontweight=title_fontweight)
+
+
+
+
+   #############
+   #Rotated pole
+   #############
+   if ptype == 6: 
+      #Rotated pole plots use a regularly spaced grid
+      #The x and y points from the data are used to make the rotated axes
+      xpts=np.arange(np.size(x))
+      ypts=np.arange(np.size(y))
+
+      if verbose: print 'con - making a rotated pole plot'
+      user_gset=plotvars.user_gset
+      if plotvars.user_plot == 0: gopen(user_plot=0)
+
+      #Set plot limits 
+      gset(xmin=0, xmax=np.size(x)-1, ymin=0, ymax=np.size(y)-1, user_gset=user_gset)
+
+
+      #Get colour scale for use in contouring
+      #If colour bar extensions are enabled then the colour map goes
+      #from 1 to ncols-2.  The colours for the colour bar extensions are then
+      #changed on the colourbar and plot after the plot is made
+      cscale_ncols=np.size(plotvars.cs)
+      colmap=cscale_get_map()
+
+
+      #Filled contours
+      if fill == True or blockfill == 1:
+         cfill=plotvars.plot.contourf(xpts,ypts,field*fmult,clevs,extend=plotvars.levels_extend,\
+               colors=colmap)
+
+         #add colour scale extensions if required
+         if (plotvars.levels_extend == 'both' or plotvars.levels_extend == 'min'):
+             cfill.cmap.set_under(plotvars.cs[0])
+         if (plotvars.levels_extend == 'both' or plotvars.levels_extend == 'max'):
+             cfill.cmap.set_over(plotvars.cs[cscale_ncols-1])
+
+
+      #Block fill
+      if blockfill == 1:  
+         bfill(f=field_orig*fmult, x=xpts, y=ypts, clevs=clevs, lonlat=0, bound=0)  
+ 
+
+      #Contour lines and labels 
+      if lines == True:
+         cs=plotvars.plot.contour(xpts,ypts,field*fmult,clevs,colors='k')
+         if line_labels == True:     
+            nd=ndecs(clevs)
+            fmt='%d'
+            if nd != 0: fmt='%1.'+str(nd)+'f'
+            plotvars.plot.clabel(cs, fmt=fmt, colors = 'k', fontsize=text_fontsize, fontweight=text_fontweight) 
+   
+         #Thick zero contour line
+         if zero_thick is not None:
+            cs = plotvars.plot.contour(xpts,ypts,field*fmult,[1e-32, 0],colors='k', linewidths=zero_thick)
+
+
+      #Colorbar
+      if colorbar == 1:     
+
+         pad=0.15
+         if plotvars.rows >= 3: pad=0.25
+         if plotvars.rows >= 5: pad=0.3
+         cbar=plotvars.master_plot.colorbar(cfill, orientation=colorbar_orientation, aspect=75, \
+                                            pad=pad, ticks=colorbar_labels, \
+                                            shrink=colorbar_shrink)
+         cbar.set_label(colorbar_title, fontsize=text_fontsize, fontweight=title_fontweight)
+         cbar.set_ticklabels([str(i) for i in colorbar_labels]) #Bug in Matplotlib colorbar labelling
+         for t in cbar.ax.get_xticklabels():
+            t.set_fontsize(text_fontsize)
+            t.set_fontweight(text_fontweight)
+
+      #Rotated grid axes
+      rgaxes(xpole=xpole, ypole=ypole, xvec=x, yvec=y)
+
+
+      #Title
+      plotvars.plot.set_title(title, y=1.03, fontsize=title_fontsize, fontweight=title_fontweight)
+
+
+
 
 
    ############
@@ -1551,9 +1650,18 @@ def gclose(view=True):
                                    orientation=plotvars.orientation)
    else:
       plot.show()
+
       
    #Reset plotting
    plotvars.plot=None
+
+
+def showplot(*args):
+   for data in args:
+      plot=data
+      plot.show()
+      #dir(plot)
+      #plot=args[0]
 
 
 
@@ -1826,7 +1934,7 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None):
      | colorbar_title - colour bar title
      | xlabel - x label for plot
      | ylabel - y label for plot
-     |
+     | 
      |
      |
      |
@@ -1835,20 +1943,22 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None):
 
 
    #Check input data has the correct number of dimensions
+   #Take into account rotated pole fields having extra dimensions  
    ndim=len(f.axes(size=cf.gt(1)))
-   if (ndim > 2 or ndim < 2):
-      print ''
-      if (ndim > 2): errstr='cf_data_assign error - data has too many dimensions'
-      if (ndim < 2): errstr='cf_data_assign error - data has too few dimensions'
-      errstr=errstr+'\n cfplot requires two dimensional data \n'
-      for mydim in f.items():
-         sn=getattr(f.item(mydim), 'standard_name', False)
-         ln=getattr(f.item(mydim), 'long_name', False)
-         if sn: 
-            errstr=errstr+str(mydim)+','+str(sn)+','+str(f.item(mydim).size)+'\n'
-         else:
-            if ln: errstr=errstr+str(mydim)+','+str(ln)+','+str(f.item(mydim).size)+'\n'
-      raise  Warning(errstr) 
+   if f.transform('rotated_latitude_longitude') is None:
+      if (ndim > 2 or ndim < 2):
+         print ''
+         if (ndim > 2): errstr='cf_data_assign error - data has too many dimensions'
+         if (ndim < 2): errstr='cf_data_assign error - data has too few dimensions'
+         errstr=errstr+'\n cfplot requires two dimensional data \n'
+         for mydim in f.items():
+            sn=getattr(f.item(mydim), 'standard_name', False)
+            ln=getattr(f.item(mydim), 'long_name', False)
+            if sn: 
+               errstr=errstr+str(mydim)+','+str(sn)+','+str(f.item(mydim).size)+'\n'
+            else:
+               if ln: errstr=errstr+str(mydim)+','+str(ln)+','+str(f.item(mydim).size)+'\n'
+         raise  Warning(errstr) 
 
    
  
@@ -1867,6 +1977,9 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None):
    has_lats=None
    has_height=None
    has_time=None
+   #has_rotated_pole=None
+   xpole=None
+   ypole=None
 
 
    #Extract coordinate data if a matching CF standard_name or axis is found
@@ -1930,26 +2043,27 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None):
    
    #Extract coordinate data from variable name if not already assigned
    for mydim in f.items():
-      name=cf_var_name(field=f, dim=mydim)
-      if name[0:3] == 'lon': 
-         if lons is None:
-            if verbose: print 'cf_data_assign dimension name - assigned lons -', name
-            lons=np.squeeze(f.item(mydim).array)
+      if mydim[:3] == 'dim':
+         name=cf_var_name(field=f, dim=mydim)
+         if name[0:3] == 'lon': 
+            if lons is None:
+               if verbose: print 'cf_data_assign dimension name - assigned lons -', name
+               lons=np.squeeze(f.item(mydim).array)
 
-      if name[0:3] == 'lat': 
-         if lats is None:
-            if verbose: print 'cf_data_assign dimension name - assigned lats -', name
-            lats=np.squeeze(f.item(mydim).array)
+         if name[0:3] == 'lat': 
+            if lats is None:
+               if verbose: print 'cf_data_assign dimension name - assigned lats -', name
+               lats=np.squeeze(f.item(mydim).array)
 
-      if (name[0:5] == 'theta' or name[0:1] == 'p' or name == 'air_pressure'): 
-         if height is None:
-            if verbose: print 'cf_data_assign dimension name - assigned height -', name
-            height=np.squeeze(f.item(mydim).array)
+         if (name[0:5] == 'theta' or name[0:1] == 'p' or name == 'air_pressure'): 
+            if height is None:
+               if verbose: print 'cf_data_assign dimension name - assigned height -', name
+               height=np.squeeze(f.item(mydim).array)
 
-      if name[0:1] == 't': 
-         if time is None:
-            if verbose: print 'cf_data_assign dimension name - assigned time -', name
-            time=np.squeeze(f.item(mydim).array)
+         if name[0:1] == 't': 
+            if time is None:
+               if verbose: print 'cf_data_assign dimension name - assigned time -', name
+               time=np.squeeze(f.item(mydim).array)
 
 
    if np.size(lons) > 1: has_lons=1
@@ -1958,7 +2072,9 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None):
    if np.size(time) > 1: has_time=1
 
 
-   #assign field data
+
+
+   #assign field data   
    field=np.squeeze(f.array)
 
    #Check what plot type is required.
@@ -1979,7 +2095,7 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None):
             xunits=str(getattr(f.item(mydim), 'Units', ''))
             if (xunits in lat_units): xunits='degrees'
             xlabel=name + ' (' + xunits + ')'
-         if name[0:1] == 'p' or name[0:5] == 'theta': 
+         if name[0:1] == 'p' or name[0:5] == 'theta' or name[0:6] == 'height': 
             yunits=str(getattr(f.item(mydim), 'Units', ''))
             ylabel=name + ' (' + yunits + ')'
 
@@ -1994,7 +2110,7 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None):
             xunits=str(getattr(f.item(mydim), 'Units', ''))
             if (xunits in lon_units): xunits='degrees'
             xlabel=name + ' (' + xunits + ')'
-         if name[0:1] == 'p' or name[0:5] == 'theta': 
+         if name[0:1] == 'p' or name[0:5] == 'theta' or name[0:6] == 'height': 
             yunits=str(getattr(f.item(mydim), 'Units', ''))
             ylabel=name + ' (' + yunits + ')'
 
@@ -2018,10 +2134,42 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None):
       ref_time_origin=str(f.item('time').Units.reftime)
       time_opts=[ref_time,ref_calendar,ref_time_origin]
 
-   
+  
+
+   #Rotated pole
+   if f.transform('rotated_latitude_longitude') is not None: 
+      ptype=6
+      rotated_pole=f.transform('rotated_latitude_longitude')
+      xpole=rotated_pole['grid_north_pole_longitude']
+      ypole=rotated_pole['grid_north_pole_latitude']
+
+      for mydim in f.items():
+         if mydim[:3] == 'dim':
+            if np.size(np.squeeze(f.item(mydim).array)) == np.shape(np.squeeze(f.array))[1]:
+               x=np.squeeze(f.item(mydim).array)
+               xunits=str(getattr(f.item(mydim), 'units', ''))
+               xlabel=cf_var_name(field=f, dim=mydim)
+
+            if np.size(np.squeeze(f.item(mydim).array)) == np.shape(np.squeeze(f.array))[0]:
+               y=np.squeeze(f.item(mydim).array)
+               #Flip y and data if reversed
+               if y[0] > y[-1]:
+                  y=y[::-1]
+                  field=np.flipud(field)
+               yunits=str(getattr(f.item(mydim), 'Units', ''))
+               ylabel=cf_var_name(field=f, dim=mydim)+yunits     
+
+
+
+
+
+      #rotated_pole.coords 
+      #gives set(['dim2', 'dim3', 'aux3', 'aux4'])
+      #select out the data using these
+      #Possible to make a plot using aux3 and aux4 via a keyword?
 
    #None of the above
-   if [has_lons, has_lats, has_height, has_time].count(None) > 2:
+   if [has_lons, has_lats, has_height, has_time].count(None) > 2 and ptype is not 6:
       ptype=0
 
       for mydim in f.items():
@@ -2034,6 +2182,7 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None):
             y=np.squeeze(f.item(mydim).array)
             yunits=str(getattr(f.item(mydim), 'Units', ''))
             ylabel=cf_var_name(field=f, dim=mydim)+yunits     
+
 
 
 
@@ -2052,7 +2201,7 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None):
     
 
    #Return data
-   return(field, x, y, ptype, colorbar_title, xlabel, ylabel, time_opts)
+   return(field, x, y, ptype, colorbar_title, xlabel, ylabel, time_opts, xpole, ypole)
 
 
 
@@ -2092,6 +2241,20 @@ def check_data(field=None, x=None, y=None):
   
   
    #Check input dimensions look okay.
+   #All inputs 2D
+   if np.ndim(field) == 2 and np.ndim(x) == 2 and  np.ndim(y) == 2:
+      print 'In new section'
+      xpts=np.shape(field)[1]
+      ypts=np.shape(field)[0]
+      print 'xpts, ypts, np.shape(x), np.shape(y)', xpts, ypts, np.shape(x), np.shape(y)
+      print 'args is ', args
+      if xpts != np.shape(x)[1] or xpts != np.shape(y)[1]: args = False
+      print 'args is ', args
+      if ypts != np.shape(x)[0] or ypts != np.shape(y)[0]: args = False
+      print 'args is ', args
+      if args is True: return
+
+   #Field 2D, x and y 1D
    if np.ndim(field) != 2: args = False 
    if np.ndim(x) != 1: args = False  
    if np.ndim(y) != 1: args = False 
@@ -2099,6 +2262,7 @@ def check_data(field=None, x=None, y=None):
       if np.size(x) != np.shape(field)[1]: args = False  
       if np.size(y) != np.shape(field)[0]: args = False  
    
+
   
    if args is False:
       errstr=errstr+'Input arguments incorrectly shaped:\n'
@@ -2510,7 +2674,7 @@ def stipple(f=None, x=None, y=None, min=None, max=None, size=80, color='k', pts=
    if isinstance(f[0], cf.Field):
       colorbar_title=''
       f=f[0]
-      field, xpts, ypts, ptype, colorbar_title, xlabel, ylabel, time_opts=\
+      field, xpts, ypts, ptype, colorbar_title, xlabel, ylabel, time_opts, xpole, ypole=\
          cf_data_assign(f, colorbar_title)
    else:
       field=f #field data passed in as f
@@ -2735,7 +2899,7 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
    #If a cf-python field
    if isinstance(u[0], cf.Field):
       u=u[0]
-      u_data, u_x, u_y, ptype, colorbar_title, xlabel, ylabel,time_opts=\
+      u_data, u_x, u_y, ptype, colorbar_title, xlabel, ylabel,time_opts, xpole, ypole=\
          cf_data_assign(u, colorbar_title)
    else:
       field=f #field data passed in as f
@@ -2749,7 +2913,7 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
 
    if isinstance(v[0], cf.Field):
       v=v[0]
-      v_data, v_x, v_y, ptype, colorbar_title, xlabel, ylabel, time_opts=\
+      v_data, v_x, v_y, ptype, colorbar_title, xlabel, ylabel, time_opts, xpole, ypole=\
          cf_data_assign(v, colorbar_title)
    else:
       field=f #field data passed in as f
@@ -3240,4 +3404,428 @@ def setvars(file=None, title_fontsize=None, text_fontsize=None, axis_label_fonts
 
 
 
+def rgrot(xin=None, yin=None, xpole=None, ypole=None):
+   """
+    | rgrot - rotate longitude and latitude points onto a rotated grid
+    |
+    | xin=xin - longitude locations
+    | yin=yin - latitude locations
+    | xpole=xpole - xpole in degrees
+    | ypole=ypole - ypole in degrees
+    | 
+    |
+    |
+    |
+    :Returns:
+      x and y points on rotated grid 
+    | 
+    | 
+    | 
+    | 
+    | 
+    | 
+   """
+
+
+
+
+   #Check input parameters
+   if [xin, yin, xpole, ypole].count(None) > 0:
+      errstr='\n\
+             rgrot error\n\
+             xin, yin, xpole, ypole all need to be passed to rgrot to generate \n\
+             rotated output points\
+             \n'
+      raise  Warning(errstr)
+
+
+   #Define output arrays.
+   xout=np.zeros(np.size(xin))
+   yout=np.zeros(np.size(yin))
+
+   #Tolerance limit.
+   tol=1.0E-6 
+
+
+   #Scale xpole to range -180 to 180.
+   xpole_orig=xpole
+   if (xpole > 180.0):  xpole=xpole-360.0
+
+   #Latitude of zero meridian.
+   x_zero=xpole+180.0
+
+
+   #Sine and cosine of latitude of eq pole
+   if (ypole >= 0.0):
+      sin_ypole=np.sin(ypole*np.pi/180.0)
+      cos_ypole=np.cos(ypole*np.pi/180.0)
+   else:
+      sin_ypole=-np.sin(ypole*np.pi/180.0)
+      cos_ypole=-np.cos(ypole*np.pi/180.0)
+
+
+
+   #Transform to rotated grid.
+   for ix in np.arange(np.size(xin)):
+
+      #Scale longitude to range -180 to +180 degs
+      xpt=xin[ix]-x_zero
+      if (xpt > 180.0): xpt=xpt-360.0
+      if (xpt <= -180.0): xpt=xpt+360.0
+
+      #Convert latitude & longitude to radians
+      xpt=xpt*np.pi/180.0
+      ypt=yin[ix]*np.pi/180.0
+
+      #Calculate latitude.
+      arg=-cos_ypole*np.cos(xpt)*np.cos(ypt)+np.sin(ypt)*sin_ypole
+      arg=min([arg,1.0])
+      arg=max([arg,-1.0])
+      ypt2=np.arcsin(arg)
+      yout[ix]=ypt2*180.0/np.pi
+
+      #Calculate longitude.
+      t1=(np.cos(ypt)*np.cos(xpt)*sin_ypole+np.sin(ypt)*cos_ypole)
+      t2=np.cos(ypt2)
+      if (t2 < tol): 
+         xpt2=0.0
+      else:
+         arg=t1/t2
+         arg=min([arg,1.0])
+         arg=max([arg,-1.0])
+         xpt2=np.arccos(arg)*180.0/np.pi
+         if (xpt >= 0):
+            xpt2=abs(xpt2)
+         else:
+            xpt2=-1.0*abs(xpt2)
+
+
+      #Scale longitude to range 0 to 360 degs
+      #if (xpt2 >= 360.0): xpt2=xpt2-360.0
+      #if (xpt2 < 0.0): xpt2=xpt2+360.0
+      xout[ix]=xpt2
+
+
+
+   #Reset xpole
+   xpole=xpole_orig
+
+
+   return (xout, yout)
+
+
+
+
+def rgunrot(xin=None, yin=None, xpole=None, ypole=None):
+   """
+    | rgunrot - translate points from a rotated grid to longitude/latitude grid
+    |
+    | xin=xin - longitude locations
+    | yin=yin - latitude locations
+    | xpole=xpole - xpole in degrees
+    | ypole=ypole - ypole in degrees
+    | 
+    |
+    |
+    |
+    :Returns:
+      x and y points on longitude and latitude grid 
+    | 
+    | 
+    | 
+    | 
+    | 
+    | 
+   """   
+
+   #Check input parameters
+   if [xin, yin, xpole, ypole].count(None) > 0:
+      errstr='\n\
+             rgrot error\n\
+             xin, yin, xpole, ypole all need to be passed to rgrot to generate \n\
+             rotated output points\
+             \n'
+      raise  Warning(errstr)
+
+   #Define output arrays.
+   xout=np.zeros(np.size(xin))
+   yout=np.zeros(np.size(yin))
+
+   #Tolerance limit.
+   tol=1.0E-6 
+
+
+   #Form x and y arrays to hold grid coordinates.
+   nx=np.size(xin)
+   ny=np.size(yin)
+   x=np.zeros([ny, nx])
+   y=np.zeros([ny, nx])
+   for iy in np.arange(ny):
+       x[iy,:]=xin
+   for ix in np.arange(nx):
+      y[:,ix]=yin
+
+   xpole_orig=xpole
+   if (xpole > 180.0):  xpole=xpole-360.0
+
+   #Sine and cosine of latitude of eq pole
+   if (ypole >= 0.0):
+      sin_ypole=np.sin(ypole*np.pi/180.0)
+      cos_ypole=np.cos(ypole*np.pi/180.0)
+   else:
+      sin_ypole=-np.sin(ypole*np.pi/180.0)
+      cos_ypole=-np.cos(ypole*np.pi/180.0)
+
+   #Scale to -180 to 180
+   xx=x
+   yy=y
+   pts=np.where(xx > 180)
+   xx[pts]=xx[pts]-360.0
+   pts=np.where(xx < 180)
+   xx[pts]=xx[pts]+360.0
+   xx=np.pi*xx/180.0
+   yy=np.pi*yy/180.0
+
+
+   arg=cosypole*np.cos(xx)*np.cos(yy)+np.sin(yy)*sinypole
+   pts=WHERE(arg > 1.0)
+   arg[pts]=1.0
+   pts=np.where(arg <= -1.0)
+   arg[pts]=-1.0
+   ay=np.asin(arg)
+   y=180.0*ay/np.pi
+
+
+   t1=np.cos(YY)*np.cos(XX)*sinypole-np.sin(YY)*cosypole
+   t2=np.cos(ay)
+
+
+   ax=np.zeros([ny,nx])
+
+   pts=np.where(t2 < tol)
+   ax[pts]=0.0
+
+   pts=np.where(t2 >= tol)
+
+   if (np.size(pts) > 0):
+      arg=t1/T2
+      pts2=np.where(arg > 1.0)
+      arg[pts2]=1.0
+      pts2=np.where(arg < -1.0)
+      arg[pts2]=-1.0
+      arg=180.0*np.acos(arg)/np.pi
+      ax[pts]=arg
+      pts3=np.where(xx >= 0.0)
+      ax[pts3]=np.abs(ax[pts3])
+      pts3=np.where(xx < 0.0)
+      ax[pts3]=-1.0*np.abs(ax[pts3]) 
+      ax=ax+x0
+                                       
+
+   x=ax
+
+   #Reset xpole
+   xpole=xpole_orig
+
+   return(x,y)
+
+
+def vloc(xvec=None, yvec=None, lons=None, lats=None):
+   """ 
+    | vloc is used to locate the positions of a set of points in a vector
+    | 
+    | 
+    |
+    | xvec=None - data longitudes 
+    | yvec=None - data latitudes
+    | lons=None - required longitude positions
+    | lats=None - required latitude positions
+
+    :Returns:
+     locations of user points in the longitude and latitude points
+    | 
+    | 
+    | 
+    | 
+    | 
+    | 
+    | 
+   """    
+
+   import numpy as np
+
+   #Check input parameters
+   if [xvec, yvec, lons, lats].count(None) > 0:
+      errstr='\n\
+             vloc error\n\
+             xvec, yvec, lons, lats all need to be passed to vloc to generate \n\
+             a set of location points\
+             \n'
+      raise  Warning(errstr)
+
+
+   xarr=np.zeros(np.size(lons))
+   yarr=np.zeros(np.size(lats))
+
+
+   #Convert longitudes to -180 to 180.
+   for i in np.arange(np.size(xvec)):
+      xvec[i]=((xvec[i] + 180) % 360)-180 
+   for i in np.arange(np.size(lons)):
+      lons[i]=((lons[i] + 180) % 360)-180 
+
+   #Centre around 180 degrees longitude if needed.
+   if (max(xvec) > 150):
+      for i in np.arange(np.size(xvec)):
+         xvec[i]=(xvec[i]+360.0) % 360.0
+      pts=np.where(xvec < 0.0)
+      xvec[pts]=xvec[pts]+360.0 
+      for i in np.arange(np.size(lons)):
+         lons[i]=(lons[i]+360.0) % 360.0
+      pts=np.where(lons < 0.0)
+      lons[pts]=lons[pts]+360.0  
+
+
+   #Find position in array
+   for i in np.arange(np.size(lons)):
+
+      if ((lons[i] < min(xvec)) or (lons[i] > max(xvec))): 
+         xpt=-1
+      else:
+         xpts=np.where(lons[i] >= xvec)
+         xpt=np.max(xpts)
+
+      if ((lats[i] < min(yvec)) or (lats[i] > max(yvec))): 
+         ypt=-1
+      else:
+         ypts=np.where(lats[i] >= yvec)
+         ypt=np.max(ypts)
+
+ 
+      if (xpt >= 0):
+         xarr[i]=xpt+(lons[i]-xvec[xpt])/(xvec[xpt+1]-xvec[xpt]) 
+      else:
+         xarr[i]=None
+
+
+      if (ypt >= 0) and ypt <= np.size(yvec)-2:  
+         yarr[i]=ypt+(lats[i]-yvec[ypt])/(yvec[ypt+1]-yvec[ypt]) 
+      else:
+         yarr[i]=None 
+
+   return (xarr, yarr)
+
+
+
+
+
+def rgaxes(xpole=None, ypole=None, xvec=None, yvec=None, spacing=10.0, degspacing=0.75, \
+           continents=True, grid=True, labels=True):
+   """
+    | rgaxes - label rotated grid plots
+    |
+    | xpole=None - location of xpole in degrees
+    | ypole=None - location of ypole in degrees
+    | xvec=None - location of x grid points
+    | yvec=None - location of y grid points
+    | spacing=10.0 - spacing of the grid for longitude and latitude (degrees)
+    | degspacing=0.75 - spacing of the points along the grid (degrees)
+    | continents=True - draw continents
+    | grid=True - draw grid
+    | labels=True - draw axis labels
+    |
+    |
+    |
+    :Returns:
+     name
+    | 
+    | 
+    | 
+    | 
+    | 
+    | 
+   """
+
+   #Invert y array if going from north to south
+   #Otherwise this gives nans for all output
+   yvec_orig=yvec
+   if (yvec[0] > yvec[np.size(yvec)-1]): yvec=yvec[::-1]
+
+
+   #Extract map continents
+   m=Basemap(projection='cyl', resolution=plotvars.resolution)
+   
+   clines=m.drawcoastlines(linewidth=0.0)
+   paths=clines.get_paths()        
+   npaths=len(paths)
+
+   gset(xmin=0, xmax=np.size(xvec)-1, ymin=0, ymax=np.size(yvec)-1, user_gset=0)
+
+   #Set continent thickness and color if not already set
+   if plotvars.continent_thickness is None: continent_thickness=1.5
+   if plotvars.continent_color is None: continent_color='k'
+
+   #Draw continents
+   if continents is True:
+      for i in np.arange(npaths):
+         p=paths[i]
+         pvert=p.vertices
+         lons=pvert[:,0]
+         lats=pvert[:,1]
+
+         xout, yout=rgrot(xin=pvert[:,0], yin=pvert[:,1], xpole=xpole, ypole=ypole)  
+         xpts, ypts = vloc(lons=xout, lats=yout, xvec=xvec, yvec=yvec)
+         plotvars.plot.plot(xpts,ypts,linewidth=continent_thickness, \
+                            color=continent_color)
+
+
+
+   #Draw grid lines
+   if grid is True:
+      lons=-180+np.arange(360/spacing+1)*spacing
+      lats=-90+np.arange(180/spacing+1)*spacing
+      #latmin=np.nanmin(xpts)
+      #lonmin=np.nanmin(ypts)
+
+      #Longitudes
+      for lon in lons:
+         ipts=179./degspacing
+         lona=np.zeros(ipts)+lon
+         lata=-90+np.arange(ipts-1)*degspacing
+         xout, yout=rgrot(xin=lona, yin=lata, xpole=xpole, ypole=ypole)   
+         xpts, ypts=vloc(lons=xout, lats=yout, xvec=xvec, yvec=yvec)
+         plotvars.plot.plot(xpts,ypts, ':', linewidth=2, color='k')
+
+         #if labels is True:
+            #Label code here
+
+      #Latitudes
+      for lat in lats:
+         ipts=359.0/degspacing
+         lata=np.zeros(ipts)+lat
+         lona=-180.0+np.arange(ipts-1)*degspacing
+         xout, yout=rgrot(xin=lona, yin=lata, xpole=xpole, ypole=ypole)   
+         xpts, ypts=vloc(lons=xout, lats=yout, xvec=xvec, yvec=yvec)
+         plotvars.plot.plot(xpts,ypts, ':', linewidth=2, color='k')
+
+         #if labels is True:
+            #Label code here
+
+      #;Plot lower axis labels if required.
+      #IF ((ylab EQ 1) or (ylab EQ 3)) THEN BEGIN
+      # pts=WHERE(xyloc(*,1) GE 0.0, count)
+      # IF (count GE 1) THEN BEGIN
+      #  ipt=MIN(pts)
+      #  IF (xyloc(ipt,0) GE 0) THEN BEGIN
+      #   y0=ymin-200
+      #   x0=xmin+xyloc(ipt,0)/(xpts-1)*(xmax-xmin)
+      #   GPLOT, X=[x0, x0], Y=[ymin, ymin-150], /DEVICE
+      #   GPLOT, X=x0, Y=y0-50 , TEXT=SCROP(((lons(ix) + 180) MOD 360)-180), ALIGN=0.5, VALIGN=1.0, /DEVICE
+      #  ENDIF
+      # ENDIF
+      #ENDIF
+
+
+   yvec=yvec_orig
+   
 
