@@ -11,8 +11,8 @@ and source code.
 '''
 
 __author__ = 'Andy Heaps - a.j.heaps@reading.ac.uk'
-__date__ = '9th July 2014'
-__version__ = '1.5.14'
+__date__ = '29th October 2014'
+__version__ = '1.6.0'
 
 from cfplot import *
 
