@@ -24,6 +24,7 @@ from scipy import interpolate
 import time
 from subprocess import call
 import matplotlib
+import matplotlib.tri as triang
 
 
 #Check for a display and use the Agg backing store if none is present
@@ -144,6 +145,9 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
       ylabel=''
 
 
+
+
+
    #Set contour line styles
    if negative_linestyle is None: matplotlib.rcParams['contour.negative_linestyle'] = 'solid'
    else: matplotlib.rcParams['contour.negative_linestyle'] = negative_linestyle
@@ -229,7 +233,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
    else:
       #Automatic levels  
       if verbose: print 'con - generating automatic contour levels'
-      clevs, mult = gvals(dmin=np.min(field), dmax=np.max(field), tight=0)
+      clevs, mult = gvals(dmin=np.nanmin(field), dmax=np.nanmax(field), tight=0)
       fmult=10**-mult      
 
       #Adjust colour table
@@ -310,6 +314,18 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
    if continent_color is None: continent_color='k'
 
  
+   #Select contour triangulation based on input grid dimensions
+   if (np.ndim(field) == 1 and   np.ndim(x) == 1 and np.ndim(y) == 1):  
+      tri=1      
+   if (np.ndim(field) == 2 and   np.ndim(x) == 2 and np.ndim(y) == 2):  
+      tri=0      
+   if (np.ndim(field) == 2 and   np.ndim(x) == 1 and np.ndim(y) == 1):
+      tri=0
+
+
+
+
+
    ########## 
    # Map plot
    ##########
@@ -319,7 +335,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
       if plotvars.user_plot == 0: gopen(user_plot=0)
 
       #Set up mapping
-      lonrange=np.max(x)-np.min(x)
+      lonrange=np.nanmax(x)-np.nanmin(x)
       #Reset mapping
       if plotvars.user_mapset == 0:
          plotvars.lonmin=-180
@@ -330,31 +346,32 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
       if lonrange > 350 or plotvars.user_mapset == 1:
          set_map()  
       else:
-         mapset(lonmin=np.min(x), lonmax=np.max(x), latmin=np.min(y), latmax=np.max(y), user_mapset=0)
+         mapset(lonmin=np.nanmin(x), lonmax=np.nanmax(x), latmin=np.nanmin(y), \
+                latmax=np.nanmax(y), user_mapset=0)
          set_map()  
 
 
       mymap=plotvars.mymap   
       user_mapset=plotvars.user_mapset
    
-      lonrange=np.max(x)-np.min(x) 
-      if lonrange >350:
+      lonrange=np.nanmax(x)-np.nanmin(x) 
+      if lonrange >350 and np.ndim(y) == 1:
       
          #Add cyclic information if missing.
          if lonrange < 360:
             field, x = addcyclic(field, x)
-            lonrange=np.max(x)-np.min(x)
+            lonrange=np.nanmax(x)-np.nanmin(x)
 
          #Shift grid if needed
-         if plotvars.lonmin < np.min(x): x=x-360
-         if plotvars.lonmin > np.max(x): x=x+360
+         if plotvars.lonmin < np.nanmin(x): x=x-360
+         if plotvars.lonmin > np.nanmax(x): x=x+360
          field, x=shiftgrid(plotvars.lonmin, field, x)   
 
          #Add cyclic information if missing.
-         lonrange=np.max(x)-plotvars.lonmin
+         lonrange=np.nanmax(x)-plotvars.lonmin
          if lonrange < 360:
             field, x = addcyclic(field, x)
-            lonrange=np.max(x)-np.min(x)
+            lonrange=np.nanmax(x)-np.nanmin(x)
 
 
       #Flip latitudes and field if latitudes are in descending order
@@ -375,8 +392,17 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
          y=y[0:myypos+1]
          field=field[0:myypos+1, :]
 
-      #Create the meshgrid         
-      lons, lats=mymap(*np.meshgrid(x, y))
+      #Create the meshgrid if required
+      if (np.ndim(field) == 1 and   np.ndim(x) == 1 and np.ndim(y) == 1):     
+         lons=x
+         lats=y
+      if (np.ndim(field) == 2 and   np.ndim(x) == 2 and np.ndim(y) == 2):      
+         lons=x
+         lats=y
+      if (np.ndim(field) == 2 and   np.ndim(x) == 1 and np.ndim(y) == 1):
+         lons, lats=mymap(*np.meshgrid(x, y))
+
+
 
       #Set the plot limits
       if lonrange > 350:
@@ -385,11 +411,10 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
          if user_mapset == 1:
             gset(xmin=plotvars.lonmin, xmax=plotvars.lonmax, ymin=plotvars.latmin, ymax=plotvars.latmax, user_gset=0)
          else:
-            gset(xmin=np.min(lons), xmax=np.max(lons), ymin=np.min(lats), ymax=np.max(lats), user_gset=0)
+            gset(xmin=np.nanmin(lons), xmax=np.nanmax(lons), ymin=np.nanmin(lats), ymax=np.nanmax(lats), user_gset=0)
 
 
 
-         
 
       #Filled contours
       if fill == True or blockfill == 1:
@@ -403,7 +428,8 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
   
          #filled colour contours
          cfill = mymap.contourf(lons,lats,field*fmult,clevs,extend=plotvars.levels_extend,\
-                 colors=colmap)
+                 colors=colmap, tri=tri)
+
 
          #add colour scale extensions if required
          if (plotvars.levels_extend == 'both' or plotvars.levels_extend == 'min'):
@@ -434,7 +460,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
       #Contour lines and labels  
       if lines == True: 
          if verbose: print 'con - adding contour lines and labels'
-         cs = mymap.contour(lons,lats,field*fmult,clevs,colors='k')
+         cs = mymap.contour(lons,lats,field*fmult,clevs,colors='k', tri=tri)
          if line_labels == True:
             nd=ndecs(clevs)
             fmt='%d'
@@ -443,7 +469,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
 
          #Thick zero contour line   
          if zero_thick is not None:
-            cs = mymap.contour(lons,lats,field*fmult,[1e-32, 0], colors='k', linewidths=zero_thick) 
+            cs = mymap.contour(lons,lats,field*fmult,[1e-32, 0], colors='k', linewidths=zero_thick, tri=tri) 
 
       
 
@@ -507,13 +533,13 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
       user_gset=plotvars.user_gset
       if user_gset == 0:
          #Program selected data plot limits
-         xmin=np.min(x)
+         xmin=np.nanmin(x)
          if xmin < -80 and xmin >= -90: xmin=-90
-         xmax=np.max(x)
+         xmax=np.nanmax(x)
          if xmax > 80 and xmax <= 90: xmax=90 
-         ymin=np.min(y)
+         ymin=np.nanmin(y)
          if ymin <= 10: ymin=0
-         ymax=np.max(y)
+         ymax=np.nanmax(y)
       else:
          #User specified plot limits
          xmin=plotvars.xmin
@@ -576,7 +602,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
       #Filled contours
       if fill == True or blockfill == 1:
          cfill=plotvars.plot.contourf(x,y,field*fmult,clevs, \
-               extend=plotvars.levels_extend, colors=colmap)
+               extend=plotvars.levels_extend, colors=colmap, tri=tri)
 
          #add colour scale extensions if required
          if (plotvars.levels_extend == 'both' or plotvars.levels_extend == 'min'):
@@ -601,7 +627,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
 
       #Contour lines and labels
       if lines == True: 
-         cs=plotvars.plot.contour(x,y,field*fmult,clevs,colors='k')
+         cs=plotvars.plot.contour(x,y,field*fmult,clevs,colors='k', tri=tri)
          if line_labels == True:  
             nd=ndecs(clevs)
             fmt='%d'
@@ -610,7 +636,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
 
             #Thick zero contour line
             if zero_thick is not None:
-               cs = plotvars.plot.contour(x,y,field*fmult,[1e-32, 0],colors='k', linewidths=zero_thick)
+               cs = plotvars.plot.contour(x,y,field*fmult,[1e-32, 0],colors='k', linewidths=zero_thick, tri=tri)
      
   
 
@@ -645,13 +671,13 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
       #Set plot limits
       if user_gset == 0:
          #Program selected data plot limits
-         xmin=np.min(x)
+         xmin=np.nanmin(x)
          if xmin < -170 and xmin >= -180: xmin=-180
-         xmax=np.max(x)
+         xmax=np.nanmax(x)
          if xmax > 170 and xmax <= 180: xmax=180 
-         ymin=np.min(y)
+         ymin=np.nanmin(y)
          if ymin <= 10: ymin=0
-         ymax=np.max(y)
+         ymax=np.nanmax(y)
       else:
          #User specified plot limits
          xmin=plotvars.xmin
@@ -709,7 +735,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
       #Filled contours
       if fill == True or blockfill == 1:
          cfill=plotvars.plot.contourf(x,y,field*fmult,clevs, \
-               extend=plotvars.levels_extend, colors=colmap)
+               extend=plotvars.levels_extend, colors=colmap, tri=tri)
 
          #add colour scale extensions if required
          if (plotvars.levels_extend == 'both' or plotvars.levels_extend == 'min'):
@@ -734,7 +760,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
 
       #Contour lines and labels
       if lines == True: 
-         cs=plotvars.plot.contour(x,y,field*fmult,clevs,colors='k')
+         cs=plotvars.plot.contour(x,y,field*fmult,clevs,colors='k', tri=tri)
          if line_labels == True:  
             nd=ndecs(clevs)
             fmt='%d'
@@ -743,7 +769,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
 
             #Thick zero contour line
             if zero_thick is not None:
-               cs = plotvars.plot.contour(x,y,field*fmult,[1e-32, 0],colors='k', linewidths=zero_thick)
+               cs = plotvars.plot.contour(x,y,field*fmult,[1e-32, 0],colors='k', linewidths=zero_thick, tri=tri)
      
   
 
@@ -802,10 +828,10 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
          xmin=plotvars.xmin
          xmax=plotvars.xmax
       else:
-         xmin=np.min(x)
-         xmax=np.max(x)
-         ymin=np.min(y)
-         ymax=np.max(y)
+         xmin=np.nanmin(x)
+         xmax=np.nanmax(x)
+         ymin=np.nanmin(y)
+         ymax=np.nanmax(y)
 
 
 
@@ -847,7 +873,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
       #Filled contours
       if fill == True or blockfill == 1:
          cfill=plotvars.plot.contourf(x,y,field*fmult,clevs, \
-               extend=plotvars.levels_extend, colors=colmap)
+               extend=plotvars.levels_extend, colors=colmap, tri=tri)
 
          #add colour scale extensions if required
          if (plotvars.levels_extend == 'both' or plotvars.levels_extend == 'min'):
@@ -872,7 +898,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
 
       #Contour lines and labels
       if lines == True: 
-         cs=plotvars.plot.contour(x,y,field*fmult,clevs,colors='k')
+         cs=plotvars.plot.contour(x,y,field*fmult,clevs,colors='k', tri=tri)
          if line_labels == True:  
             nd=ndecs(clevs)
             fmt='%d'
@@ -881,7 +907,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
 
             #Thick zero contour line
             if zero_thick is not None:
-               cs = plotvars.plot.contour(x,y,field*fmult,[1e-32, 0],colors='k', linewidths=zero_thick)
+               cs = plotvars.plot.contour(x,y,field*fmult,[1e-32, 0],colors='k', linewidths=zero_thick, tri=tri)
      
 
 
@@ -934,7 +960,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
       #Filled contours
       if fill == True or blockfill == 1:
          cfill=plotvars.plot.contourf(xpts,ypts,field*fmult,clevs,extend=plotvars.levels_extend,\
-               colors=colmap)
+               colors=colmap, tri=tri)
 
          #add colour scale extensions if required
          if (plotvars.levels_extend == 'both' or plotvars.levels_extend == 'min'):
@@ -950,7 +976,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
 
       #Contour lines and labels 
       if lines == True:
-         cs=plotvars.plot.contour(xpts,ypts,field*fmult,clevs,colors='k')
+         cs=plotvars.plot.contour(xpts,ypts,field*fmult,clevs,colors='k', tri=tri)
          if line_labels == True:     
             nd=ndecs(clevs)
             fmt='%d'
@@ -959,7 +985,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
    
          #Thick zero contour line
          if zero_thick is not None:
-            cs = plotvars.plot.contour(xpts,ypts,field*fmult,[1e-32, 0],colors='k', linewidths=zero_thick)
+            cs = plotvars.plot.contour(xpts,ypts,field*fmult,[1e-32, 0],colors='k', linewidths=zero_thick, tri=tri)
 
 
       #Colorbar
@@ -998,10 +1024,10 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
 
       #Work out axes if none are supplied
       if [plotvars.xmin, plotvars.xmax, plotvars.ymin, plotvars.ymax].count(None) > 0:
-         xmin=np.min(x)
-         xmax=np.max(x)
-         ymin=np.min(y)
-         ymax=np.max(y)
+         xmin=np.nanmin(x)
+         xmax=np.nanmax(x)
+         ymin=np.nanmin(y)
+         ymax=np.nanmax(y)
       else:
          xmin=plotvars.xmin
          xmax=plotvars.xmax
@@ -1032,7 +1058,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
       #Filled contours
       if fill == True or blockfill == 1:
          cfill=plotvars.plot.contourf(x,y,field*fmult,clevs,extend=plotvars.levels_extend,\
-               colors=colmap)
+               colors=colmap, tri=tri)
 
          #add colour scale extensions if required
          if (plotvars.levels_extend == 'both' or plotvars.levels_extend == 'min'):
@@ -1048,7 +1074,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
 
       #Contour lines and labels 
       if lines == True:
-         cs=plotvars.plot.contour(x,y,field*fmult,clevs,colors='k')
+         cs=plotvars.plot.contour(x,y,field*fmult,clevs,colors='k', tri=tri)
          if line_labels == True:     
             nd=ndecs(clevs)
             fmt='%d'
@@ -1057,7 +1083,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
    
          #Thick zero contour line
          if zero_thick is not None:
-            cs = plotvars.plot.contour(x,y,field*fmult,[1e-32, 0],colors='k', linewidths=zero_thick)
+            cs = plotvars.plot.contour(x,y,field*fmult,[1e-32, 0],colors='k', linewidths=zero_thick, tri=tri)
 
 
       #Colorbar
@@ -1871,14 +1897,14 @@ def gvals(dmin=None, dmax=None, tight=0, mystep=None, mod=1):
       vals=(int(dmin)/step)*step
    else:
       vals=dmin
-   while (np.max(vals)+step) <= dmax:
-      vals=np.append(vals, np.max(vals)+step)
+   while (np.nanmax(vals)+step) <= dmax:
+      vals=np.append(vals, np.nanmax(vals)+step)
    
 
    #Remove upper and lower limits if tight=0 - i.e. a contour plot
    if tight == 0 and np.size(vals) > 1:
-      if np.max(vals) >= dmax: vals=vals[0:-1]
-      if np.min(vals) <= dmin: vals=vals[1:]
+      if np.nanmax(vals) >= dmax: vals=vals[0:-1]
+      if np.nanmin(vals) <= dmin: vals=vals[1:]
 
 
    if mystep is not None:
@@ -1907,12 +1933,12 @@ def gvals(dmin=None, dmax=None, tight=0, mystep=None, mod=1):
 
    if (dmax-dmin == step): step=step/10.
    vals=float("%.2f" %(int(dmin/step)*step))
-   while (np.max(vals)+step) <= dmax:
-      vals=np.append(vals, float("%.2f" %(np.max(vals)+step)))
+   while (np.nanmax(vals)+step) <= dmax:
+      vals=np.append(vals, float("%.2f" %(np.nanmax(vals)+step)))
 
    if tight == 0:
-      if np.max(vals) >= dmax: vals=vals[0:-1]
-      if np.min(vals) <= dmin: vals=vals[1:]
+      if np.nanmax(vals) >= dmax: vals=vals[0:-1]
+      if np.nanmin(vals) <= dmin: vals=vals[1:]
 
    return vals, mult
 
@@ -1980,6 +2006,7 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None):
    #has_rotated_pole=None
    xpole=None
    ypole=None
+   ptype=None
 
 
    #Extract coordinate data if a matching CF standard_name or axis is found
@@ -2243,15 +2270,16 @@ def check_data(field=None, x=None, y=None):
    #Check input dimensions look okay.
    #All inputs 2D
    if np.ndim(field) == 2 and np.ndim(x) == 2 and  np.ndim(y) == 2:
-      print 'In new section'
       xpts=np.shape(field)[1]
       ypts=np.shape(field)[0]
-      print 'xpts, ypts, np.shape(x), np.shape(y)', xpts, ypts, np.shape(x), np.shape(y)
-      print 'args is ', args
       if xpts != np.shape(x)[1] or xpts != np.shape(y)[1]: args = False
-      print 'args is ', args
       if ypts != np.shape(x)[0] or ypts != np.shape(y)[0]: args = False
-      print 'args is ', args
+      if args is True: return
+
+   #Field x and y all 1D
+   if np.ndim(field) == 1 and np.ndim(x) == 1 and np.ndim(y) == 1:
+      if np.size(x) != np.size(field): args = False
+      if np.size(y) != np.size(field): args = False
       if args is True: return
 
    #Field 2D, x and y 1D
@@ -2262,14 +2290,15 @@ def check_data(field=None, x=None, y=None):
       if np.size(x) != np.shape(field)[1]: args = False  
       if np.size(y) != np.shape(field)[0]: args = False  
    
-
   
    if args is False:
       errstr=errstr+'Input arguments incorrectly shaped:\n'
       errstr=errstr+'x has shape:'+str(np.shape(x))+'\n'
       errstr=errstr+'y has shape:'+str(np.shape(y))+'\n'
       errstr=errstr+'field has shape'+str(np.shape(field))+'\n\n'
-      errstr=errstr+'Expected x=xpts, y=ypts, field=(xpts,ypts)\n'
+      errstr=errstr+'Expected x=xpts, y=ypts, field=(ypts,xpts)\n'
+      errstr=errstr+'x=npts, y=npts, field=npts\n'
+      errstr=errstr+'or x=[ypts, xpts], y=[ypts, xpts], field=[ypts, xpts]\n'
       raise  Warning(errstr)  
 
 
@@ -2532,11 +2561,11 @@ def bfill(f=None, x=None, y=None, clevs=False, lonlat=False, bound=False):
       ypts=ypts[0:-1]
 
 
-      if plotvars.lonmin < np.min(xpts): xpts=xpts-360
-      if plotvars.lonmin > np.max(xpts): xpts=xpts+360
+      if plotvars.lonmin < np.nanmin(xpts): xpts=xpts-360
+      if plotvars.lonmin > np.nanmax(xpts): xpts=xpts+360
 
       #Add cyclic information if missing.
-      lonrange=np.max(xpts)-np.min(xpts)
+      lonrange=np.nanmax(xpts)-np.nanmin(xpts)
       if lonrange < 360:
          field, xpts = addcyclic(field, xpts)
 
@@ -2687,20 +2716,20 @@ def stipple(f=None, x=None, y=None, min=None, max=None, size=80, color='k', pts=
    if plotvars.plot_type == 1:
       #Cylindrical projection
       #Add cyclic information if missing.
-      lonrange=np.max(xpts)-np.min(xpts)
+      lonrange=np.nanmax(xpts)-np.nanmin(xpts)
       if lonrange < 360:
          field, xpts = addcyclic(field, xpts)
 
       #Shift grid if needed
-      if plotvars.lonmin < np.min(xpts): xpts=xpts-360
-      if plotvars.lonmin > np.max(xpts): xpts=xpts+360
+      if plotvars.lonmin < np.nanmin(xpts): xpts=xpts-360
+      if plotvars.lonmin > np.nanmax(xpts): xpts=xpts+360
 
       field, xpts=shiftgrid(plotvars.lonmin, field, xpts)   
 
       if plotvars.proj == 'cyl':
          #Calculate interpolation points
-         xnew, ynew=stipple_points(xmin=np.min(xpts), xmax=np.max(xpts),\
-                                   ymin=np.min(ypts), ymax=np.max(ypts), pts=pts, stype=2)
+         xnew, ynew=stipple_points(xmin=np.nanmin(xpts), xmax=np.nanmax(xpts),\
+                                   ymin=np.nanmin(ypts), ymax=np.nanmax(ypts), pts=pts, stype=2)
   
          #Calculate points in map space
          xnew_map,ynew_map=plotvars.mymap(xnew,ynew)
@@ -2717,8 +2746,8 @@ def stipple(f=None, x=None, y=None, min=None, max=None, size=80, color='k', pts=
    if plotvars.plot_type == 2:
    #Calculate interpolation points
          
-      xnew, ynew=stipple_points(xmin=np.min(xpts), xmax=np.max(xpts),\
-                                ymin=np.min(ypts), ymax=np.max(ypts), pts=pts, stype=2)
+      xnew, ynew=stipple_points(xmin=np.nanmin(xpts), xmax=np.nanmax(xpts),\
+                                ymin=np.nanmin(ypts), ymax=np.nanmax(ypts), pts=pts, stype=2)
 
 
 
@@ -2778,18 +2807,18 @@ def stipple_points(xmin=None, xmax=None, ymin=None, ymax=None, pts=None, stype=N
    #Create regularly spaced points
    xstep=(xmax-xmin)/float(pts_x)
    x1=[xmin+xstep/4]
-   while (np.max(x1)+xstep) < xmax-xstep/10:
-      x1=np.append(x1,  np.max(x1)+xstep)
+   while (np.nanmax(x1)+xstep) < xmax-xstep/10:
+      x1=np.append(x1,  np.nanmax(x1)+xstep)
    nxpts=np.size(x1)
    
    x2=[xmin+xstep*3/4]
-   while (np.max(x2)+xstep) < xmax-xstep/10:
-      x2=np.append(x2,  np.max(x2)+xstep)
+   while (np.nanmax(x2)+xstep) < xmax-xstep/10:
+      x2=np.append(x2,  np.nanmax(x2)+xstep)
 
    ystep=(ymax-ymin)/float(pts_y)
    y1=[ymin+ystep/2]
-   while (np.max(y1)+ystep) < ymax-ystep/10:
-      y1=np.append(y1,  np.max(y1)+ystep)
+   while (np.nanmax(y1)+ystep) < ymax-ystep/10:
+      y1=np.append(y1,  np.nanmax(y1)+ystep)
 
 
    
@@ -2862,7 +2891,7 @@ def find_pos_in_array(vals=None, val=None, above=False):
 
 
 def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
-         key_length=None, key_label=None):
+         key_length=None, key_label=None, ptype=None):
 
    """
     | vect - plot vectors
@@ -2878,6 +2907,14 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
     |            onto a new grid.
     | key_length=None - length of the key
     | key_label=None - label for the key
+    | ptype=0 - plot type - not needed for cf fields.
+    |                       0 = no specific plot type,
+    |                       1 = longitude-latitude,
+    |                       2 = latitude - height, 
+    |                       3 = longitude - height, 
+    |                       4 = latitude - time,
+    |                       5 = longitude - time
+    |                       6 = rotated pole
     |
     |
     :Returns:
@@ -2894,6 +2931,7 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
    if text_fontsize is None: text_fontsize=11
    if continent_thickness is None: continent_thickness=1.5
    if continent_color is None: continent_color='k'
+   ylog=plotvars.ylog
 
    #Extract required data for contouring
    #If a cf-python field
@@ -2902,7 +2940,7 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
       u_data, u_x, u_y, ptype, colorbar_title, xlabel, ylabel,time_opts, xpole, ypole=\
          cf_data_assign(u, colorbar_title)
    else:
-      field=f #field data passed in as f
+      #field=f #field data passed in as f
       check_data(u, x, y)
       u_data=u
       u_x=x
@@ -2916,24 +2954,28 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
       v_data, v_x, v_y, ptype, colorbar_title, xlabel, ylabel, time_opts, xpole, ypole=\
          cf_data_assign(v, colorbar_title)
    else:
-      field=f #field data passed in as f
+      #field=f #field data passed in as f
       check_data(v, x, y)
       v_data=v
       v_x=x
       v_y=y
       xlabel=''
       ylabel=''
-
    
-   if scale is None: scale=np.max(u_data)/4.0
+
+   if scale is None: scale=np.nanmax(u_data)/4.0
    if key_length is None: key_length=scale
-   if key_label is None: key_label=str(key_length)+u.units
+   if key_label is None: key_label=str(key_length)
+   if isinstance(u[0], cf.Field): key_label=key_label+u.units
    key_label=supscr(key_label)
 
    #Open a new plot is necessary
-   if plotvars.user_plot == 0: gopen(user_plot=0)
+   if plotvars.user_plot == 0: 
+      gopen(user_plot=0)
 
- 
+   #Set plot type if user specified
+   if (ptype != None): plotvars.plot_type=ptype
+
    
    if plotvars.plot_type == 1:
       #Set up mapping
@@ -2943,67 +2985,64 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
       #add cyclic and shift grid 
       u_data, u_x = addcyclic(u_data, u_x)
       v_data, v_x = addcyclic(v_data, v_x)
-      if plotvars.lonmin < np.min(u_x): u_x=u_x-360.0
-      if plotvars.lonmin < np.min(v_x): v_x=v_x-360.0
+      if plotvars.lonmin < np.nanmin(u_x): u_x=u_x-360.0
+      if plotvars.lonmin < np.nanmin(v_x): v_x=v_x-360.0
       u_data, u_x = shiftgrid(plotvars.lonmin, u_data, u_x)
       v_data, v_x = shiftgrid(plotvars.lonmin, v_data, v_x)
 
 
-      #stride data points to reduce vector density
-      if stride is not None:
-         if np.size(stride) == 1:
-            xstride=stride
-            ystride=stride
-         if np.size(stride) == 2:
-            xstride=stride[0]
-            ystride=stride[1]
+   #stride data points to reduce vector density
+   if stride is not None:
+      if np.size(stride) == 1:
+         xstride=stride
+         ystride=stride
+      if np.size(stride) == 2:
+         xstride=stride[0]
+         ystride=stride[1]
 
 
-         iskip=1
-         for ix in np.arange(np.size(u_x)):
-            if iskip != xstride: u_x[ix]=float('nan') 
-            iskip=iskip+1
-            if iskip > xstride: iskip=1     
-         iskip=1
-         for iy in np.arange(np.size(u_y)):
-            if iskip != ystride: u_y[iy]=float('nan') 
-            iskip=iskip+1
-            if iskip > ystride: iskip=1 
+      iskip=1
+      for ix in np.arange(np.size(u_x)):
+         if iskip != xstride: u_x[ix]=float('nan') 
+         iskip=iskip+1
+         if iskip > xstride: iskip=1     
+      iskip=1
+      for iy in np.arange(np.size(u_y)):
+         if iskip != ystride: u_y[iy]=float('nan') 
+         iskip=iskip+1
+         if iskip > ystride: iskip=1 
 
       
-      #Use bilinear interpolation to plot vectors
-      if pts is not None:
+   #Use bilinear interpolation to plot vectors
+   if pts is not None:
 
-         if plotvars.proj != 'npstere' and plotvars.proj != 'spstere': 
-            #Calculate interpolation points and values
-            xnew, ynew=stipple_points(xmin=plotvars.lonmin, xmax=plotvars.lonmax,\
-                                      ymin=plotvars.latmin, ymax=plotvars.latmax, pts=pts, stype=1)
+      if plotvars.proj != 'npstere' and plotvars.proj != 'spstere': 
+         #Calculate interpolation points and values
+         xnew, ynew=stipple_points(xmin=plotvars.lonmin, xmax=plotvars.lonmax,\
+                                   ymin=plotvars.latmin, ymax=plotvars.latmax, pts=pts, stype=1)
 
-            u_vals=regrid(f=u_data, x=u_x, y=u_y, xnew=xnew, ynew=ynew)
-            v_vals=regrid(f=v_data, x=u_x, y=u_y, xnew=xnew, ynew=ynew)
+         u_vals=regrid(f=u_data, x=u_x, y=u_y, xnew=xnew, ynew=ynew)
+         v_vals=regrid(f=v_data, x=u_x, y=u_y, xnew=xnew, ynew=ynew)
 
-            #Plot vectors
-            quiv=plotvars.mymap.quiver(xnew,ynew,u_vals,v_vals, pivot='middle',units='inches', scale=scale)
-         else:
-            print 'polar vectors with pts'
-            #Calculate interpolation points and values
-            xnew, ynew, xnew_map, ynew_map=polar_regular_grid()
+         #Plot vectors
+         quiv=plotvars.mymap.quiver(xnew,ynew,u_vals,v_vals, pivot='middle',units='inches', scale=scale)
+      else:
+         #Calculate interpolation points and values
+         xnew, ynew, xnew_map, ynew_map=polar_regular_grid()
 
-            u_vals=regrid(f=u_data, x=u_x, y=u_y, xnew=xnew, ynew=ynew)
-            v_vals=regrid(f=v_data, x=u_x, y=u_y, xnew=xnew, ynew=ynew)
-            print 'min / max u_vals ', np.min(u_vals), np.max(u_vals)
-            print 'min / max v_vals ', np.min(v_vals), np.max(v_vals)
-            print 'number of u values is ', np.size(u_vals)
+         u_vals=regrid(f=u_data, x=u_x, y=u_y, xnew=xnew, ynew=ynew)
+         v_vals=regrid(f=v_data, x=u_x, y=u_y, xnew=xnew, ynew=ynew)
 
 
-            #Plot vectors
-            quiv=plotvars.mymap.quiver(xnew_map,ynew_map,u_vals,v_vals, pivot='middle',\
-                                       units='inches', scale=scale)
+
+         #Plot vectors
+         quiv=plotvars.mymap.quiver(xnew_map,ynew_map,u_vals,v_vals, pivot='middle',\
+                                    units='inches', scale=scale)
 
 
-         quiv_key=plotvars.plot.quiverkey(quiv, 0.9, -0.06, key_length, key_label, labelpos='W')
+      quiv_key=plotvars.plot.quiverkey(quiv, 0.9, -0.06, key_length, key_label, labelpos='W')
 
-
+   if plotvars.plot_type == 1:
       if pts is None:
          #convert lons, lats into map coordinates
          x,y=plotvars.mymap(*np.meshgrid(u_x, u_y))
@@ -3011,7 +3050,6 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
          #plot vectors and key
          quiv=plotvars.mymap.quiver(u_x,u_y,u_data,v_data, pivot='middle',units='inches', scale=scale)
          quiv_key=plotvars.plot.quiverkey(quiv, 0.9, -0.06, key_length, key_label, labelpos='W')
-
 
 
 
@@ -3033,14 +3071,85 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
       mymap.drawcoastlines(linewidth=continent_thickness, color=continent_color)
       #plotvars.plot.set_title(title, y=1.03, fontsize=plotvars.fontsize)
 
-      ##########
-      #Save plot
-      ##########
- 
-      if plotvars.user_plot == 0: 
-         gset()
-         cscale()
-         gclose()
+
+
+      
+   #Zonal plot
+   if plotvars.plot_type == 2 and plotvars.user_plot == 0:
+      user_gset=plotvars.user_gset
+      if user_gset == 0:
+         #Program selected data plot limits
+         xmin=np.nanmin(u_x)
+         if xmin < -80 and xmin >= -90: xmin=-90
+         xmax=np.nanmax(u_x)
+         if xmax > 80 and xmax <= 90: xmax=90 
+         ymin=np.nanmin(u_y)
+         if ymin <= 10: ymin=0
+         ymax=np.nanmax(u_y)
+      else:
+         #User specified plot limits
+         xmin=plotvars.xmin
+         xmax=plotvars.xmax
+         if plotvars.ymin < plotvars.ymax: 
+            ymin=plotvars.ymin
+            ymax=plotvars.ymax
+         else:
+            ymin=plotvars.ymax
+            ymax=plotvars.ymin
+
+
+      xstep=None
+      if (xmin == -90 and xmax == 90): xstep=30
+      ystep=None
+      if (ymax == 1000): ystep=100
+      if (ymax == 100000): ystep=10000
+
+      ytype=0 #pressure or similar y axis
+      if 'theta' in ylabel.split(' '): ytype=1
+      if 'height' in ylabel.split(' '): 
+         ytype=1
+         ystep=100
+         if (ymax - ymin) > 5000: ystep=500.0
+         if (ymax - ymin) > 10000: ystep=1000.0
+         if (ymax - ymin) > 50000: ystep=10000.0
+
+      #Set plot limits and draw axes
+      if ylog != 1:   
+         if ytype == 1: 
+            gset(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax, user_gset=user_gset)
+            latticks,latlabels=mapaxis(min=xmin, max=xmax, type=2)
+            axes_plot(xticks=latticks, xticklabels=latlabels,\
+                 yticks=gvals(dmin=ymin, dmax=ymax, tight=1, mystep=ystep, mod=0)[0],\
+                 xlabel=xlabel, ylabel=ylabel)
+         else: 
+            gset(xmin=xmin, xmax=xmax, ymin=ymax, ymax=ymin, user_gset=user_gset)
+            latticks,latlabels=mapaxis(min=xmin, max=xmax, type=2)
+            axes_plot(xticks=latticks, xticklabels=latlabels,\
+                 yticks=gvals(dmin=ymin, dmax=ymax, tight=1, mystep=ystep, mod=0)[0],\
+                 xlabel=xlabel, ylabel=ylabel)  
+
+      #Log y axis 
+      if ylog == 1:
+         if ymin == 0: ymin=1
+         gset(xmin=xmin, xmax=xmax, ymin=ymax, ymax=ymin, ylog=1, user_gset=user_gset)
+         latticks,latlabels=mapaxis(min=xmin, max=xmax, type=2)
+         axes_plot(xticks=latticks, xticklabels=latlabels,\
+              xlabel=xlabel, ylabel=ylabel)
+
+
+      #plot vectors and key
+      quiv=plotvars.plot.quiver(u_x,u_y,u_data,v_data, pivot='middle',units='inches', scale=scale)
+      quiv_key=plotvars.plot.quiverkey(quiv, 0.9, -0.06, key_length, key_label, labelpos='W')
+
+
+
+   ##########
+   #Save plot
+   ##########
+   if plotvars.user_plot == 0: 
+      gset()
+      cscale()
+      gclose()
   
 
 def set_map():
@@ -3693,13 +3802,13 @@ def vloc(xvec=None, yvec=None, lons=None, lats=None):
          xpt=-1
       else:
          xpts=np.where(lons[i] >= xvec)
-         xpt=np.max(xpts)
+         xpt=np.nanmax(xpts)
 
       if ((lats[i] < min(yvec)) or (lats[i] > max(yvec))): 
          ypt=-1
       else:
          ypts=np.where(lats[i] >= yvec)
-         ypt=np.max(ypts)
+         ypt=np.nanmax(ypts)
 
  
       if (xpt >= 0):
