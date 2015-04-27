@@ -2969,7 +2969,7 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
    if isinstance(u[0], cf.Field): key_label=key_label+u.units
    key_label=supscr(key_label)
 
-   #Open a new plot is necessary
+   #Open a new plot if necessary
    if plotvars.user_plot == 0: 
       gopen(user_plot=0)
 
@@ -3075,7 +3075,8 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
 
       
    #Zonal plot
-   if plotvars.plot_type == 2 and plotvars.user_plot == 0:
+   if plotvars.plot_type == 2: 
+      #and plotvars.user_plot == 0:
       user_gset=plotvars.user_gset
       if user_gset == 0:
          #Program selected data plot limits
