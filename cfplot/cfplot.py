@@ -1971,7 +1971,7 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None):
    #Check input data has the correct number of dimensions
    #Take into account rotated pole fields having extra dimensions  
    ndim=len(f.axes(size=cf.gt(1)))
-   if f.transform('rotated_latitude_longitude') is None:
+   if f.ref('rotated_latitude_longitude') is None:
       if (ndim > 2 or ndim < 2):
          print ''
          if (ndim > 2): errstr='cf_data_assign error - data has too many dimensions'
@@ -2164,9 +2164,9 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None):
   
 
    #Rotated pole
-   if f.transform('rotated_latitude_longitude') is not None: 
+   if f.ref('rotated_latitude_longitude') is not None: 
       ptype=6
-      rotated_pole=f.transform('rotated_latitude_longitude')
+      rotated_pole=f.ref('rotated_latitude_longitude')
       xpole=rotated_pole['grid_north_pole_longitude']
       ypole=rotated_pole['grid_north_pole_latitude']
 
