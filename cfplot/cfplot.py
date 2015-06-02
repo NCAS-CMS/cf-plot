@@ -2891,7 +2891,8 @@ def find_pos_in_array(vals=None, val=None, above=False):
 
 
 def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
-         key_length=None, key_label=None, ptype=None):
+         key_length=None, key_label=None, ptype=None, title=None,\
+         width=None, headwidth=3, headlength=5, headaxislength=4.5, pivot='middle'):
 
    """
     | vect - plot vectors
@@ -2904,7 +2905,7 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
     | stride=None - plot vector every stride points. Can take two values
     |                one for x and one for y
     | pts=None - use bilinear interpolation to interpolate vectors
-    |            onto a new grid.
+    |            onto a new grid  
     | key_length=None - length of the key
     | key_label=None - label for the key
     | ptype=0 - plot type - not needed for cf fields.
@@ -2916,6 +2917,13 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
     |                       5 = longitude - time
     |                       6 = rotated pole
     |
+    | title=None - plot title
+    | width=None - shaft width in arrow units; default is 0.005 times the width of the plot
+    | headwidth=3 - head width as multiple of shaft width, default is 3
+    | headlength=5 - head length as multiple of shaft width, default is 5
+    | headaxislength=4.5 - head length at shaft intersection, default is 4.5
+    | pivot='middle' - the part of the arrow that is at the grid point; the arrow rotates about this point
+                       takes 'tail', 'middle', 'tip'
     |
     :Returns:
      None
@@ -2932,6 +2940,11 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
    if continent_thickness is None: continent_thickness=1.5
    if continent_color is None: continent_color='k'
    ylog=plotvars.ylog
+   title_fontsize=plotvars.title_fontsize
+   title_fontweight=plotvars.title_fontweight
+   if title_fontsize is None: title_fontsize=15
+
+
 
    #Extract required data for contouring
    #If a cf-python field
@@ -3025,7 +3038,9 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
          v_vals=regrid(f=v_data, x=u_x, y=u_y, xnew=xnew, ynew=ynew)
 
          #Plot vectors
-         quiv=plotvars.mymap.quiver(xnew,ynew,u_vals,v_vals, pivot='middle',units='inches', scale=scale)
+         quiv=plotvars.mymap.quiver(xnew,ynew,u_vals,v_vals, pivot=pivot,units='inches', scale=scale,\
+                                    width=width, headwidth=headwidth, headlength=headlength,\
+                                    headaxislength=headaxislength)
       else:
          #Calculate interpolation points and values
          xnew, ynew, xnew_map, ynew_map=polar_regular_grid()
@@ -3036,8 +3051,10 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
 
 
          #Plot vectors
-         quiv=plotvars.mymap.quiver(xnew_map,ynew_map,u_vals,v_vals, pivot='middle',\
-                                    units='inches', scale=scale)
+         quiv=plotvars.mymap.quiver(xnew_map,ynew_map,u_vals,v_vals, pivot=pivot,\
+                                    units='inches', scale=scale,\
+                                    width=width, headwidth=headwidth, headlength=headlength,\
+                                    headaxislength=headaxislength)
 
 
       quiv_key=plotvars.plot.quiverkey(quiv, 0.9, -0.06, key_length, key_label, labelpos='W')
@@ -3048,7 +3065,9 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
          x,y=plotvars.mymap(*np.meshgrid(u_x, u_y))
 
          #plot vectors and key
-         quiv=plotvars.mymap.quiver(u_x,u_y,u_data,v_data, pivot='middle',units='inches', scale=scale)
+         quiv=plotvars.mymap.quiver(u_x,u_y,u_data,v_data, pivot=pivot, units='inches', scale=scale,\
+                                    width=width, headwidth=headwidth, headlength=headlength,\
+                                    headaxislength=headaxislength)
          quiv_key=plotvars.plot.quiverkey(quiv, 0.9, -0.06, key_length, key_label, labelpos='W')
 
 
@@ -3069,7 +3088,8 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
 
       #Coastlines and title
       mymap.drawcoastlines(linewidth=continent_thickness, color=continent_color)
-      #plotvars.plot.set_title(title, y=1.03, fontsize=plotvars.fontsize)
+      if title is not None:
+         plotvars.plot.set_title(title, y=1.03, fontsize=title_fontsize, fontweight=title_fontweight)
 
 
 
@@ -3139,9 +3159,12 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
 
 
       #plot vectors and key
-      quiv=plotvars.plot.quiver(u_x,u_y,u_data,v_data, pivot='middle',units='inches', scale=scale)
+      quiv=plotvars.plot.quiver(u_x,u_y,u_data,v_data, pivot=pivot, units='inches', scale=scale,\
+                                width=width, headwidth=headwidth, headlength=headlength,\
+                                headaxislength=headaxislength)
       quiv_key=plotvars.plot.quiverkey(quiv, 0.9, -0.06, key_length, key_label, labelpos='W')
-
+      if title is not None:
+         plotvars.plot.set_title(title, y=1.03, fontsize=plotvars.title_fontsize, fontweight=title_fontweight)
 
 
    ##########
