@@ -17,11 +17,10 @@ class pvars(object):
 
 import os
 import sys
-cf_version_min='1.0.2'
-cf_errstr='\n cf-python >'+cf_version_min+'needs to be installed to use cfplot \n'
+cf_errstr='\n cf-python >1.0.2 needs to be installed to use cfplot \n'
 try: 
    import cf
-   if cf.__version__ < cf_version_min:
+   if cf.__version__ < '1.0.2':
       raise  Warning(cf_errstr) 
 except ImportError:
    raise  Warning(cf_errstr) 
