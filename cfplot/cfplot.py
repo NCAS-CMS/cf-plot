@@ -529,7 +529,6 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
       if plotvars.user_plot == 0: gopen(user_plot=0)
 
       #Set plot limits
-      #if [plotvars.xmin, plotvars.xmax, plotvars.ymin, plotvars.ymax].count(None) == 4:
       user_gset=plotvars.user_gset
       if user_gset == 0:
          #Program selected data plot limits
@@ -813,7 +812,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
       tmin=None
       tmax=None
       #Set plot limits
-      if [plotvars.xmin,plotvars.xmax,plotvars.ymin,plotvars.ymax].count(None) == 0:
+      if all(val is None for val in [plotvars.xmin,plotvars.xmax,plotvars.ymin,plotvars.ymax]):
 
          #Store time strings for later use
          tmin=plotvars.ymin
@@ -840,7 +839,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
       gset(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax, user_gset=user_gset)
 
       #Revert to time strings if set
-      if [tmin, tmax].count(None) == 0:
+      if all(val is not None for val in [tmin, tmax]):
          plotvars.ymin=tmin
          plotvars.ymax=tmax
  
@@ -1023,7 +1022,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
       user_gset=plotvars.user_gset
 
       #Work out axes if none are supplied
-      if [plotvars.xmin, plotvars.xmax, plotvars.ymin, plotvars.ymax].count(None) > 0:
+      if any(val is None for val in [plotvars.xmin, plotvars.xmax, plotvars.ymin, plotvars.ymax]):
          xmin=np.nanmin(x)
          xmax=np.nanmax(x)
          ymin=np.nanmin(y)
@@ -1163,7 +1162,7 @@ def mapset(lonmin=None, lonmax=None, latmin=None, latmax=None, proj='cyl', bound
    """
 
 
-   if [lonmin,lonmax,latmin,latmax].count(None) == 4 and proj == 'cyl':
+   if all(val is None for val in [lonmin,lonmax,latmin,latmax]) and proj == 'cyl':
       plotvars.lonmin=-180
       plotvars.lonmax=180
       plotvars.latmin=-90 
@@ -1223,7 +1222,7 @@ def levs(min=None, max=None, step=None, manual=None, extend='both'):
 
    """ 
 
-   if [min,max,step,manual].count(None) == 4:
+   if all(val is None for val in [min,max,step,manual]):
       plotvars.levels=None
       plotvars.levels_min=None
       plotvars.levels_max=None
@@ -1239,7 +1238,7 @@ def levs(min=None, max=None, step=None, manual=None, extend='both'):
       plotvars.levels_step=None
       plotvars.user_levs=1
    else:
-      if [min,max,step].count(None) > 0:
+      if any(val is None for val in [min,max,step]):
          errstr='\n\
                  levs error\n\
                  min, max and step or manual need to be passed to levs to generate \n\
@@ -1390,7 +1389,7 @@ def axes(xticks=None, xticklabels=None, yticks=None, yticklabels=None,\
      None
    """ 
      
-   if [xticks,yticks,xticklabels,yticklabels,xstep,ystep,xlabel,ylabel,title].count(None) == 9:
+   if all(val is None for val in [xticks,yticks,xticklabels,yticklabels,xstep,ystep,xlabel,ylabel,title]):
       plotvars.xticks=None
       plotvars.yticks=None
       plotvars.xticklabels=None
@@ -1546,7 +1545,7 @@ def gset(xmin=None, xmax=None, ymin=None, ymax=None, xlog=None, ylog=None, user_
    #plotvars.ylog=ylog
    plotvars.user_gset=user_gset
  
-   if [xmin,xmax,ymin,ymax].count(None) == 4:
+   if all(val is None for val in [xmin,xmax,ymin,ymax]):
       plotvars.xmin=None
       plotvars.xmax=None
       plotvars.ymin=None
@@ -1556,7 +1555,7 @@ def gset(xmin=None, xmax=None, ymin=None, ymax=None, xlog=None, ylog=None, user_
       plotvars.user_gset=0
       return
 
-   if [xmin,xmax,ymin,ymax].count(None) > 0:
+   if any(val is None for val in [xmin,xmax,ymin,ymax]):
       errstr='gset error\n\
               xmin, xmax, ymin, ymax all need to be passed to gset to set the plot limits\n'
       raise  Warning(errstr)     
@@ -1761,7 +1760,7 @@ def pcon(mb=None, km=None, h=7.0, p0=1000):
      | height(km) if pressure(mb) input
     """  
 
-   if [mb, km].count(None) == 2:
+   if all(val is None for val in [mb, km]) == 2:
       errstr='pcon error - pcon must have mb or km input\n'
       raise  Warning(errstr)      
  
@@ -1790,9 +1789,9 @@ def supscr(text=None):
     | 
    """  
 
-   if [text].count(None) == 1:
-         errstr='\n supscr error - supscr must have text input\n'
-         raise  Warning(errstr)        
+   if text == None:
+      errstr='\n supscr error - supscr must have text input\n'
+      raise  Warning(errstr)        
 
 
    tform=''
@@ -1845,7 +1844,7 @@ def gvals(dmin=None, dmax=None, tight=0, mystep=None, mod=1):
     | 
    """
 
-   if [dmin, dmax].count(None) > 0:
+   if all(val is None for val in [dmin, dmax]) > 0:
       errstr='\n gvals error - gvals must have dmin and dmax input\n'
       raise  Warning(errstr)         
 
@@ -2188,15 +2187,14 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None):
 
 
 
-
-
-      #rotated_pole.coords 
-      #gives set(['dim2', 'dim3', 'aux3', 'aux4'])
-      #select out the data using these
-      #Possible to make a plot using aux3 and aux4 via a keyword?
-
    #None of the above
-   if [has_lons, has_lats, has_height, has_time].count(None) > 2 and ptype is not 6:
+   #Horible bit of code to replace [has_lons, has_lats, has_height, has_time].count(None) > 2
+   has_count=0
+   if has_lons is None: has_count=has_count+1
+   if has_lats is None: has_count=has_count+1
+   if has_height is None: has_count=has_count+1
+   if has_time is None: has_count=has_count+1
+   if has_count > 2 and ptype is not 6:
       ptype=0
 
       for mydim in f.items():
@@ -2511,7 +2509,7 @@ def bfill(f=None, x=None, y=None, clevs=False, lonlat=False, bound=False):
    field=f
  
    #Add in extra levels for colour bar extensions if present.
-   levs=clevs.astype(float)
+   levs=np.array(clevs).astype(float)
    if (plotvars.levels_extend == 'min' or plotvars.levels_extend == 'both'):
       levs=np.insert(levs,0, -1e30)
    if (plotvars.levels_extend == 'max' or plotvars.levels_extend == 'both'):
@@ -2901,13 +2899,15 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
     | v=None - v wind
     | x=None - x locations of u and v
     | y=None - y locations of u and v
-    | scale=None - data units per arrow length unit
-    | stride=None - plot vector every stride points. Can take two values
-    |                one for x and one for y
+    | scale=None - data units per arrow length unit.  Generally takes one value but in the case
+    |              of two supplied values the second vector scaling applies to the v field. 
+    | stride=None - plot vector every stride points. Can take two values one for x and one for y.
     | pts=None - use bilinear interpolation to interpolate vectors
     |            onto a new grid  
-    | key_length=None - length of the key
-    | key_label=None - label for the key
+    | key_length=None - length of the key.  Generally takes one value but in the case
+    |                   of two supplied values the second vector scaling applies to the v field. 
+    | key_label=None - label for the key. Generally takes one value but in the case
+    |                  of two supplied values the second vector scaling applies to the v field. 
     | ptype=0 - plot type - not needed for cf fields.
     |                       0 = no specific plot type,
     |                       1 = longitude-latitude,
@@ -2943,6 +2943,24 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
    title_fontsize=plotvars.title_fontsize
    title_fontweight=plotvars.title_fontweight
    if title_fontsize is None: title_fontsize=15
+   if np.size(key_length) == 1:
+      key_length_u=key_length
+      key_length_v=key_length
+   if np.size(key_length) == 2:
+      key_length_u=key_length[0]
+      key_length_v=key_length[1]
+   if np.size(scale) == 1:
+      scale_u=scale
+      scale_v=scale
+   if np.size(scale) == 2:
+      key_length_u=scale[0]
+      key_length_v=scale[1]
+   if np.size(key_label) == 1:
+      key_label_u=key_label
+      key_label_v=key_label
+   if np.size(key_label) == 2:
+      key_label_u=key_label[0]
+      key_label_v=key_label[1]
 
 
 
@@ -3506,9 +3524,9 @@ def setvars(file=None, title_fontsize=None, text_fontsize=None, axis_label_fonts
     | 
    """
 
-   if (file, title_fontsize, text_fontsize, axis_label_fontsize, continent_thickness, \
+   if all(val is None for val in [file, title_fontsize, text_fontsize, axis_label_fontsize, continent_thickness, \
        title_fontweight, text_fontweight, axis_label_fontweight, fontweight, \
-       continent_color).count(None) == 10:
+       continent_color]):
       plotvars.file=None
       title_fontsize=None
       text_fontsize=None
@@ -3563,7 +3581,7 @@ def rgrot(xin=None, yin=None, xpole=None, ypole=None):
 
 
    #Check input parameters
-   if [xin, yin, xpole, ypole].count(None) > 0:
+   if any(val is None for val in [xin, yin, xpole, ypole]):
       errstr='\n\
              rgrot error\n\
              xin, yin, xpole, ypole all need to be passed to rgrot to generate \n\
@@ -3672,7 +3690,7 @@ def rgunrot(xin=None, yin=None, xpole=None, ypole=None):
    """   
 
    #Check input parameters
-   if [xin, yin, xpole, ypole].count(None) > 0:
+   if any(val is None for val in [xin, yin, xpole, ypole]):
       errstr='\n\
              rgrot error\n\
              xin, yin, xpole, ypole all need to be passed to rgrot to generate \n\
@@ -3788,7 +3806,7 @@ def vloc(xvec=None, yvec=None, lons=None, lats=None):
    import numpy as np
 
    #Check input parameters
-   if [xvec, yvec, lons, lats].count(None) > 0:
+   if any(val is None for val in [xvec, yvec, lons, lats]):
       errstr='\n\
              vloc error\n\
              xvec, yvec, lons, lats all need to be passed to vloc to generate \n\
