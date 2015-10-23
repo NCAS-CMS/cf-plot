@@ -17,12 +17,11 @@ class pvars(object):
 
 import os
 import sys
-cf_version_min='1.0.2'
-cf_errstr='\n cf-python >'+cf_version_min+'needs to be installed to use cfplot \n'
+cf_version_min='1.0.1'
+cf_errstr='\n cf-python > '+cf_version_min+' needs to be installed to use cfplot \n'
 try: 
    import cf
-   if cf.__version__ < cf_version_min:
-      raise  Warning(cf_errstr) 
+   if cf.__version__ < cf_version_min: raise  Warning(cf_errstr) 
 except ImportError:
    raise  Warning(cf_errstr) 
 
@@ -33,6 +32,7 @@ import time
 from subprocess import call
 import matplotlib
 import matplotlib.tri as triang
+from copy import deepcopy
 
 
 #Check for a display and use the Agg backing store if none is present
@@ -57,9 +57,31 @@ cscale1=['#0a3278', '#0f4ba5', '#1e6ec8', '#3ca0f0', '#50b4fa', '#82d2ff', '#a0f
          '#c8faff', '#e6ffff', '#fffadc', '#ffe878', '#ffc03c', '#ffa000', '#ff6000', \
          '#ff3200', '#e11400', '#c00000', '#a50000']
 
-#cosam is a continuous data scale - purple, blue, green, yellow, red
-cosam=['#780088', '#5a00b8', '#4600f5', '#00aae1', '#00c8c8', '#00c87d', '#c3ff00', \
-         '#ffff00', '#ff9b00', '#ff0000']
+#viridis is a continuous data scale - blue, green, yellow
+viridis=['#440154', '#440255', '#440357', '#450558', '#45065a', '#45085b', '#46095c', '#460b5e', '#460c5f', '#460e61', \
+'#470f62', '#471163', '#471265', '#471466', '#471567', '#471669', '#47186a', '#48196b', '#481a6c', '#481c6e', '#481d6f', \
+'#481e70', '#482071', '#482172', '#482273', '#482374', '#472575', '#472676', '#472777', '#472878', '#472a79', '#472b7a', \
+'#472c7b', '#462d7c', '#462f7c', '#46307d', '#46317e', '#45327f', '#45347f', '#453580', '#453681', '#443781', '#443982', \
+'#433a83', '#433b83', '#433c84', '#423d84', '#423e85', '#424085', '#414186', '#414286', '#404387', '#404487', '#3f4587', \
+'#3f4788', '#3e4888', '#3e4989', '#3d4a89', '#3d4b89', '#3d4c89', '#3c4d8a', '#3c4e8a', '#3b508a', '#3b518a', '#3a528b', \
+'#3a538b', '#39548b', '#39558b', '#38568b', '#38578c', '#37588c', '#37598c', '#365a8c', '#365b8c', '#355c8c', '#355d8c', \
+'#345e8d', '#345f8d', '#33608d', '#33618d', '#32628d', '#32638d', '#31648d', '#31658d', '#31668d', '#30678d', '#30688d', \
+'#2f698d', '#2f6a8d', '#2e6b8e', '#2e6c8e', '#2e6d8e', '#2d6e8e', '#2d6f8e', '#2c708e', '#2c718e', '#2c728e', '#2b738e', \
+'#2b748e', '#2a758e', '#2a768e', '#2a778e', '#29788e', '#29798e', '#287a8e', '#287a8e', '#287b8e', '#277c8e', '#277d8e', \
+'#277e8e', '#267f8e', '#26808e', '#26818e', '#25828e', '#25838d', '#24848d', '#24858d', '#24868d', '#23878d', '#23888d', \
+'#23898d', '#22898d', '#228a8d', '#228b8d', '#218c8d', '#218d8c', '#218e8c', '#208f8c', '#20908c', '#20918c', '#1f928c', \
+'#1f938b', '#1f948b', '#1f958b', '#1f968b', '#1e978a', '#1e988a', '#1e998a', '#1e998a', '#1e9a89', '#1e9b89', '#1e9c89', \
+'#1e9d88', '#1e9e88', '#1e9f88', '#1ea087', '#1fa187', '#1fa286', '#1fa386', '#20a485', '#20a585', '#21a685', '#21a784', \
+'#22a784', '#23a883', '#23a982', '#24aa82', '#25ab81', '#26ac81', '#27ad80', '#28ae7f', '#29af7f', '#2ab07e', '#2bb17d', \
+'#2cb17d', '#2eb27c', '#2fb37b', '#30b47a', '#32b57a', '#33b679', '#35b778', '#36b877', '#38b976', '#39b976', '#3bba75', \
+'#3dbb74', '#3ebc73', '#40bd72', '#42be71', '#44be70', '#45bf6f', '#47c06e', '#49c16d', '#4bc26c', '#4dc26b', '#4fc369', \
+'#51c468', '#53c567', '#55c666', '#57c665', '#59c764', '#5bc862', '#5ec961', '#60c960', '#62ca5f', '#64cb5d', '#67cc5c', \
+'#69cc5b', '#6bcd59', '#6dce58', '#70ce56', '#72cf55', '#74d054', '#77d052', '#79d151', '#7cd24f', '#7ed24e', '#81d34c', \
+'#83d34b', '#86d449', '#88d547', '#8bd546', '#8dd644', '#90d643', '#92d741', '#95d73f', '#97d83e', '#9ad83c', '#9dd93a', \
+'#9fd938', '#a2da37', '#a5da35', '#a7db33', '#aadb32', '#addc30', '#afdc2e', '#b2dd2c', '#b5dd2b', '#b7dd29', '#bade27', \
+'#bdde26', '#bfdf24', '#c2df22', '#c5df21', '#c7e01f', '#cae01e', '#cde01d', '#cfe11c', '#d2e11b', '#d4e11a', '#d7e219', \
+'#dae218', '#dce218', '#dfe318', '#e1e318', '#e4e318', '#e7e419', '#e9e419', '#ece41a', '#eee51b', '#f1e51c', '#f3e51e', \
+'#f6e61f', '#f8e621', '#fae622', '#fde724']
 
 
 
@@ -69,8 +91,8 @@ plotvars=pvars(lonmin=-180, lonmax=180, latmin=-90, latmax=90, proj='cyl', \
                levels_extend='both', xmin=None, xmax=None, ymin=None, ymax=None, \
                xlog=None, ylog=None,\
                rows=1, columns=1, file=None, orientation='landscape',\
-               user_mapset=0, user_gset=0, user_cscale=0, user_levs=0, user_plot=0,\
-               master_plot=None, plot=None, text_fontsize=None, cs=cscale1, \
+               user_mapset=0, user_gset=0, cscale_flag=0, user_levs=0, user_plot=0,\
+               master_plot=None, plot=None, text_fontsize=None, cs=cscale1, cs_user='cscale1',\
                mymap=None, \
                xticks=None, yticks=None, xticklabels=None, yticklabels=None, \
                xstep=None, ystep=None,xlabel=None, ylabel=None, title=None, \
@@ -129,6 +151,10 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
 
    """ 
 
+   #Turn off divide warning in contour routine which is a numpy issue
+   old_settings = np.seterr(all='ignore')
+   np.seterr(divide='ignore')
+
    #Extract required data for contouring
    #If a cf-python field
    if isinstance(f[0], cf.Field):
@@ -176,8 +202,8 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
    #Turn off colorbar if fill is turned off
    if fill == 0 and blockfill is None: colorbar=0
 
-   #Revert to default colour scale if user_cscale flag is set
-   if plotvars.user_cscale == 0: plotvars.cs=cscale1
+   #Revert to default colour scale if cscale_flag flag is set
+   if plotvars.cscale_flag == 0: plotvars.cs=cscale1
 
 
    #Set the orientation of the colorbar
@@ -224,40 +250,40 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
       clevs=plotvars.levels
       mult=0
       fmult=1
-      if plotvars.user_cscale == 0:
-         includes_zero=0
-         col_zero=0
-         for cval in clevs:
-            if includes_zero == 0: col_zero=col_zero+1   
-            if cval == 0: includes_zero=1
-
-         if includes_zero == 1:
-            cscale('scale1', below=col_zero, above=np.size(clevs)-col_zero+1)
-         else:
-            cscale('cosam', ncols=np.size(clevs)+1)   
-
-         plotvars.user_cscale=0 #Revert to standard colour scale after plot
-
    else:
       #Automatic levels  
       if verbose: print 'con - generating automatic contour levels'
       clevs, mult = gvals(dmin=np.nanmin(field), dmax=np.nanmax(field), tight=0)
       fmult=10**-mult      
 
-      #Adjust colour table
-      if plotvars.user_cscale == 0:
-         col_zero=0
-         for cval in clevs:
-            if includes_zero == 0: col_zero=col_zero+1   
-            if cval == 0: includes_zero=1
 
-         if includes_zero == 1:
-            cscale('scale1', below=col_zero, above=np.size(clevs)-col_zero+1)
-         else:
-            cscale('cosam', ncols=np.size(clevs)+1)
 
-         #Revert to standard colour scale after plot
-         plotvars.user_cscale=0 
+   #Set the colour scale
+   #Nothing defined
+   if plotvars.cscale_flag == 0:
+       includes_zero=0
+       col_zero=0
+       for cval in clevs:
+           if includes_zero == 0: col_zero=col_zero+1   
+           if cval == 0: includes_zero=1
+
+       if includes_zero == 1:
+           cscale('scale1', below=col_zero, above=np.size(clevs)-col_zero+1)
+       else:
+           cscale('viridis', ncols=np.size(clevs)+1)   
+
+       plotvars.cscale_flag=0 
+
+   #User selected colour map but no mods so fit to levels
+   if plotvars.cscale_flag == 1: 
+      cscale(plotvars.cs_user, ncols=np.size(clevs)+1)  
+      plotvars.cscale_flag=1
+
+   #User selected colour map with mods so leave as is
+   #if plotvars.cscale_flag == 2:
+
+
+
 
 
    #Set colorbar labels
@@ -819,12 +845,15 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
       #Time strings set to None initially
       tmin=None
       tmax=None
+
+
       #Set plot limits
-      if all(val is None for val in [plotvars.xmin,plotvars.xmax,plotvars.ymin,plotvars.ymax]):
+      if all(val is not None for val in [plotvars.xmin,plotvars.xmax,plotvars.ymin,plotvars.ymax]):
 
          #Store time strings for later use
          tmin=plotvars.ymin
          tmax=plotvars.ymax
+
 
          #Change from date string in ymin and ymax to date as a float
          time_units = cf.Units(ref_time, ref_calendar)
@@ -1121,6 +1150,9 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
    if plotvars.user_plot == 0:       
       if verbose: print 'con - saving or viewing plot'
       #gset(user_gset=0)
+      
+      np.seterr(**old_settings)  # reset to default numpy error settings
+
       gclose()
   
 
@@ -1170,6 +1202,10 @@ def mapset(lonmin=None, lonmax=None, latmin=None, latmax=None, proj='cyl', bound
    """
 
 
+   #Set the continent resolution
+   plotvars.resolution=resolution 
+
+
    if all(val is None for val in [lonmin,lonmax,latmin,latmax]) and proj == 'cyl':
       plotvars.lonmin=-180
       plotvars.lonmax=180
@@ -1197,7 +1233,6 @@ def mapset(lonmin=None, lonmax=None, latmin=None, latmax=None, proj='cyl', bound
    plotvars.proj=proj
    plotvars.boundinglat=boundinglat 
    plotvars.lon_0=lon_0
-   plotvars.resolution=resolution 
    plotvars.user_mapset=user_mapset
    set_map()   
 
@@ -1869,6 +1904,11 @@ def gvals(dmin=None, dmax=None, tight=0, mystep=None, mod=1):
  
    #Generate reasonable step 
    step=(dmax-dmin)/16.0
+
+   #Don't modify if dmin and dmax are both negative as this will create a race condition
+   if dmin < 0 and dmax < 0: mod=0
+
+
    if mod == 1:
       if (mystep != None): step=mystep
 
@@ -2309,7 +2349,7 @@ def check_data(field=None, x=None, y=None):
 
 
 
-def cscale(cmap=None, ncols=None, white=None, below=None, above=None):
+def cscale(cmap=None, ncols=None, white=None, below=None, above=None, reverse=0):
    """ 
    | cscale - choose and manipulate colour maps.  Around 200 colour scales are
    |          available - see the gallery section for more details.
@@ -2321,6 +2361,7 @@ def cscale(cmap=None, ncols=None, white=None, below=None, above=None):
    |               the colour scale to be this
    | above=above - change the number of colours above the mid point of 
    |               the colour scale to be this
+   | reverse=False - reverse the colour scale
    | 
    |
    | Personal colour maps are available by saving the map as red green blue 
@@ -2342,14 +2383,20 @@ def cscale(cmap=None, ncols=None, white=None, below=None, above=None):
    #If no map requested reset to default  
    if cmap == None:
       cmap='scale1'
-      plotvars.user_cscale=0
+      plotvars.cscale_flag=0
    else:
-      plotvars.user_cscale=1
+      plotvars.cs_user=cmap
+      plotvars.cscale_flag=1
+      if ncols is not None:  plotvars.cscale_flag=2
+      if white is not None:  plotvars.cscale_flag=2
+      if below is not None:  plotvars.cscale_flag=2
+      if above is not None:  plotvars.cscale_flag=2
+      if reverse != 0:  plotvars.cscale_flag=2
 
-   if cmap == 'scale1' or cmap == 'cosam':
+   if cmap == 'scale1' or cmap == '':
       if cmap == 'scale1': myscale=cscale1
-      if cmap == 'cosam': myscale=cosam
-      #convert cscale1 or cosam from hex to rgb
+      if cmap == 'viridis': myscale=viridis
+      #convert cscale1 or viridis from hex to rgb
       r=[]
       g=[]
       b=[]
@@ -2389,11 +2436,17 @@ def cscale(cmap=None, ncols=None, white=None, below=None, above=None):
           b.append(int(vals[2]))
 
 
+   #Reverse the colour scale if requested
+   if reverse != 0:
+       r=r[::-1]
+       g=g[::-1]
+       b=b[::-1]
+
 
    #Interpolate to a new number of colours if requested
    if ncols != None:
       x=np.arange(np.size(r))
-      xnew=((np.size(r)-1)/float(ncols-1))* np.arange(ncols)
+      xnew=np.linspace(0, np.size(r)-1, num=ncols, endpoint=True)
       f_red=interpolate.interp1d(x, r)
       f_green=interpolate.interp1d(x, g)    
       f_blue=interpolate.interp1d(x, b)     
@@ -2981,9 +3034,9 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
    else:
       #field=f #field data passed in as f
       check_data(u, x, y)
-      u_data=u
-      u_x=x
-      u_y=y
+      u_data=deepcopy(u)
+      u_x=deepcopy(x)
+      u_y=deepcopy(y)
       xlabel=''
       ylabel=''
 
@@ -2995,9 +3048,9 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
    else:
       #field=f #field data passed in as f
       check_data(v, x, y)
-      v_data=v
-      v_x=x
-      v_y=y
+      v_data=deepcopy(v)
+      v_x=deepcopy(x)
+      v_y=deepcopy(y)
       xlabel=''
       ylabel=''
    
@@ -3360,6 +3413,8 @@ def process_color_scales():
    """
    
    #Define scale categories
+   uniform=['viridis', 'magma', 'inferno', 'plasma', 'parula', 'gray']
+
    ncl_large=['amwg256', 'BkBlAqGrYeOrReViWh200', 'BlAqGrYeOrRe', 'BlAqGrYeOrReVi200',\
               'BlGrYeOrReVi200', 'BlRe', 'BlueRed', 'BlueRedGray', 'BlueWhiteOrangeRed',\
               'BlueYellowRed', 'BlWhRe', 'cmp_b2r',\
@@ -3397,7 +3452,18 @@ def process_color_scales():
    for i in np.arange(1,45):
       idl_guide.append('scale'+str(i))
 
-   for category in 'ncl_meteoswiss', 'ncl_small', 'ncl_large', 'ncl_color_blindness', 'idl_guide': 
+   for category in 'uniform', 'ncl_meteoswiss', 'ncl_small', 'ncl_large', 'ncl_color_blindness', 'idl_guide': 
+      if category == 'uniform': 
+         scales=uniform
+         div='================== ====='
+         chars=10
+         print 'Perceptually uniform colour maps for use with continuous data'
+         print '----------------------------------------------' 
+         print ''
+         print div
+         print 'Name               Scale'
+         print div
+
       if category == 'ncl_meteoswiss': 
          scales=ncl_meteoswiss
          div='================== ====='
@@ -3893,7 +3959,7 @@ def rgaxes(xpole=None, ypole=None, xvec=None, yvec=None, spacing=10.0, degspacin
     | grid=True - draw grid
     | labels=True - draw axis labels
     |
-    |
+    | 
     |
     :Returns:
      name
