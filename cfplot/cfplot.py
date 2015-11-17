@@ -3,6 +3,7 @@ Routines for making climate contour/vector plots using cf-python, matplotlib and
 Andy Heaps NCAS-CMS June 2015.
 """
 
+
 class pvars(object):
    def __init__(self, **kwargs):
       '''Initialize a new Pvars instance'''
@@ -2263,11 +2264,27 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None):
 
    #Assign colorbar_title
    if (colorbar_title == None):   
-      colorbar_title=''
+      #colorbar_title=''
+      #if hasattr(f, 'id'): colorbar_title=f.id
+      #if hasattr(f, 'ncvar'): colorbar_title=f.ncvar
+      #if hasattr(f, 'short_name'): colorbar_title=f.short_name 
+      #if hasattr(f, 'long_name'): colorbar_title=f.long_name 
+      #if hasattr(f, 'standard_name'): colorbar_title=f.standard_name
+
+      #colorbar_title=f.name('None')
+      #colorbar_title=cf_var_name(field=f)+'('+supscr(getattr(f, 'Units', ''))+')'
+
+      #colorbar_title=cf_var_name(field=f)
+
+      colorbar_title='No Name'
+      if hasattr(f, 'id'): colorbar_title=f.id
       if hasattr(f, 'ncvar'): colorbar_title=f.ncvar
       if hasattr(f, 'short_name'): colorbar_title=f.short_name 
       if hasattr(f, 'long_name'): colorbar_title=f.long_name 
       if hasattr(f, 'standard_name'): colorbar_title=f.standard_name
+
+
+      
       if hasattr(f, 'Units'): 
          if str(f.Units) == '': colorbar_title=colorbar_title+''
          else: colorbar_title=colorbar_title+'('+supscr(str(f.Units))+')'
@@ -3376,16 +3393,28 @@ def cf_var_name(field=None, dim=None):
     | 
    """
 
-
+   id=getattr(field.item(dim), 'id', False)
    ncvar=getattr(field.item(dim), 'ncvar', False)
    short_name=getattr(field.item(dim), 'short_name', False)
    long_name=getattr(field.item(dim), 'long_name', False)
    standard_name=getattr(field.item(dim), 'standard_name', False)
 
+   name='No Name'
+   if id: name=id 
    if ncvar: name=ncvar 
    if short_name: name=short_name
    if long_name: name=long_name
    if standard_name: name=standard_name
+
+   #name=field.name('No name')
+
+   #name='No Name'
+   #if hasattr(field.item(dim), 'id'): name=field.id
+   #if hasattr(field.item(dim), 'ncvar'): name=field.ncvar
+   #if hasattr(field.item(dim), 'short_name'): name=field.short_name 
+   #if hasattr(field.item(dim), 'long_name'): name=field.long_name 
+   #if hasattr(field.item(dim), 'standard_name'): name=field.standard_name
+
 
    return name
 

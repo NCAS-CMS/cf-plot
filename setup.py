@@ -5,7 +5,7 @@ except ImportError:
 
 setup(
     name="cfplot",
-    version="1.7.15",
+    version="1.7.16",
     author="Andy Heaps",
     author_email="a.j.heaps@reading.ac.uk",
     packages=['cfplot'],
