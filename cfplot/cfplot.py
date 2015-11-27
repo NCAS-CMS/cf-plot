@@ -106,7 +106,7 @@ plotvars=pvars(lonmin=-180, lonmax=180, latmin=-90, latmax=90, proj='cyl', \
 def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=None, \
         colorbar_title=None, colorbar=1, colorbar_label_skip=None, ptype=0, \
         negative_linestyle=None, blockfill=None, zero_thick=None, colorbar_shrink=None, \
-        colorbar_orientation=None, xlog=None, ylog=None, verbose=None):
+        colorbar_orientation=None, colorbar_position=None, xlog=None, ylog=None, verbose=None):
    """
     | con is the interface to contouring in cfplot. The minimum use is con(f) 
     | where f is a 2 dimensional array. If a cf field is passed then an 
@@ -143,6 +143,10 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
     | colorbar_shrink=None - value to shrink the colorbar by.  If the colorbar 
     |                        exceeds the plot area then values of 1.0, 0.55 or 0.5
     |                        may help it better fit the plot area.
+    | colorbar_position=None - position of colorbar [xmin, ymin, x_extent, y_extent]
+    |                          in normalised coordinates. Use when a common colorbar 
+                               is required for a set of plots. A typical set of values
+                               would be [0.1, 0.05, 0.8, 0.02]
     | xlog=None - logarithmic x axis
     | ylog=None - logarithmic y axis
     | verbose=None - change to 1 to get a verbose listing of what con is doing
@@ -524,19 +528,28 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
          mymap.drawmeridians(np.arange(0,360,60),labels=[1,1,1,1,1,1]) 
 
 
+      #Coastlines and title         
+      mymap.drawcoastlines(linewidth=continent_thickness, color=continent_color)
+      plotvars.plot.set_title(title, y=1.03, fontsize=title_fontsize, fontweight=title_fontweight)
+
+
+
       #Color bar
       if colorbar == 1: 
          if verbose: print 'con - adding colour bar'    
          pad=0.10
          if plotvars.rows >= 3: pad=0.15
          if plotvars.rows >= 5: pad=0.20 
-         #cbar=plotvars.master_plot.colorbar(cfill, orientation=colorbar_orientation, aspect=75, \
-         #                                   pad=pad, ticks=colorbar_labels, drawedges=True, \
-         #                                   shrink=colorbar_shrink)
-         cbar=plotvars.master_plot.colorbar(cfill, ticks=colorbar_labels,\
-                                            orientation=colorbar_orientation, aspect=75, pad=pad,\
-                                            shrink=colorbar_shrink)
+         if colorbar_position is None:
+             cbar=plotvars.master_plot.colorbar(cfill, ticks=colorbar_labels,\
+                                                orientation=colorbar_orientation, aspect=75, pad=pad,\
+                                                shrink=colorbar_shrink)
+         else:
+             position=plotvars.master_plot.add_axes(colorbar_position)  
+             cbar=plotvars.master_plot.colorbar(cfill, cax=position, ticks=colorbar_labels, orientation=colorbar_orientation)
+
          cbar.set_label(colorbar_title, fontsize=text_fontsize, fontweight=title_fontweight)
+
          #Bug in Matplotlib colorbar labelling
          #With clevs=[-1, 1, 10000, 20000, 30000, 40000, 50000, 60000]
          #Labels are [0, 2, 10001, 20001, 30001, 40001, 50001, 60001]
@@ -548,9 +561,6 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
             t.set_fontweight(text_fontweight)
 
 
-      #Coastlines and title
-      mymap.drawcoastlines(linewidth=continent_thickness, color=continent_color)
-      plotvars.plot.set_title(title, y=1.03, fontsize=title_fontsize, fontweight=title_fontweight)
 
 
   
@@ -680,9 +690,14 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
          pad=0.15
          if plotvars.rows >= 3: pad=0.25
          if plotvars.rows >= 5: pad=0.3
-         cbar=plotvars.master_plot.colorbar(cfill, orientation=colorbar_orientation, aspect=75, \
-                                            pad=pad, ticks=colorbar_labels, \
-                                            shrink=colorbar_shrink)
+         if colorbar_position is None:
+             cbar=plotvars.master_plot.colorbar(cfill, orientation=colorbar_orientation, aspect=75, \
+                                                pad=pad, ticks=colorbar_labels, \
+                                                shrink=colorbar_shrink)
+         else:
+             position=plotvars.master_plot.add_axes(colorbar_position)  
+             cbar=plotvars.master_plot.colorbar(cfill, cax=position, ticks=colorbar_labels, orientation=colorbar_orientation)
+
          cbar.set_label(colorbar_title, fontsize=text_fontsize, fontweight=title_fontweight)
          cbar.set_ticklabels([str(i) for i in colorbar_labels]) #Bug in Matplotlib colorbar labelling
          for t in cbar.ax.get_xticklabels():
@@ -813,9 +828,15 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
          pad=0.15
          if plotvars.rows >= 3: pad=0.25
          if plotvars.rows >= 5: pad=0.3
-         cbar=plotvars.master_plot.colorbar(cfill, orientation=colorbar_orientation, aspect=75, \
-                                            pad=pad, ticks=colorbar_labels, \
-                                            shrink=colorbar_shrink)
+         if colorbar_position is None: 
+             cbar=plotvars.master_plot.colorbar(cfill, orientation=colorbar_orientation, aspect=75, \
+                                                pad=pad, ticks=colorbar_labels, \
+                                                shrink=colorbar_shrink)
+         else:
+             position=plotvars.master_plot.add_axes(colorbar_position)  
+             cbar=plotvars.master_plot.colorbar(cfill, cax=position, ticks=colorbar_labels, orientation=colorbar_orientation)
+
+
          cbar.set_label(colorbar_title, fontsize=text_fontsize, fontweight=title_fontweight)
          cbar.set_ticklabels([str(i) for i in colorbar_labels]) #Bug in Matplotlib colorbar labelling
          for t in cbar.ax.get_xticklabels():
@@ -954,9 +975,14 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
          pad=0.15
          if plotvars.rows >= 3: pad=0.25
          if plotvars.rows >= 5: pad=0.3
-         cbar=plotvars.master_plot.colorbar(cfill, orientation=colorbar_orientation, aspect=75, \
-                                            pad=pad, ticks=colorbar_labels, \
-                                            shrink=colorbar_shrink)
+         if colorbar_position is None: 
+             cbar=plotvars.master_plot.colorbar(cfill, orientation=colorbar_orientation, aspect=75, \
+                                                pad=pad, ticks=colorbar_labels, \
+                                                shrink=colorbar_shrink)
+         else:
+             position=plotvars.master_plot.add_axes(colorbar_position)  
+             cbar=plotvars.master_plot.colorbar(cfill, cax=position, ticks=colorbar_labels, orientation=colorbar_orientation)
+
          cbar.set_label(colorbar_title, fontsize=text_fontsize, fontweight=title_fontweight)
          cbar.set_ticklabels([str(i) for i in colorbar_labels]) #Bug in Matplotlib colorbar labelling
          for t in cbar.ax.get_xticklabels():
@@ -1031,9 +1057,15 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
          pad=0.15
          if plotvars.rows >= 3: pad=0.25
          if plotvars.rows >= 5: pad=0.3
-         cbar=plotvars.master_plot.colorbar(cfill, orientation=colorbar_orientation, aspect=75, \
-                                            pad=pad, ticks=colorbar_labels, \
-                                            shrink=colorbar_shrink)
+         if colorbar_position is None: 
+             cbar=plotvars.master_plot.colorbar(cfill, orientation=colorbar_orientation, aspect=75, \
+                                                pad=pad, ticks=colorbar_labels, \
+                                                shrink=colorbar_shrink)
+         else:
+             position=plotvars.master_plot.add_axes(colorbar_position)  
+             cbar=plotvars.master_plot.colorbar(cfill, cax=position, ticks=colorbar_labels, orientation=colorbar_orientation)
+
+
          cbar.set_label(colorbar_title, fontsize=text_fontsize, fontweight=title_fontweight)
          cbar.set_ticklabels([str(i) for i in colorbar_labels]) #Bug in Matplotlib colorbar labelling
          for t in cbar.ax.get_xticklabels():
@@ -1129,9 +1161,14 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
          pad=0.15
          if plotvars.rows >= 3: pad=0.25
          if plotvars.rows >= 5: pad=0.3
-         cbar=plotvars.master_plot.colorbar(cfill, orientation=colorbar_orientation, aspect=75, \
-                                            pad=pad, ticks=colorbar_labels, \
-                                            shrink=colorbar_shrink)
+         if colorbar_position is None: 
+             cbar=plotvars.master_plot.colorbar(cfill, orientation=colorbar_orientation, aspect=75, \
+                                                pad=pad, ticks=colorbar_labels, \
+                                                shrink=colorbar_shrink)
+         else:
+             position=plotvars.master_plot.add_axes(colorbar_position)  
+             cbar=plotvars.master_plot.colorbar(cfill, cax=position, ticks=colorbar_labels, orientation=colorbar_orientation)
+
          cbar.set_label(colorbar_title, fontsize=text_fontsize, fontweight=title_fontweight)
          cbar.set_ticklabels([str(i) for i in colorbar_labels]) #Bug in Matplotlib colorbar labelling
          for t in cbar.ax.get_xticklabels():
@@ -1622,7 +1659,8 @@ def gset(xmin=None, xmax=None, ymin=None, ymax=None, xlog=None, ylog=None, user_
   
 
 def gopen(rows=1, columns=1, user_plot=1, file='python', \
-          orientation='landscape', fontsize=None):
+          orientation='landscape', fontsize=None, figsize=[11.7, 8.3], \
+          left=0.12, right=0.92, top=0.92, bottom=0.08):
    """
     | gopen is used to open a graphic file.  
 
@@ -1632,6 +1670,11 @@ def gopen(rows=1, columns=1, user_plot=1, file='python', \
     | file='python' - default file name
     | orientation='landscape' - orientation - also takes 'portrait'
     | fontsize=None - font size - default is 11 for a single plot
+    | figsize=[11.7, 8.3]  - figure size in inches
+    | left=0.12 - left margin in normalised coordinates
+    | right=0.92 - right margin in normalised coordinates
+    | top=0.92 - top margin in normalised coordinates
+    | bottom=0.08 - bottom margin in normalised coordinates
 
     :Returns:
      None
@@ -1660,11 +1703,11 @@ def gopen(rows=1, columns=1, user_plot=1, file='python', \
          raise  Warning(errstr)    
 
    #Set master plot size
-   if orientation == 'landscape': plotvars.master_plot=plot.figure(figsize=(11.7, 8.3))
-   else: plotvars.master_plot=plot.figure(figsize=(8.3, 11.7))
+   if orientation == 'landscape': plotvars.master_plot=plot.figure(figsize=(figsize[0], figsize[1]))
+   else: plotvars.master_plot=plot.figure(figsize=(figsize[1], figsize[0]))
  
    #Set margins
-   plotvars.master_plot.subplots_adjust(left=0.12, right=0.92, top=0.92, bottom=0.08)
+   plotvars.master_plot.subplots_adjust(left=left, right=right, top=top, bottom=bottom)
   
    #Set fontsize
    if fontsize is None:
@@ -2968,7 +3011,7 @@ def find_pos_in_array(vals=None, val=None, above=False):
 
 def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
          key_length=None, key_label=None, ptype=None, title=None,\
-         width=None, headwidth=3, headlength=5, headaxislength=4.5, pivot='middle'):
+         width=None, headwidth=3, headlength=5, headaxislength=4.5, pivot='middle', key_location=[0.9, -0.06]):
 
    """
     | vect - plot vectors
@@ -2986,6 +3029,7 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
     |                   of two supplied values the second vector scaling applies to the v field. 
     | key_label=None - label for the key. Generally takes one value but in the case
     |                  of two supplied values the second vector scaling applies to the v field. 
+    | key_location=[0.9, -0.06] - location of the vector key relative to the plot in normalised coordinates.
     | ptype=0 - plot type - not needed for cf fields.
     |                       0 = no specific plot type,
     |                       1 = longitude-latitude,
@@ -3153,7 +3197,7 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
                                     headaxislength=headaxislength)
 
 
-      quiv_key=plotvars.plot.quiverkey(quiv, 0.9, -0.06, key_length, key_label, labelpos='W')
+      quiv_key=plotvars.plot.quiverkey(quiv, key_location[0], key_location[1], key_length, key_label, labelpos='W')
 
    if plotvars.plot_type == 1:
       if pts is None:
@@ -3164,7 +3208,7 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
          quiv=plotvars.mymap.quiver(u_x,u_y,u_data,v_data, pivot=pivot, units='inches', scale=scale,\
                                     width=width, headwidth=headwidth, headlength=headlength,\
                                     headaxislength=headaxislength)
-         quiv_key=plotvars.plot.quiverkey(quiv, 0.9, -0.06, key_length, key_label, labelpos='W')
+         quiv_key=plotvars.plot.quiverkey(quiv, key_location[0], key_location[1], key_length, key_label, labelpos='W')
 
 
 
@@ -3258,7 +3302,7 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
       quiv=plotvars.plot.quiver(u_x,u_y,u_data,v_data, pivot=pivot, units='inches', scale=scale,\
                                 width=width, headwidth=headwidth, headlength=headlength,\
                                 headaxislength=headaxislength)
-      quiv_key=plotvars.plot.quiverkey(quiv, 0.9, -0.06, key_length, key_label, labelpos='W')
+      quiv_key=plotvars.plot.quiverkey(quiv, key_location[0], key_location[1], key_length, key_label, labelpos='W')
       if title is not None:
          plotvars.plot.set_title(title, y=1.03, fontsize=plotvars.title_fontsize, fontweight=title_fontweight)
 

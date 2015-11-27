@@ -47,6 +47,7 @@ cfplot/colourmaps/cosam12.rgb
 cfplot/colourmaps/default.rgb
 cfplot/colourmaps/detail.rgb
 cfplot/colourmaps/extrema.rgb
+cfplot/colourmaps/gray.rgb
 cfplot/colourmaps/gui_default.rgb
 cfplot/colourmaps/helix.rgb
 cfplot/colourmaps/helix1.rgb
@@ -94,6 +95,8 @@ cfplot/colourmaps/idl6.rgb
 cfplot/colourmaps/idl7.rgb
 cfplot/colourmaps/idl8.rgb
 cfplot/colourmaps/idl9.rgb
+cfplot/colourmaps/inferno.rgb
+cfplot/colourmaps/magma.rgb
 cfplot/colourmaps/matlab_hot.rgb
 cfplot/colourmaps/matlab_hsv.rgb
 cfplot/colourmaps/matlab_jet.rgb
@@ -103,8 +106,10 @@ cfplot/colourmaps/ncl_default.rgb
 cfplot/colourmaps/ncview_default.rgb
 cfplot/colourmaps/nrl_sirkes.rgb
 cfplot/colourmaps/nrl_sirkes_nowhite.rgb
+cfplot/colourmaps/parula.rgb
 cfplot/colourmaps/perc2_9lev.rgb
 cfplot/colourmaps/percent_11lev.rgb
+cfplot/colourmaps/plasma.rgb
 cfplot/colourmaps/posneg_1.rgb
 cfplot/colourmaps/posneg_2.rgb
 cfplot/colourmaps/prcp_1.rgb
@@ -188,10 +193,9 @@ cfplot/colourmaps/temp_diff_18lev.rgb
 cfplot/colourmaps/temp_diff_1lev.rgb
 cfplot/colourmaps/testcmap.rgb
 cfplot/colourmaps/thelix.rgb
-cfplot/colourmaps/thelix.rgb~
 cfplot/colourmaps/topo_15lev.rgb
 cfplot/colourmaps/vcs.rgb
-cfplot/colourmaps/vcs.rgb~
+cfplot/colourmaps/viridis.rgb
 cfplot/colourmaps/wgne15.rgb
 cfplot/colourmaps/wh-bl-gr-ye-re.gprgb
 cfplot/colourmaps/wind_17lev.rgb
