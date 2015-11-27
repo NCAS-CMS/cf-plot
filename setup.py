@@ -5,7 +5,7 @@ except ImportError:
 
 setup(
     name="cfplot",
-    version="1.7.19",
+    version="1.7.20",
     author="Andy Heaps",
     author_email="a.j.heaps@reading.ac.uk",
     packages=['cfplot'],
@@ -15,8 +15,4 @@ setup(
     long_description=open('README.txt').read(),
     package_data={'cfplot': ['colourmaps/*']},
     include_package_data=True
-    requires     = ['matplotlib',
-                    'numpy',
-                    'scipy',
-                   ],
 )

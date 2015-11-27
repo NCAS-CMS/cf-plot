@@ -1,6 +1,6 @@
 """
 Routines for making climate contour/vector plots using cf-python, matplotlib and basemap.
-Andy Heaps NCAS-CMS June 2015.
+Andy Heaps NCAS-CMS November 2015.
 """
 
 
