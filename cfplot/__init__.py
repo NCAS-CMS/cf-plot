@@ -11,7 +11,7 @@ See the cfplot home page http://climate.ncas.ac.uk/~andy/cfplot_sphinx/_build/ht
 
 __author__ = 'Andy Heaps - a.j.heaps@reading.ac.uk'
 __date__ = '1st December 2015'
-__version__ = '1.7.25'
+__version__ = '1.7.26'
 
 from cfplot import *
 
