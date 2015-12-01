@@ -1,13 +1,9 @@
-try:
-    from setuptools import setup
-except ImportError:
-    from distutils.core import setup
-
-
+from distutils.core import setup, Extension
+from distutils.command.build import build
 
 setup(
     name="cfplot",
-    version="1.7.24",
+    version="1.7.25",
     author="Andy Heaps",
     author_email="a.j.heaps@reading.ac.uk",
     packages=['cfplot'],
@@ -18,5 +14,4 @@ setup(
     license='LICENSE.txt',
     description="Climate contour and vector plots in Python",
     long_description=open('README.txt').read(),
-    zip_safe=False
 )
