@@ -48,10 +48,6 @@ from mpl_toolkits.basemap import Basemap, shiftgrid, addcyclic
 
 
 
-#####################################
-#plotvars - global plotting variables
-#####################################
-
 #Default colour scales
 #cscale1 is a differential data scale - blue to red
 cscale1=['#0a3278', '#0f4ba5', '#1e6ec8', '#3ca0f0', '#50b4fa', '#82d2ff', '#a0f0ff', \
@@ -85,7 +81,9 @@ viridis=['#440154', '#440255', '#440357', '#450558', '#45065a', '#45085b', '#460
 '#f6e61f', '#f8e621', '#fae622', '#fde724']
 
 
-
+#####################################
+#plotvars - global plotting variables
+#####################################
 plotvars=pvars(lonmin=-180, lonmax=180, latmin=-90, latmax=90, proj='cyl', \
                resolution='c', plot_type=1, boundinglat=0, lon_0=0, \
                levels=None, levels_min=None, levels_max=None, levels_step=None, \
@@ -93,14 +91,14 @@ plotvars=pvars(lonmin=-180, lonmax=180, latmin=-90, latmax=90, proj='cyl', \
                xlog=None, ylog=None,\
                rows=1, columns=1, file=None, orientation='landscape',\
                user_mapset=0, user_gset=0, cscale_flag=0, user_levs=0, user_plot=0,\
-               master_plot=None, plot=None, text_fontsize=None, cs=cscale1, cs_user='cscale1',\
+               master_plot=None, plot=None, text_fontsize=11, cs=cscale1, cs_user='cscale1',\
                mymap=None, \
                xticks=None, yticks=None, xticklabels=None, yticklabels=None, \
                xstep=None, ystep=None,xlabel=None, ylabel=None, title=None, \
-               title_fontsize=None, axis_label_fontsize=None, \
+               title_fontsize=15, axis_label_fontsize=11, \
                text_fontweight='normal', axis_label_fontweight='normal', \
                title_fontweight='normal', \
-               continent_thickness=None, continent_color=None)
+               continent_thickness=None, continent_color=None, pos=1)
 
 
 def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=None, \
@@ -156,6 +154,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
 
    """ 
 
+
    #Turn off divide warning in contour routine which is a numpy issue
    old_settings = np.seterr(all='ignore')
    np.seterr(divide='ignore')
@@ -175,6 +174,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
       f=f[0]
       field, x, y, ptype, colorbar_title, xlabel, ylabel, time_opts, xpole, ypole=\
              cf_data_assign(f, colorbar_title, verbose=verbose)
+
 
    else:
       if verbose: print 'con - using user assigned data'
@@ -343,9 +343,6 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
    axis_label_fontsize=plotvars.axis_label_fontsize
    continent_thickness=plotvars.continent_thickness
    continent_color=plotvars.continent_color
-   if title_fontsize is None: title_fontsize=15
-   if text_fontsize is None: text_fontsize=11
-   if axis_label_fontsize is None: axis_label_fontsize=11
    text_fontweight=plotvars.text_fontweight
    title_fontweight=plotvars.title_fontweight
    axis_label_fontweight=plotvars.axis_label_fontweight
@@ -547,6 +544,9 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
          else:
              position=plotvars.master_plot.add_axes(colorbar_position)  
              cbar=plotvars.master_plot.colorbar(cfill, cax=position, ticks=colorbar_labels, orientation=colorbar_orientation)
+             gpos(pos=plotvars.pos)
+
+             
 
          cbar.set_label(colorbar_title, fontsize=text_fontsize, fontweight=title_fontweight)
 
@@ -697,6 +697,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
          else:
              position=plotvars.master_plot.add_axes(colorbar_position)  
              cbar=plotvars.master_plot.colorbar(cfill, cax=position, ticks=colorbar_labels, orientation=colorbar_orientation)
+             gpos(pos=plotvars.pos)
 
          cbar.set_label(colorbar_title, fontsize=text_fontsize, fontweight=title_fontweight)
          cbar.set_ticklabels([str(i) for i in colorbar_labels]) #Bug in Matplotlib colorbar labelling
@@ -835,7 +836,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
          else:
              position=plotvars.master_plot.add_axes(colorbar_position)  
              cbar=plotvars.master_plot.colorbar(cfill, cax=position, ticks=colorbar_labels, orientation=colorbar_orientation)
-
+             gpos(pos=plotvars.pos)
 
          cbar.set_label(colorbar_title, fontsize=text_fontsize, fontweight=title_fontweight)
          cbar.set_ticklabels([str(i) for i in colorbar_labels]) #Bug in Matplotlib colorbar labelling
@@ -982,6 +983,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
          else:
              position=plotvars.master_plot.add_axes(colorbar_position)  
              cbar=plotvars.master_plot.colorbar(cfill, cax=position, ticks=colorbar_labels, orientation=colorbar_orientation)
+             gpos(pos=plotvars.pos)
 
          cbar.set_label(colorbar_title, fontsize=text_fontsize, fontweight=title_fontweight)
          cbar.set_ticklabels([str(i) for i in colorbar_labels]) #Bug in Matplotlib colorbar labelling
@@ -1064,7 +1066,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
          else:
              position=plotvars.master_plot.add_axes(colorbar_position)  
              cbar=plotvars.master_plot.colorbar(cfill, cax=position, ticks=colorbar_labels, orientation=colorbar_orientation)
-
+             gpos(pos=plotvars.pos)
 
          cbar.set_label(colorbar_title, fontsize=text_fontsize, fontweight=title_fontweight)
          cbar.set_ticklabels([str(i) for i in colorbar_labels]) #Bug in Matplotlib colorbar labelling
@@ -1168,6 +1170,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
          else:
              position=plotvars.master_plot.add_axes(colorbar_position)  
              cbar=plotvars.master_plot.colorbar(cfill, cax=position, ticks=colorbar_labels, orientation=colorbar_orientation)
+             gpos(pos=plotvars.pos)
 
          cbar.set_label(colorbar_title, fontsize=text_fontsize, fontweight=title_fontweight)
          cbar.set_ticklabels([str(i) for i in colorbar_labels]) #Bug in Matplotlib colorbar labelling
@@ -1809,6 +1812,9 @@ def gpos(pos=1):
 
    plotvars.plot=plotvars.master_plot.add_subplot(plotvars.rows, plotvars.columns, pos)
    plotvars.plot.tick_params(which='both', direction='out')
+   
+   #Set osition in global variables
+   plotvars.pos=pos
 
    #if plotvars.user_plot == 0: 
    #   if plotvars.user_gset == 1: gset(user_gset=plotvars.user_gset)
@@ -2063,11 +2069,11 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None):
    #Take into account rotated pole fields having extra dimensions  
    ndim=len(f.axes(size=cf.gt(1)))
    if f.ref('rotated_latitude_longitude') is None:
-      if (ndim > 2 or ndim < 2):
+      if (ndim > 2 or ndim < 1):
          print ''
          if (ndim > 2): errstr='cf_data_assign error - data has too many dimensions'
-         if (ndim < 2): errstr='cf_data_assign error - data has too few dimensions'
-         errstr=errstr+'\n cfplot requires two dimensional data \n'
+         if (ndim < 1): errstr='cf_data_assign error - data has too few dimensions'
+         errstr=errstr+'\n cfplot requires one or two dimensional data\n'
          for mydim in f.items():
             sn=getattr(f.item(mydim), 'standard_name', False)
             ln=getattr(f.item(mydim), 'long_name', False)
@@ -2279,6 +2285,11 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None):
 
 
 
+
+
+
+
+
    #None of the above
    #Horible bit of code to replace [has_lons, has_lats, has_height, has_time].count(None) > 2
    has_count=0
@@ -2286,6 +2297,7 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None):
    if has_lats is None: has_count=has_count+1
    if has_height is None: has_count=has_count+1
    if has_time is None: has_count=has_count+1
+
    if has_count > 2 and ptype is not 6:
       ptype=0
 
@@ -3065,24 +3077,7 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
    title_fontsize=plotvars.title_fontsize
    title_fontweight=plotvars.title_fontweight
    if title_fontsize is None: title_fontsize=15
-   if np.size(key_length) == 1:
-      key_length_u=key_length
-      key_length_v=key_length
-   if np.size(key_length) == 2:
-      key_length_u=key_length[0]
-      key_length_v=key_length[1]
-   if np.size(scale) == 1:
-      scale_u=scale
-      scale_v=scale
-   if np.size(scale) == 2:
-      key_length_u=scale[0]
-      key_length_v=scale[1]
-   if np.size(key_label) == 1:
-      key_label_u=key_label
-      key_label_v=key_label
-   if np.size(key_label) == 2:
-      key_label_u=key_label[0]
-      key_label_v=key_label[1]
+
 
 
 
@@ -3116,11 +3111,16 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
       ylabel=''
    
 
-   if scale is None: scale=np.nanmax(u_data)/4.0
+   if scale is None: 
+       scale=np.nanmax(u_data)/4.0
+
+
    if key_length is None: key_length=scale
-   if key_label is None: key_label=str(key_length)
-   if isinstance(u[0], cf.Field): key_label=key_label+u.units
-   key_label=supscr(key_label)
+
+
+
+
+
 
    #Open a new plot if necessary
    if plotvars.user_plot == 0: 
@@ -3196,6 +3196,11 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
                                     width=width, headwidth=headwidth, headlength=headlength,\
                                     headaxislength=headaxislength)
 
+      #Make key_label if none exists
+      if key_label is None: 
+          key_label=str(key_length)
+          if isinstance(u[0], cf.Field): key_label=supscr(key_label+u.units)
+
 
       quiv_key=plotvars.plot.quiverkey(quiv, key_location[0], key_location[1], key_length, key_label, labelpos='W')
 
@@ -3208,6 +3213,11 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
          quiv=plotvars.mymap.quiver(u_x,u_y,u_data,v_data, pivot=pivot, units='inches', scale=scale,\
                                     width=width, headwidth=headwidth, headlength=headlength,\
                                     headaxislength=headaxislength)
+
+         #Make key_label if none exists
+         if key_label is None: 
+             key_label=str(key_length)
+         if isinstance(u[0], cf.Field): key_label=supscr(key_label+u.units)
          quiv_key=plotvars.plot.quiverkey(quiv, key_location[0], key_location[1], key_length, key_label, labelpos='W')
 
 
@@ -3298,11 +3308,59 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
               xlabel=xlabel, ylabel=ylabel)
 
 
-      #plot vectors and key
-      quiv=plotvars.plot.quiver(u_x,u_y,u_data,v_data, pivot=pivot, units='inches', scale=scale,\
+      #Plot vectors 
+      if np.size(scale) == 1:
+          scaling=scale
+      else:
+          scaling=scale[0]
+          v_data=v_data*scale[0]/scale[1]
+
+
+      quiv=plotvars.plot.quiver(u_x,u_y,u_data,v_data, pivot=pivot, units='inches', scale=scaling,\
                                 width=width, headwidth=headwidth, headlength=headlength,\
                                 headaxislength=headaxislength)
-      quiv_key=plotvars.plot.quiverkey(quiv, key_location[0], key_location[1], key_length, key_label, labelpos='W')
+
+      #Plot key(s)
+      if np.size(scale) == 1:  
+          #Single scale vector
+          if key_label is None:
+              key_label_u=str(scale)
+
+              if isinstance(u[0], cf.Field): key_label_u=supscr(key_label_u+' ('+u.units+')')
+          quiv_key=plotvars.plot.quiverkey(quiv, key_location[0], key_location[1], key_length, key_label, labelpos='W')   
+      if np.size(scale) == 2:
+          #EP flux vectors with two scales
+
+          #translate from normalised units to plot units
+          xpos=key_location[0]*(plotvars.xmax-plotvars.xmin)+plotvars.xmin
+          ypos=key_location[1]*(plotvars.ymax-plotvars.ymin)+plotvars.ymin
+
+          #horizontal and vertical spacings for offsetting vector reference text
+          xoffset=0.01*abs(plotvars.xmax-plotvars.xmin)
+          yoffset=0.01*abs(plotvars.ymax-plotvars.ymin)
+
+          #Assign key labels if necessary
+          if key_label is None:
+              key_label_u=str(scale[0])
+              key_label_v=str(scale[1])
+              if isinstance(u[0], cf.Field): key_label_u=supscr(key_label_u+' ('+u.units+')')
+              if isinstance(v[0], cf.Field): key_label_v=supscr(key_label_v+' ('+v.units+')')
+          else:
+              key_label_u=supscr(key_label[0])
+              key_label_v=supscr(key_label[1])
+         
+
+          #Plot reference vectors and keys 
+          quiv1=plotvars.plot.quiver(xpos, ypos, key_length[0], 0, pivot='tail', units='inches', scale=scale[0], \
+                                         headaxislength=headaxislength, width=width, headwidth=headwidth, \
+                                         headlength=headlength, clip_on=False)
+          quiv2=plotvars.plot.quiver(xpos, ypos, 0, key_length[1]*key_length[0], pivot='tail', units='inches', scale=scale[1]*scale[0], \
+                                         headaxislength=headaxislength, width=width, headwidth=headwidth, \
+                                         headlength=headlength, clip_on=False)
+          plotvars.plot.text(xpos, ypos+yoffset, key_label_u, horizontalalignment='left', verticalalignment='top')
+          plotvars.plot.text(xpos-xoffset, ypos, key_label_v, horizontalalignment='right', verticalalignment='bottom')
+
+
       if title is not None:
          plotvars.plot.set_title(title, y=1.03, fontsize=plotvars.title_fontsize, fontweight=title_fontweight)
 
@@ -3675,9 +3733,9 @@ def setvars(file=None, title_fontsize=None, text_fontsize=None, axis_label_fonts
        title_fontweight, text_fontweight, axis_label_fontweight, fontweight, \
        continent_color]):
       plotvars.file=None
-      title_fontsize=None
-      text_fontsize=None
-      axis_label_fontsize=None
+      title_fontsize=15
+      text_fontsize=11
+      axis_label_fontsize=11
       title_fontweight='normal'
       text_fontweight='normal'
       axis_label_fontweight='normal',
@@ -4126,4 +4184,138 @@ def rgaxes(xpole=None, ypole=None, xvec=None, yvec=None, spacing=10.0, degspacin
 
    yvec=yvec_orig
    
+
+
+def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=None, \
+             ptype=0, linestyle='-', linewidth=1.0, color='k', xlog=None, ylog=None, verbose=None, swap_xy=False,\
+             marker=None, markersize=5.0):
+    """
+    | lineplot is the interface to line plotting in cfplot. The minimum use is lineplot(f) 
+    | f - array to contour
+    | x - x locations of data in f (only use this if f is a numpy array)
+    | y - y locations of data in f (only use this if f is a numpy array)
+    | title=None - graph title
+    | linestyle='-' - line style
+    | color='k - line color
+    | linewidth=1.0 - line width
+    | marker=None - marker for points along the line
+    | markersize=5.0 - size of the marker
+    | title=None - plot title
+    | xlog=None - log x-axis
+    | ylog=None - log y-axis
+    | verbose=None - change to 1 to get a verbose listing of what lineplot is doing
+    """
+    if verbose: print 'lineplot - making a line plot'
+
+    ##################
+    #Open a new plot is necessary
+    ##################
+    if plotvars.user_plot == 0: gopen(user_plot=0)
+
+
+    ##################
+    #Extract required data 
+    #If a cf-python field
+    ##################
+    if isinstance(f[0], cf.Field):
+        #Check if this is a cf.Fieldlist and reject if it is
+        if len(f) > 1:
+            errstr='\n cf_data_assign error - passed field is a cf.Fieldlist\n'
+            errstr=errstr+'Please pass one field for contouring\n'
+            errstr=errstr+'i.e. f[0]\n'
+            raise  Warning(errstr) 
+
+        #Extract data
+        if verbose: print 'lineplot - extracting data'
+
+        has_count=0
+        for mydim in f.items():
+            if np.size(np.squeeze(f.item(mydim).array)) > 1:
+                has_count=has_count+1
+                x=np.squeeze(f.item(mydim).array)
+                xname=cf_var_name(field=f, dim=mydim)
+                xunits=supscr(str(getattr(f.item(mydim), 'Units', '')))
+                y=np.squeeze(f.array)
+                if hasattr(f, 'Units'): yunits=supscr(str(f.Units))
+                if hasattr(f, 'id'): yname=f.id
+                if hasattr(f, 'ncvar'): yname=f.ncvar
+                if hasattr(f, 'short_name'): yname=f.short_name 
+                if hasattr(f, 'long_name'): yname=f.long_name 
+                if hasattr(f, 'standard_name'): yname=f.standard_name
+
+
+
+        if has_count != 1:
+            errstr='\n lineplot error - passed field is not suitable for plotting as a line\n'
+            for mydim in f.items():
+                sn=getattr(f.item(mydim), 'standard_name', False)
+                ln=getattr(f.item(mydim), 'long_name', False)
+                if sn:
+                    errstr=errstr+str(mydim)+','+str(sn)+','+str(f.item(mydim).size)+'\n'
+                else:
+                    if ln: errstr=errstr+str(mydim)+','+str(ln)+','+str(f.item(mydim).size)+'\n'
+            raise  Warning(errstr) 
+
+
+    #Set data values
+    if verbose: print 'lineplot - setting data values'
+    xpts=x
+    ypts=y
+    minx=np.min(x)
+    miny=np.min(y)
+    maxx=np.max(x)
+    maxy=np.max(y)
+    xlabel=xname+' ('+xunits+')'
+    ylabel=yname+' ('+yunits+')'    
+    ticks=None
+    if xname[0:3] == 'lon': ticks, ticklabels=mapaxis(minx, maxx, type=1)
+    if xname[0:3] == 'lat': ticks, ticklabels=mapaxis(minx, maxx, type=2)
+    if swap_xy is True:
+        if verbose: print 'lineplot - swapping x and y'
+        xpts=y
+        ypts=x
+        minx=np.min(y)
+        miny=np.min(x)
+        maxx=np.max(y)
+        maxy=np.max(x)
+        xlabel=yname+' ('+yunits+')'
+        ylabel=xname+' ('+xunits+')'
+
+
+    #Make graph
+    if verbose: print 'lineplot - making graph'
+    plotvars.plot.axis([minx, maxx, miny, maxy])
+    plotvars.plot.tick_params(direction='out', which='both')
+    plotvars.plot.set_xlabel(xlabel)
+    plotvars.plot.set_ylabel(ylabel)
+    if ticks: 
+        if swap_xy is not True:
+            plotvars.plot.set_xticks(ticks)
+            plotvars.plot.set_xticklabels(ticklabels)
+        else:
+            plotvars.plot.set_yticks(ticks)
+            plotvars.plot.set_yticklabels(ticklabels)
+    plotvars.plot.plot(xpts, ypts, color=color, linestyle=linestyle, linewidth=linewidth, marker=marker,\
+                       markersize=markersize)   
+
+    #Set title
+    if title is not None: plotvars.plot.set_title(title,fontsize=plotvars.title_fontsize, \
+                                                  fontweight=plotvars.title_fontweight)
+
+
+
+
+
+
+
+
+    ##################
+    #Save or view plot
+    ##################
+    if plotvars.user_plot == 0:       
+        if verbose: print 'Saving or viewing plot'
+        #gset(user_gset=0)
+        gclose()
+
+
 
