@@ -36,6 +36,7 @@ import matplotlib.tri as triang
 from copy import deepcopy
 
 
+
 #Check for a display and use the Agg backing store if none is present
 #This is for batch mode processing
 try:
@@ -2450,6 +2451,7 @@ def cscale(cmap=None, ncols=None, white=None, below=None, above=None, reverse=0)
    | 
    |  
    """   
+    
 
 
    #If no map requested reset to default  
@@ -2483,6 +2485,9 @@ def cscale(cmap=None, ncols=None, white=None, below=None, above=None, reverse=0)
 
    else:
       import distutils.sysconfig as sysconfig
+
+      package_path = os.path.dirname(__file__)
+      #file = os.path.join(package_path, 'colourmaps/'+cmap+'.rgb')
       file = sysconfig.get_python_lib()+'/cfplot/colourmaps/'+cmap+'.rgb'
       if os.path.isfile(file) is False:
          if os.path.isfile(cmap) is False:
@@ -4188,7 +4193,7 @@ def rgaxes(xpole=None, ypole=None, xvec=None, yvec=None, spacing=10.0, degspacin
 
 def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=None, \
              ptype=0, linestyle='-', linewidth=1.0, color='k', xlog=None, ylog=None, verbose=None, swap_xy=False,\
-             marker=None, markersize=5.0):
+             marker=None, markersize=5.0, label=None, legend_location=None):
     """
     | lineplot is the interface to line plotting in cfplot. The minimum use is lineplot(f) 
     | f - array to contour
@@ -4203,6 +4208,8 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, ti
     | title=None - plot title
     | xlog=None - log x-axis
     | ylog=None - log y-axis
+    | label=None - line label - label for line
+    | legend_location=None - location of legend, 'upper right' for instance
     | verbose=None - change to 1 to get a verbose listing of what lineplot is doing
     """
     if verbose: print 'lineplot - making a line plot'
@@ -4265,6 +4272,14 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, ti
     miny=np.min(y)
     maxx=np.max(x)
     maxy=np.max(y)
+
+    #Use user set values if present
+    if plotvars.xmin is not None:
+        minx=plotvars.xmin
+        miny=plotvars.ymin
+        maxx=plotvars.xmax
+        maxy=plotvars.ymax
+
     xlabel=xname+' ('+xunits+')'
     ylabel=yname+' ('+yunits+')'    
     ticks=None
@@ -4296,7 +4311,10 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, ti
             plotvars.plot.set_yticks(ticks)
             plotvars.plot.set_yticklabels(ticklabels)
     plotvars.plot.plot(xpts, ypts, color=color, linestyle=linestyle, linewidth=linewidth, marker=marker,\
-                       markersize=markersize)   
+                       markersize=markersize, label=label)   
+
+    #Add a legend if needed
+    if legend_location is not None: plotvars.plot.legend(loc=legend_location)
 
     #Set title
     if title is not None: plotvars.plot.set_title(title,fontsize=plotvars.title_fontsize, \
