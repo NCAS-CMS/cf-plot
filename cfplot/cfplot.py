@@ -2138,7 +2138,7 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None):
    #CF defined units
    lon_units=['degrees_east', 'degree_east', 'degree_E', 'degrees_E', 'degreeE', 'degreesE']
    lat_units=['degrees_north', 'degree_north', 'degree_N', 'degrees_N', 'degreeN', 'degreesN']
-   height_units=['millibar', 'decibar', 'atmosphere', 'atm', 'pascal','Pa', 'hPa',\
+   height_units=['mb', 'mbar', 'millibar', 'decibar', 'atmosphere', 'atm', 'pascal','Pa', 'hPa',\
                  'meter', 'metre', 'm', 'kilometer', 'kilometre', 'km'] 
    time_units=['day', 'days', 'd', 'hour', 'hours', 'hr', 'h', 'minute', 'minutes', 'min', 'mins',\
                'second', 'seconds', 'sec', 'secs', 's']
@@ -4285,6 +4285,15 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, ti
     ticks=None
     if xname[0:3] == 'lon': ticks, ticklabels=mapaxis(minx, maxx, type=1)
     if xname[0:3] == 'lat': ticks, ticklabels=mapaxis(minx, maxx, type=2)
+
+    #Z on y-axis
+    ztype=None
+    if xunits in ['mb', 'mbar', 'millibar', 'decibar', 'atmosphere', 'atm', 'pascal','Pa', 'hPa']:
+        swap_xy=True
+        ztype=1
+    if xunits in ['meter', 'metre', 'm', 'kilometer', 'kilometre', 'km']:
+        xtype=2
+
     if swap_xy is True:
         if verbose: print 'lineplot - swapping x and y'
         xpts=y
@@ -4295,6 +4304,18 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, ti
         maxy=np.max(x)
         xlabel=yname+' ('+yunits+')'
         ylabel=xname+' ('+xunits+')'
+
+    if ztype == 1:
+        miny=np.max(ypts)
+        maxy=np.min(ypts)
+
+    if ztype == 2:
+        if f.positive == 'down':
+            miny=np.max(ypts)
+            maxy=np.min(ypts)
+
+
+        
 
 
     #Make graph
