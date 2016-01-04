@@ -3037,11 +3037,12 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
     | v=None - v wind
     | x=None - x locations of u and v
     | y=None - y locations of u and v
-    | scale=None - data units per arrow length unit.  Generally takes one value but in the case
-    |              of two supplied values the second vector scaling applies to the v field. 
+    | scale=None - data units per arrow length unit.  A smaller values gives a larger vector.
+                   Generally takes one value but in the case of two supplied values the second vector 
+    |              scaling applies to the v field. 
     | stride=None - plot vector every stride points. Can take two values one for x and one for y.
-    | pts=None - use bilinear interpolation to interpolate vectors
-    |            onto a new grid  
+    | pts=None - use bilinear interpolation to interpolate vectors onto a new grid - takes one or two values.
+    |            If one value is passed then this is used for both the x and y axes.  
     | key_length=None - length of the key.  Generally takes one value but in the case
     |                   of two supplied values the second vector scaling applies to the v field. 
     | key_label=None - label for the key. Generally takes one value but in the case
@@ -3187,11 +3188,29 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
                                     width=width, headwidth=headwidth, headlength=headlength,\
                                     headaxislength=headaxislength)
       else:
+         #Polar grid
          #Calculate interpolation points and values
-         xnew, ynew, xnew_map, ynew_map=polar_regular_grid()
+         
+         xnew, ynew, xnew_map, ynew_map=polar_regular_grid(pts=pts)
 
          u_vals=regrid(f=u_data, x=u_x, y=u_y, xnew=xnew, ynew=ynew)
          v_vals=regrid(f=v_data, x=u_x, y=u_y, xnew=xnew, ynew=ynew)
+
+         #Rotate vector values
+         hem=1 #Northern hemisphere
+         if plotvars.proj == 'spstere': hem=-1
+         for i in np.arange(np.size(u_vals)):
+              if hem == 1:
+                  newu=u_vals[i]*np.cos(np.radians(xnew[i]))-hem*v_vals[i]*np.sin(np.radians(xnew[i]))
+                  newv=v_vals[i]*np.cos(np.radians(xnew[i]))+hem*u_vals[i]*np.sin(np.radians(xnew[i]))  
+              else:
+                  newu=hem*u_vals[i]*np.cos(np.radians(xnew[i]))+hem*v_vals[i]*np.sin(np.radians(xnew[i]))
+                  newv=hem*v_vals[i]*np.cos(np.radians(xnew[i]))-hem*u_vals[i]*np.sin(np.radians(xnew[i]))  
+
+
+              u_vals[i]=newu
+              v_vals[i]=newv
+
 
 
 

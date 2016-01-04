@@ -10,8 +10,8 @@ See the cfplot home page http://climate.ncas.ac.uk/~andy/cfplot_sphinx/_build/ht
 '''
 
 __author__ = 'Andy Heaps - a.j.heaps@reading.ac.uk'
-__date__ = '23rd December 2015'
-__version__ = '1.8.3'
+__date__ = '4th January 2016'
+__version__ = '1.9.1'
 
 from cfplot import *
 
