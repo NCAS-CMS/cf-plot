@@ -1,6 +1,6 @@
 """
 Routines for making climate contour/vector plots using cf-python, matplotlib and basemap.
-Andy Heaps NCAS-CMS November 2015.
+Andy Heaps NCAS-CMS January 2016
 """
 
 
@@ -531,7 +531,6 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
       plotvars.plot.set_title(title, y=1.03, fontsize=title_fontsize, fontweight=title_fontweight)
 
 
-
       #Color bar
       if colorbar == 1: 
          if verbose: print 'con - adding colour bar'    
@@ -555,13 +554,14 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
          #With clevs=[-1, 1, 10000, 20000, 30000, 40000, 50000, 60000]
          #Labels are [0, 2, 10001, 20001, 30001, 40001, 50001, 60001]
          #With a +1 near to the colorbar label
-         cbar.set_ticklabels([str(i) for i in colorbar_labels]) 
+         cbar.set_ticks([i for i in colorbar_labels]) 
+
          
          for t in cbar.ax.get_xticklabels(): 
             t.set_fontsize(text_fontsize)
             t.set_fontweight(text_fontweight)
 
-
+         
 
 
   
@@ -2806,8 +2806,6 @@ def regrid(f=None, x=None, y=None, xnew=None, ynew=None, lonlat=None):
   
       fieldout=np.append(fieldout, newval3)
 
-
-
    return fieldout
 
 
@@ -3028,7 +3026,7 @@ def find_pos_in_array(vals=None, val=None, above=False):
 
 def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
          key_length=None, key_label=None, ptype=None, title=None,\
-         width=None, headwidth=3, headlength=5, headaxislength=4.5, pivot='middle', key_location=[0.9, -0.06]):
+         width=0.02, headwidth=3, headlength=5, headaxislength=4.5, pivot='middle', key_location=[0.9, -0.06]):
 
    """
     | vect - plot vectors
@@ -3058,7 +3056,7 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
     |                       6 = rotated pole
     |
     | title=None - plot title
-    | width=None - shaft width in arrow units; default is 0.005 times the width of the plot
+    | width=0.005 - shaft width in arrow units; default is 0.005 times the width of the plot
     | headwidth=3 - head width as multiple of shaft width, default is 3
     | headlength=5 - head length as multiple of shaft width, default is 5
     | headaxislength=4.5 - head length at shaft intersection, default is 4.5
@@ -3172,8 +3170,8 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
          if iskip > ystride: iskip=1 
 
       
-   #Use bilinear interpolation to plot vectors
-   if pts is not None:
+   #Use bilinear interpolation to find new vector positions and values on a map
+   if pts is not None and plotvars.plot_type == 1:
 
       if plotvars.proj != 'npstere' and plotvars.proj != 'spstere': 
          #Calculate interpolation points and values
@@ -3267,8 +3265,9 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
 
 
 
-      
+   ########### 
    #Zonal plot
+   ###########
    if plotvars.plot_type == 2: 
       #and plotvars.user_plot == 0:
       user_gset=plotvars.user_gset
@@ -3332,29 +3331,52 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
               xlabel=xlabel, ylabel=ylabel)
 
 
-      #Plot vectors 
+      #Regrid the data if requested
+      if pts is not None:
+         xnew, ynew=stipple_points(xmin=np.min(u_x), xmax=np.max(u_x),\
+                                   ymin=np.min(u_y), ymax=np.max(u_y), pts=pts, stype=1)
+         u_vals=regrid(f=u_data, x=u_x, y=u_y, xnew=xnew, ynew=ynew)
+         v_vals=regrid(f=v_data, x=u_x, y=u_y, xnew=xnew, ynew=ynew)
+        
+         u_x=xnew
+         u_y=ynew
+         u_data=u_vals
+         v_data=v_vals
+
+
+      #set scale and key lengths
       if np.size(scale) == 1:
-          scaling=scale
+          scale_u=scale
+          scale_v=scale
       else:
-          scaling=scale[0]
-          v_data=v_data*scale[0]/scale[1]
+          scale_u=scale[0]
+          scale_v=scale[1]
 
-
-      quiv=plotvars.plot.quiver(u_x,u_y,u_data,v_data, pivot=pivot, units='inches', scale=scaling,\
+      if np.size(key_length) == 2:
+          key_length_u=key_length[0]
+          key_length_v=key_length[1]
+          #scale v data
+          v_data=v_data*scale_u/scale_v
+      else:
+          key_length_u=key_length
+ 
+      #Plot the vectors 
+      quiv=plotvars.plot.quiver(u_x,u_y,u_data,v_data, pivot=pivot, units='inches', scale=scale_u,\
                                 width=width, headwidth=headwidth, headlength=headlength,\
                                 headaxislength=headaxislength)
 
-      #Plot key(s)
+      #Plot single key
       if np.size(scale) == 1:  
           #Single scale vector
           if key_label is None:
-              key_label_u=str(scale)
-
+              key_label_u=str(key_length_u)
               if isinstance(u[0], cf.Field): key_label_u=supscr(key_label_u+' ('+u.units+')')
-          quiv_key=plotvars.plot.quiverkey(quiv, key_location[0], key_location[1], key_length, key_label, labelpos='W')   
-      if np.size(scale) == 2:
-          #EP flux vectors with two scales
+          else:
+              key_label_u=key_label[0]
+          quiv_key=plotvars.plot.quiverkey(quiv, key_location[0], key_location[1], key_length_u, key_label_u, labelpos='W')   
 
+      #Plot two keys
+      if np.size(scale) == 2:
           #translate from normalised units to plot units
           xpos=key_location[0]*(plotvars.xmax-plotvars.xmin)+plotvars.xmin
           ypos=key_location[1]*(plotvars.ymax-plotvars.ymin)+plotvars.ymin
@@ -3365,20 +3387,19 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
 
           #Assign key labels if necessary
           if key_label is None:
-              key_label_u=str(scale[0])
-              key_label_v=str(scale[1])
+              key_label_u=str(key_length_u)
+              key_label_v=str(key_length_v)
               if isinstance(u[0], cf.Field): key_label_u=supscr(key_label_u+' ('+u.units+')')
               if isinstance(v[0], cf.Field): key_label_v=supscr(key_label_v+' ('+v.units+')')
           else:
               key_label_u=supscr(key_label[0])
               key_label_v=supscr(key_label[1])
          
-
           #Plot reference vectors and keys 
           quiv1=plotvars.plot.quiver(xpos, ypos, key_length[0], 0, pivot='tail', units='inches', scale=scale[0], \
                                          headaxislength=headaxislength, width=width, headwidth=headwidth, \
                                          headlength=headlength, clip_on=False)
-          quiv2=plotvars.plot.quiver(xpos, ypos, 0, key_length[1]*key_length[0], pivot='tail', units='inches', scale=scale[1]*scale[0], \
+          quiv2=plotvars.plot.quiver(xpos, ypos, 0, key_length[1], pivot='tail', units='inches', scale=scale[1], \
                                          headaxislength=headaxislength, width=width, headwidth=headwidth, \
                                          headlength=headlength, clip_on=False)
           plotvars.plot.text(xpos, ypos+yoffset, key_label_u, horizontalalignment='left', verticalalignment='top')
@@ -3683,7 +3704,7 @@ def process_color_scales():
          cb1 = matplotlib.colorbar.ColorbarBase(ax1, cmap=cmap, orientation='horizontal', ticks=None)
          cb1.set_ticks([0.0,1.0])
          cb1.set_ticklabels(['',''])
-         file='/home/andy/public_html/cfplot_sphinx/images/colour_scales/'+scale+'.png'
+         file='/home/swsheaps/public_html/cfplot_sphinx/images/colour_scales/'+scale+'.png'
          plot.savefig(file)
          plot.close()
 
