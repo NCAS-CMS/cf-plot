@@ -19,7 +19,7 @@ class pvars(object):
 import os
 import sys
 cf_version_min='1.0.1'
-cf_errstr='\n cf-python > '+cf_version_min+' needs to be installed to use cfplot \n'
+cf_errstr='\n cf-python > '+cf_version_min+' needs to be installed to use cf-plot \n'
 try: 
    import cf
    if cf.__version__ < cf_version_min: raise  Warning(cf_errstr) 
@@ -107,7 +107,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
         negative_linestyle=None, blockfill=None, zero_thick=None, colorbar_shrink=None, \
         colorbar_orientation=None, colorbar_position=None, xlog=None, ylog=None, verbose=None):
    """
-    | con is the interface to contouring in cfplot. The minimum use is con(f) 
+    | con is the interface to contouring in cf-plot. The minimum use is con(f) 
     | where f is a 2 dimensional array. If a cf field is passed then an 
     | appropriate plot will be produced i.e. a longitude-latitude or 
     | latitude-height plot for example. If a 2d numeric array is passed then 
@@ -2074,7 +2074,7 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None):
          print ''
          if (ndim > 2): errstr='cf_data_assign error - data has too many dimensions'
          if (ndim < 1): errstr='cf_data_assign error - data has too few dimensions'
-         errstr=errstr+'\n cfplot requires one or two dimensional data\n'
+         errstr=errstr+'\n cf-plot requires one or two dimensional data\n'
          for mydim in f.items():
             sn=getattr(f.item(mydim), 'standard_name', False)
             ln=getattr(f.item(mydim), 'long_name', False)
@@ -3624,11 +3624,13 @@ def process_color_scales():
               'topo_15lev', 'wgne15', 'wind_17lev']
 
 
+   orography=['os250kmetres', 'wiki-1.0.2', 'wiki-1.0.3', 'wiki-2.0', 'wiki-2.0-reduced', 'arctic']
+
    idl_guide=[]
    for i in np.arange(1,45):
       idl_guide.append('scale'+str(i))
 
-   for category in 'uniform', 'ncl_meteoswiss', 'ncl_small', 'ncl_large', 'ncl_color_blindness', 'idl_guide': 
+   for category in 'uniform', 'ncl_meteoswiss', 'ncl_small', 'ncl_large', 'ncl_color_blindness', 'orography', 'idl_guide': 
       if category == 'uniform': 
          scales=uniform
          div='================== ====='
@@ -3676,6 +3678,17 @@ def process_color_scales():
          chars=17
          print 'NCAR Command Language - Enhanced to help with colour blindness'
          print '--------------------------------------------------------------'
+         print ''
+         print div
+         print 'Name             Scale'
+         print div
+         chars=17
+      if category == 'orography': 
+         scales=orography
+         div='================ ====='
+         chars=17
+         print 'Orography/bathymetry colour scales'
+         print '----------------------------------'
          print ''
          print div
          print 'Name             Scale'
@@ -4235,7 +4248,7 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, ti
              ptype=0, linestyle='-', linewidth=1.0, color='k', xlog=None, ylog=None, verbose=None, swap_xy=False,\
              marker=None, markersize=5.0, label=None, legend_location=None):
     """
-    | lineplot is the interface to line plotting in cfplot. The minimum use is lineplot(f) 
+    | lineplot is the interface to line plotting in cf-plot. The minimum use is lineplot(f) 
     | f - array to contour
     | x - x locations of data in f (only use this if f is a numpy array)
     | y - y locations of data in f (only use this if f is a numpy array)
