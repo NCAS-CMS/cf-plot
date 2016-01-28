@@ -28,7 +28,7 @@ setup(
     package_dir={'cfplot':'cfplot'},
     package_data={'cfplot': package_data},
     include_package_data=True,
-    url="http://climate.ncas.ac.uk/~swsheaps/cfplot_sphinx/_build/html",
+    url="http://ajheaps.github.io/cf-plot",
     license='LICENSE.txt',
     description="Climate contour and vector plots in Python",
     long_description=open('README.txt').read(),

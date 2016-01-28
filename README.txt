@@ -8,6 +8,6 @@ researchers commonly make.
 
 Documentation
 =============
-Please refer to the cf-plot homepage http://climate.ncas.ac.uk/~swsheaps/cfplot_sphinx/_build/html
+Please refer to the cf-plot homepage http://ajheaps.github.io/cf-plot
 
 
