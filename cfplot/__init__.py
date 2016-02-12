@@ -1,6 +1,6 @@
 '''
 
-cf-plot is a set of Python plotting routines for the plots that
+cf-plot is a set of Python plotting routines for the contour, vector and line plots that
 climate researchers commonly make.
 
 
@@ -10,8 +10,8 @@ See the cf-plot home page http://ajheaps.github.io/cf-plot for a gallery of plot
 '''
 
 __author__ = 'Andy Heaps - a.j.heaps@reading.ac.uk'
-__date__ = '28th January 2016'
-__version__ = '1.9.5'
+__date__ = '12th February 2016'
+__version__ = '1.9.6'
 
 from cfplot import *
 

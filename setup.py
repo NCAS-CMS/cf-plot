@@ -20,8 +20,8 @@ package_data = [f for f in find_package_data_files('cfplot/colourmaps')]
 
 
 setup(
-    name="cfplot",
-    version="1.9.3",
+    name="cf-plot",
+    version="1.9.6",
     author="Andy Heaps",
     author_email="a.j.heaps@reading.ac.uk",
     packages=['cfplot'],
@@ -30,6 +30,6 @@ setup(
     include_package_data=True,
     url="http://ajheaps.github.io/cf-plot",
     license='LICENSE.txt',
-    description="Climate contour and vector plots in Python",
+    description="Climate contour, vector and line plots in Python",
     long_description=open('README.txt').read(),
 )

@@ -92,11 +92,11 @@ plotvars=pvars(lonmin=-180, lonmax=180, latmin=-90, latmax=90, proj='cyl', \
                xlog=None, ylog=None,\
                rows=1, columns=1, file=None, orientation='landscape',\
                user_mapset=0, user_gset=0, cscale_flag=0, user_levs=0, user_plot=0,\
-               master_plot=None, plot=None, text_fontsize=11, cs=cscale1, cs_user='cscale1',\
+               master_plot=None, plot=None, cs=cscale1, cs_user='cscale1',\
                mymap=None, \
                xticks=None, yticks=None, xticklabels=None, yticklabels=None, \
                xstep=None, ystep=None,xlabel=None, ylabel=None, title=None, \
-               title_fontsize=15, axis_label_fontsize=11, \
+               title_fontsize=15, axis_label_fontsize=11, text_fontsize=11, \
                text_fontweight='normal', axis_label_fontweight='normal', \
                title_fontweight='normal', \
                continent_thickness=None, continent_color=None, pos=1)
@@ -1663,8 +1663,8 @@ def gset(xmin=None, xmax=None, ymin=None, ymax=None, xlog=None, ylog=None, user_
   
 
 def gopen(rows=1, columns=1, user_plot=1, file='python', \
-          orientation='landscape', fontsize=None, figsize=[11.7, 8.3], \
-          left=0.12, right=0.92, top=0.92, bottom=0.08):
+          orientation='landscape', figsize=[11.7, 8.3], \
+          left=0.12, right=0.92, top=0.92, bottom=0.08, wspace=0.2, hspace=0.2):
    """
     | gopen is used to open a graphic file.  
 
@@ -1673,12 +1673,15 @@ def gopen(rows=1, columns=1, user_plot=1, file='python', \
     | user_plot=1 - internal plot variable - do not use.
     | file='python' - default file name
     | orientation='landscape' - orientation - also takes 'portrait'
-    | fontsize=None - font size - default is 11 for a single plot
     | figsize=[11.7, 8.3]  - figure size in inches
     | left=0.12 - left margin in normalised coordinates
     | right=0.92 - right margin in normalised coordinates
     | top=0.92 - top margin in normalised coordinates
     | bottom=0.08 - bottom margin in normalised coordinates
+    | wspace=0.2 - width reserved for blank space between subplots
+    | hspace=0.2 - height reserved for white space between subplots
+
+
 
     :Returns:
      None
@@ -1711,13 +1714,7 @@ def gopen(rows=1, columns=1, user_plot=1, file='python', \
    else: plotvars.master_plot=plot.figure(figsize=(figsize[1], figsize[0]))
  
    #Set margins
-   plotvars.master_plot.subplots_adjust(left=left, right=right, top=top, bottom=bottom)
-  
-   #Set fontsize
-   if fontsize is None:
-      if rows*columns == 1: plotvars.text_fontsize=11
-      else: plotvars.text_fontsize=8
-   else: plotvars.text_fontsize=fontsize
+   plotvars.master_plot.subplots_adjust(left=left, right=right, top=top, bottom=bottom, wspace=wspace, hspace=hspace)
 
    #Set initial subplot
    gpos(pos=1)
@@ -3766,13 +3763,12 @@ def setvars(file=None, title_fontsize=None, text_fontsize=None, axis_label_fonts
     | setvars - set plotting variables
     |
     | file=None - output file name
-    | text_fontsize=None - text fontsize, default=11
     | title_fontsize=None - title fontsize, default=15
-    | axis_label_fontsize=None - default=11
-    | text_fontweight='normal' - text fontweight
+    | text_fontsize='normal' - text font size, default=11
+    | axis_label_fontsize=None - axis label fontsize, default=11
     | title_fontweight='normal' - title fontweight
-    | axis_label_fontweight='normal' - axis fontweight
-    | fontweight='normal' - all above fontweights
+    | text_fontweight='normal' - text font weight
+    | axis_label_fontweight='normal' - axis font weight
     | continent_thickness=None - default=1.5
     | continent_color=None - default='k' (black)
     | 
@@ -3810,11 +3806,6 @@ def setvars(file=None, title_fontsize=None, text_fontsize=None, axis_label_fonts
    plotvars.text_fontweight=text_fontweight
    plotvars.axis_label_fontweight=axis_label_fontweight
    plotvars.title_fontweight=title_fontweight
-   if fontweight != 'normal':
-      plotvars.text_fontweight=fontweight
-      plotvars.axis_label_fontweight=fontweight
-      plotvars.title_fontweight=fontweight
-
 
 
 
