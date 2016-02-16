@@ -2484,8 +2484,8 @@ def cscale(cmap=None, ncols=None, white=None, below=None, above=None, reverse=0)
       import distutils.sysconfig as sysconfig
 
       package_path = os.path.dirname(__file__)
-      #file = os.path.join(package_path, 'colourmaps/'+cmap+'.rgb')
-      file = sysconfig.get_python_lib()+'/cfplot/colourmaps/'+cmap+'.rgb'
+      file = os.path.join(package_path, 'colourmaps/'+cmap+'.rgb')
+      #file = sysconfig.get_python_lib()+'/cfplot/colourmaps/'+cmap+'.rgb'
       if os.path.isfile(file) is False:
          if os.path.isfile(cmap) is False:
             errstr='\ncscale error - colour scale not found:\n'
@@ -3023,7 +3023,8 @@ def find_pos_in_array(vals=None, val=None, above=False):
 
 def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
          key_length=None, key_label=None, ptype=None, title=None,\
-         width=0.02, headwidth=3, headlength=5, headaxislength=4.5, pivot='middle', key_location=[0.9, -0.06]):
+         width=0.02, headwidth=3, headlength=5, headaxislength=4.5, pivot='middle', key_location=[0.9, -0.06],
+         key_show=True):
 
    """
     | vect - plot vectors
@@ -3043,6 +3044,7 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
     | key_label=None - label for the key. Generally takes one value but in the case
     |                  of two supplied values the second vector scaling applies to the v field. 
     | key_location=[0.9, -0.06] - location of the vector key relative to the plot in normalised coordinates.
+    | key_show=True - draw the key.  Set to False if not required.
     | ptype=0 - plot type - not needed for cf fields.
     |                       0 = no specific plot type,
     |                       1 = longitude-latitude,
@@ -3221,7 +3223,8 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
           if isinstance(u[0], cf.Field): key_label=supscr(key_label+u.units)
 
 
-      quiv_key=plotvars.plot.quiverkey(quiv, key_location[0], key_location[1], key_length, key_label, labelpos='W')
+      if key_show is True:
+          quiv_key=plotvars.plot.quiverkey(quiv, key_location[0], key_location[1], key_length, key_label, labelpos='W')
 
    if plotvars.plot_type == 1:
       if pts is None:
@@ -3237,7 +3240,8 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
          if key_label is None: 
              key_label=str(key_length)
          if isinstance(u[0], cf.Field): key_label=supscr(key_label+u.units)
-         quiv_key=plotvars.plot.quiverkey(quiv, key_location[0], key_location[1], key_length, key_label, labelpos='W')
+         if key_show is True:
+             quiv_key=plotvars.plot.quiverkey(quiv, key_location[0], key_location[1], key_length, key_label, labelpos='W')
 
 
 
@@ -3370,7 +3374,8 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
               if isinstance(u[0], cf.Field): key_label_u=supscr(key_label_u+' ('+u.units+')')
           else:
               key_label_u=key_label[0]
-          quiv_key=plotvars.plot.quiverkey(quiv, key_location[0], key_location[1], key_length_u, key_label_u, labelpos='W')   
+          if key_show is True:
+              quiv_key=plotvars.plot.quiverkey(quiv, key_location[0], key_location[1], key_length_u, key_label_u, labelpos='W')   
 
       #Plot two keys
       if np.size(scale) == 2:
@@ -3393,14 +3398,15 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
               key_label_v=supscr(key_label[1])
          
           #Plot reference vectors and keys 
-          quiv1=plotvars.plot.quiver(xpos, ypos, key_length[0], 0, pivot='tail', units='inches', scale=scale[0], \
+          if key_show is True:
+              quiv1=plotvars.plot.quiver(xpos, ypos, key_length[0], 0, pivot='tail', units='inches', scale=scale[0], \
                                          headaxislength=headaxislength, width=width, headwidth=headwidth, \
                                          headlength=headlength, clip_on=False)
-          quiv2=plotvars.plot.quiver(xpos, ypos, 0, key_length[1], pivot='tail', units='inches', scale=scale[1], \
+              quiv2=plotvars.plot.quiver(xpos, ypos, 0, key_length[1], pivot='tail', units='inches', scale=scale[1], \
                                          headaxislength=headaxislength, width=width, headwidth=headwidth, \
                                          headlength=headlength, clip_on=False)
-          plotvars.plot.text(xpos, ypos+yoffset, key_label_u, horizontalalignment='left', verticalalignment='top')
-          plotvars.plot.text(xpos-xoffset, ypos, key_label_v, horizontalalignment='right', verticalalignment='bottom')
+              plotvars.plot.text(xpos, ypos+yoffset, key_label_u, horizontalalignment='left', verticalalignment='top')
+              plotvars.plot.text(xpos-xoffset, ypos, key_label_v, horizontalalignment='right', verticalalignment='bottom')
 
 
       if title is not None:
@@ -4237,10 +4243,11 @@ def rgaxes(xpole=None, ypole=None, xvec=None, yvec=None, spacing=10.0, degspacin
 
 def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=None, \
              ptype=0, linestyle='-', linewidth=1.0, color='k', xlog=None, ylog=None, verbose=None, swap_xy=False,\
-             marker=None, markersize=5.0, label=None, legend_location=None):
+             marker=None, markersize=5.0, label=None, legend_location=None, xunits='', yunits='', xname='',\
+             yname=''):
     """
     | lineplot is the interface to line plotting in cf-plot. The minimum use is lineplot(f) 
-    | f - array to contour
+    | f - CF data to make a line plot from 
     | x - x locations of data in f (only use this if f is a numpy array)
     | y - y locations of data in f (only use this if f is a numpy array)
     | title=None - graph title
@@ -4254,6 +4261,10 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, ti
     | ylog=None - log y-axis
     | label=None - line label - label for line
     | legend_location=None - location of legend, 'upper right' for instance
+    | xunits='' - x units
+    | yunits='' - y units
+    | xname='' - x name
+    | yname='' - y name
     | verbose=None - change to 1 to get a verbose listing of what lineplot is doing
     """
     if verbose: print 'lineplot - making a line plot'
@@ -4268,50 +4279,56 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, ti
     #Extract required data 
     #If a cf-python field
     ##################
-    if isinstance(f[0], cf.Field):
-        #Check if this is a cf.Fieldlist and reject if it is
-        if len(f) > 1:
-            errstr='\n cf_data_assign error - passed field is a cf.Fieldlist\n'
-            errstr=errstr+'Please pass one field for contouring\n'
-            errstr=errstr+'i.e. f[0]\n'
-            raise  Warning(errstr) 
+    if f is not None:
+        if isinstance(f[0], cf.Field):
+            #Check if this is a cf.Fieldlist and reject if it is
+            if len(f) > 1:
+                errstr='\n cf_data_assign error - passed field is a cf.Fieldlist\n'
+                errstr=errstr+'Please pass one field for contouring\n'
+                errstr=errstr+'i.e. f[0]\n'
+                raise  Warning(errstr) 
 
-        #Extract data
-        if verbose: print 'lineplot - extracting data'
+            #Extract data
+            if verbose: print 'lineplot - CF field, extracting data'
 
-        has_count=0
-        for mydim in f.items():
-            if np.size(np.squeeze(f.item(mydim).array)) > 1:
-                has_count=has_count+1
-                x=np.squeeze(f.item(mydim).array)
-                xname=cf_var_name(field=f, dim=mydim)
-                xunits=supscr(str(getattr(f.item(mydim), 'Units', '')))
-                y=np.squeeze(f.array)
-                if hasattr(f, 'Units'): yunits=supscr(str(f.Units))
-                if hasattr(f, 'id'): yname=f.id
-                if hasattr(f, 'ncvar'): yname=f.ncvar
-                if hasattr(f, 'short_name'): yname=f.short_name 
-                if hasattr(f, 'long_name'): yname=f.long_name 
-                if hasattr(f, 'standard_name'): yname=f.standard_name
-
-
-
-        if has_count != 1:
-            errstr='\n lineplot error - passed field is not suitable for plotting as a line\n'
+            has_count=0
             for mydim in f.items():
-                sn=getattr(f.item(mydim), 'standard_name', False)
-                ln=getattr(f.item(mydim), 'long_name', False)
-                if sn:
-                    errstr=errstr+str(mydim)+','+str(sn)+','+str(f.item(mydim).size)+'\n'
-                else:
-                    if ln: errstr=errstr+str(mydim)+','+str(ln)+','+str(f.item(mydim).size)+'\n'
-            raise  Warning(errstr) 
+                if np.size(np.squeeze(f.item(mydim).array)) > 1:
+                    has_count=has_count+1
+                    x=np.squeeze(f.item(mydim).array)
+                    xname=cf_var_name(field=f, dim=mydim)
+                    xunits=supscr(str(getattr(f.item(mydim), 'Units', '')))
+                    y=np.squeeze(f.array)
+                    if hasattr(f, 'Units'): yunits=supscr(str(f.Units))
+                    if hasattr(f, 'id'): yname=f.id
+                    if hasattr(f, 'ncvar'): yname=f.ncvar
+                    if hasattr(f, 'short_name'): yname=f.short_name 
+                    if hasattr(f, 'long_name'): yname=f.long_name 
+                    if hasattr(f, 'standard_name'): yname=f.standard_name
+
+
+
+            if has_count != 1:
+                errstr='\n lineplot error - passed field is not suitable for plotting as a line\n'
+                for mydim in f.items():
+                    sn=getattr(f.item(mydim), 'standard_name', False)
+                    ln=getattr(f.item(mydim), 'long_name', False)
+                    if sn:
+                        errstr=errstr+str(mydim)+','+str(sn)+','+str(f.item(mydim).size)+'\n'
+                    else:
+                        if ln: errstr=errstr+str(mydim)+','+str(ln)+','+str(f.item(mydim).size)+'\n'
+                raise  Warning(errstr) 
+
+    else:
+        if verbose: print 'lineplot - not a CF field, using passed data'
+
+
 
 
     #Set data values
     if verbose: print 'lineplot - setting data values'
-    xpts=x
-    ypts=y
+    xpts=np.squeeze(x)
+    ypts=np.squeeze(y)
     minx=np.min(x)
     miny=np.min(y)
     maxx=np.max(x)
@@ -4324,8 +4341,11 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, ti
         maxx=plotvars.xmax
         maxy=plotvars.ymax
 
-    xlabel=xname+' ('+xunits+')'
-    ylabel=yname+' ('+yunits+')'    
+    #Set x and y labelling
+    xlabel=xname
+    ylabel=yname
+    if xunits !='': xlabel=xlabel+' ('+supscr(xunits)+')'
+    if yunits !='': ylabel=ylabel+' ('+supscr(yunits)+')'    
     ticks=None
     if xname[0:3] == 'lon': ticks, ticklabels=mapaxis(minx, maxx, type=1)
     if xname[0:3] == 'lat': ticks, ticklabels=mapaxis(minx, maxx, type=2)
@@ -4346,8 +4366,9 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, ti
         miny=np.min(x)
         maxx=np.max(y)
         maxy=np.max(x)
-        xlabel=yname+' ('+yunits+')'
-        ylabel=xname+' ('+xunits+')'
+        xlabel=yname+' ('+supscr(yunits)+')'
+        ylabel=xname+' ('+supscr(xunits)+')'
+        print 'xlabel, ylabel', xlabel, ylabel
 
     if ztype == 1:
         miny=np.max(ypts)
