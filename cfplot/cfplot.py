@@ -1,6 +1,6 @@
 """
 Routines for making climate contour/vector plots using cf-python, matplotlib and basemap.
-Andy Heaps NCAS-CMS January 2016
+Andy Heaps NCAS-CMS March 2016
 """
 
 
@@ -4243,8 +4243,8 @@ def rgaxes(xpole=None, ypole=None, xvec=None, yvec=None, spacing=10.0, degspacin
 
 def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=None, \
              ptype=0, linestyle='-', linewidth=1.0, color='k', xlog=None, ylog=None, verbose=None, swap_xy=False,\
-             marker=None, markersize=5.0, label=None, legend_location=None, xunits='', yunits='', xname='',\
-             yname=''):
+             marker=None, markersize=5.0, label=None, legend_location=None, xunits=None, yunits=None, xname=None,\
+             yname=None, xticks=None, yticks=None, xticklabels=None, yticklabels=None):
     """
     | lineplot is the interface to line plotting in cf-plot. The minimum use is lineplot(f) 
     | f - CF data to make a line plot from 
@@ -4261,10 +4261,14 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, ti
     | ylog=None - log y-axis
     | label=None - line label - label for line
     | legend_location=None - location of legend, 'upper right' for instance
-    | xunits='' - x units
-    | yunits='' - y units
-    | xname='' - x name
-    | yname='' - y name
+    | xunits=None - x units
+    | yunits=None - y units
+    | xname=None - x name
+    | yname=None - y name
+    | xticks=None - x ticks
+    | xticklabels=None - x tick labels
+    | yticks=None - y ticks
+    | yticklabels - y tick labels
     | verbose=None - change to 1 to get a verbose listing of what lineplot is doing
     """
     if verbose: print 'lineplot - making a line plot'
@@ -4296,15 +4300,17 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, ti
                 if np.size(np.squeeze(f.item(mydim).array)) > 1:
                     has_count=has_count+1
                     x=np.squeeze(f.item(mydim).array)
-                    xname=cf_var_name(field=f, dim=mydim)
-                    xunits=supscr(str(getattr(f.item(mydim), 'Units', '')))
+                    if xname is None: xname=cf_var_name(field=f, dim=mydim)
+                    if xunits is None: xunits=str(getattr(f.item(mydim), 'Units', ''))
                     y=np.squeeze(f.array)
-                    if hasattr(f, 'Units'): yunits=supscr(str(f.Units))
-                    if hasattr(f, 'id'): yname=f.id
-                    if hasattr(f, 'ncvar'): yname=f.ncvar
-                    if hasattr(f, 'short_name'): yname=f.short_name 
-                    if hasattr(f, 'long_name'): yname=f.long_name 
-                    if hasattr(f, 'standard_name'): yname=f.standard_name
+                    if yunits is None: 
+                        if hasattr(f, 'Units'): yunits=str(f.Units)
+                    if yname is None: 
+                        if hasattr(f, 'id'): yname=f.id
+                        if hasattr(f, 'ncvar'): yname=f.ncvar
+                        if hasattr(f, 'short_name'): yname=f.short_name 
+                        if hasattr(f, 'long_name'): yname=f.long_name 
+                        if hasattr(f, 'standard_name'): yname=f.standard_name
 
 
 
@@ -4342,13 +4348,23 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, ti
         maxy=plotvars.ymax
 
     #Set x and y labelling
-    xlabel=xname
-    ylabel=yname
-    if xunits !='': xlabel=xlabel+' ('+supscr(xunits)+')'
-    if yunits !='': ylabel=ylabel+' ('+supscr(yunits)+')'    
-    ticks=None
-    if xname[0:3] == 'lon': ticks, ticklabels=mapaxis(minx, maxx, type=1)
-    if xname[0:3] == 'lat': ticks, ticklabels=mapaxis(minx, maxx, type=2)
+    if xname is None:
+        xlabel=''
+    else:
+        xlabel=xname
+    if yname is None:
+        ylabel=''
+    else:
+        ylabel=yname
+    if xunits is not None: xlabel=xlabel+' ('+supscr(xunits)+')'
+    if yunits is not None: ylabel=ylabel+' ('+supscr(yunits)+')'    
+    if xticks is None:
+        if xlabel[0:3] == 'lon': xticks, xticklabels=mapaxis(minx, maxx, type=1)
+        if xlabel[0:3] == 'lat': xticks, xticklabels=mapaxis(minx, maxx, type=2)
+    else:
+        if xticklabels is None: xticklabels=xticks
+    if yticks is not None:
+        if yticklabels is None: yticklabels=yticks
 
     #Z on y-axis
     ztype=None
@@ -4368,7 +4384,6 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, ti
         maxy=np.max(x)
         xlabel=yname+' ('+supscr(yunits)+')'
         ylabel=xname+' ('+supscr(xunits)+')'
-        print 'xlabel, ylabel', xlabel, ylabel
 
     if ztype == 1:
         miny=np.max(ypts)
@@ -4380,8 +4395,6 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, ti
             maxy=np.min(ypts)
 
 
-        
-
 
     #Make graph
     if verbose: print 'lineplot - making graph'
@@ -4389,13 +4402,21 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, ti
     plotvars.plot.tick_params(direction='out', which='both')
     plotvars.plot.set_xlabel(xlabel)
     plotvars.plot.set_ylabel(ylabel)
-    if ticks: 
-        if swap_xy is not True:
-            plotvars.plot.set_xticks(ticks)
-            plotvars.plot.set_xticklabels(ticklabels)
-        else:
-            plotvars.plot.set_yticks(ticks)
-            plotvars.plot.set_yticklabels(ticklabels)
+    if swap_xy is not True:
+        if xticks is not None:
+            plotvars.plot.set_xticks(xticks)
+            plotvars.plot.set_xticklabels(xticklabels)
+        if yticks is not None:
+            plotvars.plot.set_yticks(yticks)
+            plotvars.plot.set_yticklabels(yticklabels)
+    else:
+        if xtixks is not None:
+            plotvars.plot.set_yticks(xticks)
+            plotvars.plot.set_yticklabels(xticklabels)
+        if yticks is not None:
+            plotvars.plot.set_xticks(xticks)
+            plotvars.plot.set_xticklabels(xticklabels)
+
     plotvars.plot.plot(xpts, ypts, color=color, linestyle=linestyle, linewidth=linewidth, marker=marker,\
                        markersize=markersize, label=label)   
 
