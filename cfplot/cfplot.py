@@ -1312,7 +1312,7 @@ def levs(min=None, max=None, step=None, manual=None, extend='both'):
       plotvars.levels_min=None
       plotvars.levels_max=None
       plotvars.levels_step=None 
-      plotvars.extend='both'
+      plotvars.levels_extend='both'
       plotvars.user_levs=0
       return   
 
@@ -1335,7 +1335,12 @@ def levs(min=None, max=None, step=None, manual=None, extend='both'):
          plotvars.levels_min=min
          plotvars.levels_max=max
          plotvars.levels_step=step
-         plotvars.levels=np.arange(min, max+step, step)
+         if type(step) is int:
+             plotvars.levels=np.arange(min, max+step, step)
+         else:
+             vals=np.arange(min, max+step, step)
+             if np.max(vals) > max: vals=vals[:-1]
+             plotvars.levels=np.linspace(min, max, np.size(vals))
          plotvars.user_levs=1
 
    plotvars.levels_extend=extend
@@ -1761,9 +1766,10 @@ def gclose(view=True):
       if type is None: file=file+'.png'
       plotvars.master_plot.savefig(file, papertype='a4',\
                                    orientation=plotvars.orientation)
+      plot.close()
    else:
       plot.show()
-
+      plot.close()
       
    #Reset plotting
    plotvars.plot=None
@@ -4250,17 +4256,19 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, ti
     | f - CF data to make a line plot from 
     | x - x locations of data in f (only use this if f is a numpy array)
     | y - y locations of data in f (only use this if f is a numpy array)
-    | title=None - graph title
     | linestyle='-' - line style
     | color='k - line color
     | linewidth=1.0 - line width
     | marker=None - marker for points along the line
     | markersize=5.0 - size of the marker
-    | title=None - plot title
     | xlog=None - log x-axis
     | ylog=None - log y-axis
     | label=None - line label - label for line
     | legend_location=None - location of legend, 'upper right' for instance
+    | verbose=None - change to 1 to get a verbose listing of what lineplot is doing
+    |
+    | The following parameters override any CF data defaults:
+    | title=None - plot title
     | xunits=None - x units
     | yunits=None - y units
     | xname=None - x name
@@ -4269,7 +4277,6 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, ti
     | xticklabels=None - x tick labels
     | yticks=None - y ticks
     | yticklabels - y tick labels
-    | verbose=None - change to 1 to get a verbose listing of what lineplot is doing
     """
     if verbose: print 'lineplot - making a line plot'
 
