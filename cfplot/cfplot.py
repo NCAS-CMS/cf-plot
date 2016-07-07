@@ -187,10 +187,9 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
 
 
 
-
    #Set contour line styles
    if negative_linestyle is None: matplotlib.rcParams['contour.negative_linestyle'] = 'solid'
-   else: matplotlib.rcParams['contour.negative_linestyle'] = negative_linestyle
+   else: matplotlib.rcParams['contour.negative_linestyle'] = 'Dashed'
 
 
    #Set contour lines off on block plots
@@ -497,6 +496,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
       #Contour lines and labels  
       if lines == True: 
          if verbose: print 'con - adding contour lines and labels'
+         print 'clevs are ', clevs
          cs = mymap.contour(lons,lats,field*fmult,clevs,colors='k', tri=tri)
          if line_labels == True:
             nd=ndecs(clevs)
@@ -506,7 +506,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
 
          #Thick zero contour line   
          if zero_thick is not None:
-            cs = mymap.contour(lons,lats,field*fmult,[1e-32, 0], colors='k', linewidths=zero_thick, tri=tri) 
+            cs = mymap.contour(lons,lats,field*fmult,[-1e-32, 0], colors='k', linewidths=zero_thick, tri=tri) 
 
       
 
