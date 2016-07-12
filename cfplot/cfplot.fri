@@ -36,6 +36,7 @@ import matplotlib.tri as triang
 from copy import deepcopy
 
 
+
 #Check for a display and use the Agg backing store if none is present
 #This is for batch mode processing
 try:
@@ -170,10 +171,6 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
    old_settings = np.seterr(all='ignore')
    np.seterr(divide='ignore')
 
-   #Set potential user axis labels
-   user_xlabel=xlabel
-   user_ylabel=ylabel
-
    #Extract required data for contouring
    #If a cf-python field
    if isinstance(f[0], cf.Field):
@@ -187,6 +184,8 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
       #Extract data
       if verbose: print 'con - calling cf_data_assign'
       f=f[0]
+      user_xlabel=xlabel
+      user_ylabel=ylabel
       field, x, y, ptype, colorbar_title, xlabel, ylabel, time_opts, xpole, ypole=\
              cf_data_assign(f, colorbar_title, verbose=verbose)
       if user_xlabel is not None: xlabel=user_xlabel
@@ -197,6 +196,8 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
       check_data(field, x, y)
       xlabel=''
       ylabel=''
+
+
 
 
    #Set contour line styles
@@ -285,12 +286,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
            if cval == 0: includes_zero=1
 
        if includes_zero == 1:
-           cs_below=col_zero
-           cs_above=np.size(clevs)-col_zero+1
-           if plotvars.levels_extend == 'max':
-               cs_below=cs_below-1
-               cs_above=cs_above+1
-           cscale('scale1', below=cs_below, above=cs_above)
+           cscale('scale1', below=col_zero, above=np.size(clevs)-col_zero+1)
        else:
            cscale('viridis', ncols=np.size(clevs)+1)   
 
@@ -467,6 +463,8 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
             gset(xmin=np.nanmin(lons), xmax=np.nanmax(lons), ymin=np.nanmin(lats), ymax=np.nanmax(lats), user_gset=0)
 
 
+
+
       #Filled contours
       if fill == True or blockfill == 1:
          if verbose: print 'con - adding filled contours'
@@ -476,16 +474,18 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
          #changed on the colourbar and plot after the plot is made 
          cscale_ncols=np.size(plotvars.cs)
          colmap=cscale_get_map()
-
-         cmap = matplotlib.colors.ListedColormap(colmap)
-         if (plotvars.levels_extend == 'min' or plotvars.levels_extend == 'both'):
-             cmap.set_under(plotvars.cs[0])
-         if (plotvars.levels_extend == 'max' or plotvars.levels_extend == 'both'):
-             cmap.set_over(plotvars.cs[-1])
-
+  
          #filled colour contours
          cfill = mymap.contourf(lons,lats,field*fmult,clevs,extend=plotvars.levels_extend,\
-                 cmap=cmap, tri=tri)
+                 colors=colmap, tri=tri)
+
+
+         #add colour scale extensions if required
+         if (plotvars.levels_extend == 'both' or plotvars.levels_extend == 'min'):
+            cfill.cmap.set_under(plotvars.cs[0])
+         if (plotvars.levels_extend == 'both' or plotvars.levels_extend == 'max'):
+            cfill.cmap.set_over(plotvars.cs[cscale_ncols-1])
+
 
 
       #Block fill
@@ -597,8 +597,8 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
 
          
          for t in cbar.ax.get_xticklabels(): 
-             t.set_fontsize(text_fontsize)
-             t.set_fontweight(text_fontweight)
+            t.set_fontsize(text_fontsize)
+            t.set_fontweight(text_fontweight)
 
          
 
@@ -739,16 +739,14 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
 
       #Filled contours
       if fill == True or blockfill == 1:
-         colmap=cscale_get_map()
-         cmap = matplotlib.colors.ListedColormap(colmap)
-         if (plotvars.levels_extend == 'min' or plotvars.levels_extend == 'both'):
-             cmap.set_under(plotvars.cs[0])
-         if (plotvars.levels_extend == 'max' or plotvars.levels_extend == 'both'):
-             cmap.set_over(plotvars.cs[-1])
-
          cfill=plotvars.plot.contourf(x,y,field*fmult,clevs, \
-               extend=plotvars.levels_extend, cmap=cmap, tri=tri)
+               extend=plotvars.levels_extend, colors=colmap, tri=tri)
 
+         #add colour scale extensions if required
+         if (plotvars.levels_extend == 'both' or plotvars.levels_extend == 'min'):
+            cfill.cmap.set_under(plotvars.cs[0])
+         if (plotvars.levels_extend == 'both' or plotvars.levels_extend == 'max'):
+            cfill.cmap.set_over(plotvars.cs[cscale_ncols-1])
   
       #Block fill
       if blockfill == 1:   
@@ -855,86 +853,20 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
       if ylog != 1:   
          if ytype == 1: 
             gset(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax, user_gset=user_gset)         
-            #axes_plot(xticks=lonticks, xticklabels=lonlabels,\
-            #     yticks=gvals(dmin=ymin, dmax=ymax, tight=1, mystep=ystep, mod=0)[0],\
-            #     xlabel=xlabel, ylabel=ylabel)
+            axes_plot(xticks=lonticks, xticklabels=lonlabels,\
+                 yticks=gvals(dmin=ymin, dmax=ymax, tight=1, mystep=ystep, mod=0)[0],\
+                 xlabel=xlabel, ylabel=ylabel)
          else: 
             gset(xmin=xmin, xmax=xmax, ymin=ymax, ymax=ymin, user_gset=user_gset)
-            #axes_plot(xticks=lonticks, xticklabels=lonlabels,\
-            #     yticks=gvals(dmin=ymin, dmax=ymax, tight=1, mystep=ystep, mod=0)[0],\
-            #     xlabel=xlabel, ylabel=ylabel)  
-
-
-         heightticks=gvals(dmin=ymin, dmax=ymax, tight=1, mystep=ystep, mod=0)[0]
-         heightlabels=heightticks
-
-         if axes is True:
-             if xaxis is True:
-                 if xticks is not None:
-                     lonticks=xticks
-                     lonlabels=xticks
-                     if xticklabels is not None: lonlabels=xticklabels
-             else:
-                 lonticks=[100000000]
-                 xlabel=''
-
-             if yaxis is True:
-                 if yticks is not None:
-                     heightticks=yticks
-                     heightlabels=yticks
-                     if yticklabels is not None: heightlabels=yticklabels
-             else:
-                 heightticks=[100000000]
-                 ylabel=''
-
-
-         else:
-             lonticks=[100000000]
-             heightticks=[100000000]
-             xlabel=''
-             ylabel=''
-
-         axes_plot(xticks=lonticks, xticklabels=lonlabels,\
-                   yticks=heightticks, yticklabels=heightlabels,\
-                   xlabel=xlabel, ylabel=ylabel)
-
-
-
+            axes_plot(xticks=lonticks, xticklabels=lonlabels,\
+                 yticks=gvals(dmin=ymin, dmax=ymax, tight=1, mystep=ystep, mod=0)[0],\
+                 xlabel=xlabel, ylabel=ylabel)  
 
       #Log y axis 
       if ylog == 1:
-          if ymin == 0: ymin=1
-          gset(xmin=xmin, xmax=xmax, ymin=ymax, ymax=ymin, ylog=1, user_gset=user_gset)
-          #axes_plot(xticks=lonticks, xticklabels=lonlabels, xlabel=xlabel, ylabel=ylabel)
-
-          if axes is True:
-              if xaxis is True:
-                  if xticks is not None:
-                      lonticks=xticks
-                      lonlabels=xticks
-                      if xticklabels is not None: lonlabels=xticklabels
-              else:
-                  lonticks=[100000000]
-                  xlabel=''
-
-              if yaxis is True:
-                  if yticks is not None:
-                      heightticks=yticks
-                      heightlabels=yticks
-                      if yticklabels is not None: heightlabels=yticklabels
-              else:
-                  latticks=[100000000]
-                  xlabel=''
-
-          if yticks is None:
-              axes_plot(xticks=latticks, xticklabels=latlabels, xlabel=xlabel, ylabel=ylabel)
-          else:
-              axes_plot(xticks=latticks, xticklabels=latlabels, yticks=heightticks, yticklabels=heightlabels, \
-                        xlabel=xlabel, ylabel=ylabel)
-
-
-
-
+         if ymin == 0: ymin=1
+         gset(xmin=xmin, xmax=xmax, ymin=ymax, ymax=ymin, ylog=1, user_gset=user_gset)
+         axes_plot(xticks=lonticks, xticklabels=lonlabels, xlabel=xlabel, ylabel=ylabel)
 
       #Get colour scale for use in contouring
       #If colour bar extensions are enabled then the colour map goes
@@ -946,15 +878,8 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
 
       #Filled contours
       if fill == True or blockfill == 1:
-         colmap=cscale_get_map()
-         cmap = matplotlib.colors.ListedColormap(colmap)
-         if (plotvars.levels_extend == 'min' or plotvars.levels_extend == 'both'):
-             cmap.set_under(plotvars.cs[0])
-         if (plotvars.levels_extend == 'max' or plotvars.levels_extend == 'both'):
-             cmap.set_over(plotvars.cs[-1])
-
          cfill=plotvars.plot.contourf(x,y,field*fmult,clevs, \
-               extend=plotvars.levels_extend, cmap=cmap, tri=tri)
+               extend=plotvars.levels_extend, colors=colmap, tri=tri)
 
          #add colour scale extensions if required
          if (plotvars.levels_extend == 'both' or plotvars.levels_extend == 'min'):
@@ -1024,9 +949,9 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
    #################
    if (ptype == 4 or ptype == 5): 
       if verbose: print 'con - making a Hovmuller plot'
-      yplotlabel='Time'
-      if ptype == 4: xplotlabel='Longitude'
-      if ptype == 5: xplotlabel='Latitude'
+      ylabel='Time'
+      if ptype == 4: xlabel='Longitude'
+      if ptype == 5: xlabel='Latitude'
       user_gset=plotvars.user_gset
 
       ref_time=time_opts[0]
@@ -1073,51 +998,21 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
          plotvars.ymax=tmax
  
       time_units = cf.Units(ref_time, ref_calendar)
-      t = cf.Data(cf.dt(ref_time_origin), units=time_units)
-      #t = cf.Data(cf.dt('1980-1-1'), units=time_units)
+      #t = cf.Data(cf.dt(ref_time_origin), units=time_units)
+      t = cf.Data(cf.dt('1980-1-1'), units=time_units)
 
       times=gvals(dmin=ymin, dmax=ymax, tight=1, mod=0)[0]
       T = cf.Data(times, units=t.Units)
-      timeticks=T.array
-      timelabels=T.year.array
+      time_ticks=T.array
+      time_tick_labels=T.year.array
 
-      if ptype == 4: lonlatticks, lonlatlabels=mapaxis(min=xmin, max=xmax, type=1)
-      if ptype == 5: lonlatticks, lonlatlabels=mapaxis(min=xmin, max=xmax, type=2)
+      if ptype == 4: xticks, xticklabels=mapaxis(min=xmin, max=xmax, type=1)
+      if ptype == 5: xticks, xticklabels=mapaxis(min=xmin, max=xmax, type=2)
 
       #Draw axes
-      if axes is True:
-         if xaxis is True:
-             if xticks is not None:
-                 lonlatticks=xticks
-                 lonlatlabels=xticks
-                 if xticklabels is not None: lonlatlabels=xticklabels
-         else:
-              lonlatticks=[100000000]
-              xlabel=''
-
-         if yaxis is True:
-             if yticks is not None:
-                 timeticks=yticks
-                 timelabels=yticks
-                 if yticklabels is not None: timelabels=yticklabels
-         else:
-             timeticks=[100000000]
-             ylabel=''
-
-
-      else:
-         latticks=[100000000]
-         timeticks=[100000000]
-         xplotlabel=''
-         yplotlabel=''
-
-      if xlabel is not None: xplotlabel=xlabel
-      if ylabel is not None: yplotlabel=ylabel
-
-      axes_plot(xticks=lonlatticks, xticklabels=lonlatlabels,\
-                yticks=timeticks, yticklabels=timelabels,\
-                xlabel=xplotlabel, ylabel=yplotlabel)
-
+      axes_plot(xticks=xticks, xticklabels=xticklabels,\
+           yticks=time_ticks, yticklabels=time_tick_labels,\
+           xlabel=xlabel, ylabel=ylabel)
 
 
       #Get colour scale for use in contouring
@@ -1130,16 +1025,14 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
 
       #Filled contours
       if fill == True or blockfill == 1:
-         colmap=cscale_get_map()
-         cmap = matplotlib.colors.ListedColormap(colmap)
-         if (plotvars.levels_extend == 'min' or plotvars.levels_extend == 'both'):
-             cmap.set_under(plotvars.cs[0])
-         if (plotvars.levels_extend == 'max' or plotvars.levels_extend == 'both'):
-             cmap.set_over(plotvars.cs[-1])
-
          cfill=plotvars.plot.contourf(x,y,field*fmult,clevs, \
-               extend=plotvars.levels_extend, cmap=cmap, tri=tri)
+               extend=plotvars.levels_extend, colors=colmap, tri=tri)
 
+         #add colour scale extensions if required
+         if (plotvars.levels_extend == 'both' or plotvars.levels_extend == 'min'):
+            cfill.cmap.set_under(plotvars.cs[0])
+         if (plotvars.levels_extend == 'both' or plotvars.levels_extend == 'max'):
+            cfill.cmap.set_over(plotvars.cs[cscale_ncols-1])
   
       #Block fill
       if blockfill == 1:   
@@ -1225,15 +1118,14 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
 
       #Filled contours
       if fill == True or blockfill == 1:
-         colmap=cscale_get_map()
-         cmap = matplotlib.colors.ListedColormap(colmap)
-         if (plotvars.levels_extend == 'min' or plotvars.levels_extend == 'both'):
-             cmap.set_under(plotvars.cs[0])
-         if (plotvars.levels_extend == 'max' or plotvars.levels_extend == 'both'):
-             cmap.set_over(plotvars.cs[-1])
-
          cfill=plotvars.plot.contourf(xpts,ypts,field*fmult,clevs,extend=plotvars.levels_extend,\
-               cmap=cmap, tri=tri)
+               colors=colmap, tri=tri)
+
+         #add colour scale extensions if required
+         if (plotvars.levels_extend == 'both' or plotvars.levels_extend == 'min'):
+             cfill.cmap.set_under(plotvars.cs[0])
+         if (plotvars.levels_extend == 'both' or plotvars.levels_extend == 'max'):
+             cfill.cmap.set_over(plotvars.cs[cscale_ncols-1])
 
 
       #Block fill
@@ -1310,49 +1202,14 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
       xstep=(xmax-xmin)/10.0
       ystep=(ymax-ymin)/10.0
 
-      #Set plot limits and set default plot labels
+      #Set plot limits and draw axes
       gset(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax, user_gset=user_gset)    
          
-      xaxisticks=gvals(dmin=xmin, dmax=xmax, mystep=(xmax-xmin)/10.0, tight=1, mod=0)[0]
-      xaxislabels=xaxisticks
-      if ymin < ymax: yaxisticks=gvals(dmin=ymin, dmax=ymax, mystep=(ymax-ymin)/10.0, tight=1, mod=0)[0]
-      if ymax < ymin: yaxisticks=gvals(dmin=ymax, dmax=ymin, mystep=(ymin-ymax)/10.0, tight=1, mod=0)[0]
-      yaxislabels=yaxisticks
-      xplotlabel=''
-      yplotlabel=''
-
-      #Draw axes
-      if axes is True:
-         if xaxis is True:
-             if xticks is not None:
-                 xaxisticks=xticks
-                 xaxislabels=xticks
-                 if xticklabels is not None: xaxislabels=xticklabels
-         else:
-              xaxisticks=[100000000]
-              xlabel=''
-
-         if yaxis is True:
-             if yticks is not None:
-                 yaxisticks=yticks
-                 yaxislabels=yticks
-                 if yticklabels is not None: yaxislabels=yticklabels
-         else:
-             yaxisticks=[100000000]
-             ylabel=''
-
-
-      else:
-         xplotticks=[100000000]
-         xplotticks=[100000000]
-         xlabel=''
-         ylabel=''
-
-      axes_plot(xticks=xaxisticks, xticklabels=xaxislabels,\
-                yticks=yaxisticks, yticklabels=yaxislabels,\
-                xlabel=xplotlabel, ylabel=yplotlabel)
-
-      #axes_plot(xticks=xticks, yticks=yticks, xlabel=xlabel, ylabel=ylabel)
+      
+      xticks=gvals(dmin=xmin, dmax=xmax, mystep=(xmax-xmin)/10.0, tight=1, mod=0)[0]
+      if ymin < ymax: yticks=gvals(dmin=ymin, dmax=ymax, mystep=(ymax-ymin)/10.0, tight=1, mod=0)[0]
+      if ymax < ymin: yticks=gvals(dmin=ymax, dmax=ymin, mystep=(ymin-ymax)/10.0, tight=1, mod=0)[0]
+      axes_plot(xticks=xticks, yticks=yticks, xlabel=xlabel, ylabel=ylabel)
 
 
       #Get colour scale for use in contouring
@@ -1365,15 +1222,14 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
 
       #Filled contours
       if fill == True or blockfill == 1:
-         colmap=cscale_get_map()
-         cmap = matplotlib.colors.ListedColormap(colmap)
-         if (plotvars.levels_extend == 'min' or plotvars.levels_extend == 'both'):
-             cmap.set_under(plotvars.cs[0])
-         if (plotvars.levels_extend == 'max' or plotvars.levels_extend == 'both'):
-             cmap.set_over(plotvars.cs[-1])
-
          cfill=plotvars.plot.contourf(x,y,field*fmult,clevs,extend=plotvars.levels_extend,\
-               cmap=cmap, tri=tri)
+               colors=colmap, tri=tri)
+
+         #add colour scale extensions if required
+         if (plotvars.levels_extend == 'both' or plotvars.levels_extend == 'min'):
+             cfill.cmap.set_under(plotvars.cs[0])
+         if (plotvars.levels_extend == 'both' or plotvars.levels_extend == 'max'):
+             cfill.cmap.set_over(plotvars.cs[cscale_ncols-1])
 
 
       #Block fill
@@ -3266,8 +3122,7 @@ def find_pos_in_array(vals=None, val=None, above=False):
 def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
          key_length=None, key_label=None, ptype=None, title=None,\
          width=0.02, headwidth=3, headlength=5, headaxislength=4.5, pivot='middle', key_location=[0.9, -0.06],
-         key_show=True, axes=True, xaxis=True, yaxis=True, xticks=None, xticklabels=None, \
-         yticks=None, yticklabels=None, xlabel=None, ylabel=None, ylog=False):
+         key_show=True):
 
    """
     | vect - plot vectors
@@ -3304,16 +3159,6 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
     | headaxislength=4.5 - head length at shaft intersection, default is 4.5
     | pivot='middle' - the part of the arrow that is at the grid point; the arrow rotates about this point
                        takes 'tail', 'middle', 'tip'
-    | axes=True - plot x and y axes
-    | xaxis=True - plot xaxis
-    | yaxis=True - plot y axis
-    | xticks=None - xtick positions
-    | xticklabels=None - xtick labels
-    | yticks=None - y tick positions
-    | yticklabels=None - ytick labels
-    | xlabel=None - label for x axis
-    | ylabel=None - label for y axis
-    | ylog=False - log y axis
     |
     :Returns:
      None
@@ -3329,14 +3174,12 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
    if text_fontsize is None: text_fontsize=11
    if continent_thickness is None: continent_thickness=1.5
    if continent_color is None: continent_color='k'
-   #ylog=plotvars.ylog
+   ylog=plotvars.ylog
    title_fontsize=plotvars.title_fontsize
    title_fontweight=plotvars.title_fontweight
    if title_fontsize is None: title_fontsize=15
 
-   #Set potential user axis labels
-   user_xlabel=xlabel
-   user_ylabel=ylabel
+
 
 
    #Extract required data for contouring
@@ -3368,9 +3211,6 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
       xlabel=''
       ylabel=''
    
-   #Reset xlabel and ylabel values with user defined labels in specified
-   if user_xlabel is not None: xlabel=user_xlabel
-   if user_ylabel is not None: ylabel=user_ylabel
 
    if scale is None: 
        scale=np.nanmax(u_data)/4.0
@@ -3484,9 +3324,7 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
       if key_show is True:
           quiv_key=plotvars.plot.quiverkey(quiv, key_location[0], key_location[1], key_length, key_label, labelpos='W')
 
-   #Map vectors
    if plotvars.plot_type == 1:
-
       if pts is None:
          #convert lons, lats into map coordinates
          x,y=plotvars.mymap(*np.meshgrid(u_x, u_y))
@@ -3503,52 +3341,20 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
          if key_show is True:
              quiv_key=plotvars.plot.quiverkey(quiv, key_location[0], key_location[1], key_length, key_label, labelpos='W')
 
+
+
       #axes
       if plotvars.proj == 'cyl':
          lonticks,lonlabels=mapaxis(min=plotvars.lonmin, max=plotvars.lonmax, type=1)
          latticks,latlabels=mapaxis(min=plotvars.latmin, max=plotvars.latmax, type=2)
-
-
-         if axes is True:
-             if xaxis is True:
-                 if xticks is None:
-                     axes_plot(xticks=lonticks, xticklabels=lonlabels)
-                 else:
-                     if xticklabels is None:
-                         axes_plot(xticks=xticks, xticklabels=xticks)
-                     else:
-                         axes_plot(xticks=xticks, xticklabels=xticklabels)
-             if yaxis is True:
-                 if yticks is None:
-                     axes_plot(yticks=latticks, yticklabels=latlabels)
-                 else:
-                     if yticklabels is None:
-                         axes_plot(yticks=yticks, yticklabels=yticks)
-                     else:
-                         axes_plot(yticks=yticks, yticklabels=yticklabels)
-
-
-         if user_xlabel is not None: plotvars.plot.set_xlabel(user_xlabel)
-         if user_ylabel is not None: plotvars.plot.set_ylabel(user_ylabel)
-
-
+         axes_plot(xticks=lonticks, xticklabels=lonlabels)
+         axes_plot(yticks=latticks, yticklabels=latlabels)
    
       if plotvars.proj == 'npstere' or plotvars.proj == 'spstere': 
          latstep=30
          if 90-abs(plotvars.boundinglat) <= 50: latstep=10
-         if axes is True:
-             if xaxis is True:
-                 if xticks is None:
-                     mymap.drawmeridians(np.arange(0,360,60), labels=[1,1,1,1]) 
-                 else:
-                     mymap.drawmeridians(xticks, labels=[1,1,1,1]) 
-             if yaxis is True:
-                 if yticks is None:
-                     mymap.drawparallels(np.arange(-90,120,latstep))
-                 else:
-                     mymap.drawparallels(yticks)
-
-
+         mymap.drawparallels(np.arange(-90,120,latstep))
+         mymap.drawmeridians(np.arange(0,420,60),labels=[1,1,1,1,1,1]) 
 
 
       #Coastlines and title
@@ -3562,7 +3368,7 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
    #Zonal plot
    ###########
    if plotvars.plot_type == 2: 
-
+      #and plotvars.user_plot == 0:
       user_gset=plotvars.user_gset
       if user_gset == 0:
          #Program selected data plot limits
@@ -3604,86 +3410,24 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
       if ylog != 1:   
          if ytype == 1: 
             gset(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax, user_gset=user_gset)
+            latticks,latlabels=mapaxis(min=xmin, max=xmax, type=2)
+            axes_plot(xticks=latticks, xticklabels=latlabels,\
+                 yticks=gvals(dmin=ymin, dmax=ymax, tight=1, mystep=ystep, mod=0)[0],\
+                 xlabel=xlabel, ylabel=ylabel)
          else: 
-            gset(xmin=xmin, xmax=xmax, ymin=ymax, ymax=ymin, user_gset=user_gset)         
-
-         #Set default axis labels
-         latticks,latlabels=mapaxis(min=xmin, max=xmax, type=2)
-         yaxisticks=gvals(dmin=ymin, dmax=ymax, tight=1, mystep=ystep, mod=0)[0]
-
-         heightticks=gvals(dmin=ymin, dmax=ymax, tight=1, mystep=ystep, mod=0)[0]
-         heightlabels=heightticks
-
-         if axes is True:
-             if xaxis is True:
-                 if xticks is not None:
-                     latticks=xticks
-                     latlabels=xticks
-                     if xticklabels is not None: latlabels=xticklabels
-             else:
-                 latticks=[100000000]
-                 xlabel=''
-
-             if yaxis is True:
-                 if yticks is not None:
-                     heightticks=yticks
-                     heightlabels=yticks
-                     if yticklabels is not None: heightlabels=yticklabels
-             else:
-                 heightticks=[100000000]
-                 ylabel=''
-
-
-         else:
-             latticks=[100000000]
-             heightticks=[100000000]
-             xlabel=''
-             ylabel=''
-
-
-         axes_plot(xticks=latticks, xticklabels=latlabels,\
-                   yticks=heightticks, yticklabels=heightlabels,\
-                   xlabel=xlabel, ylabel=ylabel)
-
-
-
-
+            gset(xmin=xmin, xmax=xmax, ymin=ymax, ymax=ymin, user_gset=user_gset)
+            latticks,latlabels=mapaxis(min=xmin, max=xmax, type=2)
+            axes_plot(xticks=latticks, xticklabels=latlabels,\
+                 yticks=gvals(dmin=ymin, dmax=ymax, tight=1, mystep=ystep, mod=0)[0],\
+                 xlabel=xlabel, ylabel=ylabel)  
 
       #Log y axis 
-      if ylog == True or ylog == 1:
-         if ymin == 0: ymin=1 #reset zero mb/height input to a small value
+      if ylog == 1:
+         if ymin == 0: ymin=1
          gset(xmin=xmin, xmax=xmax, ymin=ymax, ymax=ymin, ylog=1, user_gset=user_gset)
          latticks,latlabels=mapaxis(min=xmin, max=xmax, type=2)
-
-         if axes is True:
-             if xaxis is True:
-                 if xticks is not None:
-                     latticks=xticks
-                     latlabels=xticks
-                     if xticklabels is not None: latlabels=xticklabels
-             else:
-                 latticks=[100000000]
-                 xlabel=''
-
-             if yaxis is True:
-                 if yticks is not None:
-                     heightticks=yticks
-                     heightlabels=yticks
-                     if yticklabels is not None: heightlabels=yticklabels
-             else:
-                 heightticks=[100000000]
-                 ylabel=''
-
-
-             if yticks is None:
-                 axes_plot(xticks=latticks, xticklabels=latlabels, xlabel=xlabel, ylabel=ylabel)
-             else:
-                 axes_plot(xticks=latticks, xticklabels=latlabels, yticks=heightticks, yticklabels=heightlabels, \
-                           xlabel=xlabel, ylabel=ylabel)
-
-
-
-
+         axes_plot(xticks=latticks, xticklabels=latlabels,\
+              xlabel=xlabel, ylabel=ylabel)
 
 
       #Regrid the data if requested
@@ -3764,16 +3508,16 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
 
 
       if title is not None:
-          plotvars.plot.set_title(title, y=1.03, fontsize=plotvars.title_fontsize, fontweight=title_fontweight)
+         plotvars.plot.set_title(title, y=1.03, fontsize=plotvars.title_fontsize, fontweight=title_fontweight)
 
 
    ##########
    #Save plot
    ##########
    if plotvars.user_plot == 0: 
-       gset()
-       cscale()
-       gclose()
+      gset()
+      cscale()
+      gclose()
   
 
 def set_map():
