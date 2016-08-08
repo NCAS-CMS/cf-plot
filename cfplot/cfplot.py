@@ -1318,8 +1318,10 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
       if ymin < ymax: yaxisticks=gvals(dmin=ymin, dmax=ymax, mystep=(ymax-ymin)/10.0, tight=1, mod=0)[0]
       if ymax < ymin: yaxisticks=gvals(dmin=ymax, dmax=ymin, mystep=(ymin-ymax)/10.0, tight=1, mod=0)[0]
       yaxislabels=yaxisticks
-      xplotlabel=''
-      yplotlabel=''
+      if xlabel is not None: xplotlabel=xlabel 
+      else:xplotlabel=''
+      if ylabel is not None: yplotlabel=ylabel 
+      else:yplotlabel=''
 
       #Draw axes
       if axes is True:
@@ -1352,7 +1354,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
                 yticks=yaxisticks, yticklabels=yaxislabels,\
                 xlabel=xplotlabel, ylabel=yplotlabel)
 
-      #axes_plot(xticks=xticks, yticks=yticks, xlabel=xlabel, ylabel=ylabel)
+
 
 
       #Get colour scale for use in contouring
@@ -2436,8 +2438,6 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None):
    if np.size(time) > 1: has_time=1
 
 
-
-
    #assign field data   
    field=np.squeeze(f.array)
 
@@ -2498,7 +2498,9 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None):
       ref_time_origin=str(f.item('time').Units.reftime)
       time_opts=[ref_time,ref_calendar,ref_time_origin]
 
-  
+    
+
+
 
    #Rotated pole
    if f.ref('rotated_latitude_longitude') is not None: 
@@ -2524,33 +2526,39 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None):
                ylabel=cf_var_name(field=f, dim=mydim)+yunits     
 
 
-
+   #time height plot
+   if has_height == 1 and has_time == 1:
+       ptype=0
+       for mydim in f.items():
+          if mydim[:3] == 'dim':
+              if np.size(np.squeeze(f.item(mydim).array)) == np.shape(np.squeeze(f.array))[1]:
+                 x=np.squeeze(f.item(mydim).array)
+                 xunits=str(getattr(f.item(mydim), 'Units', ''))
+                 xlabel=cf_var_name(field=f, dim=mydim)+xunits 
+    
+              if np.size(np.squeeze(f.item(mydim).array)) == np.shape(np.squeeze(f.array))[0]:
+                 y=np.squeeze(f.item(mydim).array)
+                 yunits=str(getattr(f.item(mydim), 'units', ''))
+                 ylabel=cf_var_name(field=f, dim=mydim)+yunits 
 
 
 
 
 
    #None of the above
-   #Horible bit of code to replace [has_lons, has_lats, has_height, has_time].count(None) > 2
-   has_count=0
-   if has_lons is None: has_count=has_count+1
-   if has_lats is None: has_count=has_count+1
-   if has_height is None: has_count=has_count+1
-   if has_time is None: has_count=has_count+1
-
-   if has_count > 2 and ptype is not 6:
+   if ptype is None:
       ptype=0
-
       for mydim in f.items():
-         if np.size(np.squeeze(f.item(mydim).array)) == np.shape(np.squeeze(f.array))[1]:
-            x=np.squeeze(f.item(mydim).array)
-            xunits=str(getattr(f.item(mydim), 'units', ''))
-            xlabel=cf_var_name(field=f, dim=mydim)
+         if mydim[:3] == 'dim':
+             if np.size(np.squeeze(f.item(mydim).array)) == np.shape(np.squeeze(f.array))[1]:
+                x=np.squeeze(f.item(mydim).array)
+                xunits=str(getattr(f.item(mydim), 'units', ''))
+                xlabel=cf_var_name(field=f, dim=mydim)+xunits 
 
-         if np.size(np.squeeze(f.item(mydim).array)) == np.shape(np.squeeze(f.array))[0]:
-            y=np.squeeze(f.item(mydim).array)
-            yunits=str(getattr(f.item(mydim), 'Units', ''))
-            ylabel=cf_var_name(field=f, dim=mydim)+yunits     
+             if np.size(np.squeeze(f.item(mydim).array)) == np.shape(np.squeeze(f.array))[0]:
+                y=np.squeeze(f.item(mydim).array)
+                yunits=str(getattr(f.item(mydim), 'Units', ''))
+                ylabel=cf_var_name(field=f, dim=mydim)+yunits     
 
 
 
