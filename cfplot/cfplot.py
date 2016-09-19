@@ -1,6 +1,6 @@
 """
 Routines for making climate contour/vector plots using cf-python, matplotlib and basemap.
-Andy Heaps NCAS-CMS March 2016
+Andy Heaps NCAS-CMS September 2016
 """
 
 
@@ -27,12 +27,10 @@ except ImportError:
    raise  Warning(cf_errstr) 
 
 import numpy as np
-from subprocess import call
+import subprocess
 from scipy import interpolate
 import time
-from subprocess import call
 import matplotlib
-import matplotlib.tri as triang
 from copy import deepcopy
 
 
@@ -46,6 +44,24 @@ import matplotlib.pyplot as plot
 from mpl_toolkits.basemap import Basemap, shiftgrid, addcyclic
 
 
+
+#Code to check if the ImageMagick display command is available
+def which(program):
+    def is_exe(fpath):
+        return os.path.exists(fpath) and os.access(fpath, os.X_OK)
+
+    def ext_candidates(fpath):
+        yield fpath
+        for ext in os.environ.get("PATHEXT", "").split(os.pathsep):
+            yield fpath + ext
+
+    for path in os.environ["PATH"].split(os.pathsep):
+        exe_file = os.path.join(path, program)
+        for candidate in ext_candidates(exe_file):
+            if is_exe(candidate):
+                return candidate
+
+    return None
 
 
 #Default colour scales
@@ -98,7 +114,7 @@ plotvars=pvars(lonmin=-180, lonmax=180, latmin=-90, latmax=90, proj='cyl', \
                title_fontsize=15, axis_label_fontsize=11, text_fontsize=11, \
                text_fontweight='normal', axis_label_fontweight='normal', \
                title_fontweight='normal', \
-               continent_thickness=None, continent_color=None, pos=1)
+               continent_thickness=None, continent_color=None, pos=1, viewer='display')
 
 
 def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=None, \
@@ -2002,13 +2018,25 @@ def gclose(view=True):
       if file[-4:] == '.png': type=1
       if file[-4:] == '.pdf': type=1
       if type is None: file=file+'.png'
-      plotvars.master_plot.savefig(file, papertype='a4',\
-                                   orientation=plotvars.orientation)
+      plotvars.master_plot.savefig(file, papertype='a4', orientation=plotvars.orientation)
       plot.close()
    else:
-      plot.show()
-      plot.close()
-      
+
+       
+      if plotvars.viewer == 'display':
+          #Use Imagemagick display command if this exists
+          disp=which('display')
+          if disp is not None: 
+              tfile='cfplot.png'
+              plotvars.master_plot.savefig(tfile, papertype='a4', orientation=plotvars.orientation)
+              subprocess.Popen([disp, tfile])
+          else:
+              plotvars.viewer='matplotlib'
+      else:
+          plot.show()
+          plot.close()
+
+
    #Reset plotting
    plotvars.plot=None
 
@@ -4087,7 +4115,7 @@ def process_color_scales():
          plot.close()
 
          #Use covert to trim the png file to remove white space
-         call(["convert", "-trim", file, file])
+         subprocess.call(["convert", "-trim", file, file])
 
          name_pad=scale
          while len(name_pad) < chars: name_pad=name_pad+' '
@@ -4126,7 +4154,7 @@ def reset():
 
 def setvars(file=None, title_fontsize=None, text_fontsize=None, axis_label_fontsize=None, \
         title_fontweight='normal', text_fontweight='normal', axis_label_fontweight='normal', \
-        fontweight='normal', continent_thickness=None, continent_color=None):
+        fontweight='normal', continent_thickness=None, continent_color=None, viewer='display'):
    """
     | setvars - set plotting variables
     |
@@ -4139,6 +4167,10 @@ def setvars(file=None, title_fontsize=None, text_fontsize=None, axis_label_fonts
     | axis_label_fontweight='normal' - axis font weight
     | continent_thickness=None - default=1.5
     | continent_color=None - default='k' (black)
+    | viewer='display' - use ImageMagick display program to display the pictures.  Set to 
+    |                    'matplotlib' to use the built in matplotlib viewer.  display is 
+    |                    non-blocking of the command prompt while the built in matplotlib viewer
+    |                    is blocking.
     | 
     | Use setvars() to reset to the defaults
     |
@@ -4174,6 +4206,7 @@ def setvars(file=None, title_fontsize=None, text_fontsize=None, axis_label_fonts
    plotvars.text_fontweight=text_fontweight
    plotvars.axis_label_fontweight=axis_label_fontweight
    plotvars.title_fontweight=title_fontweight
+   plotvars.viewer=viewer
 
 
 
