@@ -114,7 +114,8 @@ plotvars=pvars(lonmin=-180, lonmax=180, latmin=-90, latmax=90, proj='cyl', \
                title_fontsize=15, axis_label_fontsize=11, text_fontsize=11, \
                text_fontweight='normal', axis_label_fontweight='normal', \
                title_fontweight='normal', \
-               continent_thickness=None, continent_color=None, pos=1, viewer='display')
+               continent_thickness=None, continent_color=None, pos=1, viewer='display', \
+               tspace_year=None, tspace_month=None, tspace_day=None, tspace_hour=None)
 
 
 def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=None, \
@@ -203,7 +204,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
       #Extract data
       if verbose: print 'con - calling cf_data_assign'
       f=f[0]
-      field, x, y, ptype, colorbar_title, xlabel, ylabel, time_opts, xpole, ypole=\
+      field, x, y, ptype, colorbar_title, xlabel, ylabel, xpole, ypole=\
              cf_data_assign(f, colorbar_title, verbose=verbose)
       if user_xlabel is not None: xlabel=user_xlabel
       if user_ylabel is not None: ylabel=user_ylabel
@@ -871,14 +872,9 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
       if ylog != 1:   
          if ytype == 1: 
             gset(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax, user_gset=user_gset)         
-            #axes_plot(xticks=lonticks, xticklabels=lonlabels,\
-            #     yticks=gvals(dmin=ymin, dmax=ymax, tight=1, mystep=ystep, mod=0)[0],\
-            #     xlabel=xlabel, ylabel=ylabel)
          else: 
             gset(xmin=xmin, xmax=xmax, ymin=ymax, ymax=ymin, user_gset=user_gset)
-            #axes_plot(xticks=lonticks, xticklabels=lonlabels,\
-            #     yticks=gvals(dmin=ymin, dmax=ymax, tight=1, mystep=ystep, mod=0)[0],\
-            #     xlabel=xlabel, ylabel=ylabel)  
+
 
 
          heightticks=gvals(dmin=ymin, dmax=ymax, tight=1, mystep=ystep, mod=0)[0]
@@ -1045,9 +1041,8 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
       if ptype == 5: xplotlabel='Latitude'
       user_gset=plotvars.user_gset
 
-      ref_time=time_opts[0]
-      ref_calendar=time_opts[1]
-      ref_time_origin=time_opts[2]
+
+
 
 
       #Time strings set to None initially
@@ -1056,14 +1051,37 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
 
 
       #Set plot limits
-      if all(val is not None for val in [plotvars.xmin,plotvars.xmax,plotvars.ymin,plotvars.ymax]):
 
+      if all(val is not None for val in [plotvars.xmin,plotvars.xmax,plotvars.ymin,plotvars.ymax]):
          #Store time strings for later use
          tmin=plotvars.ymin
          tmax=plotvars.ymax
 
+         #Check data has CF attributes needed
+         check_units=check_units=True
+         check_calendar=True
+         check_Units_reftime=True
+         if hasattr(f.item('T'), 'units') is False: check_units=False
+         if hasattr(f.item('T'), 'calendar') is False: check_calendar=False
+         if hasattr(f.item('T'), 'Units') is True: 
+             if not hasattr(f.item('T').Units, 'reftime'): check_Units_reftime=False
+         else:
+             check_Units_reftime=False
+         if check_units is False or check_calendar is False or check_Units_reftime is False:
+             print '\nThe required CF time information to make the plot is not available'
+             print 'please fix the following before trying to plot again'
+             if check_units is False: print 'Time axis missing: units'
+             if check_calendar is False: print 'Time axis missing: calendar'
+             if check_Units_reftime is False: print 'Time axis missing: Units.reftime'
+             return
+
 
          #Change from date string in ymin and ymax to date as a float
+         ref_time=f.item('T').units
+         ref_calendar=f.item('T').calendar
+         ref_time_origin=str(f.item('T').Units.reftime)
+
+
          time_units = cf.Units(ref_time, ref_calendar)
          t = cf.Data(cf.dt(plotvars.ymin), units=time_units)
          ymin=t.array
@@ -1078,7 +1096,6 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
          ymax=np.nanmax(y)
 
 
-
       #Set plot limits
       if plotvars.user_plot == 0: gopen(user_plot=0)
       gset(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax, user_gset=user_gset)
@@ -1088,14 +1105,9 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
          plotvars.ymin=tmin
          plotvars.ymax=tmax
  
-      time_units = cf.Units(ref_time, ref_calendar)
-      t = cf.Data(cf.dt(ref_time_origin), units=time_units)
-      #t = cf.Data(cf.dt('1980-1-1'), units=time_units)
 
-      times=gvals(dmin=ymin, dmax=ymax, tight=1, mod=0)[0]
-      T = cf.Data(times, units=t.Units)
-      timeticks=T.array
-      timelabels=T.year.array
+
+      time_ticks, time_labels, ylabel=timeaxis(f.item('T'))
 
       if ptype == 4: lonlatticks, lonlatlabels=mapaxis(min=xmin, max=xmax, type=1)
       if ptype == 5: lonlatticks, lonlatlabels=mapaxis(min=xmin, max=xmax, type=2)
@@ -1127,8 +1139,16 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
          xplotlabel=''
          yplotlabel=''
 
-      if xlabel is not None: xplotlabel=xlabel
-      if ylabel is not None: yplotlabel=ylabel
+
+      if xlabel != '': xplotlabel=xlabel
+      if ylabel != '': yplotlabel=ylabel
+
+
+      #Use the automatically generated labels if none are supplied
+      if ylabel is None: yplotlabel=time_axis_label
+      if np.size(time_ticks) > 0: timeticks=time_ticks
+      if np.size(time_labels) > 0: timelabels=time_labels
+
 
       axes_plot(xticks=lonlatticks, xticklabels=lonlatlabels,\
                 yticks=timeticks, yticklabels=timelabels,\
@@ -1211,7 +1231,8 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
       #Title
       plotvars.plot.set_title(title, y=1.03, fontsize=title_fontsize, fontweight=title_fontweight)
 
-
+      #reset plot limits if not a user plot
+      if user_gset == 0: gset()
 
 
    #############
@@ -1675,6 +1696,148 @@ def mapaxis(min=min, max=max, type=type):
          if lat == 0: latlabels.append('0')
      
       return(latticks, latlabels) 
+
+
+def timeaxis(dtimes=None):
+    """ 
+     | timeaxis is used to work out a sensible set of time labels and tick 
+     | marks given a time span  This is an internal routine and is not used 
+     | by the user.
+
+     | dtimes=None - data times as a CF variable i.e. f.item('T')
+  
+     :Returns:
+      time ticks and labels
+     | 
+     | 
+     | 
+     | 
+     | 
+     | 
+     | 
+    """ 
+
+
+    time_units = dtimes.Units
+
+    time_ticks=[]
+    time_labels=[]
+    axis_label='Time'
+    if plotvars.user_gset == 0:
+        yearmin=min(dtimes.year.array)
+        yearmax=max(dtimes.year.array)
+        tmin=min(dtimes.dtarray)
+        tmax=max(dtimes.dtarray)
+    else:
+        t = cf.Data(cf.dt(plotvars.ymin), units=time_units)
+        yearmin=int(t.year)
+        t = cf.Data(cf.dt(plotvars.ymax), units=time_units)
+        yearmax=int(t.year)
+        tmin=cf.dt(plotvars.ymin) ####Added cf.dt to this - correct?
+        tmax=cf.dt(plotvars.ymax) ####Added cf.dt to this - correct?
+             
+
+    #Years
+    span=yearmax-yearmin
+    if span > 4 and span < 3000: 
+        axis_label='Time (year)'
+        tvals=[]
+        if span <= 15: step=1
+        if span > 15: step=2
+        if span > 30: step=5
+        if span > 60: step=10
+        if span > 160: step=20
+        if span > 300: step=50
+        if span > 600: step=100
+        if span > 1300: step=200
+
+        if plotvars.tspace_year is not None: step=plotvars.tspace_year
+
+        years=np.arange(yearmax/step+2)*step
+        tvals=years[np.where((years >=yearmin) & (years <=yearmax))]
+
+        #Catch tvals if not properly defined and use gvals to generate some year tick marks
+        if np.size(tvals) < 2: tvals=gvals(dmin=yearmin, dmax=yearmax, tight=1)[0]
+
+        for year in tvals:
+            time_ticks.append(np.min((cf.Data(cf.dt(str(int(year))+'-01-01 00:00:00'), units=time_units).array)))
+            time_labels.append(str(int(year)))
+
+    #Months
+    if yearmax-yearmin <= 4:
+
+        time_label='Time (month and year)'
+        months=['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
+        #Check number of labels with 1 month steps
+        tsteps=0
+        for year in np.arange(yearmax-yearmin+1)+yearmin:
+            for month in np.arange(12):
+                mytime=cf.dt(str(year)+'-'+str(month+1)+'-01 00:00:00')                
+                if mytime >= tmin and mytime <= tmax: tsteps=tsteps+1
+
+        if tsteps < 17: mvals=np.arange(12)
+        if tsteps >= 17: mvals=np.arange(4)*3
+
+        if plotvars.tspace_month is not None: mvals=np.arange(12/plotvars.tspace_month)*plotvars.tspace_month
+
+        for year in np.arange(yearmax-yearmin+1)+yearmin:
+            for month in mvals:
+                mytime=cf.dt(str(year)+'-'+str(month+1)+'-01 00:00:00')
+                if mytime >= tmin and mytime <= tmax:
+                    time_ticks.append(np.min((cf.Data(mytime, units=time_units).array)))
+                    time_labels.append(str(months[month])+' '+str(int(year)))
+
+
+    #Days and hours
+    if np.size(tsteps) <= 2:
+        myday=cf.dt(int(tmin.year),int(tmin.month), int(tmin.day))
+
+        not_found=0
+        hour_counter=0
+        span=0
+        while not_found <= 48:
+            mydate=cf.Data(myday, dtimes.Units)+ cf.Data(hour_counter, 'hour')
+            if mydate >= tmin and mydate <= tmax:
+                span=span+1
+            else:
+                not_found=not_found+1
+                
+            hour_counter=hour_counter+1
+            
+
+        step=1
+        if span > 13: step=1
+        if span > 13: step=4
+        if span > 25: step=6
+        if plotvars.tspace_hour is not None: step=plotvars.tspace_hour
+        if plotvars.tspace_day is not None: step=plotvars.tspace_day*24
+
+        not_found=0
+        hour_counter=0
+        span=0
+        axis_label='Time (day and hour)'
+        time_ticks=[]
+        time_labels=[]
+
+
+        while not_found <= 48:
+            mytime=cf.Data(myday, dtimes.Units)+ cf.Data(hour_counter, 'hour')
+            if mytime >= tmin and mytime <= tmax:
+                time_ticks.append(np.min(mytime.array))
+                label=str(mytime.year)+'-'+str(mytime.month)+'-'+str(mytime.day)
+                if step/24 != step/24.0: label=label+' '+str(mytime.hour)+':00:00'
+                time_labels.append(label)
+            else:
+                not_found=not_found+1
+                
+            hour_counter=hour_counter+step
+
+
+
+
+
+    return(time_ticks, time_labels, axis_label) 
 
 
 
@@ -2362,10 +2525,6 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None):
    time=None 
    xlabel=''
    ylabel=''
-   ref_time=None
-   ref_calendar=None
-   ref_time_origin=None
-   time_opts=None
    has_lons=None
    has_lats=None
    has_height=None
@@ -2512,21 +2671,12 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None):
       ptype=4
       x=lons
       y=time
-      ref_time=f.item('time').units
-      ref_calendar=f.item('time').calendar
-      ref_time_origin=str(f.item('time').Units.reftime)
-      time_opts=[ref_time,ref_calendar,ref_time_origin]
 
    if np.size(lats) > 1 and np.size(time) > 1:
       ptype=5     
       x=lats
       y=time
-      ref_time=f.item('time').units
-      ref_calendar=f.item('time').calendar
-      ref_time_origin=str(f.item('time').Units.reftime)
-      time_opts=[ref_time,ref_calendar,ref_time_origin]
 
-    
 
 
 
@@ -2622,7 +2772,7 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None):
     
 
    #Return data
-   return(field, x, y, ptype, colorbar_title, xlabel, ylabel, time_opts, xpole, ypole)
+   return(field, x, y, ptype, colorbar_title, xlabel, ylabel, xpole, ypole)
 
 
 
@@ -3112,7 +3262,7 @@ def stipple(f=None, x=None, y=None, min=None, max=None, size=80, color='k', pts=
    if isinstance(f[0], cf.Field):
       colorbar_title=''
       f=f[0]
-      field, xpts, ypts, ptype, colorbar_title, xlabel, ylabel, time_opts, xpole, ypole=\
+      field, xpts, ypts, ptype, colorbar_title, xlabel, ylabel, xpole, ypole=\
          cf_data_assign(f, colorbar_title)
    else:
       field=f #field data passed in as f
@@ -3379,7 +3529,7 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
    #If a cf-python field
    if isinstance(u[0], cf.Field):
       u=u[0]
-      u_data, u_x, u_y, ptype, colorbar_title, xlabel, ylabel,time_opts, xpole, ypole=\
+      u_data, u_x, u_y, ptype, colorbar_title, xlabel, ylabel, xpole, ypole=\
          cf_data_assign(u, colorbar_title)
    else:
       #field=f #field data passed in as f
@@ -3393,7 +3543,7 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
 
    if isinstance(v[0], cf.Field):
       v=v[0]
-      v_data, v_x, v_y, ptype, colorbar_title, xlabel, ylabel, time_opts, xpole, ypole=\
+      v_data, v_x, v_y, ptype, colorbar_title, xlabel, ylabel, xpole, ypole=\
          cf_data_assign(v, colorbar_title)
    else:
       #field=f #field data passed in as f
@@ -4154,7 +4304,8 @@ def reset():
 
 def setvars(file=None, title_fontsize=None, text_fontsize=None, axis_label_fontsize=None, \
         title_fontweight='normal', text_fontweight='normal', axis_label_fontweight='normal', \
-        fontweight='normal', continent_thickness=None, continent_color=None, viewer='display'):
+        fontweight='normal', continent_thickness=None, continent_color=None, viewer='display', \
+        tspace_year=None, tspace_month=None, tspace_day=None, tspace_hour=None):
    """
     | setvars - set plotting variables
     |
@@ -4172,6 +4323,10 @@ def setvars(file=None, title_fontsize=None, text_fontsize=None, axis_label_fonts
     |                    non-blocking of the command prompt while the built in matplotlib viewer
     |                    is blocking.
     | 
+    | tspace_year=None - time axis spacing in years
+    | tspace_month=None - time axis spacing in months
+    | tspace_day=None - time axis spacing in days
+    | tspace_hour=None - time axis spacing in hours
     | Use setvars() to reset to the defaults
     |
     |
@@ -4196,6 +4351,10 @@ def setvars(file=None, title_fontsize=None, text_fontsize=None, axis_label_fonts
       fontweight='normal'
       continent_thickness=None
       continent_color=None
+      tspace_year=None
+      tspace_month=None
+      tspace_day=None
+      tspace_hour=None
 
    plotvars.file=file
    plotvars.title_fontsize=title_fontsize
@@ -4207,6 +4366,10 @@ def setvars(file=None, title_fontsize=None, text_fontsize=None, axis_label_fonts
    plotvars.axis_label_fontweight=axis_label_fontweight
    plotvars.title_fontweight=title_fontweight
    plotvars.viewer=viewer
+   plotvars.tspace_year=tspace_year
+   plotvars.tspace_month=tspace_month
+   plotvars.tspace_day=tspace_day
+   plotvars.tspace_hour=tspace_hour
 
 
 
@@ -4743,6 +4906,7 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, ti
         maxx=plotvars.xmax
         maxy=plotvars.ymax
 
+
     #Set x and y labelling
     if xname is None:
         xlabel=''
@@ -4757,6 +4921,8 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, ti
     if xticks is None:
         if xlabel[0:3] == 'lon': xticks, xticklabels=mapaxis(minx, maxx, type=1)
         if xlabel[0:3] == 'lat': xticks, xticklabels=mapaxis(minx, maxx, type=2)
+        if np.size(f.item('T').array) > 1: 
+            xticks, xticklabels, xlabel=timeaxis(f.item('T'))
     else:
         if xticklabels is None: xticklabels=xticks
     if yticks is not None:
@@ -4798,23 +4964,35 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, ti
     plotvars.plot.tick_params(direction='out', which='both')
     plotvars.plot.set_xlabel(xlabel)
     plotvars.plot.set_ylabel(ylabel)
+    rotation=0
+    align='center'
+    if np.size(f.item('T').array) > 1:
+        if swap_xy is False:
+            rotation=45
+            align='right'
+
     if swap_xy is not True:
         if xticks is not None:
             plotvars.plot.set_xticks(xticks)
-            plotvars.plot.set_xticklabels(xticklabels)
+            plotvars.plot.set_xticklabels(xticklabels, rotation=rotation, horizontalalignment=align)
         if yticks is not None:
             plotvars.plot.set_yticks(yticks)
             plotvars.plot.set_yticklabels(yticklabels)
     else:
-        if xtixks is not None:
+        if xticks is not None:
             plotvars.plot.set_yticks(xticks)
             plotvars.plot.set_yticklabels(xticklabels)
         if yticks is not None:
             plotvars.plot.set_xticks(xticks)
-            plotvars.plot.set_xticklabels(xticklabels)
+            plotvars.plot.set_xticklabels(xticklabels, rotation=rotation, ha=ha)
 
     plotvars.plot.plot(xpts, ypts, color=color, linestyle=linestyle, linewidth=linewidth, marker=marker,\
                        markersize=markersize, label=label)   
+
+
+    #Time axes sometimes spill over the edge of the plot limits so
+    #use tight_layout() to adjust these plots
+    if np.size(f.item('T').array) > 1: plotvars.master_plot.tight_layout()
 
     #Add a legend if needed
     if legend_location is not None: plotvars.plot.legend(loc=legend_location)
