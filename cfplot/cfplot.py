@@ -1704,7 +1704,7 @@ def timeaxis(dtimes=None):
      | marks given a time span  This is an internal routine and is not used 
      | by the user.
 
-     | dtimes=None - data times as a CF variable i.e. f.item('T')
+     | dtimes=None - data times as a CF variable
   
      :Returns:
       time ticks and labels
@@ -1779,7 +1779,6 @@ def timeaxis(dtimes=None):
         if tsteps < 17: mvals=np.arange(12)
         if tsteps >= 17: mvals=np.arange(4)*3
 
-        if plotvars.tspace_month is not None: mvals=np.arange(12/plotvars.tspace_month)*plotvars.tspace_month
 
         for year in np.arange(yearmax-yearmin+1)+yearmin:
             for month in mvals:
@@ -1790,7 +1789,7 @@ def timeaxis(dtimes=None):
 
 
     #Days and hours
-    if np.size(tsteps) <= 2:
+    if np.size(time_ticks) <= 2:
         myday=cf.dt(int(tmin.year),int(tmin.month), int(tmin.day))
 
         not_found=0
@@ -1810,13 +1809,18 @@ def timeaxis(dtimes=None):
         if span > 13: step=1
         if span > 13: step=4
         if span > 25: step=6
+        if span > 100: step=12
+        if span > 200: step=24
+        if span > 400: step=48
+        if span > 800: step=96
         if plotvars.tspace_hour is not None: step=plotvars.tspace_hour
         if plotvars.tspace_day is not None: step=plotvars.tspace_day*24
 
         not_found=0
         hour_counter=0
         span=0
-        axis_label='Time (day and hour)'
+        axis_label='Time (day)'
+        if span >= 24: axis_label='Time (day and hour)'
         time_ticks=[]
         time_labels=[]
 
