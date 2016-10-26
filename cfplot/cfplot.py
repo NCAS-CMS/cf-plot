@@ -1,6 +1,6 @@
 """
 Routines for making climate contour/vector plots using cf-python, matplotlib and basemap.
-Andy Heaps NCAS-CMS September 2016
+Andy Heaps NCAS-CMS October 2016
 """
 
 
@@ -115,7 +115,9 @@ plotvars=pvars(lonmin=-180, lonmax=180, latmin=-90, latmax=90, proj='cyl', \
                text_fontweight='normal', axis_label_fontweight='normal', \
                title_fontweight='normal', \
                continent_thickness=None, continent_color=None, pos=1, viewer='display', \
-               tspace_year=None, tspace_month=None, tspace_day=None, tspace_hour=None)
+               tspace_year=None, tspace_month=None, tspace_day=None, tspace_hour=None, \
+               xtick_label_rotation=0, xtick_label_align='center', ytick_label_rotation=0, \
+               ytick_label_align='right')
 
 
 def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=None, \
@@ -1998,19 +2000,44 @@ def axes_plot(xticks=None, xticklabels=None, yticks=None, yticklabels=None,\
 
    if xstep is not None:
       ticks, mult=gvals(plotvars.xmin, plotvars.xmax, tight=1, mystep=xstep)
-      plotvars.plot.set_xticks(ticks*10**mult)
+      #plotvars.plot.set_xticks(ticks*10**mult)
+      plot_xticks=ticks*10**mult
+      plot_xticks_labels=plot_xticks
+
    if ystep is not None:
       ticks, mult=gvals(plotvars.ymin, plotvars.ymax, tight=1, mystep=ystep)
-      plotvars.plot.set_yticks(ticks*10**mult)
-
+      #plotvars.plot.set_yticks(ticks*10**mult)
+      plot_yticks=ticks*10**mult
+      plot_yticks_labels=plot_yticks
 
    if xticks is not None:
-      plotvars.plot.set_xticks(xticks)
-      if xticklabels is not None: plotvars.plot.set_xticklabels(xticklabels)
+      #plotvars.plot.set_xticks(xticks)
+      #if xticklabels is not None: plotvars.plot.set_xticklabels(xticklabels)
+      plot_xticks=xticks
+      if xticklabels is not None: 
+          plot_xticks_labels=xticklabels
+      else:
+          plot_xticks_labels=xticks
 
    if yticks is not None:
+      #plotvars.plot.set_yticks(yticks)
+      #if yticklabels is not None: plotvars.plot.set_yticklabels(yticklabels)  
+      plot_yticks=yticks
+      if yticklabels is not None: 
+          plot_yticks_labels=yticklabels
+      else:
+          plot_yticks_labels=yticks
+
+
+
+   #Set the ticks and tick labels
+   if xticks is not None:
+      plotvars.plot.set_xticks(xticks)
+      plotvars.plot.set_xticklabels(xticklabels, rotation=plotvars.xtick_label_rotation, horizontalalignment=plotvars.xtick_label_align)
+   if yticks is not None:
       plotvars.plot.set_yticks(yticks)
-      if yticklabels is not None: plotvars.plot.set_yticklabels(yticklabels)  
+      plotvars.plot.set_yticklabels(yticklabels, rotation=plotvars.ytick_label_rotation, horizontalalignment=plotvars.ytick_label_align)
+
 
 
    #Set font size and weight
@@ -2447,22 +2474,26 @@ def gvals(dmin=None, dmax=None, tight=0, mystep=None, mod=1):
 
 
    #Floating point step
-   if (mult == 0 and np.size(vals) > 5):
+   if (mult == 0 and np.size(vals) > 5 and float("%.1f" %((dmax-dmin)/16)) > 0):   
       return vals, mult  
    else:
       step=float("%.1f" %((dmax-dmin)/16))
       if step == 0: step=float("%.2f" %((dmax-dmin)/16))
 
+
+
    if step == .9: step=1.0
    if step == .8: step=1.0
    if step == .7: step=.5
    if step == .6: step=.5
-   if step == .3: step=.2
+   if step == .3: step=.25
    if step == .09: step=0.1
    if step == .08: step=0.1
-   if step == .07: step=.05
-   if step == .06: step=.05
+   if step == .07: step=.1
+   if step == .06: step=.1
+   if step == .04: step=.1
    if step == .03: step=.02
+
 
 
    if (dmax-dmin == step): step=step/10.
@@ -4309,71 +4340,89 @@ def reset():
 def setvars(file=None, title_fontsize=None, text_fontsize=None, axis_label_fontsize=None, \
         title_fontweight='normal', text_fontweight='normal', axis_label_fontweight='normal', \
         fontweight='normal', continent_thickness=None, continent_color=None, viewer='display', \
-        tspace_year=None, tspace_month=None, tspace_day=None, tspace_hour=None):
-   """
-    | setvars - set plotting variables
-    |
-    | file=None - output file name
-    | title_fontsize=None - title fontsize, default=15
-    | text_fontsize='normal' - text font size, default=11
-    | axis_label_fontsize=None - axis label fontsize, default=11
-    | title_fontweight='normal' - title fontweight
-    | text_fontweight='normal' - text font weight
-    | axis_label_fontweight='normal' - axis font weight
-    | continent_thickness=None - default=1.5
-    | continent_color=None - default='k' (black)
-    | viewer='display' - use ImageMagick display program to display the pictures.  Set to 
-    |                    'matplotlib' to use the built in matplotlib viewer.  display is 
-    |                    non-blocking of the command prompt while the built in matplotlib viewer
-    |                    is blocking.
-    | 
-    | tspace_year=None - time axis spacing in years
-    | tspace_month=None - time axis spacing in months
-    | tspace_day=None - time axis spacing in days
-    | tspace_hour=None - time axis spacing in hours
-    | Use setvars() to reset to the defaults
-    |
-    |
-    |
-    :Returns:
-     name
-    | 
-    | 
-    | 
-   """
+        tspace_year=None, tspace_month=None, tspace_day=None, tspace_hour=None, \
+        xtick_label_rotation=0, xtick_label_align='center', ytick_label_rotation=0, \
+        ytick_label_align='right'):
+    """
+     | setvars - set plotting variables
+     |
+     | file=None - output file name
+     | title_fontsize=None - title fontsize, default=15
+     | text_fontsize='normal' - text font size, default=11
+     | axis_label_fontsize=None - axis label fontsize, default=11
+     | title_fontweight='normal' - title fontweight
+     | text_fontweight='normal' - text font weight
+     | axis_label_fontweight='normal' - axis font weight
+     | continent_thickness=None - default=1.5
+     | continent_color=None - default='k' (black)
+     | viewer='display' - use ImageMagick display program to display the pictures.  Set to 
+     |                    'matplotlib' to use the built in matplotlib viewer.  display is 
+     |                    non-blocking of the command prompt while the built in matplotlib viewer
+     |                    is blocking.
+     | 
+     | tspace_year=None - time axis spacing in years
+     | tspace_month=None - time axis spacing in months
+     | tspace_day=None - time axis spacing in days
+     | tspace_hour=None - time axis spacing in hours
+     | xtick_label_rotation=0 - rotation of xtick labels
+     | xtick_label_align='center' - alignment of xtick labels
+     | ytick_label_rotation=0 - rotation of ytick labels
+     | ytick_label_align='right' - alignment of ytick labels
+     |
+     |
+     | Use setvars() to reset to the defaults
+     |
+     |
+     |
+     :Returns:
+      name
+     | 
+     | 
+     | 
+    """
 
-   if all(val is None for val in [file, title_fontsize, text_fontsize, axis_label_fontsize, continent_thickness, \
-       title_fontweight, text_fontweight, axis_label_fontweight, fontweight, \
-       continent_color]):
-      plotvars.file=None
-      title_fontsize=15
-      text_fontsize=11
-      axis_label_fontsize=11
-      title_fontweight='normal'
-      text_fontweight='normal'
-      axis_label_fontweight='normal',
-      fontweight='normal'
-      continent_thickness=None
-      continent_color=None
-      tspace_year=None
-      tspace_month=None
-      tspace_day=None
-      tspace_hour=None
+    if all(val is None for val in [file, title_fontsize, text_fontsize, axis_label_fontsize, continent_thickness, \
+           title_fontweight, text_fontweight, axis_label_fontweight, fontweight, \
+           continent_color, tspace_year, tspace_month, tspace_day, tspace_hour,xtick_label_rotation, \
+           xtick_label_align, ytick_label_rotation, ytick_label_align]):
+        plotvars.file=None
+        title_fontsize=15
+        text_fontsize=11
+        axis_label_fontsize=11
+        title_fontweight='normal'
+        text_fontweight='normal'
+        axis_label_fontweight='normal',
+        fontweight='normal'
+        continent_thickness=None
+        continent_color=None
+        tspace_year=None
+        tspace_month=None
+        tspace_day=None
+        tspace_hour=None
+        xtick_label_rotation=0
+        xtick_label_align='center'
+        ytick_label_rotation=0
+        ytick_label_align='right'
 
-   plotvars.file=file
-   plotvars.title_fontsize=title_fontsize
-   plotvars.axis_label_fontsize=axis_label_fontsize
-   plotvars.continent_thickness=continent_thickness
-   plotvars.continent_color=continent_color
-   plotvars.text_fontsize=text_fontsize
-   plotvars.text_fontweight=text_fontweight
-   plotvars.axis_label_fontweight=axis_label_fontweight
-   plotvars.title_fontweight=title_fontweight
-   plotvars.viewer=viewer
-   plotvars.tspace_year=tspace_year
-   plotvars.tspace_month=tspace_month
-   plotvars.tspace_day=tspace_day
-   plotvars.tspace_hour=tspace_hour
+    plotvars.file=file
+    plotvars.title_fontsize=title_fontsize
+    plotvars.axis_label_fontsize=axis_label_fontsize
+    plotvars.continent_thickness=continent_thickness
+    plotvars.continent_color=continent_color
+    plotvars.text_fontsize=text_fontsize
+    plotvars.text_fontweight=text_fontweight
+    plotvars.axis_label_fontweight=axis_label_fontweight
+    plotvars.title_fontweight=title_fontweight
+    plotvars.viewer=viewer
+    plotvars.tspace_year=tspace_year
+    plotvars.tspace_month=tspace_month
+    plotvars.tspace_day=tspace_day
+    plotvars.tspace_hour=tspace_hour
+    plotvars.xtick_label_rotation=xtick_label_rotation
+    plotvars.xtick_label_align=xtick_label_align
+    plotvars.ytick_label_rotation=ytick_label_rotation
+    plotvars.ytick_label_align=ytick_label_align
+
 
 
 
@@ -4927,10 +4976,13 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, ti
         if xlabel[0:3] == 'lat': xticks, xticklabels=mapaxis(minx, maxx, type=2)
         if np.size(f.item('T').array) > 1: 
             xticks, xticklabels, xlabel=timeaxis(f.item('T'))
+        if xticks is None: 
+            xticks=gvals(dmin=minx, dmax=maxx, tight=1, mod=0)[0]
+            xticklabels=xticks
     else:
         if xticklabels is None: xticklabels=xticks
-    if yticks is not None:
-        if yticklabels is None: yticklabels=yticks
+    if yticks is None: yticks=gvals(dmin=miny, dmax=maxy, tight=0, mod=0)[0]
+    if yticklabels is None: yticklabels=yticks
 
     #Z on y-axis
     ztype=None
@@ -4968,27 +5020,21 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, ti
     plotvars.plot.tick_params(direction='out', which='both')
     plotvars.plot.set_xlabel(xlabel)
     plotvars.plot.set_ylabel(ylabel)
-    rotation=0
-    align='center'
-    if np.size(f.item('T').array) > 1:
-        if swap_xy is False:
-            rotation=45
-            align='right'
 
     if swap_xy is not True:
         if xticks is not None:
             plotvars.plot.set_xticks(xticks)
-            plotvars.plot.set_xticklabels(xticklabels, rotation=rotation, horizontalalignment=align)
+            plotvars.plot.set_xticklabels(xticklabels, rotation=plotvars.xtick_label_rotation, horizontalalignment=plotvars.xtick_label_align)
         if yticks is not None:
             plotvars.plot.set_yticks(yticks)
-            plotvars.plot.set_yticklabels(yticklabels)
+            plotvars.plot.set_yticklabels(yticklabels, rotation=plotvars.ytick_label_rotation, horizontalalignment=plotvars.ytick_label_align)
     else:
         if xticks is not None:
             plotvars.plot.set_yticks(xticks)
-            plotvars.plot.set_yticklabels(xticklabels)
+            plotvars.plot.set_yticklabels(xticklabels, rotation=plotvars.ytick_label_rotation, horizontalalignment=plotvars.ytick_label_align)
         if yticks is not None:
             plotvars.plot.set_xticks(xticks)
-            plotvars.plot.set_xticklabels(xticklabels, rotation=rotation, ha=ha)
+            plotvars.plot.set_xticklabels(xticklabels, rotation=plotvars.xtick_label_rotation, horizontalalignment=plotvars.xtick_label_align)
 
     plotvars.plot.plot(xpts, ypts, color=color, linestyle=linestyle, linewidth=linewidth, marker=marker,\
                        markersize=markersize, label=label)   
