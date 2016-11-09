@@ -1,6 +1,6 @@
 """
 Routines for making climate contour/vector plots using cf-python, matplotlib and basemap.
-Andy Heaps NCAS-CMS October 2016
+Andy Heaps NCAS-CMS November 2016
 """
 
 
@@ -671,6 +671,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
          if (ymax - ymin) > 50000: ystep=10000.0
 
       #Set plot limits and draw axes
+      print xmin, xmax, ymin,ymax, ytype
 
       if ylog is False or ylog == 0:   
          if ytype == 1: 
@@ -683,6 +684,8 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
 
          heightticks=gvals(dmin=ymin, dmax=ymax, tight=1, mystep=ystep, mod=0)[0]
          heightlabels=heightticks
+         print heightticks
+         print heightlabels
 
          if axes is True:
              if xaxis is True:
@@ -710,6 +713,8 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
              xlabel=''
              ylabel=''
 
+         print heightticks
+         print heightlabels
          axes_plot(xticks=latticks, xticklabels=latlabels,\
                    yticks=heightticks, yticklabels=heightlabels,\
                    xlabel=xlabel, ylabel=ylabel)
@@ -1731,13 +1736,24 @@ def timeaxis(dtimes=None):
         tmin=min(dtimes.dtarray)
         tmax=max(dtimes.dtarray)
     else:
-        t = cf.Data(cf.dt(plotvars.ymin), units=time_units)
-        yearmin=int(t.year)
-        t = cf.Data(cf.dt(plotvars.ymax), units=time_units)
-        yearmax=int(t.year)
-        tmin=cf.dt(plotvars.ymin) ####Added cf.dt to this - correct?
-        tmax=cf.dt(plotvars.ymax) ####Added cf.dt to this - correct?
-             
+         if isinstance(plotvars.xmin, str):
+             t = cf.Data(cf.dt(plotvars.xmin), units=time_units)
+             yearmin=int(t.year)
+             t = cf.Data(cf.dt(plotvars.xmax), units=time_units)
+             yearmax=int(t.year)
+             tmin=cf.dt(plotvars.xmin) 
+             tmax=cf.dt(plotvars.xmax)   
+         if isinstance(plotvars.ymin, str):
+             t = cf.Data(cf.dt(plotvars.ymin), units=time_units)
+             yearmin=int(t.year)
+             t = cf.Data(cf.dt(plotvars.ymax), units=time_units)
+             yearmax=int(t.year)
+             tmin=cf.dt(plotvars.ymin) 
+             tmax=cf.dt(plotvars.ymax) 
+          
+
+
+
 
     #Years
     span=yearmax-yearmin
@@ -2106,9 +2122,24 @@ def gset(xmin=None, xmax=None, ymin=None, ymax=None, xlog=False, ylog=False, use
    plotvars.xlog=xlog
    plotvars.ylog=ylog 
 
+   #Check if any axes are time strings
+   time_xstr=False
+   time_ystr=False
+   try: 
+       float(xmin)
+   except:
+       time_xstr=True
+   try: 
+       float(ymin)
+   except:
+       time_ystr=True
+
+
    #Set plot limits
    if plotvars.plot is not None:
-      plotvars.plot.axis([plotvars.xmin, plotvars.xmax, plotvars.ymin, plotvars.ymax])
+      if time_xstr is False and time_ystr is False:
+          plotvars.plot.axis([plotvars.xmin, plotvars.xmax, plotvars.ymin, plotvars.ymax])
+
       if plotvars.xlog == True or plotvars.xlog == 1: plotvars.plot.set_yscale('log')
       if plotvars.ylog == True or plotvars.ylog == 1: plotvars.plot.set_yscale('log')  
 
@@ -2120,7 +2151,7 @@ def gopen(rows=1, columns=1, user_plot=1, file='python', \
           left=0.12, right=0.92, top=0.92, bottom=0.08, wspace=0.2, hspace=0.2):
    """
     | gopen is used to open a graphic file.  
-
+    |
     | rows=1 - number of plot rows on the page
     | columns=1 - number of plot columns on the page
     | user_plot=1 - internal plot variable - do not use.
@@ -2468,6 +2499,11 @@ def gvals(dmin=None, dmax=None, tight=0, mystep=None, mod=1):
       if np.nanmin(vals) <= dmin: vals=vals[1:]
 
 
+   #Return values if inputs are integers
+   if isinstance(dmin, int) and isinstance(dmax, int):
+       return vals, mult
+  
+
    if mystep is not None:
       if int(mystep) == mystep:      
          return vals, mult
@@ -2493,7 +2529,6 @@ def gvals(dmin=None, dmax=None, tight=0, mystep=None, mod=1):
    if step == .06: step=.1
    if step == .04: step=.1
    if step == .03: step=.02
-
 
 
    if (dmax-dmin == step): step=step/10.
@@ -4951,6 +4986,7 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, ti
     miny=np.min(y)
     maxx=np.max(x)
     maxy=np.max(y)
+    taxis=f.item('T')
 
     #Use user set values if present
     if plotvars.xmin is not None:
@@ -4958,6 +4994,40 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, ti
         miny=plotvars.ymin
         maxx=plotvars.xmax
         maxy=plotvars.ymax
+
+        #Change from date string to a number if strings are passed
+        time_xstr=False
+        time_ystr=False
+        try: 
+            float(minx)
+        except:
+            time_xstr=True
+        try: 
+            float(miny)
+        except:
+            time_ystr=True
+
+        taxis=f.item('T')
+        if time_xstr is True or time_ystr is True:
+            ref_time=f.item('T').units
+            ref_calendar=f.item('T').calendar
+            ref_time_origin=str(f.item('T').Units.reftime)
+            time_units = cf.Units(ref_time, ref_calendar)
+
+            if time_xstr is True:
+                t = cf.Data(cf.dt(minx), units=time_units)
+                minx=t.array
+                t = cf.Data(cf.dt(maxx), units=time_units)
+                maxx=t.array
+                taxis=cf.Data([cf.dt(plotvars.xmin),  cf.dt(plotvars.xmax)], units=time_units)
+
+            if time_ystr is True:
+                t = cf.Data(cf.dt(miny), units=time_units)
+                miny=t.array
+                t = cf.Data(cf.dt(maxy), units=time_units)
+                maxy=t.array
+                taxis=cf.Data([cf.dt(plotvars.ymin),  cf.dt(plotvars.ymax)], units=time_units)
+
 
 
     #Set x and y labelling
@@ -4975,14 +5045,22 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, ti
         if xlabel[0:3] == 'lon': xticks, xticklabels=mapaxis(minx, maxx, type=1)
         if xlabel[0:3] == 'lat': xticks, xticklabels=mapaxis(minx, maxx, type=2)
         if np.size(f.item('T').array) > 1: 
-            xticks, xticklabels, xlabel=timeaxis(f.item('T'))
+            #xticks, xticklabels, xlabel=timeaxis(f.item('T'))
+            xticks, xticklabels, xlabel=timeaxis(taxis)
         if xticks is None: 
-            xticks=gvals(dmin=minx, dmax=maxx, tight=1, mod=0)[0]
+            xticks=gvals(dmin=minx, dmax=maxx, tight=1, mod=1)[0]
             xticklabels=xticks
     else:
         if xticklabels is None: xticklabels=xticks
-    if yticks is None: yticks=gvals(dmin=miny, dmax=maxy, tight=0, mod=0)[0]
+
+
+
+    if yticks is None: 
+        yticks, mult=gvals(dmin=miny, dmax=maxy, tight=1, mod=1)
+        yticks=yticks*10**mult
     if yticklabels is None: yticklabels=yticks
+
+
 
     #Z on y-axis
     ztype=None
