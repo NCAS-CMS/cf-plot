@@ -671,8 +671,6 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
          if (ymax - ymin) > 50000: ystep=10000.0
 
       #Set plot limits and draw axes
-      print xmin, xmax, ymin,ymax, ytype
-
       if ylog is False or ylog == 0:   
          if ytype == 1: 
              gset(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax, user_gset=user_gset)
@@ -684,8 +682,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
 
          heightticks=gvals(dmin=ymin, dmax=ymax, tight=1, mystep=ystep, mod=0)[0]
          heightlabels=heightticks
-         print heightticks
-         print heightlabels
+
 
          if axes is True:
              if xaxis is True:
@@ -713,8 +710,6 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
              xlabel=''
              ylabel=''
 
-         print heightticks
-         print heightlabels
          axes_plot(xticks=latticks, xticklabels=latlabels,\
                    yticks=heightticks, yticklabels=heightlabels,\
                    xlabel=xlabel, ylabel=ylabel)
@@ -1049,16 +1044,12 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
       user_gset=plotvars.user_gset
 
 
-
-
-
       #Time strings set to None initially
       tmin=None
       tmax=None
 
 
       #Set plot limits
-
       if all(val is not None for val in [plotvars.xmin,plotvars.xmax,plotvars.ymin,plotvars.ymax]):
          #Store time strings for later use
          tmin=plotvars.ymin
@@ -1323,6 +1314,244 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
       #Rotated grid axes
       rgaxes(xpole=xpole, ypole=ypole, xvec=x, yvec=y)
 
+
+      #Title
+      plotvars.plot.set_title(title, y=1.03, fontsize=title_fontsize, fontweight=title_fontweight)
+
+
+
+   ##################
+   # time-height plot
+   ##################
+   if ptype == 7:
+      if verbose: print 'con - making a time-height plot'
+
+      if plotvars.user_plot == 0: gopen(user_plot=0)
+      user_gset=plotvars.user_gset
+      if isinstance(f[0], cf.Field): taxis=f.item('T')
+
+      #Set plot limits
+      if user_gset == 1:
+          #Use user set values if present
+          tmin=plotvars.xmin
+          tmax=plotvars.xmax
+          #Change plotvars.xmin and plotvars.xmax from a date string to a number 
+          ref_time=f.item('T').units
+          ref_calendar=f.item('T').calendar
+          ref_time_origin=str(f.item('T').Units.reftime)
+          time_units = cf.Units(ref_time, ref_calendar)
+
+          t = cf.Data(cf.dt(plotvars.xmin), units=time_units)
+          xmin=t.array
+          t = cf.Data(cf.dt(plotvars.xmax), units=time_units)
+          xmax=t.array
+
+          if isinstance(f[0], cf.Field):
+              taxis=cf.Data([cf.dt(plotvars.xmin),  cf.dt(plotvars.xmax)], units=time_units)
+          ymin=plotvars.ymin
+          ymax=plotvars.ymax
+      else:
+          xmin=np.nanmin(x)
+          xmax=np.nanmax(x)
+          ymin=np.nanmin(y)
+          ymax=np.nanmax(y)
+          ytype=0 #pressure or similar y axis
+          if 'theta' in ylabel.split(' '): ytype=1
+          if 'height' in ylabel.split(' '): ytype=1
+          if ytype == 0:
+              ymin=np.nanmax(y)
+              ymax=np.nanmin(y)
+              if ylog != 1 and ylog is not True:
+                  if ymax <= 10: ymax=0
+
+
+      ystep=None
+      if (ymin == 1000): ystep=100
+      if (ymin == 100000): ystep=10000
+
+      ytype=0 #pressure or similar y axis
+      if 'theta' in ylabel.split(' '): ytype=1
+      if 'height' in ylabel.split(' '): 
+         ytype=1
+         ystep=100
+         if (ymax - ymin) > 5000: ystep=500
+         if (ymax - ymin) > 10000: ystep=1000
+         if (ymax - ymin) > 50000: ystep=10000
+
+
+
+
+      #Use the automatically generated labels if none are supplied
+      if isinstance(f[0], cf.Field):
+          time_ticks, time_labels, xlabel=timeaxis(taxis)
+      if xlabel != '': xplotlabel=xlabel
+
+      #Use user supplied labels if present
+      if xlabel is None: xplotlabel=time_axis_label
+      if np.size(time_ticks) > 0: timeticks=time_ticks
+      if np.size(time_labels) > 0: timelabels=time_labels
+
+      if ylabel != '': yplotlabel=ylabel
+
+
+      #Use the automatically generated labels if none are supplied
+      if xlabel is None: xplotlabel=time_axis_label
+      if np.size(time_ticks) > 0: timeticks=time_ticks
+      if np.size(time_labels) > 0: timelabels=time_labels
+
+
+
+      #Set plot limits and draw axes
+      if ylog != 1:
+         gset(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax, user_gset=user_gset)
+         if ytype == 0: heightticks=gvals(dmin=ymax, dmax=ymin, tight=1, mystep=ystep, mod=0)[0]
+         if ytype == 1: heightticks=gvals(dmin=ymin, dmax=ymax, tight=1, mystep=ystep, mod=0)[0]
+         heightlabels=heightticks
+
+
+         if axes is True:
+             if xaxis is True:
+                 if xticks is not None:
+                     timeticks=xticks
+                     timelabels=xticks
+                     if xticklabels is not None: timelabels=xticklabels
+             else:
+                 timeticks=[100000000]
+                 xlabel=''
+
+             if yaxis is True:
+                 if yticks is not None:
+                     heightticks=yticks
+                     heightlabels=yticks
+                     if yticklabels is not None: heightlabels=yticklabels
+             else:
+                 heightticks=[100000000]
+                 ylabel=''
+
+
+         else:
+             lonticks=[100000000]
+             heightticks=[100000000]
+             xlabel=''
+             ylabel=''
+
+         axes_plot(xticks=timeticks, xticklabels=timelabels,\
+                   yticks=heightticks, yticklabels=heightlabels,\
+                   xlabel=xplotlabel, ylabel=yplotlabel)
+
+
+
+      #Log y axis
+      if ylog == 1:
+          if ymin == 0: ymin=1
+          gset(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax, ylog=1, user_gset=user_gset)
+
+          if axes is True:
+              if xaxis is True:
+                  if xticks is not None:
+                      timeticks=xticks
+                      timelabels=xticks
+                      if xticklabels is not None: timelabels=xticklabels
+              else:
+                  timeticks=[100000000]
+                  xlabel=''
+
+              if yaxis is True:
+                  if yticks is not None:
+                      heightticks=yticks
+                      heightlabels=yticks
+                      if yticklabels is not None: heightlabels=yticklabels
+              else:
+                  latticks=[100000000]
+                  xlabel=''
+
+          if yticks is None:
+              axes_plot(xticks=timeticks, xticklabels=timelabels, xlabel=xlabel, ylabel=ylabel)
+          else:
+              axes_plot(xticks=timeticks, xticklabels=timelabels, yticks=heightticks, yticklabels=heightlabels, \
+                        xlabel=xlabel, ylabel=ylabel)
+
+
+
+      #Reset xmin and xmax to strings
+      if user_gset == 1:
+          plotvars.xmin=tmin
+          plotvars.xmax=tmax
+
+
+
+
+      #Get colour scale for use in contouring
+      #If colour bar extensions are enabled then the colour map goes
+      #from 1 to ncols-2.  The colours for the colour bar extensions are then
+      #changed on the colourbar and plot after the plot is made
+      cscale_ncols=np.size(plotvars.cs)
+      colmap=cscale_get_map()
+
+
+      #Filled contours
+      if fill == True or blockfill == 1:
+         colmap=cscale_get_map()
+         cmap = matplotlib.colors.ListedColormap(colmap)
+         if (plotvars.levels_extend == 'min' or plotvars.levels_extend == 'both'):
+             cmap.set_under(plotvars.cs[0])
+         if (plotvars.levels_extend == 'max' or plotvars.levels_extend == 'both'):
+             cmap.set_over(plotvars.cs[-1])
+
+         cfill=plotvars.plot.contourf(x,y,field*fmult,clevs, \
+               extend=plotvars.levels_extend, cmap=cmap, tri=tri)
+
+  
+      #Block fill
+      if blockfill == 1:   
+         if isinstance(f[0], cf.Field):  
+            if getattr(f[0].coord('lat'), 'hasbounds', False):
+               xpts=np.squeeze(f.coord('lat').bounds.array)[:,0]
+               ypts=np.squeeze(f.coord('pressure').bounds.array)[:,0]   
+               bfill(f=field_orig*fmult, x=xpts, y=ypts, clevs=clevs, lonlat=0, bound=1)  
+            else:
+               bfill(f=field_orig*fmult, x=x_orig, y=y_orig, clevs=clevs, lonlat=0, bound=0)  
+
+         else:
+            bfill(f=field_orig*fmult, x=x_orig, y=y_orig, clevs=clevs, lonlat=0, bound=0)  
+ 
+
+
+      #Contour lines and labels
+      if lines == True: 
+         cs=plotvars.plot.contour(x,y,field*fmult,clevs,colors='k', tri=tri)
+         if line_labels == True:  
+            nd=ndecs(clevs)
+            fmt='%d'
+            if nd != 0: fmt='%1.'+str(nd)+'f'
+            plotvars.plot.clabel(cs, fmt=fmt, colors = 'k', fontsize=text_fontsize, fontweight=text_fontweight) 
+
+      #Thick zero contour line
+      if zero_thick is not None:
+         cs = plotvars.plot.contour(x,y,field*fmult,[-1e-32, 0],colors='k', linewidths=zero_thick, tri=tri)
+     
+  
+
+      #Colorbar
+      if colorbar == 1:  
+
+         pad=0.15
+         if plotvars.rows >= 3: pad=0.25
+         if plotvars.rows >= 5: pad=0.3
+         if colorbar_position is None:
+             cbar=plotvars.master_plot.colorbar(cfill, orientation=colorbar_orientation, aspect=75, \
+                                                pad=pad, ticks=colorbar_labels, \
+                                                shrink=colorbar_shrink)
+         else:
+             position=plotvars.master_plot.add_axes(colorbar_position)  
+             cbar=plotvars.master_plot.colorbar(cfill, cax=position, ticks=colorbar_labels, orientation=colorbar_orientation)
+             gpos(pos=plotvars.pos)
+
+         cbar.set_label(colorbar_title, fontsize=text_fontsize, fontweight=title_fontweight)
+         cbar.set_ticklabels([str(i) for i in colorbar_labels]) #Bug in Matplotlib colorbar labelling
+         for t in cbar.ax.get_xticklabels():
+            t.set_fontsize(text_fontsize)
+            t.set_fontweight(text_fontweight)
 
       #Title
       plotvars.plot.set_title(title, y=1.03, fontsize=title_fontsize, fontweight=title_fontweight)
@@ -2776,18 +3005,22 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None):
 
    #time height plot
    if has_height == 1 and has_time == 1:
-       ptype=0
+       ptype=7
        for mydim in f.items():
           if mydim[:3] == 'dim':
-              if np.size(np.squeeze(f.item(mydim).array)) == np.shape(np.squeeze(f.array))[1]:
-                 x=np.squeeze(f.item(mydim).array)
-                 xunits=str(getattr(f.item(mydim), 'Units', ''))
-                 xlabel=cf_var_name(field=f, dim=mydim)+xunits 
-    
               if np.size(np.squeeze(f.item(mydim).array)) == np.shape(np.squeeze(f.array))[0]:
+                 x=np.squeeze(f.item(mydim).array)
+                 xunits=str(getattr(f.item(mydim), 'units', ''))
+                 xlabel=cf_var_name(field=f, dim=mydim)+xunits 
+
+              if np.size(np.squeeze(f.item(mydim).array)) == np.shape(np.squeeze(f.array))[1]:
                  y=np.squeeze(f.item(mydim).array)
-                 yunits=str(getattr(f.item(mydim), 'units', ''))
+                 yunits='('+str(getattr(f.item(mydim), 'Units', ''))+')'
                  ylabel=cf_var_name(field=f, dim=mydim)+yunits 
+    
+       #Rotate array to get it as time vs height
+       field=np.rot90(field)
+       field=np.flipud(field) 
 
 
 
@@ -3521,7 +3754,7 @@ def find_pos_in_array(vals=None, val=None, above=False):
 
 def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,\
          key_length=None, key_label=None, ptype=None, title=None,\
-         width=0.02, headwidth=3, headlength=5, headaxislength=4.5, pivot='middle', key_location=[0.9, -0.06],
+         width=0.02, headwidth=3, headlength=5, headaxislength=4.5, pivot='middle', key_location=[0.95, -0.06],
          key_show=True, axes=True, xaxis=True, yaxis=True, xticks=None, xticklabels=None, \
          yticks=None, yticklabels=None, xlabel=None, ylabel=None, ylog=False):
 
@@ -4930,8 +5163,13 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, ti
     #Extract required data 
     #If a cf-python field
     ##################
+    if isinstance(f[0], cf.Field):
+        cf_field=True
+    else:
+        cf_field=False
+
     if f is not None:
-        if isinstance(f[0], cf.Field):
+        if cf_field is True:
             #Check if this is a cf.Fieldlist and reject if it is
             if len(f) > 1:
                 errstr='\n cf_data_assign error - passed field is a cf.Fieldlist\n'
@@ -4971,7 +5209,6 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, ti
                     else:
                         if ln: errstr=errstr+str(mydim)+','+str(ln)+','+str(f.item(mydim).size)+'\n'
                 raise  Warning(errstr) 
-
     else:
         if verbose: print 'lineplot - not a CF field, using passed data'
 
@@ -4986,7 +5223,8 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, ti
     miny=np.min(y)
     maxx=np.max(x)
     maxy=np.max(y)
-    taxis=f.item('T')
+    if cf_field is True: 
+        taxis=f.item('T')
 
     #Use user set values if present
     if plotvars.xmin is not None:
@@ -5007,26 +5245,27 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, ti
         except:
             time_ystr=True
 
-        taxis=f.item('T')
-        if time_xstr is True or time_ystr is True:
-            ref_time=f.item('T').units
-            ref_calendar=f.item('T').calendar
-            ref_time_origin=str(f.item('T').Units.reftime)
-            time_units = cf.Units(ref_time, ref_calendar)
+        if cf_field is True:
+            taxis=f.item('T')
+            if time_xstr is True or time_ystr is True:
+                ref_time=f.item('T').units
+                ref_calendar=f.item('T').calendar
+                ref_time_origin=str(f.item('T').Units.reftime)
+                time_units = cf.Units(ref_time, ref_calendar)
 
-            if time_xstr is True:
-                t = cf.Data(cf.dt(minx), units=time_units)
-                minx=t.array
-                t = cf.Data(cf.dt(maxx), units=time_units)
-                maxx=t.array
-                taxis=cf.Data([cf.dt(plotvars.xmin),  cf.dt(plotvars.xmax)], units=time_units)
+                if time_xstr is True:
+                    t = cf.Data(cf.dt(minx), units=time_units)
+                    minx=t.array
+                    t = cf.Data(cf.dt(maxx), units=time_units)
+                    maxx=t.array
+                    taxis=cf.Data([cf.dt(plotvars.xmin),  cf.dt(plotvars.xmax)], units=time_units)
 
-            if time_ystr is True:
-                t = cf.Data(cf.dt(miny), units=time_units)
-                miny=t.array
-                t = cf.Data(cf.dt(maxy), units=time_units)
-                maxy=t.array
-                taxis=cf.Data([cf.dt(plotvars.ymin),  cf.dt(plotvars.ymax)], units=time_units)
+                if time_ystr is True:
+                    t = cf.Data(cf.dt(miny), units=time_units)
+                    miny=t.array
+                    t = cf.Data(cf.dt(maxy), units=time_units)
+                    maxy=t.array
+                    taxis=cf.Data([cf.dt(plotvars.ymin),  cf.dt(plotvars.ymax)], units=time_units)
 
 
 
@@ -5044,11 +5283,11 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, ti
     if xticks is None:
         if xlabel[0:3] == 'lon': xticks, xticklabels=mapaxis(minx, maxx, type=1)
         if xlabel[0:3] == 'lat': xticks, xticklabels=mapaxis(minx, maxx, type=2)
-        if np.size(f.item('T').array) > 1: 
-            #xticks, xticklabels, xlabel=timeaxis(f.item('T'))
-            xticks, xticklabels, xlabel=timeaxis(taxis)
+        if cf_field is True:
+            if np.size(f.item('T').array) > 1: 
+                xticks, xticklabels, xlabel=timeaxis(taxis)
         if xticks is None: 
-            xticks=gvals(dmin=minx, dmax=maxx, tight=1, mod=1)[0]
+            xticks=gvals(dmin=minx, dmax=maxx, tight=0, mod=1)[0]
             xticklabels=xticks
     else:
         if xticklabels is None: xticklabels=xticks
@@ -5056,7 +5295,7 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, ti
 
 
     if yticks is None: 
-        yticks, mult=gvals(dmin=miny, dmax=maxy, tight=1, mod=1)
+        yticks, mult=gvals(dmin=miny, dmax=maxy, tight=0, mod=1)
         yticks=yticks*10**mult
     if yticklabels is None: yticklabels=yticks
 
@@ -5120,7 +5359,8 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, ti
 
     #Time axes sometimes spill over the edge of the plot limits so
     #use tight_layout() to adjust these plots
-    if np.size(f.item('T').array) > 1: plotvars.master_plot.tight_layout()
+    if cf_field is True:
+        if np.size(f.item('T').array) > 1: plotvars.master_plot.tight_layout()
 
     #Add a legend if needed
     if legend_location is not None: plotvars.plot.legend(loc=legend_location)
