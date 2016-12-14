@@ -102,7 +102,7 @@ viridis=['#440154', '#440255', '#440357', '#450558', '#45065a', '#45085b', '#460
 #####################################
 plotvars=pvars(lonmin=-180, lonmax=180, latmin=-90, latmax=90, proj='cyl', \
                resolution='c', plot_type=1, boundinglat=0, lon_0=0, \
-               levels=None, levels_min=None, levels_max=None, levels_step=None, \
+               levels=None, levels_min=None, levels_max=None, levels_step=None, norm=None, \
                levels_extend='both', xmin=None, xmax=None, ymin=None, ymax=None, \
                xlog=None, ylog=None,\
                rows=1, columns=1, file=None, orientation='landscape',\
@@ -117,7 +117,8 @@ plotvars=pvars(lonmin=-180, lonmax=180, latmin=-90, latmax=90, proj='cyl', \
                continent_thickness=None, continent_color=None, pos=1, viewer='display', \
                tspace_year=None, tspace_month=None, tspace_day=None, tspace_hour=None, \
                xtick_label_rotation=0, xtick_label_align='center', ytick_label_rotation=0, \
-               ytick_label_align='right')
+               ytick_label_align='right', legend_text_size=11, legend_text_weight='normal',\
+               tight=False)
 
 
 def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=None, \
@@ -152,7 +153,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
     | negative_linestyle=None - set to 1 to get dashed negative contours
     | zero_thick=None - add a thick zero contour line. Set to 3 for example.
     | blockfill=None - set to 1 for a blockfill plot
-    | colbar_title=colbar_title - title for the colour bar
+    | colorbar_title=colbar_title - title for the colour bar
     | colorbar=1 - add a colour bar if a filled contour plot
     | colorbar_label_skip=None - skip colour bar labels. Set to 2 to skip every
     |                            other label.
@@ -502,9 +503,10 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
          if (plotvars.levels_extend == 'max' or plotvars.levels_extend == 'both'):
              cmap.set_over(plotvars.cs[-1])
 
+
          #filled colour contours
          cfill = mymap.contourf(lons,lats,field*fmult,clevs,extend=plotvars.levels_extend,\
-                 cmap=cmap, tri=tri)
+                 cmap=cmap, tri=tri, norm=plotvars.norm)
 
 
       #Block fill
@@ -766,7 +768,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
              cmap.set_over(plotvars.cs[-1])
 
          cfill=plotvars.plot.contourf(x,y,field*fmult,clevs, \
-               extend=plotvars.levels_extend, cmap=cmap, tri=tri)
+               extend=plotvars.levels_extend, cmap=cmap, tri=tri, norm=plotvars.norm)
 
   
       #Block fill
@@ -968,7 +970,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
              cmap.set_over(plotvars.cs[-1])
 
          cfill=plotvars.plot.contourf(x,y,field*fmult,clevs, \
-               extend=plotvars.levels_extend, cmap=cmap, tri=tri)
+               extend=plotvars.levels_extend, cmap=cmap, tri=tri, norm=plotvars.norm)
 
          #add colour scale extensions if required
          if (plotvars.levels_extend == 'both' or plotvars.levels_extend == 'min'):
@@ -1172,7 +1174,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
              cmap.set_over(plotvars.cs[-1])
 
          cfill=plotvars.plot.contourf(x,y,field*fmult,clevs, \
-               extend=plotvars.levels_extend, cmap=cmap, tri=tri)
+               extend=plotvars.levels_extend, cmap=cmap, tri=tri, norm=plotvars.norm)
 
   
       #Block fill
@@ -1268,7 +1270,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
              cmap.set_over(plotvars.cs[-1])
 
          cfill=plotvars.plot.contourf(xpts,ypts,field*fmult,clevs,extend=plotvars.levels_extend,\
-               cmap=cmap, tri=tri)
+               cmap=cmap, tri=tri, norm=plotvars.norm)
 
 
       #Block fill
@@ -1499,7 +1501,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
              cmap.set_over(plotvars.cs[-1])
 
          cfill=plotvars.plot.contourf(x,y,field*fmult,clevs, \
-               extend=plotvars.levels_extend, cmap=cmap, tri=tri)
+               extend=plotvars.levels_extend, cmap=cmap, tri=tri, norm=plotvars.norm)
 
   
       #Block fill
@@ -1648,7 +1650,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=N
              cmap.set_over(plotvars.cs[-1])
 
          cfill=plotvars.plot.contourf(x,y,field*fmult,clevs,extend=plotvars.levels_extend,\
-               cmap=cmap, tri=tri)
+               cmap=cmap, tri=tri, norm=plotvars.norm)
 
 
       #Block fill
@@ -1825,6 +1827,7 @@ def levs(min=None, max=None, step=None, manual=None, extend='both'):
       plotvars.levels_max=None
       plotvars.levels_step=None 
       plotvars.levels_extend='both'
+      plotvars.norm=None
       plotvars.user_levs=0
       return   
 
@@ -1833,6 +1836,10 @@ def levs(min=None, max=None, step=None, manual=None, extend='both'):
       plotvars.levels_min=None
       plotvars.levels_max=None
       plotvars.levels_step=None
+      #Set the normalization object as we are using potentially unevenly spaced levels 
+      ncolors=np.size(plotvars.levels)
+      if extend=='both' or extend=='max': ncolors=ncolors-1
+      plotvars.norm=matplotlib.colors.BoundaryNorm(boundaries=plotvars.levels, ncolors=ncolors)
       plotvars.user_levs=1
    else:
       if any(val is None for val in [min,max,step]):
@@ -1847,16 +1854,18 @@ def levs(min=None, max=None, step=None, manual=None, extend='both'):
          plotvars.levels_min=min
          plotvars.levels_max=max
          plotvars.levels_step=step
-         if type(step) is int:
-             plotvars.levels=np.arange(min, max+step, step)
+         plotvars.norm=None
+         if type(step) is int and type(min) is int and type(max) is int:
+             #plotvars.levels=np.arange(min, max+step, step)
+             levs = ((((np.arange(min, max+step*1e-10, step, dtype=np.float64)*1e10)).astype(np.int64)).astype(np.float64)/1e10).astype(np.int)
+             plotvars.levels=levs
          else:
-             vals=np.arange(min, max+step, step)
-             if np.max(vals) > max: vals=vals[:-1]
-             plotvars.levels=np.linspace(min, max, np.size(vals))
+             levs = (((np.arange(min, max+step*1e-10, step, dtype=np.float64)*1e10)).astype(np.int64)).astype(np.float64)/1e10
+             plotvars.levels=levs
          plotvars.user_levs=1
 
    plotvars.levels_extend=extend
-
+   
 
 
 def mapaxis(min=min, max=max, type=type):
@@ -2303,17 +2312,21 @@ def gset(xmin=None, xmax=None, ymin=None, ymax=None, xlog=False, ylog=False, use
     | Set plot limits for all non longitude-latitide plots. 
     | xmin, xmax, ymin, ymax are all needed to set the plot limits.  
     | Set xlog/ylog to True or 1 to get a log axis.
-  
+    |
     | xmin=None - x minimum
     | xmax=None - x maximum
     | ymin=None - y minimum
     | ymax=None - y maximum
     | xlog=False - log x
     | ylog=False - log y
-
+    |
     | Once a user call is made to gset the plot limits are persistent. i.e. the next plot
     | will use the same set of plot limits.
     | Use gset() to reset to undefined plot limits i.e. the full range of the data.
+    |
+    | To set date axes use date strings i.e.
+    | cfp.gset(xmin = '170-1-1', xmax = '300-1-1', ymin = 285, ymax = 295)
+    |
 
     :Returns:
      None
@@ -2672,64 +2685,71 @@ def gvals(dmin=None, dmax=None, tight=0, mystep=None, mod=1):
       mult=0
       return vals, mult
 
+   #Copies of inputs 
+   dmin1=dmin
+   dmax1=dmax
+   dmin2=dmin
+   dmax2=dmax
 
 
    mult=0 #field multiplyer
  
-   #Generate reasonable step 
+   #Generate an inital step 
    step=(dmax-dmin)/16.0
 
-   #Don't modify if dmin and dmax are both negative as this will create a race condition
-   if dmin < 0 and dmax < 0: mod=0
+
+   #Don't modify if dmin1 and dmax1 are both negative as this will create a race condition
+   if dmin1 < 0 and dmax1 < 0: mod=0
 
 
    if mod == 1:
       if (mystep != None): step=mystep
 
-      if step < 1:
-         while dmax < 1:
+      if step <= 3:
+         while dmax1 < 1:
             step=step*10.0
-            dmin=dmin*10.0
-            dmax=dmax*10.0
+            dmin1=dmin1*10.0
+            dmax1=dmax1*10.0
             mult=mult-1
 
-      if step > 100:
-         while step >= 1 or dmax >10:
-            step=step/10.0
-            dmin=dmin/10.0
-            dmax=dmax/10.0
-            mult=mult+1
-     
+      if int(dmax2-dmin2) > 3: 
+          step=1
+          mult=0
 
-   #Change step to be a sensible one
-   step=int(dmax-dmin)/16
+          for val in [2, 5, 10, 20, 25, 50, 100, 200, 250, 500, 1000, 2000, 2500, 5000, 10000, 20000, 25000, 50000, 100000, 
+                      200000, 250000, 500000, 1000000]:
+
+              if int(dmax2-dmin2)/val > 10: 
+                  step=val
+                  mult=0
+
+              #print val, step, int(dmax2-dmin2)/val
+
+          if int(dmax2-dmin2)/1000000 > 10: step=(dmax2-dmin2)/16.0
 
 
-   if (step == 8 or step == 9): step=10
-   if (step == 7 or step == 6 or step == 4): step=5
-   if step == 3: step=2
-   if (step >= 10): step=int(step/10)*10
-   if (step == 0): step=1
+
+   #Reset to user or mone zero values
    if (mystep != None): step=mystep
-
+   if (step == 0): step=1
 
    #Make integer step
    if tight ==0:
-      vals=(int(dmin)/step)*step
+      vals=(int(dmin1)/step)*step
    else:
-      vals=dmin
-   while (np.nanmax(vals)+step) <= dmax:
+      vals=dmin1
+   while (np.nanmax(vals)+step) <= dmax1:
       vals=np.append(vals, np.nanmax(vals)+step)
    
 
    #Remove upper and lower limits if tight=0 - i.e. a contour plot
    if tight == 0 and np.size(vals) > 1:
-      if np.nanmax(vals) >= dmax: vals=vals[0:-1]
-      if np.nanmin(vals) <= dmin: vals=vals[1:]
+      if np.nanmax(vals) >= dmax1: vals=vals[0:-1]
+      if np.nanmin(vals) <= dmin1: vals=vals[1:]
 
 
    #Return values if inputs are integers
-   if isinstance(dmin, int) and isinstance(dmax, int):
+   if isinstance(dmin1, int) and isinstance(dmax1, int):
        return vals, mult
   
 
@@ -2739,11 +2759,11 @@ def gvals(dmin=None, dmax=None, tight=0, mystep=None, mod=1):
 
 
    #Floating point step
-   if (mult == 0 and np.size(vals) > 5 and float("%.1f" %((dmax-dmin)/16)) > 0):   
+   if (mult == 0 and np.size(vals) > 5 and float("%.1f" %((dmax1-dmin1)/16)) > 0):   
       return vals, mult  
    else:
-      step=float("%.1f" %((dmax-dmin)/16))
-      if step == 0: step=float("%.2f" %((dmax-dmin)/16))
+      step=float("%.1f" %((dmax1-dmin1)/16))
+      if step == 0: step=float("%.2f" %((dmax1-dmin1)/16))
 
 
 
@@ -2760,14 +2780,14 @@ def gvals(dmin=None, dmax=None, tight=0, mystep=None, mod=1):
    if step == .03: step=.02
 
 
-   if (dmax-dmin == step): step=step/10.
-   vals=float("%.2f" %(int(dmin/step)*step))
-   while (np.nanmax(vals)+step) <= dmax:
+   if (dmax1-dmin1 == step): step=step/10.
+   vals=float("%.2f" %(int(dmin1/step)*step))
+   while (np.nanmax(vals)+step) <= dmax1:
       vals=np.append(vals, float("%.2f" %(np.nanmax(vals)+step)))
 
    if tight == 0:
-      if np.nanmax(vals) >= dmax: vals=vals[0:-1]
-      if np.nanmin(vals) <= dmin: vals=vals[1:]
+      if np.nanmax(vals) >= dmax1: vals=vals[0:-1]
+      if np.nanmin(vals) <= dmin1: vals=vals[1:]
 
    return vals, mult
 
@@ -3169,7 +3189,7 @@ def cscale(cmap=None, ncols=None, white=None, below=None, above=None, reverse=0)
    | to a file with a set of values on each line. 
    | 
    |  
-   | Use cscale() To reset to the scale1 colour scale
+   | Use cscale() To reset to the default settings.
    |
    :Returns:
       None
@@ -3457,6 +3477,7 @@ def bfill(f=None, x=None, y=None, clevs=False, lonlat=False, bound=False):
       cmap.set_over(plotvars.cs[-1])
 
    norm = matplotlib.colors.BoundaryNorm(clevs, ncolors=cmap.N, clip=False)
+   #norm = matplotlib.colors.BoundaryNorm(clevs, ncolors=cmap.N)
    im = plotvars.plot.pcolormesh(xpts, ypts, field, cmap=cmap, norm=norm)
 
    
@@ -4606,11 +4627,12 @@ def reset():
 
 
 def setvars(file=None, title_fontsize=None, text_fontsize=None, axis_label_fontsize=None, \
-        title_fontweight='normal', text_fontweight='normal', axis_label_fontweight='normal', \
-        fontweight='normal', continent_thickness=None, continent_color=None, viewer='display', \
+        title_fontweight=None, text_fontweight=None, axis_label_fontweight=None, \
+        fontweight=None, continent_thickness=None, continent_color=None, viewer=None, \
         tspace_year=None, tspace_month=None, tspace_day=None, tspace_hour=None, \
-        xtick_label_rotation=0, xtick_label_align='center', ytick_label_rotation=0, \
-        ytick_label_align='right'):
+        xtick_label_rotation=None, xtick_label_align=None, ytick_label_rotation=None, \
+        ytick_label_align=None, legend_text_weight=None, legend_text_size=None\
+        ):
     """
      | setvars - set plotting variables
      |
@@ -4636,7 +4658,8 @@ def setvars(file=None, title_fontsize=None, text_fontsize=None, axis_label_fonts
      | xtick_label_align='center' - alignment of xtick labels
      | ytick_label_rotation=0 - rotation of ytick labels
      | ytick_label_align='right' - alignment of ytick labels
-     |
+     | legend_text_size=None - legend text size
+     | legend_text_weight=None - legend text weight
      |
      | Use setvars() to reset to the defaults
      |
@@ -4652,45 +4675,49 @@ def setvars(file=None, title_fontsize=None, text_fontsize=None, axis_label_fonts
     if all(val is None for val in [file, title_fontsize, text_fontsize, axis_label_fontsize, continent_thickness, \
            title_fontweight, text_fontweight, axis_label_fontweight, fontweight, \
            continent_color, tspace_year, tspace_month, tspace_day, tspace_hour,xtick_label_rotation, \
-           xtick_label_align, ytick_label_rotation, ytick_label_align]):
+           xtick_label_align, ytick_label_rotation, ytick_label_align, legend_text_size, legend_text_weight]):
         plotvars.file=None
-        title_fontsize=15
-        text_fontsize=11
-        axis_label_fontsize=11
-        title_fontweight='normal'
-        text_fontweight='normal'
-        axis_label_fontweight='normal',
-        fontweight='normal'
-        continent_thickness=None
-        continent_color=None
-        tspace_year=None
-        tspace_month=None
-        tspace_day=None
-        tspace_hour=None
-        xtick_label_rotation=0
-        xtick_label_align='center'
-        ytick_label_rotation=0
-        ytick_label_align='right'
+        plotvars.title_fontsize=15
+        plotvars.text_fontsize=11
+        plotvars.axis_label_fontsize=11
+        plotvars.title_fontweight='normal'
+        plotvars.text_fontweight='normal'
+        plotvars.axis_label_fontweight='normal'
+        plotvars.fontweight='normal'
+        plotvars.continent_thickness=None
+        plotvars.continent_color=None
+        plotvars.tspace_year=None
+        plotvars.tspace_month=None
+        plotvars.tspace_day=None
+        plotvars.tspace_hour=None
+        plotvars.xtick_label_rotation=0
+        plotvars.xtick_label_align='center'
+        plotvars.ytick_label_rotation=0
+        plotvars.ytick_label_align='right'
+        plotvars.legend_text_size=11
+        plotvars.legend_text_weight='normal'
 
-    plotvars.file=file
-    plotvars.title_fontsize=title_fontsize
-    plotvars.axis_label_fontsize=axis_label_fontsize
-    plotvars.continent_thickness=continent_thickness
-    plotvars.continent_color=continent_color
-    plotvars.text_fontsize=text_fontsize
-    plotvars.text_fontweight=text_fontweight
-    plotvars.axis_label_fontweight=axis_label_fontweight
-    plotvars.title_fontweight=title_fontweight
-    plotvars.viewer=viewer
-    plotvars.tspace_year=tspace_year
-    plotvars.tspace_month=tspace_month
-    plotvars.tspace_day=tspace_day
-    plotvars.tspace_hour=tspace_hour
-    plotvars.xtick_label_rotation=xtick_label_rotation
-    plotvars.xtick_label_align=xtick_label_align
-    plotvars.ytick_label_rotation=ytick_label_rotation
-    plotvars.ytick_label_align=ytick_label_align
 
+    if file is not None: plotvars.file=file
+    if title_fontsize is not None: plotvars.title_fontsize=title_fontsize
+    if axis_label_fontsize is not None: plotvars.axis_label_fontsize=axis_label_fontsize
+    if continent_thickness is not None: plotvars.continent_thickness=continent_thickness
+    if continent_color is not None: plotvars.continent_color=continent_color
+    if text_fontsize is not None: plotvars.text_fontsize=text_fontsize
+    if text_fontweight is not None: plotvars.text_fontweight=text_fontweight
+    if axis_label_fontweight is not None: plotvars.axis_label_fontweight=axis_label_fontweight
+    if title_fontweight is not None: plotvars.title_fontweight=title_fontweight
+    if viewer is not None: plotvars.viewer=viewer
+    if tspace_year is not None: plotvars.tspace_year=tspace_year
+    if tspace_month is not None: plotvars.tspace_month=tspace_month
+    if tspace_day is not None: plotvars.tspace_day=tspace_day
+    if tspace_hour is not None: plotvars.tspace_hour=tspace_hour
+    if xtick_label_rotation is not None: plotvars.xtick_label_rotation=xtick_label_rotation
+    if xtick_label_align is not None: plotvars.xtick_label_align=xtick_label_align
+    if ytick_label_rotation is not None: plotvars.ytick_label_rotation=ytick_label_rotation
+    if ytick_label_align is not None: plotvars.ytick_label_align=ytick_label_align
+    if legend_text_size is not None: plotvars.legend_text_size=legend_text_size
+    if legend_text_weight is not None: plotvars.legend_text_weight=legend_text_weight
 
 
 
@@ -5122,13 +5149,16 @@ def rgaxes(xpole=None, ypole=None, xvec=None, yvec=None, spacing=10.0, degspacin
 
 def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, title=None, \
              ptype=0, linestyle='-', linewidth=1.0, color='k', xlog=False, ylog=False, verbose=None, swap_xy=False,\
-             marker=None, markersize=5.0, label=None, legend_location=None, xunits=None, yunits=None, xname=None,\
+             marker=None, markersize=5.0, label=None, legend_location='upper right', xunits=None, yunits=None, xname=None,\
              yname=None, xticks=None, yticks=None, xticklabels=None, yticklabels=None):
     """
-    | lineplot is the interface to line plotting in cf-plot. The minimum use is lineplot(f) 
-    | f - CF data to make a line plot from 
-    | x - x locations of data in f (only use this if f is a numpy array)
-    | y - y locations of data in f (only use this if f is a numpy array)
+    | lineplot is the interface to line plotting in cf-plot. 
+    | The minimum use is lineplot(f) where f is a CF field.
+    | If x and y are passed then an appropriate plot is made allowing x vs data and y vs data plots.
+    |
+    | f - CF data used to make a line plot
+    | x - x locations of data in y
+    | y - y locations of data in x
     | linestyle='-' - line style
     | color='k - line color
     | linewidth=1.0 - line width
@@ -5137,7 +5167,7 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, ti
     | xlog=False - log x-axis
     | ylog=False - log y-axis
     | label=None - line label - label for line
-    | legend_location=None - location of legend, 'upper right' for instance
+    | legend_location='upper right' - default location of legend
     | verbose=None - change to 1 to get a verbose listing of what lineplot is doing
     |
     | The following parameters override any CF data defaults:
@@ -5163,56 +5193,58 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, ti
     #Extract required data 
     #If a cf-python field
     ##################
-    if isinstance(f[0], cf.Field):
-        cf_field=True
-    else:
-        cf_field=False
-
+    cf_field=False
     if f is not None:
-        if cf_field is True:
-            #Check if this is a cf.Fieldlist and reject if it is
-            if len(f) > 1:
-                errstr='\n cf_data_assign error - passed field is a cf.Fieldlist\n'
-                errstr=errstr+'Please pass one field for contouring\n'
-                errstr=errstr+'i.e. f[0]\n'
-                raise  Warning(errstr) 
+        if isinstance(f[0], cf.Field): cf_field=True
 
-            #Extract data
-            if verbose: print 'lineplot - CF field, extracting data'
 
-            has_count=0
+
+    if cf_field is True:
+      #Check if this is a cf.Fieldlist and reject if it is
+        if len(f) > 1:
+            errstr='\n cf_data_assign error - passed field is a cf.Fieldlist\n'
+            errstr=errstr+'Please pass one field for contouring\n'
+            errstr=errstr+'i.e. f[0]\n'
+            raise  Warning(errstr) 
+
+        #Extract data
+        if verbose: print 'lineplot - CF field, extracting data'
+
+        has_count=0
+        for mydim in f.items():
+            if np.size(np.squeeze(f.item(mydim).array)) > 1:
+                has_count=has_count+1
+                x=np.squeeze(f.item(mydim).array)
+                if xname is None: xname=cf_var_name(field=f, dim=mydim)
+                if xunits is None: xunits=str(getattr(f.item(mydim), 'Units', ''))
+                y=np.squeeze(f.array)
+                if yunits is None: 
+                    if hasattr(f, 'Units'): yunits=str(f.Units)
+                if yname is None: 
+                    if hasattr(f, 'id'): yname=f.id
+                    if hasattr(f, 'ncvar'): yname=f.ncvar
+                    if hasattr(f, 'short_name'): yname=f.short_name 
+                    if hasattr(f, 'long_name'): yname=f.long_name 
+                    if hasattr(f, 'standard_name'): yname=f.standard_name
+
+
+
+        if has_count != 1:
+            errstr='\n lineplot error - passed field is not suitable for plotting as a line\n'
             for mydim in f.items():
-                if np.size(np.squeeze(f.item(mydim).array)) > 1:
-                    has_count=has_count+1
-                    x=np.squeeze(f.item(mydim).array)
-                    if xname is None: xname=cf_var_name(field=f, dim=mydim)
-                    if xunits is None: xunits=str(getattr(f.item(mydim), 'Units', ''))
-                    y=np.squeeze(f.array)
-                    if yunits is None: 
-                        if hasattr(f, 'Units'): yunits=str(f.Units)
-                    if yname is None: 
-                        if hasattr(f, 'id'): yname=f.id
-                        if hasattr(f, 'ncvar'): yname=f.ncvar
-                        if hasattr(f, 'short_name'): yname=f.short_name 
-                        if hasattr(f, 'long_name'): yname=f.long_name 
-                        if hasattr(f, 'standard_name'): yname=f.standard_name
-
-
-
-            if has_count != 1:
-                errstr='\n lineplot error - passed field is not suitable for plotting as a line\n'
-                for mydim in f.items():
-                    sn=getattr(f.item(mydim), 'standard_name', False)
-                    ln=getattr(f.item(mydim), 'long_name', False)
-                    if sn:
-                        errstr=errstr+str(mydim)+','+str(sn)+','+str(f.item(mydim).size)+'\n'
-                    else:
-                        if ln: errstr=errstr+str(mydim)+','+str(ln)+','+str(f.item(mydim).size)+'\n'
-                raise  Warning(errstr) 
+                sn=getattr(f.item(mydim), 'standard_name', False)
+                ln=getattr(f.item(mydim), 'long_name', False)
+                if sn:
+                    errstr=errstr+str(mydim)+','+str(sn)+','+str(f.item(mydim).size)+'\n'
+                else:
+                    if ln: errstr=errstr+str(mydim)+','+str(ln)+','+str(f.item(mydim).size)+'\n'
+            raise  Warning(errstr) 
     else:
         if verbose: print 'lineplot - not a CF field, using passed data'
-
-
+        errstr=''
+        if x is None or y is None: errstr='lineplot error- must define both x and y'
+        if f is not None: errstr=errstr+'lineplot error- must define just x and y to make a lineplot'
+        if errstr !='': raise  Warning('\n'+errstr+'\n') 
 
 
     #Set data values
@@ -5223,8 +5255,7 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, ti
     miny=np.min(y)
     maxx=np.max(x)
     maxy=np.max(y)
-    if cf_field is True: 
-        taxis=f.item('T')
+    if cf_field is True: taxis=f.item('T')
 
     #Use user set values if present
     if plotvars.xmin is not None:
@@ -5270,6 +5301,10 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, ti
 
 
     #Set x and y labelling
+    mod=1
+    tight=0
+    if plotvars.user_gset == 1: 
+        tight=1
     if xname is None:
         xlabel=''
     else:
@@ -5287,16 +5322,14 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, ti
             if np.size(f.item('T').array) > 1: 
                 xticks, xticklabels, xlabel=timeaxis(taxis)
         if xticks is None: 
-            xticks=gvals(dmin=minx, dmax=maxx, tight=0, mod=1)[0]
+            xticks=gvals(dmin=minx, dmax=maxx, tight=tight, mod=mod)[0]
             xticklabels=xticks
     else:
         if xticklabels is None: xticklabels=xticks
 
 
-
     if yticks is None: 
-        yticks, mult=gvals(dmin=miny, dmax=maxy, tight=0, mod=1)
-        yticks=yticks*10**mult
+        yticks=gvals(dmin=miny, dmax=maxy, tight=tight, mod=mod)[0]
     if yticklabels is None: yticklabels=yticks
 
 
@@ -5363,16 +5396,14 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, ti
         if np.size(f.item('T').array) > 1: plotvars.master_plot.tight_layout()
 
     #Add a legend if needed
-    if legend_location is not None: plotvars.plot.legend(loc=legend_location)
+    if label is not None:
+        legend_properties = {'size': plotvars.legend_text_size, 'weight': plotvars.legend_text_weight}
+        plotvars.plot.legend(loc=legend_location, prop=legend_properties)
+
 
     #Set title
     if title is not None: plotvars.plot.set_title(title,fontsize=plotvars.title_fontsize, \
                                                   fontweight=plotvars.title_fontweight)
-
-
-
-
-
 
 
 
@@ -5381,8 +5412,599 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True, ti
     ##################
     if plotvars.user_plot == 0:       
         if verbose: print 'Saving or viewing plot'
-        #gset(user_gset=0)
         gclose()
+
+
+
+
+def regression_tests():
+    """
+    | Test for cf-plot regressions
+    | Run through some standard levs, gvals, lon and lat labelling
+    | Make all the gallery plots and use Imagemaick to display them alongside a reference plot
+    |
+    |
+    |
+    |
+    |
+    """
+
+    print '=================='
+    print 'Regression testing'
+    print '=================='
+    print ''
+
+
+    print '------------------'
+    print 'Testing for levels'
+    print '------------------'
+    ref_answer=[-35, -30, -25, -20, -15, -10,  -5,   0,   5,  10,  15,  20,  25, 30,  35,  40,  45,  50,  55,  60, 65]
+    compare_arrays(ref=ref_answer, levs_test=True, min=-35, max=65, step=5)
+
+    ref_answer=[-6. , -4.8, -3.6, -2.4, -1.2,  0. ,  1.2,  2.4,  3.6,  4.8,  6. ]
+    compare_arrays(ref=ref_answer, levs_test=True, min=-6, max=6, step=1.2)
+
+    ref_answer=[50000, 51000, 52000, 53000, 54000, 55000, 56000, 57000, 58000, 59000, 60000]
+    compare_arrays(ref=ref_answer, levs_test=True, min=50000, max=60000, step=1000)
+
+    ref_answer=[-7000, -6500, -6000, -5500, -5000, -4500, -4000, -3500, -3000, -2500, -2000, -1500, -1000,  -500]
+    compare_arrays(ref=ref_answer, levs_test=True, min=-7000, max=-300, step=500)
+
+
+    print ''
+    print '-----------------'
+    print 'Testing for gvals'
+    print '-----------------'
+    ref_answer=[281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293]
+    compare_arrays(ref=ref_answer, min=280.50619506835938, max=293.48431396484375, mult=0, gvals_test=True)
+
+    ref_answer=[ 3.6,  3.8,  4. ,  4.2,  4.4,  4.6,  4.8,  5. ,  5.2,  5.4,  5.6, 5.8,  6.0 ,  6.2,  6.4,  6.6]
+    compare_arrays(ref=ref_answer, min=0.356, max=0.675, mult=-1, gvals_test=True)
+
+    ref_answer=[-45, -40, -35, -30, -25, -20, -15, -10,  -5,   0,   5,  10,  15, 20,  25,  30,  35,  40,  45,  50]
+    compare_arrays(ref=ref_answer, min=-49.510975, max=53.206604, mult=0, gvals_test=True)
+
+    ref_answer=[47000, 48000, 49000, 50000, 51000, 52000, 53000, 54000, 55000, 56000, 57000, 58000, 59000, 60000, 61000, 62000, 63000, 64000]
+    compare_arrays(ref=ref_answer, min=46956, max=64538, mult=0, gvals_test=True)
+
+
+
+
+    print ''
+    print '----------------------------------------'
+    print 'Testing for longitude/latitude labelling'
+    print '----------------------------------------'
+    ref_answer=([-180, -120, -60, 0, 60, 120, 180], ['180', '120W', '60W', '0', '60E', '120E', '180'])
+    compare_arrays(ref=ref_answer, min=-180, max=180, type=1, mapaxis_test=True)
+
+    ref_answer=([150, 180, 210, 240, 270], ['150E', '180', '150W', '120W', '90W'])
+    compare_arrays(ref=ref_answer, min=135, max=280, type=1, mapaxis_test=True)
+
+    ref_answer=([0, 10, 20, 30, 40, 50, 60, 70, 80, 90], ['0', '10E', '20E', '30E', '40E', '50E', '60E', '70E', '80E', '90E'])
+    compare_arrays(ref=ref_answer, min=0, max=90, type=1, mapaxis_test=True)
+
+    ref_answer=([-90, -60, -30, 0, 30, 60, 90], ['90S', '60S', '30S', '0', '30N', '60N', '90N'])
+    compare_arrays(ref=ref_answer, min=-90, max=90, type=2, mapaxis_test=True)
+
+
+    ref_answer=([0, 5, 10, 15, 20, 25, 30], ['0', '5N', '10N', '15N', '20N', '25N', '30N'])
+    compare_arrays(ref=ref_answer, min=0, max=30, type=2, mapaxis_test=True)
+
+
+
+
+
+    print ''
+    print '-----------------'
+    print 'Testing for plots'
+    print '-----------------'
+
+
+
+    #Run through gallery examples and compare to reference plots
+
+    #example1
+    reset()
+    setvars(file='example1.png')
+    f=cf.read('/opt/graphics/cfplot_data/tas_A1.nc')
+    con(f.subspace(time=15))
+    compare_images(1)
+
+    #example2
+    reset()
+    setvars(file='example2.png')
+    f=cf.read('/opt/graphics/cfplot_data/tas_A1.nc')
+    con(f.subspace(time=15), blockfill=1)
+    compare_images(2)
+
+
+    #example3
+    reset()
+    setvars(file='example3.png')
+    f=cf.read('/opt/graphics/cfplot_data/tas_A1.nc')
+    mapset(lonmin=-15, lonmax=3, latmin=48, latmax=60)
+    levs(min=265, max=285, step=1)
+    con(f.subspace(time=15))
+    compare_images(3)
+
+
+    #example4
+    reset()
+    setvars(file='example4.png')
+    f=cf.read('/opt/graphics/cfplot_data/ggap.nc')[7]
+    mapset(proj='npstere')
+    con(f.subspace(pressure=500))
+    compare_images(4)
+
+
+    #example5
+    reset()
+    setvars(file='example5.png')
+    f=cf.read('/opt/graphics/cfplot_data/ggap.nc')[7]
+    mapset(proj='spstere', boundinglat=-30, lon_0=180)
+    con(f.subspace(pressure=500))
+    compare_images(5)
+
+
+    #example6
+    reset()
+    setvars(file='example6.png')
+    f=cf.read('/opt/graphics/cfplot_data/ggap.nc')[9]
+    con(f.subspace(longitude=0))
+    compare_images(6)
+
+
+    #example7
+    reset()
+    setvars(file='example7.png')
+    f=cf.read('/opt/graphics/cfplot_data/ggap.nc')[7]
+    con(f.collapse('mean','longitude'))
+    compare_images(7)
+
+
+    #example8
+    reset()
+    setvars(file='example8.png')
+    f=cf.read('/opt/graphics/cfplot_data/ggap.nc')[7]
+    con(f.collapse('mean','longitude'), ylog=1)
+    compare_images(8)
+
+
+    #example9
+    reset()
+    setvars(file='example9.png')
+    f=cf.read('/opt/graphics/cfplot_data/ggap.nc')[2]
+    con(f.subspace(latitude=0.56074494))
+    compare_images(9)
+
+
+    #example10
+    reset()
+    setvars(file='example10.png')
+    f=cf.read('/opt/graphics/cfplot_data/tas_A1.nc')
+    cscale('plasma')
+    con(f.subspace(longitude=0), lines=0)
+    compare_images(10)
+
+
+    #example11
+    reset()
+    setvars(file='example11.png')
+    f=cf.read('/opt/graphics/cfplot_data/tas_A1.nc')
+    gset(-30, 30, '1960-1-1', '1980-1-1')
+    levs(min=280, max=305, step=1)
+    cscale('plasma')
+    con(f.subspace(longitude=0), lines=0)
+    compare_images(11)
+
+
+    #example12
+    reset()
+    setvars(file='example12.png')
+    f=cf.read('/opt/graphics/cfplot_data/tas_A1.nc')
+    cscale('plasma')
+    con(f.subspace(latitude=0), lines=0)
+    compare_images(12)
+
+
+    #example13
+    reset()
+    setvars(file='example13.png')
+    f=cf.read('/opt/graphics/cfplot_data/ggap.nc')
+    u=f[7].subspace(pressure=500)
+    v=f[9].subspace(pressure=500)
+    vect(u=u, v=v, key_length=10, scale=100, stride=5)
+    compare_images(13)
+
+
+    #example14
+    reset()
+    setvars(file='example14.png')
+    f=cf.read('/opt/graphics/cfplot_data/ggap.nc')
+    u=f[7].subspace(pressure=500)
+    v=f[9].subspace(pressure=500)
+    t=f[2].subspace(pressure=500)
+
+    gopen()
+    mapset(lonmin=10, lonmax=120, latmin=-30, latmax=30)
+    levs(min=254, max=270, step=1)
+    con(t)
+    vect(u=u, v=v, key_length=10, scale=50, stride=2)
+    gclose()
+    compare_images(14)
+
+
+    #example15
+    reset()
+    setvars(file='example15.png')
+    u=cf.read('/opt/graphics/cfplot_data/ggap.nc')[7]
+    v=cf.read('/opt/graphics/cfplot_data/ggap.nc')[9]
+    u=u.subspace(Z=500)
+    v=v.subspace(Z=500)
+
+    mapset(proj='npstere')
+    vect(u=u, v=v, key_length=10, scale=100, pts=40, title='Polar plot with regular point distribution')
+    compare_images(15)
+
+
+    #example16
+    reset()
+    setvars(file='example16.png')
+    c=cf.read('/opt/graphics/cfplot_data/vaAMIPlcd_DJF.nc')
+    c=c.subspace(Y=cf.wi(-60,60))
+    c=c.subspace(X=cf.wi(80,160))
+    c=c.collapse('T: mean X: mean')
+
+    g=cf.read('/opt/graphics/cfplot_data/wapAMIPlcd_DJF.nc')
+    g=g.subspace(Y=cf.wi(-60,60))
+    g=g.subspace(X=cf.wi(80,160))
+    g=g.collapse('T: mean X: mean')
+
+    vect(u=c, v=-g, key_length=[5, 0.05], scale=[20,0.2], title='DJF', key_location=[0.95, -0.05])
+    compare_images(16)
+
+
+    #example17
+    reset()
+    setvars(file='example17.png')
+    f=cf.read('/opt/graphics/cfplot_data/tas_A1.nc')
+    g=f.subspace(time=15)
+    gopen()
+    cscale('magma')
+    con(g)
+    stipple(f=g, min=220, max=260, size=100, color='#00ff00')
+    stipple(f=g, min=300, max=330, size=50, color='#0000ff', marker='s')
+    gclose()
+    compare_images(17)
+
+
+    #example18
+    reset()
+    setvars(file='example18.png')
+    f=cf.read('/opt/graphics/cfplot_data/tas_A1.nc')
+    g=f.subspace(time=15)
+    gopen()
+    cscale('magma')
+    mapset(proj='npstere')
+    con(g)
+    stipple(f=g, min=265, max=295, size=100, color='#00ff00')
+    gclose()
+    compare_images(18)
+
+
+    #example19
+    reset()
+    setvars(file='example19.png')
+    f=cf.read('/opt/graphics/cfplot_data/ggap.nc')[7]
+    gopen(rows=2, columns=2, bottom=0.2)
+    gpos(1)
+    con(f.subspace(pressure=500), colorbar=None)
+    gpos(2)
+    mapset(proj='moll')
+    con(f.subspace(pressure=500), colorbar=None)
+    gpos(3)
+    mapset(proj='npstere', boundinglat=30, lon_0=180)
+    con(f.subspace(pressure=500), colorbar=None)
+    gpos(4)
+    mapset(proj='spstere', boundinglat=-30, lon_0=180)
+    con(f.subspace(pressure=500), colorbar_position=[0.1, 0.1, 0.8, 0.02], colorbar_orientation='horizontal')
+    gclose()
+    compare_images(19)
+
+
+    #example20
+    reset()
+    setvars(file='example20.png')
+    f=cf.read('/opt/graphics/cfplot_data/Geostropic_Adjustment.nc')[7]
+    con(f.subspace[9])
+    compare_images(20)
+
+
+    #example21
+    reset()
+    setvars(file='example21.png')
+    f=cf.read('/opt/graphics/cfplot_data/Geostropic_Adjustment.nc')[7]
+    con(f.subspace[9], title='test data', xticks=np.arange(5)*100000+100000,
+        yticks=np.arange(7)*2000+2000, xlabel='x-axis', ylabel='z-axis')
+    compare_images(21)
+
+
+    #example22
+    reset()
+    setvars(file='example22.png')
+    f=cf.read('/opt/graphics/cfplot_data/rgp.nc')[0]
+    cscale('gray')
+    con(f)
+    compare_images(22)
+
+
+    #example23
+    reset()
+    setvars(file='example23.png')
+    f=cf.read('/opt/graphics/cfplot_data/rgp.nc')[0]
+    data=f[0].array
+    xvec=f.item('dim1').array
+    yvec=f.item('dim0').array
+    xpole=160
+    ypole=30
+
+    gopen()
+    cscale('plasma')
+    xpts=np.arange(np.size(xvec))
+    ypts=np.arange(np.size(yvec))
+    gset(xmin=0, xmax=np.size(xvec)-1, ymin=0, ymax=np.size(yvec)-1)
+    levs(min=980,max=1035, step=2.5)
+    con(data, xpts, ypts[::-1])
+    rgaxes(xpole=xpole, ypole=ypole, xvec=xvec, yvec=yvec)
+    gclose()
+    compare_images(23)
+
+
+    #example24
+    reset()
+    setvars(file='example24.png')
+    from matplotlib.mlab import griddata
+
+    #Arrays for data
+    lons=[]
+    lats=[]
+    pressure=[]
+    temp=[]
+
+    #Read data
+    f = open('/opt/graphics/cfplot_data/synop_data.txt')
+    lines = f.readlines()
+    for line in lines:
+       mysplit=line.split()
+       lons=np.append(lons, float(mysplit[1]))
+       lats=np.append(lats, float(mysplit[2]))
+       pressure=np.append(pressure, float(mysplit[3]))
+       temp=np.append(temp, float(mysplit[4]))
+
+    #Linearly interpolate data to a regular grid
+    lons_new=np.arange(140)*0.1-11.0
+    lats_new=np.arange(140)*0.1+49.0
+    temp_new = griddata(lons, lats, temp, lons_new, lats_new, interp='linear')
+
+    cscale('parula')
+    con(x=lons_new, y=lats_new, f=temp_new, ptype=1)
+    compare_images(24)
+
+
+
+    #example25
+    reset()
+    setvars(file='example25.png')
+    gopen()
+    con(x=lons_new, y=lats_new, f=temp_new, ptype=1)
+    for i in np.arange(len(lines)):
+        plotvars.plot.text(float(lons[i]), float(lats[i]), str(temp[i]), \
+                           horizontalalignment='center',verticalalignment='center')
+
+    gclose()
+    compare_images(25)
+
+
+    #example26
+    reset()
+    setvars(file='example26.png')
+    from netCDF4 import Dataset as ncfile
+    from matplotlib.mlab import griddata
+
+    #Get an Orca grid and flatten the arrays
+    nc = ncfile('/opt/graphics/cfplot_data/orca2.nc')
+    lons=np.array(nc.variables['longitude'])
+    lats=np.array(nc.variables['latitude'])
+    temp=np.array(nc.variables['sst'])
+    lons=lons.flatten()
+    lats=lats.flatten()
+    temp=temp.flatten()
+
+    #Add wrap around at both longitude limits
+    pts=np.squeeze(np.where(lons < -150))
+    lons=np.append(lons, lons[pts]+360)
+    lats=np.append(lats, lats[pts])
+    temp=np.append(temp, temp[pts])
+
+    pts=np.squeeze(np.where(lons > 150))
+    lons=np.append(lons, lons[pts]-360)
+    lats=np.append(lats, lats[pts])
+    temp=np.append(temp, temp[pts])
+
+    lons_new=np.arange(181*8)*0.25-180.0
+    lats_new=np.arange(91*8)*0.25-90.0
+    temp_new = griddata(lons, lats, temp, lons_new, lats_new, interp='linear')
+
+    con(x=lons_new, y=lats_new, f=temp_new, ptype=1)
+    compare_images(26)
+
+
+    #example27
+    reset()
+    setvars(file='example27.png')
+    f=cf.read('/opt/graphics/cfplot_data/ggap.nc')[7]
+    g=f.collapse('X: mean')
+    lineplot(g.subspace(pressure=100), marker='o', color='blue',\
+             title='Zonal mean zonal wind at 100mb')
+    compare_images(27)
+
+
+
+    #example28
+    reset()
+    setvars(file='example28.png')
+    f=cf.read('/opt/graphics/cfplot_data/ggap.nc')[7]
+    g=f.collapse('X: mean')
+    xticks=[-90,-75,-60,-45,-30,-15,0,15,30,45,60,75,90]
+    xticklabels=['90S','75S','60S','45S','30S','15S','0','15N','30N','45N','60N','75N','90N']
+    xpts=[-30, 30, 30, -30, -30]
+    ypts=[-8, -8, 5, 5, -8]
+
+    gset(xmin=-90, xmax=90, ymin=-10, ymax=50)
+    gopen()
+    lineplot(g.subspace(pressure=100), marker='o', color='blue',\
+             title='Zonal mean zonal wind', label='100mb')
+    lineplot(g.subspace(pressure=200), marker='D', color='red',\
+             label='200mb', xticks=xticks, xticklabels=xticklabels,\
+             legend_location='upper right')
+    plotvars.plot.plot(xpts,ypts, linewidth=3.0, color='green')
+    plotvars.plot.text(35, -2, 'Region of interest', horizontalalignment='left')
+    gclose()
+    compare_images(28)
+
+
+
+    #example29
+    reset()
+    setvars(file='example29.png')
+    f=cf.read('/opt/graphics/cfplot_data/tas_A1.nc')
+    temp=f.subspace(time=cf.wi(cf.dt('1900-01-01'), cf.dt('1980-01-01')))
+    temp_annual=temp.collapse('T: mean', group=cf.Y())
+    temp_annual_global=temp_annual.collapse('area: mean')
+    temp_annual_global.Units -= 273.15
+    lineplot(temp_annual_global, title='Global average annual temperature', color='blue')
+    compare_images(29)
+
+
+
+
+def compare_images(example=None):
+    """
+    | Compare images and return an error string if they don't match
+    |
+    |
+    |
+    |
+    |
+    |
+    |
+    """
+    from scipy import misc
+    import hashlib
+    disp=which('display')
+    conv=which('convert')
+    file='example'+str(example)+'.png'
+    file_new='/home/swsheaps/cfplot.src/cfplot/'+file
+    file_ref='/home/swsheaps/regression/'+file
+    image_new=misc.imread(file_new)
+    image_ref=misc.imread(file_ref)
+
+    #Check md5 checksums are the same, display files if not 
+    if  hashlib.md5(open(file_new,'rb').read()).hexdigest() != hashlib.md5(open(file_ref,'rb').read()).hexdigest():
+        print '***Failed example '+str(example)+'**'
+        error_image='/home/swsheaps/cfplot.src/cfplot/'+'error_'+file
+
+        p=subprocess.Popen([conv, "+append", file_new, file_ref, error_image])
+        (output, err) = p.communicate() 
+        p_status = p.wait()
+        subprocess.Popen([disp, error_image])
+
+    else:
+        print 'Passed example '+str(example)
+
+
+
+def compare_arrays(ref=None, levs_test=None, gvals_test=None, mapaxis_test=None, min=None, max=None, step=None, mult=None, type=None):
+    """
+    | Compare arrays and return an error string if they don't match
+    |
+    |
+    |
+    |
+    |
+    |
+    |
+    """
+
+    anom=0
+    if levs_test is True:
+        levs(min, max, step)
+        if np.size(ref) != np.size(plotvars.levels):
+            anom=1
+        else:
+            for val in np.arange(np.size(ref)):
+                if abs(ref[val]-plotvars.levels[val]) >= 1e-6: anom=1
+
+
+        if anom == 1:
+            print '***levs failure***'
+            print 'min, max, step are', min, max, step
+            print 'generated levels are:'
+            print plotvars.levels
+            print 'expected levels:'
+            print ref 
+        else:
+            print 'Passed cfp.levs(min='+str(min)+', max='+str(max)+', step='+str(step)+')'
+
+
+    anom=0
+    if gvals_test is True:
+        vals, testmult=gvals(min, max)
+        if np.size(ref) != np.size(vals):
+            anom=1
+        else:
+            for val in np.arange(np.size(ref)):
+                if abs(ref[val]-vals[val]) >= 1e-6: anom=1
+        if mult != testmult: anom=1
+
+        if anom == 1:
+            print '***gvals failure***'
+            print ''
+            print 'generated values are:', vals
+            print 'with a  multiplier of ', testmult
+            print ''
+            print 'expected values:', ref
+            print 'with a  multiplier of ', mult 
+        else:
+            print 'Passed cfp.gvals(min='+str(min)+', max='+str(max)+')'
+
+
+
+
+    anom=0
+    if mapaxis_test is True:
+        ref_ticks=ref[0]
+        ref_labels=ref[1]
+        test_ticks, test_labels=mapaxis(min=min, max=max, type=type)
+        if np.size(test_ticks) != np.size(ref_ticks):
+            anom=1
+        else:
+            for val in np.arange(np.size(ref_ticks)):
+                if abs(ref_ticks[val]-test_ticks[val]) >= 1e-6: anom=1
+                if ref_labels[val] != test_labels[val]: anom=1
+
+
+        if anom == 1:
+            print '***mapaxis failure***'
+            print ''
+            print 'scfp.mapaxis(min='+str(min)+', max='+str(max)+', type='+str(type)+')'
+            print 'generated values are:', test_ticks
+            print 'with labels:', test_labels
+            print ''
+            print 'expected ticks:', ref_ticks
+            print 'with labels:', ref_labels
+        else:
+            print 'Passed cfp.mapaxis(min='+str(min)+', max='+str(max)+', type='+str(type)+')'
 
 
 
