@@ -1,7 +1,7 @@
 """
 Routines for making climate contour/vector plots using cf-python, matplotlib
 and basemap.
-Andy Heaps NCAS-CMS January 2017
+Andy Heaps NCAS-CMS February 2017
 """
 import numpy as np
 import subprocess
@@ -271,8 +271,8 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
             raise Warning(errstr)
 
     # Turn off colorbar if fill is turned off
-    if fill == 0 and blockfill is None:
-        colorbar = 0
+    if not fill and not blockfill:
+        colorbar = False
 
     # Revert to default colour scale if cscale_flag flag is set
     if plotvars.cscale_flag == 0:
@@ -301,7 +301,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
                 if (proj == 'cyl' and colorbar_orientation == 'horizontal'):
                     colorbar_shrink = 1.0
             if plotvars.orientation == 'portrait':
-                if (projj == 'cyl' and colorbar_orientation == 'vertical'):
+                if (proj == 'cyl' and colorbar_orientation == 'vertical'):
                     colorbar_shrink = 0.25
                 if (proj == 'cyl' and colorbar_orientation == 'horizontal'):
                     colorbar_shrink = 1.0
@@ -695,7 +695,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
             fontweight=title_fontweight)
 
         # Color bar
-        if colorbar == 1:
+        if colorbar:
             if verbose:
                 print 'con - adding colour bar'
             pad = 0.10
@@ -880,6 +880,11 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
         if (xmin == -90 and xmax == 90):
             xstep = 30
         ystep = 100
+        myrange = abs(ymax - ymin)
+
+        if myrange < 1:
+            ystep = abs(ymax - ymin)/10.
+
         if abs(ymax - ymin) > 2000:
             ystep = 500
         if abs(ymax - ymin) > 5000:
@@ -893,6 +898,10 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
                 dmin=min(
                     ymin, ymax), dmax=max(
                     ymin, ymax), tight=1, mystep=ystep, mod=0)[0]
+
+            if myrange < 1 and myrange > 0.1:
+                heightticks=np.arange(10)/10.0
+
         else:
             heightticks = []
             for tick in 1000, 100, 10, 1:
@@ -927,6 +936,10 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
             heightlabels = heightticks
             xlabel = ''
             ylabel = ''
+
+        if yticks is None:
+            yticks = heightticks
+            yticklabels = heightlabels
 
         if xticks is None and xaxis:
             if ptype == 2:
@@ -994,6 +1007,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
                 ymax=ymax,
                 ylog=1,
                 user_gset=user_gset)
+
 
         # Label axes
         axes_plot(xticks=xticks, xticklabels=xticklabels, yticks=heightticks,
@@ -1084,7 +1098,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
                                                linewidths=zero_thick, tri=tri)
 
         # Colorbar
-        if colorbar == 1:
+        if colorbar:
             pad = 0.15
             if plotvars.rows >= 3:
                 pad = 0.25
@@ -1452,8 +1466,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
                                            linewidths=zero_thick, tri=tri)
 
         # Colorbar
-        if colorbar == 1:
-
+        if colorbar:
             pad = 0.15
             if plotvars.rows >= 3:
                 pad = 0.25
@@ -1645,8 +1658,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
                                            linewidths=zero_thick, tri=tri)
 
         # Colorbar
-        if colorbar == 1:
-
+        if colorbar:
             pad = 0.15
             if plotvars.rows >= 3:
                 pad = 0.25
@@ -2286,6 +2298,7 @@ def axes_plot(xticks=None, xticklabels=None, yticks=None, yticklabels=None,
         ymin = plotvars.ymin
         ymax = plotvars.ymax
 
+
     # Retrieve any user set axes parameters
     if plotvars.xticks is not None:
         xticks = plotvars.xticks
@@ -2601,7 +2614,8 @@ def gclose(view=True):
                 subprocess.Popen([disp, tfile])
             else:
                 plotvars.viewer = 'matplotlib'
-        else:
+        if plotvars.viewer == 'matplotlib':
+            # Use Matplotlib viewer
             plot.show()
             plot.close()
 
@@ -3551,12 +3565,6 @@ def bfill(f=None, x=None, y=None, clevs=False, lonlat=False, bound=False):
     # Assign f to field as this may be modified in lat-lon plots
     field = f
 
-    # Add in extra levels for colour bar extensions if present.
-    levs = np.array(clevs).astype(float)
-    if (plotvars.levels_extend == 'min' or plotvars.levels_extend == 'both'):
-        levs = np.insert(levs, 0, -1e30)
-    if (plotvars.levels_extend == 'max' or plotvars.levels_extend == 'both'):
-        levs = np.append(levs, 1e30)
 
     if bound:
         xpts = x
@@ -3607,21 +3615,21 @@ def bfill(f=None, x=None, y=None, clevs=False, lonlat=False, bound=False):
         xpts = np.append(xpts, right_bound)
         ypts = np.append(ypts, upper_bound)
 
-    # Make plot
-    # Set colour map
-    cmin = 0
-    cmax = np.size(plotvars.cs)
-    if (plotvars.levels_extend == 'min' or plotvars.levels_extend == 'both'):
-        cmin = 1
-    if (plotvars.levels_extend == 'max' or plotvars.levels_extend == 'both'):
-        cmax = np.size(plotvars.cs) - 1
 
-    cmap = matplotlib.colors.ListedColormap(plotvars.cs[cmin:cmax])
-    if (plotvars.levels_extend == 'min' or plotvars.levels_extend == 'both'):
-        cmap.set_under(plotvars.cs[0])
-    if (plotvars.levels_extend == 'max' or plotvars.levels_extend == 'both'):
-        cmap.set_over(plotvars.cs[-1])
+    # Add below and above contour limits
+    if isinstance(field, np.ma.MaskedArray) is False:
+        if plotvars.levels_extend == 'both' or plotvars.levels_extend == 'min':
+            clevs=np.insert(clevs, 0, -5000*(clevs[1]-clevs[0]))
 
+    if plotvars.levels_extend == 'both' or plotvars.levels_extend == 'max':
+        sz=np.size(clevs)
+        clevs=np.append(clevs, (clevs[sz-1]-clevs[sz-2])*5000)
+
+    # Generate a Matplotlib colour map
+    cmap = matplotlib.colors.ListedColormap(plotvars.cs)
+    cmap.set_under(plotvars.cs[0])
+    cmap.set_over(plotvars.cs[-1])
+    
     norm = matplotlib.colors.BoundaryNorm(clevs, ncolors=cmap.N, clip=False)
     im = plotvars.plot.pcolormesh(xpts, ypts, field, cmap=cmap, norm=norm)
 
@@ -3703,7 +3711,7 @@ def regrid(f=None, x=None, y=None, xnew=None, ynew=None, lonlat=None):
 
 
 def stipple(f=None, x=None, y=None, min=None, max=None,
-            size=80, color='k', pts=50, marker='.'):
+            size=80, color='k', pts=50, marker='.', edgecolors='k'):
     """
      | stipple - put dots on the plot to indicate value of interest
      |
@@ -3716,6 +3724,7 @@ def stipple(f=None, x=None, y=None, min=None, max=None,
      | color='k' - default colour for stipples
      | pts=50 - number of points in the x direction
      | marker='.' - default marker for stipples
+     | edegecolors='k' - outline colour
      |
      |
      :Returns:
@@ -3791,7 +3800,8 @@ def stipple(f=None, x=None, y=None, min=None, max=None,
             ynew_map[valid_points],
             s=size,
             c=color,
-            marker=marker)
+            marker=marker,
+            edgecolors=edgecolors)
 
     if plotvars.plot_type == 2:
         plotvars.plot.scatter(
@@ -3799,7 +3809,8 @@ def stipple(f=None, x=None, y=None, min=None, max=None,
             ynew[valid_points],
             s=size,
             c=color,
-            marker=marker)
+            marker=marker,
+            edgecolors=edgecolors)
 
 
 def stipple_points(xmin=None, xmax=None, ymin=None,
@@ -4711,14 +4722,14 @@ def process_color_scales():
                  'GrayWhiteGray', 'GreenYellow', 'helix', 'helix1',
                  'hotres', 'matlab_hot', 'matlab_hsv', 'matlab_jet',
                  'matlab_lines', 'ncl_default', 'ncview_default',
-                 'OceanLakeLandSnow', 'rainbow', 'rainbow+white+gray',
-                 'rainbow+white', 'rainbow+gray', 'tbr_240-300',
-                 'tbr_stdev_0-30', 'tbr_var_0-500', 'tbrAvg1', 'tbrStd1',
-                 'tbrVar1', 'thelix', 'ViBlGrWhYeOrRe', 'wh-bl-gr-ye-re',
+                 'OceanLakeLandSnow', 'rainbow', 'rainbow_white_gray',
+                 'rainbow_white', 'rainbow_gray', 'tbr_240_300',
+                 'tbr_stdev_0_30', 'tbr_var_0_500', 'tbrAvg1', 'tbrStd1',
+                 'tbrVar1', 'thelix', 'ViBlGrWhYeOrRe', 'wh_bl_gr_ye_re',
                  'WhBlGrYeRe', 'WhBlReWh', 'WhiteBlue',
                  'WhiteBlueGreenYellowRed', 'WhiteGreen',
                  'WhiteYellowOrangeRed', 'WhViBlGrYeOrRe', 'WhViBlGrYeOrReWh',
-                 'wxpEnIR', '3gauss', '3saw']
+                 'wxpEnIR', '3gauss', '3saw', 'BrBG']
 
     ncl_meteoswiss = ['hotcold_18lev', 'hotcolr_19lev', 'mch_default',
                       'perc2_9lev', 'percent_11lev', 'precip2_15lev',
@@ -4746,8 +4757,8 @@ def process_color_scales():
                  'sunshine_diff_12lev', 'temp_19lev', 'temp_diff_18lev',
                  'temp_diff_1lev', 'topo_15lev', 'wgne15', 'wind_17lev']
 
-    orography = ['os250kmetres', 'wiki-1.0.2', 'wiki-1.0.3',
-                 'wiki-2.0', 'wiki-2.0-reduced', 'arctic']
+    orography = ['os250kmetres', 'wiki_1_0_2', 'wiki_1_0_3',
+                 'wiki_2_0', 'wiki_2_0_reduced', 'arctic']
 
     idl_guide = []
     for i in np.arange(1, 45):
@@ -4847,7 +4858,7 @@ def process_color_scales():
                 ax1, cmap=cmap, orientation='horizontal', ticks=None)
             cb1.set_ticks([0.0, 1.0])
             cb1.set_ticklabels(['', ''])
-            file = '/home/swsheaps/public_html/cfplot_sphinx/images/'
+            file = '/home/swsheaps/cf-docs/cfplot_sphinx/images/'
             file += 'colour_scales/' + scale + '.png'
             plot.savefig(file)
             plot.close()
@@ -4911,11 +4922,14 @@ def setvars(file=None, title_fontsize=None, text_fontsize=None,
      | axis_label_fontweight='normal' - axis font weight
      | continent_thickness=None - default=1.5
      | continent_color=None - default='k' (black)
-     | viewer='display' - use ImageMagick display program to display
+     | viewer=None - use ImageMagick display program to display
      |                    the pictures.  Set to 'matplotlib' to use the
      |                    built in matplotlib viewer.  display is non-blocking
      |                    of the command prompt while the built in matplotlib
-     |                    viewer is blocking.
+     |                    viewer is blocking.  Set to anything else to not
+     |                    view the picture.  i.e. in jupyter notebook set to
+     |                    'inline' to just view the pictures inline with
+     |                    the notebook.
      |
      | tspace_year=None - time axis spacing in years
      | tspace_month=None - time axis spacing in months
@@ -4967,6 +4981,7 @@ def setvars(file=None, title_fontsize=None, text_fontsize=None,
         plotvars.legend_text_size = 11
         plotvars.legend_text_weight = 'normal'
         plotvars.cs_uniform = True
+        plotvars.viewer='display'
 
     if file is not None:
         plotvars.file = file
@@ -5624,13 +5639,15 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
     if plotvars.user_gset == 1:
         tight = 1
     if xticks is None:
-        if xlabel[0:3] == 'lon':
-            xticks, xticklabels = mapaxis(minx, maxx, type=1)
-        if xlabel[0:3] == 'lat':
-            xticks, xticklabels = mapaxis(minx, maxx, type=2)
+        if xlabel is not None:
+            if xlabel[0:3] == 'lon':
+                xticks, xticklabels = mapaxis(minx, maxx, type=1)
+            if xlabel[0:3] == 'lat':
+                xticks, xticklabels = mapaxis(minx, maxx, type=2)
         if cf_field:
-            if np.size(f.item('T').array) > 1:
-                xticks, xticklabels, xlabel = timeaxis(taxis)
+            if f.item('T') is not None:
+                if np.size(f.item('T').array) > 1:
+                    xticks, xticklabels, xlabel = timeaxis(taxis)
         if xticks is None:
             xticks = gvals(dmin=minx, dmax=maxx, tight=tight, mod=mod)[0]
             xticklabels = xticks
@@ -5639,7 +5656,10 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
             xticklabels = xticks
 
     if yticks is None:
-        yticks = gvals(dmin=miny, dmax=maxy, tight=tight, mod=mod)[0]
+        if abs(maxy - miny) > 1:
+             yticks = gvals(dmin=miny, dmax=maxy, tight=tight, mod=mod)[0]
+        else:
+             yticks = gvals(dmin=miny, dmax=maxy, tight=tight, mod=0)[0]
     if yticklabels is None:
         yticklabels = yticks
 
@@ -5683,6 +5703,7 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
     plotvars.plot.set_xlabel(xlabel)
     plotvars.plot.set_ylabel(ylabel)
 
+
     if swap_xy is not True:
         if xticks is not None:
             plotvars.plot.set_xticks(xticks)
@@ -5696,6 +5717,7 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
                 yticklabels,
                 rotation=plotvars.ytick_label_rotation,
                 horizontalalignment=plotvars.ytick_label_align)
+
     else:
         if xticks is not None:
             plotvars.plot.set_yticks(xticks)
@@ -5717,8 +5739,9 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
     # Time axes sometimes spill over the edge of the plot limits so
     # use tight_layout() to adjust these plots
     if cf_field:
-        if np.size(f.item('T').array) > 1:
-            plotvars.master_plot.tight_layout()
+        if f.item('T') is not None:
+            if np.size(f.item('T').array) > 1:
+                plotvars.master_plot.tight_layout()
 
     # Add a legend if needed
     if label is not None:
@@ -6332,3 +6355,387 @@ def compare_arrays(ref=None, levs_test=None, gvals_test=None,
             pass_str = 'Passed cfp.mapaxis(min=' + str(min) + ', max='
             pass_str += str(max) + ', type=' + str(type) + ')'
             print pass_str
+
+
+
+def trajectory(f=None,
+             title=None, ptype=0, linestyle='-', linewidth=2.0, color='k',
+             axes=True, xaxis=True, yaxis=True,
+             xlog=False, ylog=False, verbose=None,
+             marker='o', markersize=5.0, label=None,
+             legend_location='upper right', xunits=None, yunits=None,
+             xlabel=None, ylabel=None, xticks=None, yticks=None,
+             xticklabels=None, yticklabels=None, colorbar=True,
+             colorbar_position=None, colorbar_orientation='horizontal',
+             head_width=2.0, head_length=2.0,
+             fc='k', ec='k'):
+    """
+    | trajectory is the interface to trajectory plotting in cf-plot.
+    | The minimum use is trajectory(f) where f is a CF field.
+    |
+    | f - CF data used to make a line plot
+    | linestyle='-' - line style
+    | color='k - line color
+    | linewidth=1.0 - line width
+    | marker='o' - marker for points along the line
+    | markersize=5.0 - size of the marker
+    | xlog=False - log x-axis
+    | ylog=False - log y-axis
+    | label=None - line label - label for line
+    | legend_location='upper right' - default location of legend
+    | verbose=None - change to 1 to get a verbose listing of what lineplot
+    |                is doing
+    |
+    | The following parameters override any CF data defaults:
+    | title=None - plot title
+    | xunits=None - x units
+    | yunits=None - y units
+    | xlabel=None - x name
+    | ylabel=None - y name
+    | xticks=None - x ticks
+    | xticklabels=None - x tick labels
+    | yticks=None - y ticks
+    | yticklabels - y tick labels
+    | colorbar - plot a colorbar
+    | colorbar_position=None - position of colorbar
+    |                          [xmin, ymin, x_extent,y_extent] in normalised
+    |                          coordinates. Use when a common colorbar
+    |                          is required for a set of plots. A typical set
+    |                          of values would be [0.1, 0.05, 0.8, 0.02]
+    | colorbar_orientation='horizontal' - orientation of the colorbar
+    | head_width=2.0 - vector head width
+    | head_length=2.0 - vector head length
+    | fc='k' - vector face colour
+    | ec='k' - vector edge colour
+
+
+    """
+    if verbose:
+        print 'trajectory - making a trajectory plot'
+
+
+
+
+    #Read in data
+    tracks=200
+    lonarr=f[1].array
+    latarr=f[6].array
+    intensityarr=f[3].array
+    first_pointarr=f[4].array
+    num_ptsarr=f[7].array
+
+
+    ##################
+    # Open a new plot is necessary
+    ##################
+    if plotvars.user_plot == 0:
+        gopen(user_plot=0)
+
+    # Set up mapping
+    if plotvars.user_mapset == 0:
+        plotvars.lonmin = -180
+        plotvars.lonmax = 180
+        plotvars.latmin = -90
+        plotvars.latmax = 90
+
+    set_map()
+    mymap = plotvars.mymap
+    user_mapset = plotvars.user_mapset
+
+    # Set the plot limits
+    gset(xmin=plotvars.lonmin, xmax=plotvars.lonmax,
+         ymin=plotvars.latmin, ymax=plotvars.latmax, user_gset=0)
+
+
+    # Select the levels to use
+    if plotvars.user_levs == 1:
+        # User defined
+        if verbose:
+            print 'trajectory - using user defined levels'
+        clevs = plotvars.levels
+        mult = 0
+        fmult = 1
+    else:
+        # Automatic levels
+        if verbose:
+            print 'trajectory - generating automatic levels'
+        clevs, mult = gvals(dmin=np.nanmin(
+            intensityarr), dmax=np.nanmax(intensityarr), tight=0)
+        fmult = 10**-mult
+
+    print 'clevs, mult are ', clevs, mult
+
+    # Set the default colour scale
+    if plotvars.cscale_flag == 0:
+        cscale('viridis', ncols=np.size(clevs) + 1)
+        plotvars.cscale_flag = 0
+
+    # User selected colour map but no mods so fit to levels
+    if plotvars.cscale_flag == 1:
+        cscale(plotvars.cs_user, ncols=np.size(clevs) + 1)
+        plotvars.cscale_flag = 1
+
+
+    lons = lonarr
+    lats = latarr
+    intensity = intensityarr
+
+    lons = np.zeros([4,6])
+    lons[:,:] = np.nan
+    lats = np.zeros([4,6])
+    lats[:,:] = np.nan
+    intensity = np.zeros([4,6])
+    intensity[:,:] = np.nan
+
+    lons[0,:]=[-10, 30, -20, 50, 10, 40]
+    lons[1,:]=lons[0,:]+90
+    lons[2,:]=lons[0,:]+180
+    lons[3,:]=lons[0,:]+270
+
+    lats[0,:]=[-50, -20, 30, -10, 50, 70]
+    lats[1,:]=lats[0,:]
+    lats[2,:]=lats[0,:]
+    lats[3,:]=lats[0,:]
+
+    intensity[0,:]=[1, 3, 5, 7, 8, 12]
+    intensity[1,:]=intensity[0,:]
+    intensity[2,:]=intensity[0,:]
+    intensity[3,:]=intensity[0,:]
+
+    # Cylindrical projection - shift points to match grid
+    #if plotvars.proj == 'cyl':
+    #    # Shift longitudes if needed
+    #    pts=np.where(lons < plotvars.lonmin)
+    #    if pts > 0:
+    #        lons[pts]=lons[pts]+360
+    #    pts=np.where(lons > plotvars.lonmax)
+    #    if pts > 0:
+    #        lons[pts]=lons[pts]-360
+
+
+    # Plot the points withcolours as defined by clevs
+    #for val in np.arange(np.size(clevs)-1):
+    #    pts = np.where(intensity >= clevs[val])
+    #    xpts, ypts = mymap(lons[pts], lats[pts])
+    #    plotvars.plot.plot(xpts, ypts, color=plotvars.cs[val],
+    #                       marker=marker, markersize=markersize,
+    #                       linewidth=0.0)
+
+    # Convert to 0 to 360 
+    # mylons = np.mod(mylons + 360.0, 360.0)
+    # Convert to -360 to 0
+    # mylons=mylons - 360.0
+
+
+
+      
+    ################
+    #Vector plotting
+    ################
+
+    if plotvars.proj == 'cyl':
+        for col in np.arange(np.shape(lons)[0]):
+            print 'col is ', col
+
+            xpts, ypts = mymap(lons[col, :], lats[col, :])
+
+            for pt in np.arange(np.size(lons[col, :])-1):
+                plotvars.plot.arrow(xpts[pt], ypts[pt],
+                                    xpts[pt+1] - xpts[pt],
+                                    ypts[pt+1] - ypts[pt], 
+                                    head_width=head_width,
+                                    head_length=head_length,
+                                    fc=fc, ec=ec, 
+                                    length_includes_head=True)
+
+            # And again to cover LHS of plot
+            xpts, ypts = mymap(lons[col, :]-360.0, lats[col, :])
+            for pt in np.arange(np.size(lons[col, :])-1):
+                plotvars.plot.arrow(xpts[pt], ypts[pt],
+                                    xpts[pt+1] - xpts[pt],
+                                    ypts[pt+1] - ypts[pt], 
+                                    head_width=head_width,
+                                    head_length=head_length,
+                                    fc=fc, ec=ec,
+                                    length_includes_head=True)
+
+            # And again to cover RHS of plot
+            xpts, ypts = mymap(lons[col, :]+360.0, lats[col, :])
+            for pt in np.arange(np.size(lons[col, :])-1):
+                plotvars.plot.arrow(xpts[pt], ypts[pt],
+                                    xpts[pt+1] - xpts[pt],
+                                    ypts[pt+1] - ypts[pt], 
+                                    head_width=head_width,
+                                    head_length=head_length,
+                                    fc=fc, ec=ec,
+                                    length_includes_head=True)
+
+
+    if plotvars.proj == 'npstere' or plotvars.proj == 'spstere':
+        for col in np.arange(np.shape(lons)[0]):
+            xpts, ypts = mymap(lons[col, :], lats[col, :])
+            for pt in np.arange(np.size(lons[col, :])-1):
+ 
+                x, y = mymap(xpts[pt], ypts[pt])
+                x2, y2 = mymap(xpts[pt+1],ypts[pt+1])
+
+
+                print 'x and y', x, y, x2, y2
+                #x, y = map(2, 41)
+                #x2, y2 = mymap(0, 0)
+                plotvars.plot.annotate('Barcelona', xy=(x, y),  xycoords='data',
+                        xytext=(x2, y2), textcoords='data',
+                        arrowprops=dict(arrowstyle="->")
+                        )
+
+
+            #plotvars.plot.plot(xpts, ypts, linewidth=3.0, marker='o')
+            #plotvars.plot.plot(xpts, ypts, linewidth=linewidth, color=color, marker=marker, markersize=markersize)
+
+
+
+
+    # axes
+    user_xlabel = xlabel
+    user_ylabel = ylabel
+
+    if plotvars.proj == 'cyl':
+        print 'axes, xaxis, yaxis are', axes, xaxis, yaxis 
+
+
+
+        if verbose:
+            print 'trajectory - adding cylindrical axes'
+        lonticks, lonlabels = mapaxis(
+            min=plotvars.lonmin, max=plotvars.lonmax, type=1)
+        latticks, latlabels = mapaxis(
+            min=plotvars.latmin, max=plotvars.latmax, type=2)
+        if axes:
+            if xaxis:
+                if xticks is None:
+                    print 'plotting xaxis'
+                    print lonticks, lonlabels
+                    axes_plot(xticks=lonticks, xticklabels=lonlabels)
+                else:
+                    if xticklabels is None:
+                        axes_plot(xticks=xticks, xticklabels=xticks)
+                    else:
+                        axes_plot(xticks=xticks, xticklabels=xticklabels)
+            if yaxis:
+                if yticks is None:
+                    print latticks, latlabels
+                    axes_plot(yticks=latticks, yticklabels=latlabels)
+                else:
+                    if yticklabels is None:
+                        axes_plot(yticks=yticks, yticklabels=yticks)
+                    else:
+                        axes_plot(yticks=yticks, yticklabels=yticklabels)
+
+            if user_xlabel is not None:
+                plotvars.plot.set_xlabel(user_xlabel)
+            if user_ylabel is not None:
+                plotvars.plot.set_ylabel(user_ylabel)
+
+    if plotvars.proj == 'npstere' or plotvars.proj == 'spstere':
+        if verbose:
+            print 'trajectory - adding stereograpic axes'
+            latstep = 30
+            if 90 - abs(plotvars.boundinglat) <= 50:
+                latstep = 10
+            if axes:
+                if xaxis:
+                    if xticks is None:
+                        mymap.drawmeridians(
+                            np.arange(0, 360, 60), labels=[1, 1, 1, 1])
+                    else:
+                        mymap.drawmeridians(xticks, labels=[1, 1, 1, 1])
+                if yaxis:
+                    if yticks is None:
+                        mymap.drawparallels(np.arange(-90, 120, latstep))
+                    else:
+                        mymap.drawparallels(yticks)
+
+    # Coastlines and title
+    continent_thickness = plotvars.continent_thickness
+    continent_color = plotvars.continent_color
+    title_fontsize = plotvars.title_fontsize
+    text_fontsize = plotvars.text_fontsize
+    title_fontweight = plotvars.title_fontweight
+    axis_label_fontsize = plotvars.axis_label_fontsize
+    mymap.drawcoastlines(linewidth=continent_thickness, color=continent_color)
+    if title is not None:
+        plotvars.plot.set_title(title, y=1.03, fontsize=title_fontsize,
+                                fontweight=title_fontweight)
+
+    # Color bar
+    if colorbar:
+        if verbose:
+            print 'con - adding colour bar'
+
+        # Get plotting window coordinates and set colorbar coordinates
+        if colorbar_position is None:
+            bbox=plotvars.plot.get_position()
+            if colorbar_orientation == 'horizontal':
+                ax1 = plotvars.master_plot.add_axes([bbox.x0, bbox.y0, bbox.x1-bbox.x0, 0.02])
+            else:
+                ax1 = plotvars.master_plot.add_axes([bbox.x1, bbox.y0, 0.02, bbox.y1-bbox.y0])
+        else:
+            ax1 = plotvars.master_plot.add_axes(colorbar_position)
+
+
+        # Get the colour map
+        colmap = cscale_get_map()
+        cmap = matplotlib.colors.ListedColormap(colmap)
+        extend=plotvars.levels_extend
+        boundaries=plotvars.levels.astype(float)
+        # Add colorbar extensions if definded by levs.  Using boundaries[0]-1 
+        # for the lower and boundaries[-1]+1 is just for the colorbar and
+        # has no meaning for the plot.
+        if (extend == 'min' or extend == 'both'):
+            cmap.set_under(plotvars.cs[0])
+            boundaries = np.insert(boundaries, 0, boundaries[0]-1)
+        if (extend == 'max' or extend == 'both'):
+            cmap.set_over(plotvars.cs[-1])
+            boundaries = np.insert(boundaries, len(boundaries), boundaries[-1]+1)
+
+        cbar = matplotlib.colorbar.ColorbarBase(ax1, cmap=cmap,
+                            norm=plotvars.norm,
+                            extend=extend,
+                            extendfrac='auto',
+                            boundaries=boundaries,
+                            ticks=plotvars.levels,
+                            spacing='uniform',
+                            orientation=colorbar_orientation)
+
+        # Reset plot position
+        gpos(pos=plotvars.pos)
+
+        cbar.set_label('Intensity', fontsize=text_fontsize,
+                       fontweight=title_fontweight)
+
+        # Bug in Matplotlib colorbar labelling
+        # With clevs=[-1, 1, 10000, 20000, 30000, 40000, 50000, 60000]
+        # Labels are [0, 2, 10001, 20001, 30001, 40001, 50001, 60001]
+        # With a +1 near to the colorbar label
+        cbar.set_ticks([i for i in plotvars.levels])
+
+        for t in cbar.ax.get_xticklabels():
+           t.set_fontsize(plotvars.text_fontsize)
+           t.set_fontweight(plotvars.text_fontweight)
+
+    # reset plot limits if not a user plot
+    if plotvars.user_gset == 0:
+        gset()
+
+
+    ##########
+    # Save plot
+    ##########
+    if plotvars.user_plot == 0:
+        gset()
+        cscale()
+        gclose()
+
+
+
+
