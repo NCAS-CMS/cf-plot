@@ -13,6 +13,7 @@ import os
 import sys
 import matplotlib.pyplot as plot
 from mpl_toolkits.basemap import Basemap, shiftgrid, addcyclic
+from distutils.version import StrictVersion
 
 
 class pvars(object):
@@ -28,12 +29,12 @@ class pvars(object):
         for a, v in self.__dict__.iteritems():
             return '\n'.join(out)
 
-cf_version_min = '1.0.1'
+cf_version_min = '2.0.0' #'1.0.1'
 cf_errstr = '\n cf-python > ' + cf_version_min + \
     ' needs to be installed to use cf-plot \n'
 try:
-    import cf
-    if cf.__version__ < cf_version_min:
+    import cf2 as cf
+    if StrictVersion(cf.__version__) < StrictVersion(cf_version_min):
         raise Warning(cf_errstr)
 except ImportError:
     raise Warning(cf_errstr)
