@@ -143,7 +143,9 @@ plotvars = pvars(lonmin=-180, lonmax=180, latmin=-90, latmax=90, proj='cyl',
                  xtick_label_align='center', ytick_label_rotation=0,
                  ytick_label_align='right', legend_text_size=11,
                  legend_text_weight='normal', tight=False,
-                 cs_uniform=True)
+                 cs_uniform=True, master_title=None,
+                 master_title_location=[0.5, 0.95], master_title_fontsize=30,
+                 master_title_fontweight='normal')
 
 
 def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
@@ -335,8 +337,9 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
         # Automatic levels
         if verbose:
             print 'con - generating automatic contour levels'
-        clevs, mult = gvals(dmin=np.nanmin(
-            field), dmax=np.nanmax(field), tight=0)
+        dmin = np.nanmin(field)
+        dmax = np.nanmax(field)
+        clevs, mult = gvals(dmin=dmin, dmax=dmax, tight=0)
         fmult = 10**-mult
 
     # Set the colour scale
@@ -409,9 +412,10 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
     # Add mult to colorbar_title if used
     if (colorbar_title is None):
         colorbar_title = ''
-    else:
-        if (mult != 0):
-            colorbar_title = colorbar_title + ' *10$^{' + str(mult) + '}$'
+    if (mult != 0):
+        colorbar_title = colorbar_title + ' *10$^{' + str(mult) + '}$'
+
+
 
     # Catch null titles
     if title is None:
@@ -726,7 +730,6 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
             # Labels are [0, 2, 10001, 20001, 30001, 40001, 50001, 60001]
             # With a +1 near to the colorbar label
             cbar.set_ticks([i for i in colorbar_labels])
-
             for t in cbar.ax.get_xticklabels():
                 t.set_fontsize(text_fontsize)
                 t.set_fontweight(text_fontweight)
@@ -813,7 +816,8 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
                                                verticalalignment='center',
                                                zorder=100)
 
-        # reset plot limits if not a user plot
+
+        # Reset plot limits if not a user plot
         if plotvars.user_gset == 0:
             gset()
 
@@ -988,6 +992,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
                     errstr = '\nNot a CF field\nPlease use ptype=0 and '
                     errstr = srrstr + 'specify axis labels manually\n'
                     raise Warning(errstr)
+
 
         # Set plot limits
         if ylog is False or ylog == 0:
@@ -1253,10 +1258,11 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
             xplotlabel = ''
             yplotlabel = ''
 
-        if xlabel != '':
-            xplotlabel = xlabel
-        if ylabel != '':
-            yplotlabel = ylabel
+        if user_xlabel is not None:
+            xplotlabel = user_xlabel
+        if user_ylabel is not None:
+            yplotlabel = user_ylabel
+
 
         # Use the automatically generated labels if none are supplied
         if ylabel is None:
@@ -1519,6 +1525,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
     # Other plots
     ############
     if ptype == 0:
+
         if verbose:
             print 'con - making an other plot'
         if plotvars.user_plot == 0:
@@ -1563,12 +1570,13 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
                 dmin=ymax, dmax=ymin, mystep=(
                     ymin - ymax) / 10.0, tight=1, mod=0)[0]
         yaxislabels = yaxisticks
-        if xlabel is not None:
-            xplotlabel = xlabel
+
+        if user_xlabel is not None:
+            xplotlabel = user_xlabel
         else:
             xplotlabel = ''
-        if ylabel is not None:
-            yplotlabel = ylabel
+        if user_ylabel is not None:
+            yplotlabel = user_ylabel
         else:
             yplotlabel = ''
 
@@ -1599,6 +1607,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
             xplotticks = [100000000]
             xlabel = ''
             ylabel = ''
+
 
         axes_plot(xticks=xaxisticks, xticklabels=xaxislabels,
                   yticks=yaxisticks, yticklabels=yaxislabels,
@@ -1698,6 +1707,20 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
         # reset plot limits if not a user plot
         if plotvars.user_gset == 0:
             gset()
+
+    ################################
+    # Add a master title if reqested
+    ################################
+    if plotvars.master_title is not None:
+        location=plotvars.master_title_location
+        plotvars.master_plot.text(location[0], location[1],
+                                  plotvars.master_title, 
+                                  horizontalalignment='center',
+                                  fontweight=plotvars.master_title_fontweight,
+                                  fontsize=plotvars.master_title_fontsize)
+
+
+
 
     ##################
     # Save or view plot
@@ -1948,14 +1971,19 @@ def mapaxis(min=None, max=None, type=None):
         lonlabels = []
         for lon in lonticks:
             lon2 = np.mod(lon + 180, 360) - 180
-            if lon2 < 0 and lon2 > -180:
-                lonlabels.append(str(abs(lon2)) + 'W')
-            if lon2 > 0 and lon2 < 180:
+            if lon2 < 0 and lon2 >= -180:
+                if lon != 180: 
+                    lonlabels.append(str(abs(lon2)) + 'W')
+                if lon == 180:
+                    if np.max(lonticks) == 180: 
+                        lonlabels.append('180E')
+                    else:
+                        lonlabels.append('180')
+
+            if lon2 > 0 and lon2 <= 180:
                 lonlabels.append(str(lon2) + 'E')
             if lon2 == 0:
                 lonlabels.append('0')
-            if np.abs(lon2) == 180:
-                lonlabels.append('180')
 
         return(lonticks, lonlabels)
 
@@ -2806,10 +2834,10 @@ def gvals(dmin=None, dmax=None, tight=0, mystep=None, mod=1):
         return vals, mult
 
     # Copies of inputs
-    dmin1 = dmin
-    dmax1 = dmax
-    dmin2 = dmin
-    dmax2 = dmax
+    dmin1 = deepcopy(dmin)
+    dmax1 = deepcopy(dmax)
+    dmin2 = deepcopy(dmin)
+    dmax2 = deepcopy(dmax)
 
     mult = 0  # field multiplyer
 
@@ -2821,12 +2849,13 @@ def gvals(dmin=None, dmax=None, tight=0, mystep=None, mod=1):
     if dmin1 < 0 and dmax1 < 0:
         mod = 0
 
+
     if mod == 1:
         if (mystep is not None):
             step = mystep
 
-        if step <= 3:
-            while dmax1 < 1:
+        if step < 1:
+            while dmax1 <= 3:
                 step = step * 10.0
                 dmin1 = dmin1 * 10.0
                 dmax1 = dmax1 * 10.0
@@ -2838,16 +2867,20 @@ def gvals(dmin=None, dmax=None, tight=0, mystep=None, mod=1):
 
             for val in [2, 5, 10, 20, 25, 50, 100, 200, 250, 500, 1000, 2000,
                         2500, 5000, 10000, 20000, 25000, 50000, 100000,
-                        200000, 250000, 500000, 1000000]:
+                        200000, 250000, 500000, 1000000, 10000000 ]:
 
                 if int(dmax2 - dmin2) / val > 10:
                     step = val
                     mult = 0
 
-                # print val, step, int(dmax2-dmin2)/val
 
             if int(dmax2 - dmin2) / 1000000 > 10:
                 step = (dmax2 - dmin2) / 16.0
+
+    #if dmax1 - dmin1 < 1:
+    #    vals = np.linspace(dmin, dmax, 12)
+    #    return vals, mult
+
 
     # Reset to user or mone zero values
     if (mystep is not None):
@@ -2877,6 +2910,7 @@ def gvals(dmin=None, dmax=None, tight=0, mystep=None, mod=1):
     if mystep is not None:
         if int(mystep) == mystep:
             return vals, mult
+
 
     # Floating point step
     if (mult == 0 and np.size(vals) > 5 and float(
@@ -4909,7 +4943,9 @@ def setvars(file=None, title_fontsize=None, text_fontsize=None,
             tspace_hour=None, xtick_label_rotation=None,
             xtick_label_align=None, ytick_label_rotation=None,
             ytick_label_align=None, legend_text_weight=None,
-            legend_text_size=None, cs_uniform=None):
+            legend_text_size=None, cs_uniform=None, 
+            master_title=None, master_title_location=None,
+            master_title_fontsize=None, master_title_fontweight=None):
     """
      | setvars - set plotting variables
      |
@@ -4942,6 +4978,10 @@ def setvars(file=None, title_fontsize=None, text_fontsize=None,
      | legend_text_size=None - legend text size
      | legend_text_weight=None - legend text weight
      | cs_uniform=None - make a uniform differential colour scale
+     | master_title=None - master title text
+     | master_title_location=None - master title location
+     | master_title_fontsize=None - master title font size
+     | master_title_fontweight=None - master title font weight
      |
      | Use setvars() to reset to the defaults
      |
@@ -4958,7 +4998,9 @@ def setvars(file=None, title_fontsize=None, text_fontsize=None,
             axis_label_fontweight, fontweight,  continent_color, tspace_year,
             tspace_month, tspace_day, tspace_hour, xtick_label_rotation,
             xtick_label_align, ytick_label_rotation, ytick_label_align,
-            legend_text_size, legend_text_weight]
+            legend_text_size, legend_text_weight, cs_uniform, 
+            master_title, master_title_location,
+            master_title_fontsize, master_title_fontweight]
     if all(val is None for val in vals):
         plotvars.file = None
         plotvars.title_fontsize = 15
@@ -4981,7 +5023,11 @@ def setvars(file=None, title_fontsize=None, text_fontsize=None,
         plotvars.legend_text_size = 11
         plotvars.legend_text_weight = 'normal'
         plotvars.cs_uniform = True
-        plotvars.viewer='display'
+        plotvars.viewer = 'display'
+        plotvars.master_title = None
+        plotvars.master_title_location = [0.5, 0.95]
+        plotvars.master_title_fontsize = 30
+        plotvars.master_title_fontweight = 'normal'
 
     if file is not None:
         plotvars.file = file
@@ -5025,6 +5071,15 @@ def setvars(file=None, title_fontsize=None, text_fontsize=None,
         plotvars.legend_text_weight = legend_text_weight
     if cs_uniform is not None:
         plotvars.cs_uniform = cs_uniform
+    if master_title is not None:
+        plotvars.master_title = master_title
+    if master_title_location is not None:
+        plotvars.master_title_location = master_title_location
+    if master_title_fontsize is not None:
+        plotvars.master_title_fontsize = master_title_fontsize
+    if master_title_fontweight is not None:
+        plotvars.master_title_fontweight = master_title_fontweight
+
 
 
 def rgrot(xin=None, yin=None, xpole=None, ypole=None):
