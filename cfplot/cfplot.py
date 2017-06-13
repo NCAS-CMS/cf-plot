@@ -12,6 +12,9 @@ from copy import deepcopy
 import os
 import sys
 import matplotlib.pyplot as plot
+from matplotlib.path import Path
+import matplotlib.patches as patches
+from matplotlib.collections import PolyCollection
 from mpl_toolkits.basemap import Basemap, shiftgrid, addcyclic
 
 
@@ -155,7 +158,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
         colorbar_orientation=None, colorbar_position=None, xlog=False,
         ylog=False, axes=True, xaxis=True, yaxis=True, xticks=None,
         xticklabels=None, yticks=None, yticklabels=None, xlabel=None,
-        ylabel=None, colors='k', verbose=None):
+        ylabel=None, colors='k', swap_axes=False, verbose=None):
     """
      | con is the interface to contouring in cf-plot. The minimum use is con(f)
      | where f is a 2 dimensional array. If a cf field is passed then an
@@ -209,6 +212,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
      | yticklabels=None - ytick labels
      | xlabel=None - label for x axis
      | ylabel=None - label for y axis
+     | swap_axes=False - swap plotted axes - only valid for X, Y, Z vs T plots
      | verbose=None - change to 1 to get a verbose listing of what con
      |                is doing
      |
@@ -267,10 +271,10 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
         x_orig = x
         y_orig = y
 
-        if (plotvars.proj == 'npstere' or plotvars.proj == 'spstere'):
-            errstr = '\n\n con error - blockfill not supported for polar '
-            errstr = errstr + 'stereograpic plots\n\n'
-            raise Warning(errstr)
+        #if (plotvars.proj == 'npstere' or plotvars.proj == 'spstere'):
+        #    errstr = '\n\n con error - blockfill not supported for polar '
+        #    errstr = errstr + 'stereograpic plots\n\n'
+        #raise Warning(errstr)
 
     # Turn off colorbar if fill is turned off
     if not fill and not blockfill:
@@ -356,21 +360,32 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
         if includes_zero == 1:
             cs_below = col_zero
             cs_above = np.size(clevs) - col_zero + 1
-            if plotvars.levels_extend == 'max':
+            if plotvars.levels_extend == 'max' or plotvars.levels_extend == 'neither':
                 cs_below = cs_below - 1
-                cs_above = cs_above + 1
+            if plotvars.levels_extend == 'min' or plotvars.levels_extend == 'neither':
+                cs_above = cs_above - 1
             uniform = True
             if plotvars.cs_uniform is False:
                 uniform = False
             cscale('scale1', below=cs_below, above=cs_above, uniform=uniform)
         else:
-            cscale('viridis', ncols=np.size(clevs) + 1)
+            ncols=ncols=np.size(clevs)+1
+            if plotvars.levels_extend == 'min' or plotvars.levels_extend == 'max':
+                ncols=ncols-1
+            if plotvars.levels_extend == 'neither':
+                ncols=ncols-2
+            cscale('viridis', ncols=ncols)
 
         plotvars.cscale_flag = 0
 
     # User selected colour map but no mods so fit to levels
     if plotvars.cscale_flag == 1:
-        cscale(plotvars.cs_user, ncols=np.size(clevs) + 1)
+        ncols=ncols=np.size(clevs)+1
+        if plotvars.levels_extend == 'min' or plotvars.levels_extend == 'max':
+            ncols=ncols-1
+        if plotvars.levels_extend == 'neither':
+            ncols=ncols-2
+        cscale(plotvars.cs_user, ncols=ncols)
         plotvars.cscale_flag = 1
 
     # Set colorbar labels
@@ -409,6 +424,11 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
     else:
         colorbar_labels = clevs
 
+    # Make a list of strings of the colorbar levels for later labeling
+    clabels=[]
+    for i in colorbar_labels:
+        clabels.append(str(i))    
+
     # Add mult to colorbar_title if used
     if (colorbar_title is None):
         colorbar_title = ''
@@ -446,6 +466,26 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
         tri = 0
 
     cb_orient = colorbar_orientation
+
+    # Retrieve any user defined axis labels
+    if xlabel == '' and plotvars.xlabel is not None:
+        xlabel = plotvars.xlabel
+    if ylabel == '' and plotvars.ylabel is not None:
+        ylabel = plotvars.ylabel
+    if xticks is None and plotvars.xticks is not None:
+        xticks = plotvars.xticks
+        if plotvars.xticklabels is not None:
+            xticklabels = plotvars.xticklabels
+        else:
+            xticklabels = map(str, xticks)
+    if yticks is None and plotvars.yticks is not None:
+        yticks = plotvars.yticks
+        if plotvars.yticklabels is not None:
+            yticklabels = plotvars.yticklabels
+        else:
+            yticklabels = map(str, yticks)
+
+
 
     ##########
     # Map plot
@@ -582,9 +622,9 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
             if isinstance(f[0], cf.Field):
                 if getattr(f[0].coord('lon'), 'hasbounds', False):
                     xpts = np.squeeze(f.coord('lon').bounds.array[:, 0])
+                    ypts = np.squeeze(f.coord('lat').bounds.array[:, 0])
                     # Add last longitude point
                     xpts = np.append(xpts, f.coord('lon').bounds.array[-1, 1])
-                    ypts = np.squeeze(f.coord('lat').bounds.array[:, 0])
                     # Add last latitude point
                     ypts = np.append(ypts, f.coord('lat').bounds.array[-1, 1])
                     bfill(
@@ -652,6 +692,8 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
                         if xticklabels is None:
                             axes_plot(xticks=xticks, xticklabels=xticks)
                         else:
+                            print 'xticks are ', xticks
+                            print 'xtick labels are ', xticklabels
                             axes_plot(xticks=xticks, xticklabels=xticklabels)
                 if yaxis:
                     if yticks is None:
@@ -729,7 +771,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
             # With clevs=[-1, 1, 10000, 20000, 30000, 40000, 50000, 60000]
             # Labels are [0, 2, 10001, 20001, 30001, 40001, 50001, 60001]
             # With a +1 near to the colorbar label
-            cbar.set_ticks([i for i in colorbar_labels])
+            cbar.set_ticklabels([str(i) for i in colorbar_labels])
             for t in cbar.ax.get_xticklabels():
                 t.set_fontsize(text_fontsize)
                 t.set_fontweight(text_fontweight)
@@ -821,9 +863,9 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
         if plotvars.user_gset == 0:
             gset()
 
-    ###############################################
-    # Latitude, longitude or time vs pressure plots
-    ###############################################
+    ########################################
+    # Latitude, longitude or time vs Z plots
+    ########################################
     if ptype == 2 or ptype == 3 or ptype == 7:
         if verbose:
             if ptype == 2:
@@ -852,6 +894,10 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
 
         if plotvars.user_plot == 0:
             gopen(user_plot=0)
+
+        # Use gset parameter of ylog if user has set this
+        if plotvars.ylog is True or plotvars.ylog == 1:
+            ylog = True
 
         # Set plot limits
         user_gset = plotvars.user_gset
@@ -1014,6 +1060,8 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
                 user_gset=user_gset)
 
 
+
+
         # Label axes
         axes_plot(xticks=xticks, xticklabels=xticklabels, yticks=heightticks,
                   yticklabels=heightlabels, xlabel=xlabel, ylabel=ylabel)
@@ -1046,12 +1094,16 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
             if isinstance(f[0], cf.Field):
                 if getattr(f[0].coord('lat'), 'hasbounds', False):
                     if ptype == 2:
-                        xpts = np.squeeze(f.coord('lat').bounds.array)[:, 0]
+                        xpts = np.squeeze(f.coord('Y').bounds.array)[:, 0]
+                        xpts = np.append(xpts, f.coord('Y').bounds.array[-1, 1])
                     if ptype == 3:
-                        xpts = np.squeeze(f.coord('lon').bounds.array)[:, 0]
+                        xpts = np.squeeze(f.coord('X').bounds.array)[:, 0]
+                        xpts = np.append(xpts, f.coord('X').bounds.array[-1, 1])
                     if ptype == 7:
-                        xpts = np.squeeze(f.coord('time').bounds.array)[:, 0]
-                    ypts = np.squeeze(f.coord('pressure').bounds.array)[:, 0]
+                        xpts = np.squeeze(f.coord('T').bounds.array)[:, 0]
+                        xpts = np.append(xpts, f.coord('T').bounds.array[-1, 1])
+                    ypts = np.squeeze(f.coord('Z').bounds.array)[:, 0]
+                    ypts = np.append(ypts, f.coord('Z').bounds.array[-1, 1])
                     bfill(
                         f=field_orig *
                         fmult,
@@ -1213,15 +1265,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
             ymin = np.nanmin(y)
             ymax = np.nanmax(y)
 
-        # Set plot limits
-        if plotvars.user_plot == 0:
-            gopen(user_plot=0)
-        gset(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax, user_gset=user_gset)
 
-        # Revert to time strings if set
-        if all(val is not None for val in [tmin, tmax]):
-            plotvars.ymin = tmin
-            plotvars.ymax = tmax
 
         # Extract axis labels
         time_ticks, time_labels, ylabel = timeaxis(f.item('T'))
@@ -1272,6 +1316,28 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
         if np.size(time_labels) > 0:
             timelabels = time_labels
 
+
+        # Swap axes if requested
+        if swap_axes:
+            x, y = y, x
+            field = np.flipud(np.rot90(field))
+            xmin, ymin = ymin, xmin
+            xmax, ymax = ymax, xmax
+            xplotlabel, yplotlabel = yplotlabel, xplotlabel
+            lonlatticks, timeticks = timeticks, lonlatticks
+            lonlatlabels, timelabels = timelabels, lonlatlabels
+
+        # Set plot limits
+        if plotvars.user_plot == 0:
+            gopen(user_plot=0)
+        gset(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax, user_gset=user_gset)
+
+        # Revert to time strings if set
+        if all(val is not None for val in [tmin, tmax]):
+            plotvars.ymin = tmin
+            plotvars.ymax = tmax
+
+
         # Set and label axes
         axes_plot(xticks=lonlatticks, xticklabels=lonlatlabels,
                   yticks=timeticks, yticklabels=timelabels,
@@ -1304,8 +1370,18 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
         if blockfill:
             if isinstance(f[0], cf.Field):
                 if f[0].coord('lon').hasbounds:
-                    xpts = np.squeeze(f.coord('lat').bounds.array)[:, 0]
-                    ypts = np.squeeze(f.coord('time').bounds.array)[:, 0]
+                    if ptype == 4:
+                        xpts = np.squeeze(f.coord('X').bounds.array)[:, 0]
+                        xpts = np.append(xpts, f.coord('X').bounds.array[-1, 1])
+                    if ptype == 5:
+                        xpts = np.squeeze(f.coord('Y').bounds.array)[:, 0]
+                        xpts = np.append(xpts, f.coord('Y').bounds.array[-1, 1])
+                    ypts = np.squeeze(f.coord('T').bounds.array)[:, 0]
+                    ypts = np.append(ypts, f.coord('T').bounds.array[-1, 1])
+                    if swap_axes:
+                        xpts, ypts = ypts, xpts
+                        field_orig = np.flipud(np.rot90(field_orig))
+
                     bfill(
                         f=field_orig *
                         fmult,
@@ -1315,6 +1391,9 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
                         lonlat=0,
                         bound=1)
                 else:
+                    if swap_axes:
+                        x_orig, y_orig = y_orig, x_orig
+                        field_orig = np.flipud(np.rot90(field_orig))
                     bfill(
                         f=field_orig *
                         fmult,
@@ -1325,6 +1404,9 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
                         bound=0)
 
             else:
+                if swap_axes:
+                    x_orig, y_orig = y_orig, x_orig
+                    field_orig = np.flipud(np.rot90(field_orig))
                 bfill(
                     f=field_orig *
                     fmult,
@@ -1757,18 +1839,14 @@ def mapset(lonmin=None, lonmax=None, latmin=None, latmax=None, proj='cyl',
      |      'l' (low), 'i' (intermediate), 'h' (high), 'f' (full) or 'None'
      | user_mapset=user_mapset - variable to indicate whether a user call
      |      to mapset has been made.
-     | lat_1=45 - first standard parallel
-     | lat_2=55 - second standard parallel
-     | width=12000000 - width of Lambert Conformal Projection, lcc
-     | height=9000000 - height of Lambert Conformal Projection, lcc
-     | plimits=None - plot limits [lonmin, lonmax, latmin, latmax] for lcc plot
      |
      | The default map plotting projection is the cyclindrical equidistant
-     | projection from-180 to 180 in longitude and -90 to 90 in latitude.
+     | projection from -180 to 180 in longitude and -90 to 90 in latitude.
      | To change the map view in this projection to over the United Kingdom,
      | for example, you would use
      | mapset(lonmin=-6, lonmax=3, latmin=50, latmax=60)
-     | or mapset(-6, 3, 50, 60)
+     | or
+     | mapset(-6, 3, 50, 60)
      |
      | The limits are -360 to 720 in longitude so to look at the equatorial
      | Pacific you could use
@@ -1776,11 +1854,25 @@ def mapset(lonmin=None, lonmax=None, latmin=None, latmax=None, proj='cyl',
      | or
      | mapset(lonmin=-270, lonmax=-60, latmin=-30, latmax=30)
      |
-     | The proj parameter for the present accepts just two values - 'npstere'
-     | and 'spstere' for northern hemisphere or southern hemisphere polar
-     | stereographic projections. In addition to these the boundinglat
-     | parameter sets the edge of the viewable latitudes and lat_0 sets the
-     | centre of desired map domain.
+     | The proj parameter accepts 'npstere' and 'spstere' for northern 
+     | hemisphere or southern hemisphere polar stereographic projections.
+     | In addition to these the boundinglat parameter sets the edge of the
+     | viewable latitudes and lat_0 sets the centre of desired map domain.
+     |
+     | Additional map projections via proj are:
+     | ortho, merc, moll, robin and lcc
+     | These are abreviations for orthographic, mercator, mollweide, robinson 
+     | and lambert conformal projections
+     |
+     | For Lambert Conformal Projection, lcc, plots the following extra 
+     | parameters are required.
+     | lat_1=45 - first standard parallel
+     | lat_2=55 - second standard parallel
+     | width=12000000 - width of Lambert Conformal Projection, lcc
+     | height=9000000 - height of Lambert Conformal Projection, lcc
+     | plimits=None - plot limits [lonmin, lonmax, latmin, latmax] for lcc plot
+     | See the http://ajheaps.github.io/cf-plot/version_2.1.htm for a couple of
+     | examples of using the Lambert Conformal Projection
      |
      | Map settings are persistent until a new call to mapset is made. To
      | reset to the default map settings use mapset().
@@ -2043,12 +2135,13 @@ def timeaxis(dtimes=None):
     time_ticks = []
     time_labels = []
     axis_label = 'Time'
-    if plotvars.user_gset == 0:
-        yearmin = min(dtimes.year.array)
-        yearmax = max(dtimes.year.array)
-        tmin = min(dtimes.dtarray)
-        tmax = max(dtimes.dtarray)
-    else:
+
+    yearmin = min(dtimes.year.array)
+    yearmax = max(dtimes.year.array)
+    tmin = min(dtimes.dtarray)
+    tmax = max(dtimes.dtarray)
+
+    if plotvars.user_gset != 0:
         if isinstance(plotvars.xmin, str):
             t = cf.Data(cf.dt(plotvars.xmin), units=time_units)
             yearmin = int(t.year)
@@ -2327,19 +2420,6 @@ def axes_plot(xticks=None, xticklabels=None, yticks=None, yticklabels=None,
         ymax = plotvars.ymax
 
 
-    # Retrieve any user set axes parameters
-    if plotvars.xticks is not None:
-        xticks = plotvars.xticks
-        if plotvars.xticklabels is None:
-            xticklabels = None
-    if plotvars.yticks is not None:
-        yticks = plotvars.yticks
-        if plotvars.yticklabels is None:
-            yticklabels = None
-    if plotvars.xticklabels is not None:
-        xticklabels = plotvars.xticklabels
-    if plotvars.yticklabels is not None:
-        yticklabels = plotvars.yticklabels
     if plotvars.xstep is not None:
         xstep = plotvars.xstep
         xticks = None
@@ -2349,10 +2429,6 @@ def axes_plot(xticks=None, xticklabels=None, yticks=None, yticklabels=None,
         yticks = None
         yticklabels = None
 
-    if plotvars.xlabel is not None:
-        xlabel = plotvars.xlabel
-    if plotvars.ylabel is not None:
-        ylabel = plotvars.ylabel
     if plotvars.title is not None:
         title = plotvars.title
     title_fontsize = plotvars.title_fontsize
@@ -2453,7 +2529,7 @@ def gset(xmin=None, xmax=None, ymin=None, ymax=None,
      | of the data.
      |
      | To set date axes use date strings i.e.
-     | cfp.gset(xmin = '170-1-1', xmax = '300-1-1', ymin = 285,
+     | cfp.gset(xmin = '1970-1-1', xmax = '1999-31-12', ymin = 285,
      |          ymax = 295)
      |
 
@@ -2511,7 +2587,7 @@ def gset(xmin=None, xmax=None, ymin=None, ymax=None,
                 [plotvars.xmin, plotvars.xmax, plotvars.ymin, plotvars.ymax])
 
         if plotvars.xlog:
-            plotvars.plot.set_yscale('log')
+            plotvars.plot.set_xscale('log')
         if plotvars.ylog:
             plotvars.plot.set_yscale('log')
 
@@ -2849,7 +2925,6 @@ def gvals(dmin=None, dmax=None, tight=0, mystep=None, mod=1):
     if dmin1 < 0 and dmax1 < 0:
         mod = 0
 
-
     if mod == 1:
         if (mystep is not None):
             step = mystep
@@ -2877,9 +2952,11 @@ def gvals(dmin=None, dmax=None, tight=0, mystep=None, mod=1):
             if int(dmax2 - dmin2) / 1000000 > 10:
                 step = (dmax2 - dmin2) / 16.0
 
-    #if dmax1 - dmin1 < 1:
-    #    vals = np.linspace(dmin, dmax, 12)
-    #    return vals, mult
+    # Return a linspace set of values if dmax1 - dmin1 is < 1
+    if dmax1 - dmin1 < 1:
+        mult = 0
+        vals = np.linspace(dmin, dmax, 12)
+        return vals, mult
 
 
     # Reset to user or mone zero values
@@ -3382,7 +3459,9 @@ def cscale(cmap=None, ncols=None, white=None, below=None,
     |                 For example: if below=3 and above=10 are specified
     |                 then initially below=10 and above=10 are used.  The
     |                 colour scale is then cropped to use scale colours
-    |                 6 to 19.
+    |                 6 to 19.  This produces a more uniform intensity colour
+    |                 scale than one where all the blues are compressed into
+    |                 3 colours.
     |
     |
     | Personal colour maps are available by saving the map as red green blue
@@ -3408,9 +3487,12 @@ def cscale(cmap=None, ncols=None, white=None, below=None,
     else:
         plotvars.cs_user = cmap
         plotvars.cscale_flag = 1
-        vals = [ncols, white, below, above, reverse, uniform]
+        vals = [ncols, white, below, above]
         if any(val is not None for val in vals):
             plotvars.cscale_flag = 2
+        if reverse is not False or uniform is not False:
+            plotvars.cscale_flag = 2
+
 
     if cmap == 'scale1' or cmap == '':
         if cmap == 'scale1':
@@ -3596,9 +3678,9 @@ def bfill(f=None, x=None, y=None, clevs=False, lonlat=False, bound=False):
      |
     """
 
+
     # Assign f to field as this may be modified in lat-lon plots
     field = f
-
 
     if bound:
         xpts = x
@@ -3650,22 +3732,112 @@ def bfill(f=None, x=None, y=None, clevs=False, lonlat=False, bound=False):
         ypts = np.append(ypts, upper_bound)
 
 
-    # Add below and above contour limits
-    if isinstance(field, np.ma.MaskedArray) is False:
-        if plotvars.levels_extend == 'both' or plotvars.levels_extend == 'min':
-            clevs=np.insert(clevs, 0, -5000*(clevs[1]-clevs[0]))
-
-    if plotvars.levels_extend == 'both' or plotvars.levels_extend == 'max':
-        sz=np.size(clevs)
-        clevs=np.append(clevs, (clevs[sz-1]-clevs[sz-2])*5000)
+    levels=np.array(deepcopy(clevs)).astype('float')
 
     # Generate a Matplotlib colour map
+    cols=plotvars.cs
     cmap = matplotlib.colors.ListedColormap(plotvars.cs)
-    cmap.set_under(plotvars.cs[0])
-    cmap.set_over(plotvars.cs[-1])
-    
-    norm = matplotlib.colors.BoundaryNorm(clevs, ncolors=cmap.N, clip=False)
-    im = plotvars.plot.pcolormesh(xpts, ypts, field, cmap=cmap, norm=norm)
+
+    if plotvars.levels_extend == 'both' or plotvars.levels_extend == 'min':
+        levels=np.insert(levels, 0, -1e30)
+    if plotvars.levels_extend == 'both' or plotvars.levels_extend == 'max':
+        levels=np.append(levels, 1e30)
+
+
+    if plotvars.levels_extend == 'both' or plotvars.levels_extend == 'min':
+        cmap.set_under(plotvars.cs[0])
+        cols=cols[1:]
+    if plotvars.levels_extend == 'both' or plotvars.levels_extend == 'max':
+        cmap.set_over(plotvars.cs[-1])
+        cols=cols[:-1]
+
+
+    # Colour array for storing the cell colour.  Start with -1 as the default 
+    # as the colours run from 0 to np.size(levels)-1
+    colarr=np.zeros([np.shape(field)[0], np.shape(field)[1]])-1
+    for i in np.arange(np.size(levels)-1):
+        lev=levels[i]
+        pts=np.where(np.logical_and(field > lev, field <= levels[i+1]))
+        colarr[pts]=int(i)
+
+    # Change points that are masked back to -1
+    if isinstance(field, np.ma.MaskedArray):
+        pts=np.ma.where(field.mask)
+        if np.size(pts) > 0:
+            colarr[pts]=-1
+
+
+    if plotvars.plot_type == 1 and plotvars.proj != 'cyl':
+        for i in np.arange(np.size(levels)-1):
+            allverts = []
+            xy_stack=np.column_stack(np.where(colarr == i))
+            for pt in np.arange(np.shape(xy_stack)[0]):
+                ix = xy_stack[pt][1]
+                iy = xy_stack[pt][0]
+                lons = [xpts[ix], xpts[ix+1], xpts[ix+1], xpts[ix], xpts[ix]]
+                lats = [ypts[iy], ypts[iy], ypts[iy+1], ypts[iy+1], ypts[iy]]
+                txpts, typts = plotvars.mymap(lons, lats)
+                verts=[
+                    (txpts[0], typts[0]),
+                    (txpts[1], typts[1]), 
+                    (txpts[2], typts[2]),
+                    (txpts[3], typts[3]),
+                    (txpts[4], typts[4]),
+                    ]
+
+                allverts.append(verts)
+
+            # Make the collection and add it to the plot.
+            color=plotvars.cs[i]
+            coll = PolyCollection(allverts, facecolor=color, edgecolors='none')
+            plotvars.plot.add_collection(coll)
+
+    else:
+        for i in np.arange(np.size(levels)-1):
+            allverts = []
+            xy_stack=np.column_stack(np.where(colarr == i))
+            for pt in np.arange(np.shape(xy_stack)[0]):
+                ix = xy_stack[pt][1]
+                iy = xy_stack[pt][0]
+                verts=[
+                    (xpts[ix], ypts[iy]),
+                    (xpts[ix+1], ypts[iy]), 
+                    (xpts[ix+1], ypts[iy+1]),
+                    (xpts[ix], ypts[iy+1]),
+                    (xpts[ix], ypts[iy]),
+                    ]
+        
+                allverts.append(verts)
+
+            # Make the collection and add it to the plot.
+            color=plotvars.cs[i]
+            coll = PolyCollection(allverts, facecolor=color, edgecolors='none')
+            plotvars.plot.add_collection(coll)
+
+
+    # Add white for undefined areas
+    allverts = []
+    xy_stack=np.column_stack(np.where(colarr == -1))
+    for pt in np.arange(np.shape(xy_stack)[0]):
+        ix = xy_stack[pt][1]
+        iy = xy_stack[pt][0]
+
+        verts=[
+            (xpts[ix], ypts[iy]),
+            (xpts[ix+1], ypts[iy]), 
+            (xpts[ix+1], ypts[iy+1]),
+            (xpts[ix], ypts[iy+1]),
+            (xpts[ix], ypts[iy]),
+            ]
+        
+        allverts.append(verts)
+
+    # Make the collection and add it to the plot.
+    color=plotvars.cs[i]
+    coll = PolyCollection(allverts, facecolor='#ffffff', edgecolors='none')
+    plotvars.plot.add_collection(coll)
+
+
 
 
 def regrid(f=None, x=None, y=None, xnew=None, ynew=None, lonlat=None):
@@ -4079,6 +4251,25 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,
     if user_ylabel is not None:
         ylabel = user_ylabel
 
+    # Retrieve any user defined axis labels
+    if xlabel == '' and plotvars.xlabel is not None:
+        xlabel = plotvars.xlabel
+    if ylabel == '' and plotvars.ylabel is not None:
+        ylabel = plotvars.ylabel
+    if xticks is None and plotvars.xticks is not None:
+        xticks = plotvars.xticks
+        if plotvars.xticklabels is not None:
+            xticklabels = plotvars.xticklabels
+        else:
+            xticklabels = map(str, xticks)
+    if yticks is None and plotvars.yticks is not None:
+        yticks = plotvars.yticks
+        if plotvars.yticklabels is not None:
+            yticklabels = plotvars.yticklabels
+        else:
+            yticklabels = map(str, yticks)
+
+
     if scale is None:
         scale = np.nanmax(u_data) / 4.0
 
@@ -4286,20 +4477,21 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,
                 fontsize=title_fontsize,
                 fontweight=title_fontweight)
 
-    ###########
-    # Zonal plot
-    ###########
-    if plotvars.plot_type == 2:
+    ######################################
+    # Latitude or longitude vs height plot
+    ######################################
+    if plotvars.plot_type == 2 or plotvars.plot_type == 3:
 
         user_gset = plotvars.user_gset
         if user_gset == 0:
             # Program selected data plot limits
             xmin = np.nanmin(u_x)
-            if xmin < -80 and xmin >= -90:
-                xmin = -90
             xmax = np.nanmax(u_x)
-            if xmax > 80 and xmax <= 90:
-                xmax = 90
+            if plotvars.plot_type == 2:
+                if xmin < -80 and xmin >= -90:
+                    xmin = -90
+                if xmax > 80 and xmax <= 90:
+                    xmax = 90
             ymin = np.nanmin(u_y)
             if ymin <= 10:
                 ymin = 0
@@ -4316,8 +4508,15 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,
                 ymax = plotvars.ymin
 
         xstep = None
-        if (xmin == -90 and xmax == 90):
-            xstep = 30
+        if ptype == 1:
+            if (xmin == -90 and xmax == 90):
+                xstep = 30
+        if ptype == 2:
+            if xmax - xmax >= 160:
+                xstep = 60
+            else:
+                xstep = 30
+
         ystep = None
         if (ymax == 1000):
             ystep = 100
@@ -4354,14 +4553,12 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,
                     ymax=ymin,
                     user_gset=user_gset)
 
-            # Set default axis labels
-            latticks, latlabels = mapaxis(min=xmin, max=xmax, type=2)
-            yaxisticks = gvals(
-                dmin=ymin,
-                dmax=ymax,
-                tight=1,
-                mystep=ystep,
-                mod=0)[0]
+            # Set default x-axis labels
+            lltype=1
+            if plotvars.plot_type == 2:
+                lltype = 2
+            llticks, lllabels = mapaxis(min=xmin, max=xmax, type=lltype)
+
 
             heightticks = gvals(
                 dmin=ymin,
@@ -4374,12 +4571,12 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,
             if axes:
                 if xaxis:
                     if xticks is not None:
-                        latticks = xticks
-                        latlabels = xticks
+                        llticks = xticks
+                        lllabels = xticks
                         if xticklabels is not None:
-                            latlabels = xticklabels
+                            lllabels = xticklabels
                 else:
-                    latticks = [100000000]
+                    llticks = [100000000]
                     xlabel = ''
 
                 if yaxis:
@@ -4393,12 +4590,12 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,
                     ylabel = ''
 
             else:
-                latticks = [100000000]
+                llticks = [100000000]
                 heightticks = [100000000]
                 xlabel = ''
                 ylabel = ''
 
-            axes_plot(xticks=latticks, xticklabels=latlabels,
+            axes_plot(xticks=llticks, xticklabels=lllabels,
                       yticks=heightticks, yticklabels=heightlabels,
                       xlabel=xlabel, ylabel=ylabel)
 
@@ -4413,17 +4610,18 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,
                 ymax=ymin,
                 ylog=1,
                 user_gset=user_gset)
-            latticks, latlabels = mapaxis(min=xmin, max=xmax, type=2)
+            llticks, lllabels = mapaxis(min=xmin, max=xmax,
+                type=plotvars.plot_type)
 
             if axes:
                 if xaxis:
                     if xticks is not None:
-                        latticks = xticks
-                        latlabels = xticks
+                        llticks = xticks
+                        lllabels = xticks
                         if xticklabels is not None:
-                            latlabels = xticklabels
+                            lllabels = xticklabels
                 else:
-                    latticks = [100000000]
+                    llticks = [100000000]
                     xlabel = ''
 
                 if yaxis:
@@ -4438,12 +4636,12 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,
 
                 if yticks is None:
                     axes_plot(
-                        xticks=latticks,
-                        xticklabels=latlabels,
+                        xticks=llticks,
+                        xticklabels=lllabels,
                         xlabel=xlabel,
                         ylabel=ylabel)
                 else:
-                    axes_plot(xticks=latticks, xticklabels=latlabels,
+                    axes_plot(xticks=llticks, xticklabels=lllabels,
                               yticks=heightticks, yticklabels=heightlabels,
                               xlabel=xlabel, ylabel=ylabel)
 
@@ -5508,6 +5706,10 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
     | The minimum use is lineplot(f) where f is a CF field.
     | If x and y are passed then an appropriate plot is made allowing
     | x vs data and y vs data plots.
+
+    | When making a labelled line plot:
+    | always have a label for each line
+    | always put the legend location as an option to the last call to lineplot
     |
     | f - CF data used to make a line plot
     | x - x locations of data in y
@@ -5633,6 +5835,27 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
         if errstr != '':
             raise Warning('\n' + errstr + '\n')
 
+
+    # Z on y-axis
+    ztype = None
+    if xunits in ['mb', 'mbar', 'millibar', 'decibar',
+                  'atmosphere', 'atm', 'pascal', 'Pa', 'hPa']:
+        ztype = 1
+    if xunits in ['meter', 'metre', 'm', 'kilometer', 'kilometre', 'km']:
+        ztype = 2
+
+    if ztype is not None:
+        temporary_xpts = x
+        temporary_ypts = y
+        temporary_xlabel = xlabel
+        temporary_ylabel = ylabel
+        x = temporary_ypts
+        y = temporary_xpts
+        xlabel = temporary_ylabel
+        ylabel = temporary_xlabel
+
+
+
     # Set data values
     if verbose:
         print 'lineplot - setting data values'
@@ -5644,6 +5867,16 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
     maxy = np.max(y)
     if cf_field:
         taxis = f.item('T')
+
+
+    if ztype == 1:
+        miny = np.max(y)
+        maxy = np.min(y)
+
+    if ztype == 2:
+        if f.positive == 'down':
+            miny = np.max(y)
+            maxy = np.min(y)
 
     # Use user set values if present
     if plotvars.xmin is not None:
@@ -5688,7 +5921,27 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
                     taxis = cf.Data([cf.dt(plotvars.ymin), cf.dt(
                         plotvars.ymax)], units=time_units)
 
+
     # Set x and y labelling
+
+    # Retrieve any user defined axis labels
+    if xlabel == '' and plotvars.xlabel is not None:
+        xlabel = plotvars.xlabel
+    if ylabel == '' and plotvars.ylabel is not None:
+        ylabel = plotvars.ylabel
+    if xticks is None and plotvars.xticks is not None:
+        xticks = plotvars.xticks
+        if plotvars.xticklabels is not None:
+            xticklabels = plotvars.xticklabels
+        else:
+            xticklabels = map(str, xticks)
+    if yticks is None and plotvars.yticks is not None:
+        yticks = plotvars.yticks
+        if plotvars.yticklabels is not None:
+            yticklabels = plotvars.yticklabels
+        else:
+            yticklabels = map(str, yticks)
+
     mod = 1
     tight = 0
     if plotvars.user_gset == 1:
@@ -5712,20 +5965,17 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
 
     if yticks is None:
         if abs(maxy - miny) > 1:
-             yticks = gvals(dmin=miny, dmax=maxy, tight=tight, mod=mod)[0]
+             if miny < maxy:
+                 yticks = gvals(dmin=miny, dmax=maxy, tight=tight, mod=mod)[0]
+             if maxy < miny:
+                 yticks = gvals(dmin=maxy, dmax=miny, tight=tight, mod=mod)[0]
+
         else:
              yticks = gvals(dmin=miny, dmax=maxy, tight=tight, mod=0)[0]
     if yticklabels is None:
         yticklabels = yticks
 
-    # Z on y-axis
-    ztype = None
-    if xunits in ['mb', 'mbar', 'millibar', 'decibar',
-                  'atmosphere', 'atm', 'pascal', 'Pa', 'hPa']:
-        swap_xy = True
-        ztype = 1
-    if xunits in ['meter', 'metre', 'm', 'kilometer', 'kilometre', 'km']:
-        xtype = 2
+
 
     if swap_xy:
         if verbose:
@@ -5741,14 +5991,14 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
         xlabel = xlabel2
         ylabel = ylabel2
 
-    if ztype == 1:
-        miny = np.max(ypts)
-        maxy = np.min(ypts)
 
-    if ztype == 2:
-        if f.positive == 'down':
-            miny = np.max(ypts)
-            maxy = np.min(ypts)
+
+    if plotvars.user_gset == 1:
+        minx = plotvars.xmin
+        maxx = plotvars.xmax
+        miny = plotvars.ymin
+        maxy = plotvars.ymax
+
 
     # Make graph
     if verbose:
@@ -5757,7 +6007,11 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
     plotvars.plot.tick_params(direction='out', which='both')
     plotvars.plot.set_xlabel(xlabel)
     plotvars.plot.set_ylabel(ylabel)
-
+        
+    if plotvars.xlog or xlog:
+        plotvars.plot.set_xscale('log')
+    if plotvars.ylog or ylog:
+        plotvars.plot.set_yscale('log')
 
     if swap_xy is not True:
         if xticks is not None:
@@ -5774,10 +6028,11 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
                 horizontalalignment=plotvars.ytick_label_align)
 
     else:
+        print 'swap_xy is True'
         if xticks is not None:
-            plotvars.plot.set_yticks(xticks)
+            plotvars.plot.set_yticks(yticks)
             plotvars.plot.set_yticklabels(
-                xticklabels,
+                yticklabels,
                 rotation=plotvars.ytick_label_rotation,
                 horizontalalignment=plotvars.ytick_label_align)
         if yticks is not None:
