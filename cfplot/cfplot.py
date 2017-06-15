@@ -151,6 +151,12 @@ plotvars = pvars(lonmin=-180, lonmax=180, latmin=-90, latmax=90, proj='cyl',
                  master_title_fontweight='normal')
 
 
+# Check for iPython notebook inline
+# and set the viewer to None if found
+is_inline = 'inline' in matplotlib.get_backend()
+if is_inline:
+    plotvars.viewer=None
+
 def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
         title=None, colorbar_title=None, colorbar=True,
         colorbar_label_skip=None, ptype=0, negative_linestyle=None,
@@ -5161,10 +5167,7 @@ def setvars(file=None, title_fontsize=None, text_fontsize=None,
      |                    built in matplotlib viewer.  display is non-blocking
      |                    of the command prompt while the built in matplotlib
      |                    viewer is blocking.  Set to anything else to not
-     |                    view the picture.  i.e. in jupyter notebook set to
-     |                    'inline' to just view the pictures inline with
-     |                    the notebook.
-     |
+     |                    view the picture.  
      | tspace_year=None - time axis spacing in years
      | tspace_month=None - time axis spacing in months
      | tspace_day=None - time axis spacing in days
