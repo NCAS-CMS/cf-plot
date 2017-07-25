@@ -159,7 +159,7 @@ if is_inline:
 
 def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
         title=None, colorbar_title=None, colorbar=True,
-        colorbar_label_skip=None, ptype=0, negative_linestyle=None,
+        colorbar_label_skip=None, ptype=0, negative_linestyle='solid',
         blockfill=False, zero_thick=False, colorbar_shrink=None,
         colorbar_orientation=None, colorbar_position=None, xlog=False,
         ylog=False, axes=True, xaxis=True, yaxis=True, xticks=None,
@@ -188,13 +188,13 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
      |                       4 = latitude - time,
      |                       5 = longitude - time
      |                       6 = rotated pole
-     | negative_linestyle=False - set to True to get dashed negative contours
+     | negative_linestyle='solid' - set to one of 'solid', 'dashed'
      | zero_thick=False - add a thick zero contour line. Set to 3 for example.
      | blockfill=False - set to True for a blockfill plot
      | colorbar_title=colbar_title - title for the colour bar
      | colorbar=1 - add a colour bar if a filled contour plot
      | colorbar_label_skip=None - skip colour bar labels. Set to 2 to skip
-     |                            every other label.
+     |                            every other label. 
      | colorbar_orientation=None - options are 'horizontal' and 'vertical'
      |                      The default for most plots is horizontal but
      |                      for polar stereographic plots this is vertical.
@@ -265,10 +265,8 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
         ylabel = ''
 
     # Set contour line styles
-    if negative_linestyle is None:
-        matplotlib.rcParams['contour.negative_linestyle'] = 'solid'
-    else:
-        matplotlib.rcParams['contour.negative_linestyle'] = 'Dashed'
+    matplotlib.rcParams['contour.negative_linestyle'] = negative_linestyle
+
 
     # Set contour lines off on block plots
     if blockfill:
@@ -824,6 +822,10 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
 
                 # Add some labels
                 if axes:
+                    # Offset for text based on size of text
+                    offset = 3.0*plotvars.axis_label_fontsize/11.0
+                    fs = plotvars.axis_label_fontsize
+                    fw = plotvars.axis_label_fontweight
                     mymap.drawcoastlines()
                     mymap.drawparallels(np.arange(-80., 81., 20.))
                     mymap.drawmeridians(np.arange(-180., 181., 20.))
@@ -845,13 +847,15 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
                                 label = label + 'E'
                             plotvars.plot.text(xpts[pt], ypts[pt], label,
                                                horizontalalignment='center',
-                                               zorder=100)
+                                               zorder=100,
+                                               fontsize=fs,
+                                               fontweight=fw)
                     if yaxis:
                         lats = []
                         for lat in np.arange(9)*20-80:
                             if lat >= ymin and lat <= ymax:
                                 lats = np.append(lats, lat)
-                        lons = np.zeros(np.size(lats))+xmin-3
+                        lons = np.zeros(np.size(lats))+xmin-offset
                         xpts, ypts = mymap(lons, lats)
                         for pt in np.arange(np.size(xpts)):
                             label = str(abs(lats[pt]))
@@ -862,7 +866,9 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
                             plotvars.plot.text(xpts[pt], ypts[pt], label,
                                                horizontalalignment='right',
                                                verticalalignment='center',
-                                               zorder=100)
+                                               zorder=100,
+                                               fontsize=fs,
+                                               fontweight=fw)
 
 
         # Reset plot limits if not a user plot
@@ -1877,8 +1883,11 @@ def mapset(lonmin=None, lonmax=None, latmin=None, latmax=None, proj='cyl',
      | width=12000000 - width of Lambert Conformal Projection, lcc
      | height=9000000 - height of Lambert Conformal Projection, lcc
      | plimits=None - plot limits [lonmin, lonmax, latmin, latmax] for lcc plot
-     | See the http://ajheaps.github.io/cf-plot/version_2.1.htm for a couple of
-     | examples of using the Lambert Conformal Projection
+     | See the http://ajheaps.github.io/cf-plot/version_2.1.html for a couple of
+     | examples of using the Lambert Conformal Projection.
+     | Data must be continuous and contiguous and you must select the same 
+     | plot limits as your data.  i.e. if you have data that is -60 to 30 
+     | in longitude then the plot limits must also be -60 to 30 in longitude.
      |
      | Map settings are persistent until a new call to mapset is made. To
      | reset to the default map settings use mapset().
@@ -3945,6 +3954,14 @@ def stipple(f=None, x=None, y=None, min=None, max=None,
      |
     """
 
+
+    if plotvars.plot_type not in [1,2,3]:
+        errstr = '\n stipple error - only X-Y, X-Z and Y-Z \n'
+        errstr = errstr + 'stipple supported at the present time\n'
+        errstr = errstr + 'Please raise a feature request if you see this error.\n'
+        raise Warning(errstr)
+
+
     # Extract required data for contouring
     # If a cf-python field
     if isinstance(f[0], cf.Field):
@@ -3988,9 +4005,18 @@ def stipple(f=None, x=None, y=None, min=None, max=None,
             # Calculate interpolation points
             xnew, ynew, xnew_map, ynew_map = polar_regular_grid()
 
-    if plotvars.plot_type == 2:
-        # Calculate interpolation points
+    if plotvars.plot_type >= 2 and plotvars.plot_type <= 3:
 
+        print 'plotvars.plot_type is', plotvars.plot_type
+
+        # Flip data if a lat-height plot and lats start at the north pole
+        if plotvars.plot_type == 2:
+            if xpts[0] > xpts[-1]:
+                print 'flipping Y'
+                xpts = xpts[::-1]
+                field = np.fliplr(field)
+
+        # Calculate interpolation points
         xnew, ynew = stipple_points(xmin=np.nanmin(xpts),
                                     xmax=np.nanmax(xpts),
                                     ymin=np.nanmin(ypts),
@@ -4015,7 +4041,7 @@ def stipple(f=None, x=None, y=None, min=None, max=None,
             marker=marker,
             edgecolors=edgecolors)
 
-    if plotvars.plot_type == 2:
+    if plotvars.plot_type >= 2 and plotvars.plot_type <= 3:
         plotvars.plot.scatter(
             xnew[valid_points],
             ynew[valid_points],
@@ -5882,6 +5908,8 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
             maxy = np.min(y)
 
     # Use user set values if present
+    time_xstr = False
+    time_ystr = False
     if plotvars.xmin is not None:
         minx = plotvars.xmin
         miny = plotvars.ymin
@@ -5889,8 +5917,6 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
         maxy = plotvars.ymax
 
         # Change from date string to a number if strings are passed
-        time_xstr = False
-        time_ystr = False
         try:
             float(minx)
         except:
@@ -5899,6 +5925,7 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
             float(miny)
         except:
             time_ystr = True
+
 
         if cf_field:
             taxis = f.item('T')
@@ -5923,6 +5950,8 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
                     maxy = t.array
                     taxis = cf.Data([cf.dt(plotvars.ymin), cf.dt(
                         plotvars.ymax)], units=time_units)
+
+
 
 
     # Set x and y labelling
@@ -5997,10 +6026,11 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
 
 
     if plotvars.user_gset == 1:
-        minx = plotvars.xmin
-        maxx = plotvars.xmax
-        miny = plotvars.ymin
-        maxy = plotvars.ymax
+        if time_xstr is False and time_ystr is False:
+            minx = plotvars.xmin
+            maxx = plotvars.xmax
+            miny = plotvars.ymin
+            maxy = plotvars.ymax
 
 
     # Make graph
