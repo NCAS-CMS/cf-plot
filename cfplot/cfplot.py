@@ -32,11 +32,11 @@ class pvars(object):
         for a, v in self.__dict__.iteritems():
             return '\n'.join(out)
 
-cf_version_min = '2.0.0' #'1.0.1'
+cf_version_min = '1.0.1'
 cf_errstr = '\n cf-python > ' + cf_version_min + \
     ' needs to be installed to use cf-plot \n'
 try:
-    import cf2 as cf
+    import cf
     if StrictVersion(cf.__version__) < StrictVersion(cf_version_min):
         raise Warning(cf_errstr)
 except ImportError:
@@ -238,25 +238,19 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
 
     # Extract required data for contouring
     # If a cf-python field
-    if isinstance(f[0], cf.Field):
-        # Check if this is a cf.Fieldlist and reject if it is
-        if len(f) > 1:
-            errstr = '\n cf_data_assign error - passed field is a '
-            errstr = errstr + 'cf.Fieldlist\n'
-            errstr = errstr + 'Please pass one field for contouring\n'
-            errstr = errstr + 'i.e. f[0]\n'
-            raise Warning(errstr)
-
+    if isinstance(f, cf.Field):
         # Extract data
         if verbose:
             print 'con - calling cf_data_assign'
-        f = f[0]
+
         field, x, y, ptype, colorbar_title, xlabel, ylabel, xpole, ypole =\
             cf_data_assign(f, colorbar_title, verbose=verbose)
         if user_xlabel is not None:
             xlabel = user_xlabel
         if user_ylabel is not None:
             ylabel = user_ylabel
+    elif isinstance(f, cf.FieldList):
+        raise TypeError("Can't plot a field list")
     else:
         if verbose:
             print 'con - using user assigned data'
@@ -624,8 +618,8 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
         if blockfill:
             if verbose:
                 print 'con - adding blockfill'
-            if isinstance(f[0], cf.Field):
-                if getattr(f[0].coord('lon'), 'hasbounds', False):
+            if isinstance(f, cf.Field):
+                if getattr(f.coord('lon'), 'hasbounds', False):
                     xpts = np.squeeze(f.coord('lon').bounds.array[:, 0])
                     ypts = np.squeeze(f.coord('lat').bounds.array[:, 0])
                     # Add last longitude point
@@ -890,7 +884,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
 
         # Work out which way is up
         positive = None
-        if isinstance(f[0], cf.Field):
+        if isinstance(f, cf.Field):
             if hasattr(f.item('Z'), 'positive'):
                 positive = f.item('Z').positive
             else:
@@ -1013,7 +1007,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
                     min=xmin, max=xmax, type=1)  # lon-pressure
             if ptype == 7:
                 # time-pressure
-                if isinstance(f[0], cf.Field):
+                if isinstance(f, cf.Field):
 
                     if plotvars.user_gset == 0:
                         tmin = f.item('T').dtarray[0]
@@ -1104,8 +1098,8 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
 
         # Block fill
         if blockfill:
-            if isinstance(f[0], cf.Field):
-                if getattr(f[0].coord('lat'), 'hasbounds', False):
+            if isinstance(f, cf.Field):
+                if getattr(f.coord('lat'), 'hasbounds', False):
                     if ptype == 2:
                         xpts = np.squeeze(f.coord('Y').bounds.array)[:, 0]
                         xpts = np.append(xpts, f.coord('Y').bounds.array[-1, 1])
@@ -1381,8 +1375,8 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
 
         # Block fill
         if blockfill:
-            if isinstance(f[0], cf.Field):
-                if f[0].coord('lon').hasbounds:
+            if isinstance(f, cf.Field):
+                if f.coord('lon').hasbounds:
                     if ptype == 4:
                         xpts = np.squeeze(f.coord('X').bounds.array)[:, 0]
                         xpts = np.append(xpts, f.coord('X').bounds.array[-1, 1])
@@ -3965,11 +3959,12 @@ def stipple(f=None, x=None, y=None, min=None, max=None,
 
     # Extract required data for contouring
     # If a cf-python field
-    if isinstance(f[0], cf.Field):
+    if isinstance(f, cf.Field):
         colorbar_title = ''
-        f = f[0]
         field, xpts, ypts, ptype, colorbar_title, xlabel, ylabel, xpole, \
             ypole = cf_data_assign(f, colorbar_title)
+    elif isinstance(f, cf.FieldList):
+        raise TypeError("Can't plot a field list")
     else:
         field = f  # field data passed in as f
         check_data(field, x, y)
@@ -4252,10 +4247,11 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,
 
     # Extract required data for contouring
     # If a cf-python field
-    if isinstance(u[0], cf.Field):
-        u = u[0]
+    if isinstance(u, cf.Field):
         u_data, u_x, u_y, ptype, colorbar_title, xlabel, ylabel, xpole, \
             ypole = cf_data_assign(u, colorbar_title)
+    elif isinstance(u, cf.FieldList):
+        raise TypeError("Can't plot a field list")
     else:
         # field=f #field data passed in as f
         check_data(u, x, y)
@@ -4265,10 +4261,11 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,
         xlabel = ''
         ylabel = ''
 
-    if isinstance(v[0], cf.Field):
-        v = v[0]
+    if isinstance(v, cf.Field):
         v_data, v_x, v_y, ptype, colorbar_title, xlabel, ylabel, xpole, \
             ypole = cf_data_assign(v, colorbar_title)
+    elif isinstance(v, cf.FieldList):
+        raise TypeError("Can't plot a field list")
     else:
         # field=f #field data passed in as f
         check_data(v, x, y)
@@ -4418,7 +4415,7 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,
         # Make key_label if none exists
         if key_label is None:
             key_label = str(key_length)
-            if isinstance(u[0], cf.Field):
+            if isinstance(u, cf.Field):
                 key_label = supscr(key_label + u.units)
 
         if key_show:
@@ -4443,7 +4440,7 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,
             # Make key_label if none exists
             if key_label is None:
                 key_label = str(key_length)
-            if isinstance(u[0], cf.Field):
+            if isinstance(u, cf.Field):
                 key_label = supscr(key_label + u.units)
             if key_show:
                 quiv_key = plotvars.plot.quiverkey(quiv, key_location[0],
@@ -4719,7 +4716,7 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,
             # Single scale vector
             if key_label is None:
                 key_label_u = str(key_length_u)
-                if isinstance(u[0], cf.Field):
+                if isinstance(u, cf.Field):
                     key_label_u = supscr(key_label_u + ' (' + u.units + ')')
             else:
                 key_label_u = key_label[0]
@@ -4746,9 +4743,9 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,
             if key_label is None:
                 key_label_u = str(key_length_u)
                 key_label_v = str(key_length_v)
-                if isinstance(u[0], cf.Field):
+                if isinstance(u, cf.Field):
                     key_label_u = supscr(key_label_u + ' (' + u.units + ')')
-                if isinstance(v[0], cf.Field):
+                if isinstance(v, cf.Field):
                     key_label_v = supscr(key_label_v + ' (' + v.units + ')')
             else:
                 key_label_u = supscr(key_label[0])
@@ -5791,18 +5788,12 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
     ##################
     cf_field = False
     if f is not None:
-        if isinstance(f[0], cf.Field):
+        if isinstance(f, cf.Field):
             cf_field = True
+        elif isinstance(f, cf.FieldList):
+            raise TypeError("Can't plot a field list")
 
     if cf_field:
-        # Check if this is a cf.Fieldlist and reject if it is
-        if len(f) > 1:
-            errstr = '\n cf_data_assign error - passed field is a '
-            errstr += 'cf.Fieldlist\n'
-            errstr += 'Please pass one field for contouring\n'
-            errstr += 'i.e. f[0]\n'
-            raise Warning(errstr)
-
         # Extract data
         if verbose:
             print 'lineplot - CF field, extracting data'
@@ -6211,21 +6202,21 @@ def regression_tests():
     # example1
     reset()
     setvars(file='fig1.png')
-    f = cf.read('/opt/graphics/cfplot_data/tas_A1.nc')
+    f = cf.read('/opt/graphics/cfplot_data/tas_A1.nc')[0]
     con(f.subspace(time=15))
     compare_images(1)
 
     # example2
     reset()
     setvars(file='fig2.png')
-    f = cf.read('/opt/graphics/cfplot_data/tas_A1.nc')
+    f = cf.read('/opt/graphics/cfplot_data/tas_A1.nc')[0]
     con(f.subspace(time=15), blockfill=True, lines=False)
     compare_images(2)
 
     # example3
     reset()
     setvars(file='fig3.png')
-    f = cf.read('/opt/graphics/cfplot_data/tas_A1.nc')
+    f = cf.read('/opt/graphics/cfplot_data/tas_A1.nc')[0]
     mapset(lonmin=-15, lonmax=3, latmin=48, latmax=60)
     levs(min=265, max=285, step=1)
     con(f.subspace(time=15))
@@ -6278,7 +6269,7 @@ def regression_tests():
     # example10
     reset()
     setvars(file='fig10.png')
-    f = cf.read('/opt/graphics/cfplot_data/tas_A1.nc')
+    f = cf.read('/opt/graphics/cfplot_data/tas_A1.nc')[0]
     cscale('plasma')
     con(f.subspace(longitude=0), lines=0)
     compare_images(10)
@@ -6286,7 +6277,7 @@ def regression_tests():
     # example11
     reset()
     setvars(file='fig11.png')
-    f = cf.read('/opt/graphics/cfplot_data/tas_A1.nc')
+    f = cf.read('/opt/graphics/cfplot_data/tas_A1.nc')[0]
     gset(-30, 30, '1960-1-1', '1980-1-1')
     levs(min=280, max=305, step=1)
     cscale('plasma')
@@ -6296,7 +6287,7 @@ def regression_tests():
     # example12
     reset()
     setvars(file='fig12.png')
-    f = cf.read('/opt/graphics/cfplot_data/tas_A1.nc')
+    f = cf.read('/opt/graphics/cfplot_data/tas_A1.nc')[0]
     cscale('plasma')
     con(f.subspace(latitude=0), lines=0)
     compare_images(12)
@@ -6342,12 +6333,12 @@ def regression_tests():
     # example16
     reset()
     setvars(file='fig16.png')
-    c = cf.read('/opt/graphics/cfplot_data/vaAMIPlcd_DJF.nc')
+    c = cf.read('/opt/graphics/cfplot_data/vaAMIPlcd_DJF.nc')[0]
     c = c.subspace(Y=cf.wi(-60, 60))
     c = c.subspace(X=cf.wi(80, 160))
     c = c.collapse('T: mean X: mean')
 
-    g = cf.read('/opt/graphics/cfplot_data/wapAMIPlcd_DJF.nc')
+    g = cf.read('/opt/graphics/cfplot_data/wapAMIPlcd_DJF.nc')[0]
     g = g.subspace(Y=cf.wi(-60, 60))
     g = g.subspace(X=cf.wi(80, 160))
     g = g.collapse('T: mean X: mean')
@@ -6359,7 +6350,7 @@ def regression_tests():
     # example17
     reset()
     setvars(file='fig17.png')
-    f = cf.read('/opt/graphics/cfplot_data/tas_A1.nc')
+    f = cf.read('/opt/graphics/cfplot_data/tas_A1.nc')[0]
     g = f.subspace(time=15)
     gopen()
     cscale('magma')
@@ -6372,7 +6363,7 @@ def regression_tests():
     # example18
     reset()
     setvars(file='fig18.png')
-    f = cf.read('/opt/graphics/cfplot_data/tas_A1.nc')
+    f = cf.read('/opt/graphics/cfplot_data/tas_A1.nc')[0]
     g = f.subspace(time=15)
     gopen()
     cscale('magma')
@@ -6431,7 +6422,7 @@ def regression_tests():
     reset()
     setvars(file='fig23.png')
     f = cf.read('/opt/graphics/cfplot_data/rgp.nc')[0]
-    data = f[0].array
+    data = f.array
     xvec = f.item('dim1').array
     yvec = f.item('dim0').array
     xpole = 160
@@ -6560,7 +6551,7 @@ def regression_tests():
     # example29
     reset()
     setvars(file='fig29.png')
-    f = cf.read('/opt/graphics/cfplot_data/tas_A1.nc')
+    f = cf.read('/opt/graphics/cfplot_data/tas_A1.nc')[0]
     temp = f.subspace(time=cf.wi(cf.dt('1900-01-01'), cf.dt('1980-01-01')))
     temp_annual = temp.collapse('T: mean', group=cf.Y())
     temp_annual_global = temp_annual.collapse('area: mean')
