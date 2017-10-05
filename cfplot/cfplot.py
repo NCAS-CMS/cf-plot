@@ -32,6 +32,15 @@ class pvars(object):
         for a, v in self.__dict__.iteritems():
             return '\n'.join(out)
 
+cf_version_min = '1.0.1'
+cf_errstr = '\n cf-python > ' + cf_version_min + \
+    ' needs to be installed to use cf-plot \n'
+try:
+    import cf
+    if StrictVersion(cf.__version__) < StrictVersion(cf_version_min):
+        raise Warning(cf_errstr)
+except ImportError:
+    raise Warning(cf_errstr)
 
 
 # Check for a display and use the Agg backing store if none is present
@@ -140,7 +149,7 @@ plotvars = pvars(lonmin=-180, lonmax=180, latmin=-90, latmax=90, proj='cyl',
                  legend_text_weight='normal', tight=False,
                  cs_uniform=True, master_title=None,
                  master_title_location=[0.5, 0.95], master_title_fontsize=30,
-                 master_title_fontweight='normal')
+                 master_title_fontweight='normal', dpi=None)
 
 
 # Check for iPython notebook inline
@@ -156,7 +165,8 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
         colorbar_orientation=None, colorbar_position=None, xlog=False,
         ylog=False, axes=True, xaxis=True, yaxis=True, xticks=None,
         xticklabels=None, yticks=None, yticklabels=None, xlabel=None,
-        ylabel=None, colors='k', swap_axes=False, verbose=None):
+        ylabel=None, colors='k', swap_axes=False, verbose=None,
+        linewidths=None, alpha=1.0):
     """
      | con is the interface to contouring in cf-plot. The minimum use is con(f)
      | where f is a 2 dimensional array. If a cf field is passed then an
@@ -198,7 +208,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
      |                          coordinates. Use when a common colorbar
      |                          is required for a set of plots. A typical set
      |                          of values would be [0.1, 0.05, 0.8, 0.02]
-     | colors='k' - contour line colors
+     | colors='k' - contour line colors - takes one or many values.
      | xlog=False - logarithmic x axis
      | ylog=False - logarithmic y axis
      | axes=True - plot x and y axes
@@ -213,6 +223,9 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
      | swap_axes=False - swap plotted axes - only valid for X, Y, Z vs T plots
      | verbose=None - change to 1 to get a verbose listing of what con
      |                is doing
+     | linewidths=None - contour linewidths.  Either a single number for all 
+     |                   lines or array of widths
+     | alpha=1.0 - transparency setting.  The default is no transparency.
      |
      :Returns:
       None
@@ -246,6 +259,12 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
         if verbose:
             print 'con - using user assigned data'
         field = f  # field data passed in as f
+        if x is None:
+            x = np.arange(np.shape(field)[1])
+        if y is None:
+            y = np.arange(np.shape(field)[0])
+
+
         check_data(field, x, y)
         xlabel = ''
         ylabel = ''
@@ -494,6 +513,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
 
 
 
+
     ##########
     # Map plot
     ##########
@@ -620,7 +640,8 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
             # filled colour contours
             cfill = mymap.contourf(lons, lats, field * fmult, clevs,
                                    extend=plotvars.levels_extend,
-                                   cmap=cmap, tri=tri, norm=plotvars.norm)
+                                   cmap=cmap, tri=tri, norm=plotvars.norm,
+                                   alpha=alpha)
 
         # Block fill
         if blockfill:
@@ -667,7 +688,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
             if verbose:
                 print 'con - adding contour lines and labels'
             cs = mymap.contour(lons, lats, field * fmult, clevs, colors=colors,
-                               tri=tri)
+                               tri=tri, linewidths=linewidths, alpha=alpha)
             if line_labels:
                 nd = ndecs(clevs)
                 fmt = '%d'
@@ -681,7 +702,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
             if zero_thick:
                 cs = mymap.contour(lons, lats, field * fmult, [-1e-32, 0],
                                    colors=colors, linewidths=zero_thick,
-                                   tri=tri)
+                                   tri=tri, alpha=alpha)
 
         # axes
         if plotvars.proj == 'cyl':
@@ -699,8 +720,6 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
                         if xticklabels is None:
                             axes_plot(xticks=xticks, xticklabels=xticks)
                         else:
-                            print 'xticks are ', xticks
-                            print 'xtick labels are ', xticklabels
                             axes_plot(xticks=xticks, xticklabels=xticklabels)
                 if yaxis:
                     if yticks is None:
@@ -882,6 +901,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
     # Latitude, longitude or time vs Z plots
     ########################################
     if ptype == 2 or ptype == 3 or ptype == 7:
+
         if verbose:
             if ptype == 2:
                 print 'con - making a latitude-pressure plot'
@@ -1041,8 +1061,9 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
                         [cf.dt(tmin), cf.dt(tmax)], units=time_units)
                     time_ticks, time_labels, tlabel = timeaxis(taxis)
 
+
                     # Use user supplied labels if present
-                    if xlabel is None:
+                    if user_xlabel is None:
                         xlabel = tlabel
                     if xticks is None:
                         xticks = time_ticks
@@ -1102,23 +1123,39 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
             cfill = plotvars.plot.contourf(x, y, field * fmult, clevs,
                                            extend=plotvars.levels_extend,
                                            cmap=cmap, tri=tri,
-                                           norm=plotvars.norm)
+                                           norm=plotvars.norm, alpha=alpha)
 
         # Block fill
         if blockfill:
-            if isinstance(f, cf.Field):
-                if getattr(f.coord('lat'), 'hasbounds', False):
-                    if ptype == 2:
+            if isinstance(f, cf.Field): 
+
+                hasbounds = True
+
+                if ptype == 2:
+                    if getattr(f.coord('Y'), 'hasbounds', False):
+                        hasbounds = False
                         xpts = np.squeeze(f.coord('Y').bounds.array)[:, 0]
                         xpts = np.append(xpts, f.coord('Y').bounds.array[-1, 1])
-                    if ptype == 3:
+
+                if ptype == 3:
+                    if getattr(f.coord('X'), 'hasbounds', False):
+                        hasbounds = False
                         xpts = np.squeeze(f.coord('X').bounds.array)[:, 0]
                         xpts = np.append(xpts, f.coord('X').bounds.array[-1, 1])
-                    if ptype == 7:
+
+                if ptype == 7:
+                    if getattr(f.coord('T'), 'hasbounds', False):
+                        hasbounds = False
                         xpts = np.squeeze(f.coord('T').bounds.array)[:, 0]
                         xpts = np.append(xpts, f.coord('T').bounds.array[-1, 1])
+
+                if getattr(f.coord('Z'), 'hasbounds', False):
+                    hasbounds = False
                     ypts = np.squeeze(f.coord('Z').bounds.array)[:, 0]
                     ypts = np.append(ypts, f.coord('Z').bounds.array[-1, 1])
+
+
+                if hasbounds is False:
                     bfill(
                         f=field_orig *
                         fmult,
@@ -1150,7 +1187,8 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
         # Contour lines and labels
         if lines:
             cs = plotvars.plot.contour(
-                x, y, field * fmult, clevs, colors=colors, tri=tri)
+                x, y, field * fmult, clevs, colors=colors, tri=tri, 
+                linewidths=linewidths)
             if line_labels:
                 nd = ndecs(clevs)
                 fmt = '%d'
@@ -1167,7 +1205,8 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
                 if zero_thick:
                     cs = plotvars.plot.contour(x, y, field * fmult,
                                                [-1e-32, 0], colors=colors,
-                                               linewidths=zero_thick, tri=tri)
+                                               linewidths=zero_thick, tri=tri,
+                                               alpha=alpha)
 
         # Colorbar
         if colorbar:
@@ -1379,7 +1418,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
             cfill = plotvars.plot.contourf(x, y, field * fmult, clevs,
                                            extend=plotvars.levels_extend,
                                            cmap=cmap, tri=tri,
-                                           norm=plotvars.norm)
+                                           norm=plotvars.norm, alpha=alpha)
 
         # Block fill
         if blockfill:
@@ -1434,7 +1473,8 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
         # Contour lines and labels
         if lines:
             cs = plotvars.plot.contour(
-                x, y, field * fmult, clevs, colors=colors, tri=tri)
+                x, y, field * fmult, clevs, colors=colors, tri=tri,
+                linewidths=linewidths, alpha=alpha)
             if line_labels:
                 nd = ndecs(clevs)
                 fmt = '%d'
@@ -1448,7 +1488,8 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
                 if zero_thick:
                     cs = plotvars.plot.contour(x, y, field * fmult,
                                                [-1e-32, 0], colors=colors,
-                                               linewidths=zero_thick, tri=tri)
+                                               linewidths=zero_thick, tri=tri,
+                                               alpha=alpha)
 
         # Colorbar
         if colorbar:
@@ -1536,7 +1577,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
             cfill = plotvars.plot.contourf(xpts, ypts, field * fmult, clevs,
                                            extend=plotvars.levels_extend,
                                            cmap=cmap, tri=tri,
-                                           norm=plotvars.norm)
+                                           norm=plotvars.norm, alpha=alpha)
 
         # Block fill
         if blockfill:
@@ -1552,7 +1593,8 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
         # Contour lines and labels
         if lines:
             cs = plotvars.plot.contour(
-                xpts, ypts, field * fmult, clevs, colors=colors, tri=tri)
+                xpts, ypts, field * fmult, clevs, colors=colors, tri=tri,
+                linewidths=linewidths)
             if line_labels:
                 nd = ndecs(clevs)
                 fmt = '%d'
@@ -1566,7 +1608,8 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
             if zero_thick:
                 cs = plotvars.plot.contour(xpts, ypts, field * fmult,
                                            [-1e-32, 0], colors=colors,
-                                           linewidths=zero_thick, tri=tri)
+                                           linewidths=zero_thick, tri=tri,
+                                           alpha=alpha)
 
         # Colorbar
         if colorbar:
@@ -1731,7 +1774,7 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
             cfill = plotvars.plot.contourf(x, y, field * fmult, clevs,
                                            extend=plotvars.levels_extend,
                                            cmap=cmap, tri=tri,
-                                           norm=plotvars.norm)
+                                           norm=plotvars.norm, alpha=alpha)
 
         # Block fill
         if blockfill:
@@ -1747,7 +1790,8 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
         # Contour lines and labels
         if lines:
             cs = plotvars.plot.contour(
-                x, y, field * fmult, clevs, colors=colors, tri=tri)
+                x, y, field * fmult, clevs, colors=colors, tri=tri,
+                linewidths=linewidths)
             if line_labels:
                 nd = ndecs(clevs)
                 fmt = '%d'
@@ -1761,7 +1805,8 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
             if zero_thick:
                 cs = plotvars.plot.contour(x, y, field * fmult, [-1e-32, 0],
                                            colors=colors,
-                                           linewidths=zero_thick, tri=tri)
+                                           linewidths=zero_thick, tri=tri,
+                                           alpha=alpha)
 
         # Colorbar
         if colorbar:
@@ -2551,7 +2596,7 @@ def gset(xmin=None, xmax=None, ymin=None, ymax=None,
      | of the data.
      |
      | To set date axes use date strings i.e.
-     | cfp.gset(xmin = '1970-1-1', xmax = '1999-31-12', ymin = 285,
+     | cfp.gset(xmin = '1970-1-1', xmax = '1999-12-31', ymin = 285,
      |          ymax = 295)
      |
 
@@ -2617,7 +2662,7 @@ def gset(xmin=None, xmax=None, ymin=None, ymax=None,
 def gopen(rows=1, columns=1, user_plot=1, file='python',
           orientation='landscape', figsize=[11.7, 8.3],
           left=0.12, right=0.92, top=0.92, bottom=0.08, wspace=0.2,
-          hspace=0.2):
+          hspace=0.2, dpi=None):
     """
      | gopen is used to open a graphic file.
      |
@@ -2633,7 +2678,7 @@ def gopen(rows=1, columns=1, user_plot=1, file='python',
      | bottom=0.08 - bottom margin in normalised coordinates
      | wspace=0.2 - width reserved for blank space between subplots
      | hspace=0.2 - height reserved for white space between subplots
-
+     | dpi=None - resolution in dots per inch
 
 
      :Returns:
@@ -2686,6 +2731,10 @@ def gopen(rows=1, columns=1, user_plot=1, file='python',
         matplotlib.rcParams['xtick.major.size'] = 2
         matplotlib.rcParams['ytick.major.size'] = 2
 
+    # Set image resolution
+    if dpi is not None:
+        plotvars.dpi=dpi
+
 
 def gclose(view=True):
     """
@@ -2726,7 +2775,7 @@ def gclose(view=True):
         if type is None:
             file = file + '.png'
         plotvars.master_plot.savefig(
-            file, papertype='a4', orientation=plotvars.orientation)
+            file, papertype='a4', orientation=plotvars.orientation, dpi=plotvars.dpi)
         plot.close()
     else:
 
@@ -2736,7 +2785,7 @@ def gclose(view=True):
             if disp is not None:
                 tfile = 'cfplot.png'
                 plotvars.master_plot.savefig(
-                    tfile, papertype='a4', orientation=plotvars.orientation)
+                    tfile, papertype='a4', orientation=plotvars.orientation, dpi=plotvars.dpi)
                 subprocess.Popen([disp, tfile])
             else:
                 plotvars.viewer = 'matplotlib'
@@ -3406,14 +3455,10 @@ def check_data(field=None, x=None, y=None):
             args = False
     if np.size(x) == 1:
         if x is None:
-            errstr = errstr + 'con error - x coordinates must be passed '
-            errstr += 'with the x= flag\n'
-            args = False
+            x = np.arange(np.shape(field)[1])
     if np.size(y) == 1:
         if y is None:
-            errstr = errstr + 'con error - y coordinates must be passed '
-            errstr += 'with the y= flag\n'
-            args = False
+            y = np.arange(np.shape(field)[0])
     if not args:
         raise Warning(errstr)
 
@@ -3939,7 +3984,8 @@ def regrid(f=None, x=None, y=None, xnew=None, ynew=None, lonlat=None):
 
 
 def stipple(f=None, x=None, y=None, min=None, max=None,
-            size=80, color='k', pts=50, marker='.', edgecolors='k'):
+            size=80, color='k', pts=50, marker='.', edgecolors='k',
+            alpha=1.0):
     """
      | stipple - put dots on the plot to indicate value of interest
      |
@@ -3953,6 +3999,7 @@ def stipple(f=None, x=None, y=None, min=None, max=None,
      | pts=50 - number of points in the x direction
      | marker='.' - default marker for stipples
      | edegecolors='k' - outline colour
+     | alpha=1.0 - transparency setting - defaul is off.
      |
      |
      :Returns:
@@ -4047,7 +4094,8 @@ def stipple(f=None, x=None, y=None, min=None, max=None,
             s=size,
             c=color,
             marker=marker,
-            edgecolors=edgecolors)
+            edgecolors=edgecolors,
+            alpha=alpha)
 
     if plotvars.plot_type >= 2 and plotvars.plot_type <= 3:
         plotvars.plot.scatter(
@@ -4056,7 +4104,8 @@ def stipple(f=None, x=None, y=None, min=None, max=None,
             s=size,
             c=color,
             marker=marker,
-            edgecolors=edgecolors)
+            edgecolors=edgecolors,
+            alpha=alpha)
 
 
 def stipple_points(xmin=None, xmax=None, ymin=None,
@@ -4174,7 +4223,7 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,
          width=0.02, headwidth=3, headlength=5, headaxislength=4.5,
          pivot='middle', key_location=[0.95, -0.06], key_show=True, axes=True,
          xaxis=True, yaxis=True, xticks=None, xticklabels=None, yticks=None,
-         yticklabels=None, xlabel=None, ylabel=None, ylog=False):
+         yticklabels=None, xlabel=None, ylabel=None, ylog=False, color='k'):
     """
      | vect - plot vectors
      |
@@ -4229,6 +4278,7 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,
      | xlabel=None - label for x axis
      | ylabel=None - label for y axis
      | ylog=False - log y axis
+     | color='k' - colour for the vectors - default is black.
      |
      :Returns:
       None
@@ -4236,6 +4286,12 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,
      |
      |
     """
+
+    # If the vector color is white set the quicker key colour to black
+    # so that it can be seen
+    qkey_color=color
+    if qkey_color == 'w' or qkey_color == 'white':
+        qkey_color = 'k'
 
     colorbar_title = ''
     text_fontsize = plotvars.text_fontsize
@@ -4387,7 +4443,8 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,
                                          width=width,
                                          headwidth=headwidth,
                                          headlength=headlength,
-                                         headaxislength=headaxislength)
+                                         headaxislength=headaxislength,
+                                         color=color)
         else:
             # Polar grid
             # Calculate interpolation points and values
@@ -4422,7 +4479,8 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,
                                          scale=scale, width=width,
                                          headwidth=headwidth,
                                          headlength=headlength,
-                                         headaxislength=headaxislength)
+                                         headaxislength=headaxislength,
+                                         color=color)
 
         # Make key_label if none exists
         if key_label is None:
@@ -4433,7 +4491,9 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,
         if key_show:
             quiv_key = plotvars.plot.quiverkey(quiv, key_location[0],
                                                key_location[1], key_length,
-                                               key_label, labelpos='W')
+                                               key_label, labelpos='W',
+                                               color=qkey_color,
+                                               fontproperties={'size':str(plotvars.axis_label_fontsize)})
 
     # Map vectors
     if plotvars.plot_type == 1:
@@ -4447,7 +4507,8 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,
                                          units='inches', scale=scale,
                                          width=width, headwidth=headwidth,
                                          headlength=headlength,
-                                         headaxislength=headaxislength)
+                                         headaxislength=headaxislength,
+                                         color=color)
 
             # Make key_label if none exists
             if key_label is None:
@@ -4457,7 +4518,9 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,
             if key_show:
                 quiv_key = plotvars.plot.quiverkey(quiv, key_location[0],
                                                    key_location[1], key_length,
-                                                   key_label, labelpos='W')
+                                                   key_label, labelpos='W',
+                                                   color=qkey_color,
+                                                   fontproperties={'size':str(plotvars.axis_label_fontsize)})
 
         # axes
         if plotvars.proj == 'cyl':
@@ -4721,7 +4784,8 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,
                                     units='inches', scale=scale_u,
                                     width=width, headwidth=headwidth,
                                     headlength=headlength,
-                                    headaxislength=headaxislength)
+                                    headaxislength=headaxislength,
+                                    color=color)
 
         # Plot single key
         if np.size(scale) == 1:
@@ -4736,7 +4800,9 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,
                 quiv_key = plotvars.plot.quiverkey(quiv, key_location[0],
                                                    key_location[1],
                                                    key_length_u, key_label_u,
-                                                   labelpos='W')
+                                                   labelpos='W',
+                                                   color=qkey_color,
+                                                   fontproperties={'size':str(plotvars.axis_label_fontsize)})
 
         # Plot two keys
         if np.size(scale) == 2:
@@ -4771,14 +4837,18 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,
                                              headaxislength=headaxislength,
                                              width=width, headwidth=headwidth,
                                              headlength=headlength,
-                                             clip_on=False)
+                                             clip_on=False,
+                                             color=qkey_color,
+                                             fontproperties={'size':str(plotvars.axis_label_fontsize)})
                 quiv2 = plotvars.plot.quiver(xpos, ypos, 0, key_length[1],
                                              pivot='tail', units='inches',
                                              scale=scale[1],
                                              headaxislength=headaxislength,
                                              width=width, headwidth=headwidth,
                                              headlength=headlength,
-                                             clip_on=False)
+                                             clip_on=False,
+                                             color=qkey_color,
+                                             fontproperties={'size':str(plotvars.axis_label_fontsize)})
                 plotvars.plot.text(
                     xpos,
                     ypos + yoffset,
@@ -5185,7 +5255,8 @@ def setvars(file=None, title_fontsize=None, text_fontsize=None,
             ytick_label_align=None, legend_text_weight=None,
             legend_text_size=None, cs_uniform=None, 
             master_title=None, master_title_location=None,
-            master_title_fontsize=None, master_title_fontweight=None):
+            master_title_fontsize=None, master_title_fontweight=None,
+            dpi=None):
     """
      | setvars - set plotting variables
      |
@@ -5219,6 +5290,7 @@ def setvars(file=None, title_fontsize=None, text_fontsize=None,
      | master_title_location=None - master title location
      | master_title_fontsize=None - master title font size
      | master_title_fontweight=None - master title font weight
+     | dpi=None - dots per inch setting
      |
      | Use setvars() to reset to the defaults
      |
@@ -5237,7 +5309,7 @@ def setvars(file=None, title_fontsize=None, text_fontsize=None,
             xtick_label_align, ytick_label_rotation, ytick_label_align,
             legend_text_size, legend_text_weight, cs_uniform, 
             master_title, master_title_location,
-            master_title_fontsize, master_title_fontweight]
+            master_title_fontsize, master_title_fontweight, dpi]
     if all(val is None for val in vals):
         plotvars.file = None
         plotvars.title_fontsize = 15
@@ -5265,6 +5337,7 @@ def setvars(file=None, title_fontsize=None, text_fontsize=None,
         plotvars.master_title_location = [0.5, 0.95]
         plotvars.master_title_fontsize = 30
         plotvars.master_title_fontweight = 'normal'
+        plotvars.dpi=None
 
     if file is not None:
         plotvars.file = file
@@ -5316,7 +5389,8 @@ def setvars(file=None, title_fontsize=None, text_fontsize=None,
         plotvars.master_title_fontsize = master_title_fontsize
     if master_title_fontweight is not None:
         plotvars.master_title_fontweight = master_title_fontweight
-
+    if dpi is not None:
+        plotvars.dpi = dpi
 
 
 def rgrot(xin=None, yin=None, xpole=None, ypole=None):
