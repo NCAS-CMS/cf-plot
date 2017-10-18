@@ -2130,19 +2130,18 @@ def mapaxis(min=None, max=None, type=None):
         lonlabels = []
         for lon in lonticks:
             lon2 = np.mod(lon + 180, 360) - 180
-            if lon2 < 0 and lon2 >= -180:
+            if lon2 < 0 and lon2 > -180:
                 if lon != 180: 
                     lonlabels.append(str(abs(lon2)) + 'W')
-                if lon == 180:
-                    if np.max(lonticks) == 180: 
-                        lonlabels.append('180E')
-                    else:
-                        lonlabels.append('180')
 
             if lon2 > 0 and lon2 <= 180:
                 lonlabels.append(str(lon2) + 'E')
             if lon2 == 0:
                 lonlabels.append('0')
+
+            if lon == 180 or lon == -180:
+                   lonlabels.append('180')
+
 
         return(lonticks, lonlabels)
 
@@ -2612,13 +2611,14 @@ def gset(xmin=None, xmax=None, ymin=None, ymax=None,
 
     plotvars.user_gset = user_gset
 
+
     if all(val is None for val in [xmin, xmax, ymin, ymax]):
         plotvars.xmin = None
         plotvars.xmax = None
         plotvars.ymin = None
         plotvars.ymax = None
-        plotvars.xlog = False
-        plotvars.ylog = False
+        plotvars.xlog = xlog
+        plotvars.ylog = ylog
         plotvars.user_gset = 0
         return
 
@@ -2955,7 +2955,7 @@ def gvals(dmin=None, dmax=None, tight=0, mystep=None, mod=1):
     """
      | gvals - work out a sensible set of values between two limits
      | This is an internal routine used for contour levels and axis
-     | labelling and is not used by the user.
+     | labelling and is not generally used by the user.
 
      | dmin=None - minimum
      | dmax=None - maximum
@@ -2993,8 +2993,70 @@ def gvals(dmin=None, dmax=None, tight=0, mystep=None, mod=1):
 
     # Don't modify if dmin1 and dmax1 are both negative as this will create a
     # race condition
-    if dmin1 < 0 and dmax1 < 0:
+    if dmin1 < 0 and dmax1 <= 0:
         mod = 0
+
+
+    # Small range code
+    # Return a linspace set of values if dmax1 - dmin1 is <= 3
+    if dmax1 - dmin1 <= 3:
+        mult = 0
+        mindecs = 40 # minimum number of decimal places - a high starting value
+        minval = 0 # spacing value of the minimum number of decimal spaces
+        for val in np.arange(19)+2:
+            vals = np.linspace(dmin, dmax, val)
+            nd = ndecs(vals)
+            if nd <= mindecs:
+                minval = val
+                mindecs = nd
+
+        vals = np.linspace(dmin, dmax, minval)
+
+
+        # Try to recalculate if too many decimal places
+        if mindecs >=4:
+
+            step=0.1
+            if dmax1-dmin1 <= 0.1:
+                 step=0.01
+            if dmax1-dmin1 <= 0.01:
+                 step=0.001
+            if dmax1-dmin1 <= 0.001:
+                 step=0.0001
+            if dmax1-dmin1 <= 0.0001:
+                 step=0.00001
+            if dmax1-dmin1 <= 0.00001:
+                 step=0.000001
+
+
+            newvals = [float(int(dmin1))]
+            while np.max(newvals) < dmax1:
+                newvals = np.append(newvals, newvals[-1] + step)
+
+
+            # Remove any points outside of limits
+            pts = np.where((newvals >= dmin1) & (newvals <= dmax1))
+            newvals = newvals[pts ] 
+
+            # Remove upper and lower limits if tight=0 - i.e. a contour plot
+            if tight == 0 and np.size(vals) > 1:
+                if np.nanmax(newvals) >= dmax1:
+                    newvals = newvals[0:-1]
+                if np.nanmin(newvals) <= dmin1:
+                    newvals = newvals[1:]
+
+            if np.size(newvals) >2:
+                vals=newvals
+
+
+        return vals, mult
+
+
+
+
+
+
+
 
     if mod == 1:
         if (mystep is not None):
@@ -3007,30 +3069,26 @@ def gvals(dmin=None, dmax=None, tight=0, mystep=None, mod=1):
                 dmax1 = dmax1 * 10.0
                 mult = mult - 1
 
-        if int(dmax2 - dmin2) > 3:
-            step = 1
-            mult = 0
-
-            for val in [2, 5, 10, 20, 25, 50, 100, 200, 250, 500, 1000, 2000,
-                        2500, 5000, 10000, 20000, 25000, 50000, 100000,
-                        200000, 250000, 500000, 1000000, 10000000 ]:
-
-                if int(dmax2 - dmin2) / val > 10:
-                    step = val
-                    mult = 0
-
-
-            if int(dmax2 - dmin2) / 1000000 > 10:
-                step = (dmax2 - dmin2) / 16.0
-
-    # Return a linspace set of values if dmax1 - dmin1 is < 1
-    if dmax1 - dmin1 < 1:
+    if int(dmax2 - dmin2) > 3:
+        step = 1
         mult = 0
-        vals = np.linspace(dmin, dmax, 12)
-        return vals, mult
+        for val in [2, 5, 10, 20, 25, 50, 100, 200, 250, 500, 1000, 2000,
+                    2500, 5000, 10000, 20000, 25000, 50000, 100000,
+                    200000, 250000, 500000, 1000000, 10000000 ]:
+
+            if int(dmax2 - dmin2) / val > 10:
+                step = val
+                mult = 0
+
+        if int(dmax2 - dmin2) / 1000000 > 10:
+            step = (dmax2 - dmin2) / 16.0
 
 
-    # Reset to user or mone zero values
+
+
+
+
+    # Reset to user or non-zero values
     if (mystep is not None):
         step = mystep
     if (step == 0):
@@ -3051,8 +3109,8 @@ def gvals(dmin=None, dmax=None, tight=0, mystep=None, mod=1):
         if np.nanmin(vals) <= dmin1:
             vals = vals[1:]
 
-    # Return values if inputs are integers
-    if isinstance(dmin1, int) and isinstance(dmax1, int):
+    # Return values if there are five or more
+    if np.size(vals) >= 5:
         return vals, mult
 
     if mystep is not None:
@@ -3060,14 +3118,6 @@ def gvals(dmin=None, dmax=None, tight=0, mystep=None, mod=1):
             return vals, mult
 
 
-    # Floating point step
-    if (mult == 0 and np.size(vals) > 5 and float(
-            "%.1f" % ((dmax1 - dmin1) / 16)) > 0):
-        return vals, mult
-    else:
-        step = float("%.1f" % ((dmax1 - dmin1) / 16))
-        if step == 0:
-            step = float("%.2f" % ((dmax1 - dmin1) / 16))
 
     if step == .9:
         step = 1.0
@@ -3092,8 +3142,12 @@ def gvals(dmin=None, dmax=None, tight=0, mystep=None, mod=1):
     if step == .03:
         step = .02
 
+
     if (dmax1 - dmin1 == step):
         step = step / 10.
+
+    if step == 0.0:
+        step = (dmax1-dmin1)/16.
     vals = float("%.2f" % (int(dmin1 / step) * step))
     while (np.nanmax(vals) + step) <= dmax1:
         vals = np.append(vals, float("%.2f" % (np.nanmax(vals) + step)))
@@ -4062,12 +4116,11 @@ def stipple(f=None, x=None, y=None, min=None, max=None,
 
     if plotvars.plot_type >= 2 and plotvars.plot_type <= 3:
 
-        print 'plotvars.plot_type is', plotvars.plot_type
+
 
         # Flip data if a lat-height plot and lats start at the north pole
         if plotvars.plot_type == 2:
             if xpts[0] > xpts[-1]:
-                print 'flipping Y'
                 xpts = xpts[::-1]
                 field = np.fliplr(field)
 
@@ -4838,8 +4891,8 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,
                                              width=width, headwidth=headwidth,
                                              headlength=headlength,
                                              clip_on=False,
-                                             color=qkey_color,
-                                             fontproperties={'size':str(plotvars.axis_label_fontsize)})
+                                             color=qkey_color)
+
                 quiv2 = plotvars.plot.quiver(xpos, ypos, 0, key_length[1],
                                              pivot='tail', units='inches',
                                              scale=scale[1],
@@ -4847,8 +4900,8 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,
                                              width=width, headwidth=headwidth,
                                              headlength=headlength,
                                              clip_on=False,
-                                             color=qkey_color,
-                                             fontproperties={'size':str(plotvars.axis_label_fontsize)})
+                                             color=qkey_color)
+
                 plotvars.plot.text(
                     xpos,
                     ypos + yoffset,
@@ -6052,7 +6105,7 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
         else:
             yticklabels = map(str, yticks)
 
-    mod = 1
+    mod = 0
     tight = 0
     if plotvars.user_gset == 1:
         tight = 1
@@ -6236,9 +6289,9 @@ def regression_tests():
     compare_arrays(ref=ref_answer, min=280.50619506835938,
                    max=293.48431396484375, mult=0, gvals_test=True)
 
-    ref_answer = [3.6, 3.8, 4., 4.2, 4.4, 4.6, 4.8, 5., 5.2, 5.4, 5.6, 5.8,
-                  6.0, 6.2, 6.4, 6.6]
-    compare_arrays(ref=ref_answer, min=0.356, max=0.675, mult=-1,
+    ref_answer = [0.356,  0.385,  0.414,  0.443,  0.472,  0.501,  0.53 ,  0.559,
+        0.588,  0.617,  0.646,  0.675]
+    compare_arrays(ref=ref_answer, min=0.356, max=0.675, mult=0,
                    gvals_test=True)
 
     ref_answer = [-45, -40, -35, -30, -25, -20, -15, -10, -5, 0, 5, 10, 15,
@@ -6251,6 +6304,13 @@ def regression_tests():
                   63000, 64000]
     compare_arrays(ref=ref_answer, min=46956, max=64538, mult=0,
                    gvals_test=True)
+
+    ref_answer = [-1. , -0.9, -0.8, -0.7, -0.6, -0.5, -0.4, -0.3, -0.2, -0.1,  0. ,
+        0.1]
+    compare_arrays(ref=ref_answer, min=-1.0, max=0.1, mult=0,
+                   gvals_test=True)
+
+
 
     print ''
     print '----------------------------------------'
@@ -6349,7 +6409,7 @@ def regression_tests():
     reset()
     setvars(file='fig9.png')
     f = cf.read('/opt/graphics/cfplot_data/ggap.nc')[2]
-    con(f.subspace(latitude=0.56074494))
+    con(f.collapse('mean', 'latitude'))
     compare_images(9)
 
     # example10
@@ -6499,7 +6559,7 @@ def regression_tests():
     # example22
     reset()
     setvars(file='fig22.png')
-    f = cf.read('/opt/graphics/cfplot_data/rgp.nc')[0]
+    f = cf.read_field('/opt/graphics/cfplot_data/rgp.nc')
     cscale('gray')
     con(f)
     compare_images(22)
@@ -6507,7 +6567,7 @@ def regression_tests():
     # example23
     reset()
     setvars(file='fig23.png')
-    f = cf.read('/opt/graphics/cfplot_data/rgp.nc')[0]
+    f = cf.read_field('/opt/graphics/cfplot_data/rgp.nc')
     data = f.array
     xvec = f.item('dim1').array
     yvec = f.item('dim0').array
@@ -6640,7 +6700,7 @@ def regression_tests():
     f = cf.read('/opt/graphics/cfplot_data/tas_A1.nc')[0]
     temp = f.subspace(time=cf.wi(cf.dt('1900-01-01'), cf.dt('1980-01-01')))
     temp_annual = temp.collapse('T: mean', group=cf.Y())
-    temp_annual_global = temp_annual.collapse('area: mean')
+    temp_annual_global = temp_annual.collapse('area: mean', weights='area')
     temp_annual_global.Units -= 273.15
     lineplot(
         temp_annual_global,
@@ -6737,6 +6797,7 @@ def compare_arrays(ref=None, levs_test=None, gvals_test=None,
 
         if anom == 1:
             print '***gvals failure***'
+            print 'cfp.gvals(' + str(min) + ', ' + str(max) + ')'
             print ''
             print 'generated values are:', vals
             print 'with a  multiplier of ', testmult
@@ -6744,8 +6805,7 @@ def compare_arrays(ref=None, levs_test=None, gvals_test=None,
             print 'expected values:', ref
             print 'with a  multiplier of ', mult
         else:
-            pass_str = 'Passed cfp.gvals(min=' + str(min) + ', max='
-            pass_str += str(max) + ')'
+            pass_str = 'Passed cfp.gvals(' + str(min) + ', '+ str(max) + ')'
             print pass_str
 
     anom = 0
@@ -6765,7 +6825,7 @@ def compare_arrays(ref=None, levs_test=None, gvals_test=None,
         if anom == 1:
             print '***mapaxis failure***'
             print ''
-            print 'scfp.mapaxis(min=' + str(min) + ', max=' + str(max)
+            print 'cfp.mapaxis(min=' + str(min) + ', max=' + str(max)
             print ', type=' + str(type) + ')'
             print 'generated values are:', test_ticks
             print 'with labels:', test_labels
