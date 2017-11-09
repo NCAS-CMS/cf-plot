@@ -149,7 +149,9 @@ plotvars = pvars(lonmin=-180, lonmax=180, latmin=-90, latmax=90, proj='cyl',
                  legend_text_weight='normal', tight=False,
                  cs_uniform=True, master_title=None,
                  master_title_location=[0.5, 0.95], master_title_fontsize=30,
-                 master_title_fontweight='normal', dpi=None)
+                 master_title_fontweight='normal', dpi=None,
+                 plot_xmin=None, plot_xmax=None, plot_ymin=None,
+                 plot_ymax=None)
 
 
 # Check for iPython notebook inline
@@ -364,13 +366,45 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
         mult = 0
         fmult = 1
     else:
-        # Automatic levels
-        if verbose:
-            print 'con - generating automatic contour levels'
-        dmin = np.nanmin(field)
-        dmax = np.nanmax(field)
-        clevs, mult = gvals(dmin=dmin, dmax=dmax, tight=0)
-        fmult = 10**-mult
+        if plotvars.levels_step is None:
+            # Automatic levels
+            if verbose:
+                print 'con - generating automatic contour levels'
+            dmin = np.nanmin(field)
+            dmax = np.nanmax(field)
+            clevs, mult = gvals(dmin=dmin, dmax=dmax, tight=0)
+            fmult = 10**-mult
+        else:
+            # Use step to generate the levels
+            step = plotvars.levels_step
+            dmin = np.nanmin(field)
+            dmax = np.nanmax(field)
+            if isinstance(step, (int, long)):
+                dmin = int(np.nanmin(field))
+                dmax = int(np.nanmax(field))
+            fmult = 1
+            mult = 0
+            clevs = []
+            if dmin < 0:
+               clevs = ((np.arange(-1*dmin/step+1)*-step)[::-1])
+            if dmax > 0:
+                if np.size(clevs) > 0:
+                    clevs = np.concatenate((clevs[:-1], np.arange(dmax/step+1)*step))
+                else:
+                    clevs = np.arange(dmax/step+1)*step
+
+            # Strip out any outlying values
+            pts = np.where(np.logical_and(clevs >= dmin, clevs <= dmax))
+            clevs = clevs[pts]
+
+            # Throw an error if less than two levels
+            if np.size(clevs) < 2:
+                errstr = "\n\ncfp.con error - need more than two levels "
+                errstr += "to make a contour plot\n"
+                raise TypeError(errstr)
+
+
+
 
     # Set the colour scale
     # Nothing defined
@@ -550,6 +584,11 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
             # Add cyclic information if missing.
             if lonrange < 360:
                 field, x = addcyclic(field, x)
+                # New code to take account of addcyclic behaviour change from 1.0.7 to 1.1.0
+                # 1.0.7: 1.875, 5.625, ..., 358.125 went to 1.875, 5.625,..., 358.125, 361.875
+                # 1.1.0: 1.875, 5.625, ..., 358.125 went to 1.875, 5.625,..., 358.125, 1.875
+                if abs(x[0]-abs(x[-1])) < 1e-5:
+                    x[-1] = x[-1]+360.0
                 lonrange = np.nanmax(x) - np.nanmin(x)
 
             # Shift grid if needed
@@ -563,6 +602,8 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
             lonrange = np.nanmax(x) - plotvars.lonmin
             if lonrange < 360:
                 field, x = addcyclic(field, x)
+                if abs(x[0]-abs(x[-1])) < 1e-5:
+                    x[-1] = x[-1]+360.0
                 lonrange = np.nanmax(x) - np.nanmin(x)
 
         # Flip latitudes and field if latitudes are in descending order
@@ -662,7 +703,8 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
                         y=ypts,
                         clevs=clevs,
                         lonlat=1,
-                        bound=1)
+                        bound=1,
+                        alpha=alpha)
                 else:
                     bfill(
                         f=field_orig *
@@ -671,7 +713,8 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
                         y=y_orig,
                         clevs=clevs,
                         lonlat=1,
-                        bound=0)
+                        bound=0,
+                        alpha=alpha)
 
             else:
                 bfill(
@@ -681,7 +724,8 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
                     y=y_orig,
                     clevs=clevs,
                     lonlat=1,
-                    bound=0)
+                    bound=0,
+                    alpha=alpha)
 
         # Contour lines and labels
         if lines:
@@ -798,9 +842,16 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
             # Labels are [0, 2, 10001, 20001, 30001, 40001, 50001, 60001]
             # With a +1 near to the colorbar label
             cbar.set_ticklabels([str(i) for i in colorbar_labels])
-            for t in cbar.ax.get_xticklabels():
-                t.set_fontsize(text_fontsize)
-                t.set_fontweight(text_fontweight)
+            if colorbar_orientation == 'horizontal':
+                for t in cbar.ax.get_xticklabels():
+                    t.set_fontsize(text_fontsize)
+                    t.set_fontweight(text_fontweight)
+            else:
+                for t in cbar.ax.get_yticklabels():
+                    t.set_fontsize(text_fontsize)
+                    t.set_fontweight(text_fontweight)
+
+
 
         # Mask off selected area in Lambert Conformal projection if requested
         if plotvars.proj == 'lcc' and plotvars.lcc_plimits is not None:
@@ -1163,7 +1214,8 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
                         y=ypts,
                         clevs=clevs,
                         lonlat=0,
-                        bound=1)
+                        bound=1,
+                        alpha=alpha)
                 else:
                     bfill(
                         f=field_orig *
@@ -1172,7 +1224,8 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
                         y=y_orig,
                         clevs=clevs,
                         lonlat=0,
-                        bound=0)
+                        bound=0,
+                        alpha=alpha)
 
             else:
                 bfill(
@@ -1182,7 +1235,8 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
                     y=y_orig,
                     clevs=clevs,
                     lonlat=0,
-                    bound=0)
+                    bound=0,
+                    alpha=alpha)
 
         # Contour lines and labels
         if lines:
@@ -1235,9 +1289,14 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
                 fontweight=title_fontweight)
             # Bug in Matplotlib colorbar labelling
             cbar.set_ticklabels([str(i) for i in colorbar_labels])
-            for t in cbar.ax.get_xticklabels():
-                t.set_fontsize(text_fontsize)
-                t.set_fontweight(text_fontweight)
+            if colorbar_orientation == 'horizontal':
+                for t in cbar.ax.get_xticklabels():
+                    t.set_fontsize(text_fontsize)
+                    t.set_fontweight(text_fontweight)
+            else:
+                for t in cbar.ax.get_yticklabels():
+                    t.set_fontsize(text_fontsize)
+                    t.set_fontweight(text_fontweight)
 
         # Title
         plotvars.plot.set_title(title, y=1.03, fontsize=title_fontsize,
@@ -1443,7 +1502,8 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
                         y=ypts,
                         clevs=clevs,
                         lonlat=0,
-                        bound=1)
+                        bound=1,
+                        alpha=alpha)
                 else:
                     if swap_axes:
                         x_orig, y_orig = y_orig, x_orig
@@ -1455,7 +1515,8 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
                         y=y_orig,
                         clevs=clevs,
                         lonlat=0,
-                        bound=0)
+                        bound=0,
+                        alpha=alpha)
 
             else:
                 if swap_axes:
@@ -1468,7 +1529,8 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
                     y=y_orig,
                     clevs=clevs,
                     lonlat=0,
-                    bound=0)
+                    bound=0,
+                    alpha=alpha)
 
         # Contour lines and labels
         if lines:
@@ -1518,9 +1580,15 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
                 fontweight=title_fontweight)
             # Bug in Matplotlib colorbar labelling
             cbar.set_ticklabels([str(i) for i in colorbar_labels])
-            for t in cbar.ax.get_xticklabels():
-                t.set_fontsize(text_fontsize)
-                t.set_fontweight(text_fontweight)
+            if colorbar_orientation == 'horizontal':
+                for t in cbar.ax.get_xticklabels():
+                    t.set_fontsize(text_fontsize)
+                    t.set_fontweight(text_fontweight)
+            else:
+                for t in cbar.ax.get_yticklabels():
+                    t.set_fontsize(text_fontsize)
+                    t.set_fontweight(text_fontweight)
+
 
         # Title
         plotvars.plot.set_title(
@@ -1588,7 +1656,8 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
                 y=ypts,
                 clevs=clevs,
                 lonlat=0,
-                bound=0)
+                bound=0,
+                alpha=alpha)
 
         # Contour lines and labels
         if lines:
@@ -1638,9 +1707,16 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
                 fontweight=title_fontweight)
             # Bug in Matplotlib colorbar labelling
             cbar.set_ticklabels([str(i) for i in colorbar_labels])
-            for t in cbar.ax.get_xticklabels():
-                t.set_fontsize(text_fontsize)
-                t.set_fontweight(text_fontweight)
+            if colorbar_orientation == 'horizontal':
+                for t in cbar.ax.get_xticklabels():
+                    t.set_fontsize(text_fontsize)
+                    t.set_fontweight(text_fontweight)
+            else:
+                for t in cbar.ax.get_yticklabels():
+                    t.set_fontsize(text_fontsize)
+                    t.set_fontweight(text_fontweight)
+
+
 
         # Rotated grid axes
         if axes:
@@ -1785,7 +1861,8 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
                 y=y_orig,
                 clevs=clevs,
                 lonlat=0,
-                bound=0)
+                bound=0,
+                alpha=alpha)
 
         # Contour lines and labels
         if lines:
@@ -1835,9 +1912,16 @@ def con(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
                 fontweight=title_fontweight)
             # Bug in Matplotlib colorbar labelling
             cbar.set_ticklabels([str(i) for i in colorbar_labels])
-            for t in cbar.ax.get_xticklabels():
-                t.set_fontsize(text_fontsize)
-                t.set_fontweight(text_fontweight)
+            if colorbar_orientation == 'horizontal':
+                for t in cbar.ax.get_xticklabels():
+                    t.set_fontsize(text_fontsize)
+                    t.set_fontweight(text_fontweight)
+            else:
+                for t in cbar.ax.get_yticklabels():
+                    t.set_fontsize(text_fontsize)
+                    t.set_fontweight(text_fontweight)
+
+
 
         # Title
         plotvars.plot.set_title(
@@ -2004,13 +2088,18 @@ def levs(min=None, max=None, step=None, manual=None, extend='both'):
      | max=max - maximum level
      | step=step - step between levels
      | manual= manual - set levels manually
-     | extend='neither', 'both', 'min', or 'max' - colour bar limit extensions.
+     | extend='neither', 'both', 'min', or 'max' - colour bar limit extensions
 
      | Use the levs command when a predefined set of levels is required. The
-     | min, max and step parameters are all needed to define a set of  levels.
-     | These can take integer or floating point numbers. If colour filled
-     | contours are plotted then the default is to extend the minimum and
-     | maximum contours coloured for out of range values - extend='both'.
+     | min, max and step parameters can be used to define a set of  levels.
+     | These can take integer or floating point numbers. If just the step is 
+     | defined then cf-plot will internally try to define a reasonable set
+     | of levels. 
+
+
+     | If colour filled contours are plotted then the default is to extend 
+     | the minimum and maximum contours coloured for out of range values
+     | - extend='both'.
 
      | Once a user call is made to levs the levels are persistent.
      | i.e. the next plot will use the same set of levels.
@@ -2045,12 +2134,7 @@ def levs(min=None, max=None, step=None, manual=None, extend='both'):
             boundaries=plotvars.levels, ncolors=ncolors)
         plotvars.user_levs = 1
     else:
-        if any(val is None for val in [min, max, step]):
-            errstr = '\n levs error'
-            errstr += '\n min, max and step or manual need to be passed'
-            errstr += '\n to levs to generate a set of contour levels\n'
-            raise Warning(errstr)
-        else:
+        if all(val is not None for val in [min, max, step]):
             plotvars.levels_min = min
             plotvars.levels_max = max
             plotvars.levels_step = step
@@ -2075,6 +2159,14 @@ def levs(min=None, max=None, step=None, manual=None, extend='both'):
                 ndecs = str(plotvars.levels[pt])[::-1].find('.')
                 if ndecs > 7:
                     plotvars.levels[pt] = round(plotvars.levels[pt], 7)
+
+    # If step only is set then reset user_levs to zero 
+    if step is not None and all(val is None for val in [min, max]):
+        plotvars.user_levs = 0
+        plotvars.levels = None
+        plotvars.levels_step = step
+        
+
 
     # Check extend has a proper value
     if extend not in ['neither', 'min', 'max', 'both']:
@@ -2617,12 +2709,18 @@ def gset(xmin=None, xmax=None, ymin=None, ymax=None,
         plotvars.xmax = None
         plotvars.ymin = None
         plotvars.ymax = None
-        plotvars.xlog = xlog
-        plotvars.ylog = ylog
+        plotvars.xlog = False
+        plotvars.ylog = False
         plotvars.user_gset = 0
         return
 
-    if any(val is None for val in [xmin, xmax, ymin, ymax]):
+
+    bcount=0
+    for val in [xmin, xmax, ymin, ymax]:
+        if val is None:
+            bcount=bcount + 1
+
+    if bcount !=0 and bcount != 4:
         errstr = 'gset error\n'
         errstr += 'xmin, xmax, ymin, ymax all need to be passed to gset\n'
         errstr += 'to set the plot limits\n'
@@ -2662,7 +2760,7 @@ def gset(xmin=None, xmax=None, ymin=None, ymax=None,
 def gopen(rows=1, columns=1, user_plot=1, file='python',
           orientation='landscape', figsize=[11.7, 8.3],
           left=0.12, right=0.92, top=0.92, bottom=0.08, wspace=0.2,
-          hspace=0.2, dpi=None):
+          hspace=0.2, dpi=None, user_position=False):
     """
      | gopen is used to open a graphic file.
      |
@@ -2679,6 +2777,8 @@ def gopen(rows=1, columns=1, user_plot=1, file='python',
      | wspace=0.2 - width reserved for blank space between subplots
      | hspace=0.2 - height reserved for white space between subplots
      | dpi=None - resolution in dots per inch
+     | user_position=False - user to supply plot position via gpos
+     |               xmin, xmax, ymin, ymax values
 
 
      :Returns:
@@ -2692,6 +2792,7 @@ def gopen(rows=1, columns=1, user_plot=1, file='python',
 
     """
 
+
     # Set values in globals
     plotvars.rows = rows
     plotvars.columns = columns
@@ -2699,6 +2800,13 @@ def gopen(rows=1, columns=1, user_plot=1, file='python',
         plotvars.file = file
     plotvars.orientation = orientation
     plotvars.user_plot = user_plot
+
+    # Set user defined plot area to None
+    plotvars.plot_xmin = None
+    plotvars.plot_xmax = None
+    plotvars.plot_ymin = None
+    plotvars.plot_ymax = None
+
 
     if orientation != 'landscape':
         if orientation != 'portrait':
@@ -2724,7 +2832,8 @@ def gopen(rows=1, columns=1, user_plot=1, file='python',
         hspace=hspace)
 
     # Set initial subplot
-    gpos(pos=1)
+    if user_position is False:
+        gpos(pos=1)
 
     # Change tick length for plots > 2x2
     if (columns > 2 or rows > 2):
@@ -2806,7 +2915,7 @@ def showplot(*args):
         # plot=args[0]
 
 
-def gpos(pos=1):
+def gpos(pos=1, xmin=None, xmax=None, ymin=None, ymax=None):
     """
      | Set plot position. Plots start at top left and increase by one each plot
      | to the right. When the end of the row has been reached then the next
@@ -2836,16 +2945,35 @@ def gpos(pos=1):
         errstr = errstr + '\n'
         raise Warning(errstr)
 
-    plotvars.plot = plotvars.master_plot.add_subplot(
-        plotvars.rows, plotvars.columns, pos)
+    user_pos = 0
+    if all(val is not None for val in [xmin, xmax, ymin, ymax]):
+        user_pos = 1
+        plotvars.plot_xmin = xmin
+        plotvars.plot_xmax = xmax
+        plotvars.plot_ymin = ymin
+        plotvars.plot_ymax = ymax
+
+    if plotvars.plot_xmin is not None:
+        user_pos = 1
+
+
+    if user_pos == 0:
+        plotvars.plot = plotvars.master_plot.add_subplot(
+            plotvars.rows, plotvars.columns, pos)
+    else:        
+        delta_x = plotvars.plot_xmax - plotvars.plot_xmin
+        delta_y = plotvars.plot_ymax - plotvars.plot_ymin
+        plotvars.plot = plotvars.master_plot.add_axes([plotvars.plot_xmin,
+             plotvars.plot_ymin, delta_x, delta_y])
+
+
+
     plotvars.plot.tick_params(which='both', direction='out')
 
-    # Set osition in global variables
+    # Set position in global variables
     plotvars.pos = pos
 
-    # if plotvars.user_plot == 0:
-    #   if plotvars.user_gset == 1: gset(user_gset=plotvars.user_gset)
-    #   gset(user_gset=plotvars.user_gset)
+
 
 
 #######################################
@@ -3777,7 +3905,8 @@ def cscale_get_map():
     return (colmap)
 
 
-def bfill(f=None, x=None, y=None, clevs=False, lonlat=False, bound=False):
+def bfill(f=None, x=None, y=None, clevs=False, lonlat=False, bound=False,
+          alpha=1.0):
     """
      | bfill - block fill a field with colour rectangles
      | This is an internal routine and is not used by the user.
@@ -3788,6 +3917,7 @@ def bfill(f=None, x=None, y=None, clevs=False, lonlat=False, bound=False):
      | clevs=None - levels for filling
      | lonlat=False - lonlat data
      | bound=False - x and y are cf data boundaries
+     | alpha=alpha - transparency setting 0 to 1
      |
      |
      |
@@ -3800,6 +3930,7 @@ def bfill(f=None, x=None, y=None, clevs=False, lonlat=False, bound=False):
     """
 
 
+  
     # Assign f to field as this may be modified in lat-lon plots
     field = f
 
@@ -3910,7 +4041,7 @@ def bfill(f=None, x=None, y=None, clevs=False, lonlat=False, bound=False):
 
             # Make the collection and add it to the plot.
             color=plotvars.cs[i]
-            coll = PolyCollection(allverts, facecolor=color, edgecolors='none')
+            coll = PolyCollection(allverts, facecolor=color, edgecolors='none', alpha=alpha)
             plotvars.plot.add_collection(coll)
 
     else:
@@ -3932,7 +4063,7 @@ def bfill(f=None, x=None, y=None, clevs=False, lonlat=False, bound=False):
 
             # Make the collection and add it to the plot.
             color=plotvars.cs[i]
-            coll = PolyCollection(allverts, facecolor=color, edgecolors='none')
+            coll = PolyCollection(allverts, facecolor=color, edgecolors='none', alpha=alpha)
             plotvars.plot.add_collection(coll)
 
 
@@ -3955,7 +4086,7 @@ def bfill(f=None, x=None, y=None, clevs=False, lonlat=False, bound=False):
 
     # Make the collection and add it to the plot.
     color=plotvars.cs[i]
-    coll = PolyCollection(allverts, facecolor='#ffffff', edgecolors='none')
+    coll = PolyCollection(allverts, facecolor='#ffffff', edgecolors='none', alpha=alpha)
     plotvars.plot.add_collection(coll)
 
 
