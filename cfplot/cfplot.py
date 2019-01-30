@@ -1,6 +1,6 @@
 """
-Climate contour/vector plots using cf-python, matplotlib and basemap.
-Andy Heaps NCAS-CMS February 2018
+Climate contour/vector plots using cf-python, matplotlib and cartopy.
+Andy Heaps NCAS-CMS September 2018
 """
 import cf
 import numpy as np
@@ -13,10 +13,13 @@ import os
 import sys
 import matplotlib.pyplot as plot
 from matplotlib.path import Path
-import matplotlib.patches as patches
+import matplotlib.patches as mpatches
 from matplotlib.collections import PolyCollection
-from mpl_toolkits.basemap import Basemap, shiftgrid, addcyclic
 from distutils.version import StrictVersion
+import cartopy
+import cartopy.crs as ccrs
+import cartopy.util as cartopy_util
+import cartopy.feature as cfeature
 
 
 class pvars(object):
@@ -126,6 +129,7 @@ viridis = ['#440154', '#440255', '#440357', '#450558', '#45065a', '#45085b',
 global_fill=True
 global_lines=True
 global_blockfill=False
+global_degsym=False
 defaults_file=os.path.expanduser("~")+'/.cfplot_defaults'
 if os.path.exists(defaults_file):
     with open(defaults_file) as file: 
@@ -141,6 +145,8 @@ if os.path.exists(defaults_file):
                 global_lines=v
             if com == 'fill':
                  global_fill=v
+            if com == 'degsym':
+                 global_degsym=v
 
 
 
@@ -148,9 +154,8 @@ if os.path.exists(defaults_file):
 # plotvars - global plotting variables
 #####################################
 plotvars = pvars(lonmin=-180, lonmax=180, latmin=-90, latmax=90, proj='cyl',
-                 resolution='c', plot_type=1, boundinglat=0, lon_0=0,
-                 lat_0=40, lat_1=45, lat_2=55, lcc_width=12000000,
-                 lcc_height=900000, lcc_plimits=None, levels=None,
+                 resolution='110m', plot_type=1, boundinglat=0, lon_0=0,
+                 levels=None,
                  levels_min=None, levels_max=None, levels_step=None,
                  norm=None, levels_extend='both', xmin=None,
                  xmax=None, ymin=None, ymax=None, xlog=None, ylog=None,
@@ -162,8 +167,10 @@ plotvars = pvars(lonmin=-180, lonmax=180, latmin=-90, latmax=90, proj='cyl',
                  xlabel=None, ylabel=None, title=None, title_fontsize=15,
                  axis_label_fontsize=11, text_fontsize=11,
                  text_fontweight='normal', axis_label_fontweight='normal',
+                 colorbar_fontsize=11, colorbar_fontweight='normal',
                  title_fontweight='normal', continent_thickness=None,
-                 continent_color=None, pos=1, viewer='display',
+                 continent_color=None, continent_linestyle=None,
+                 pos=1, viewer='display',
                  tspace_year=None, tspace_month=None, tspace_day=None,
                  tspace_hour=None, xtick_label_rotation=0,
                  xtick_label_align='center', ytick_label_rotation=0,
@@ -177,7 +184,10 @@ plotvars = pvars(lonmin=-180, lonmax=180, latmin=-90, latmax=90, proj='cyl',
                  lake_color=None, twinx=False, twiny=False,
                  rotated_grid_thickness=2.0, rotated_grid_spacing=10,
                  rotated_deg_spacing=0.75, rotated_continents=True,
-                 rotated_grid=True, rotated_labels=True)
+                 rotated_grid=True, rotated_labels=True,
+                 legend_frame=True, legend_frame_edge_color='k',
+                 legend_frame_face_color=None, degsym=global_degsym,
+                 axis_width=None)
 
 
 # Check for iPython notebook inline
@@ -364,7 +374,8 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
     if colorbar_orientation is None:
         colorbar_orientation = 'horizontal'
 
-
+    # Store original map resolution
+    resolution_orig=plotvars.resolution
 
     proj = plotvars.proj
     # Set size of color bar if not specified
@@ -552,28 +563,26 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
     # Set plot variables
     title_fontsize = plotvars.title_fontsize
     text_fontsize = plotvars.text_fontsize
+    colorbar_fontsize = plotvars.colorbar_fontsize
     axis_label_fontsize = plotvars.axis_label_fontsize
     continent_thickness = plotvars.continent_thickness
     continent_color = plotvars.continent_color
+    continent_linestyle = plotvars.continent_linestyle
     land_color = plotvars.land_color
     ocean_color = plotvars.ocean_color
     lake_color = plotvars.lake_color
     text_fontweight = plotvars.text_fontweight
+    colorbar_fontweight = plotvars.colorbar_fontweight
     title_fontweight = plotvars.title_fontweight
     axis_label_fontweight = plotvars.axis_label_fontweight
     if continent_thickness is None:
         continent_thickness = 1.5
     if continent_color is None:
         continent_color = 'k'
+    if continent_linestyle is None:
+        continent_linestyle = 'solid'
     
 
-    # Select contour triangulation based on input grid dimensions
-    if (np.ndim(field) == 1 and np.ndim(x) == 1 and np.ndim(y) == 1):
-        tri = 1
-    if (np.ndim(field) == 2 and np.ndim(x) == 2 and np.ndim(y) == 2):
-        tri = 0
-    if (np.ndim(field) == 2 and np.ndim(x) == 1 and np.ndim(y) == 1):
-        tri = 0
 
     cb_orient = colorbar_orientation
 
@@ -604,7 +613,8 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
     if ptype == 1:
         if verbose:
             print 'con - making a map plot'
-        # Open a new plot is necessary
+
+        # Open a new plot if necessary
         if plotvars.user_plot == 0:
             gopen(user_plot=0)
 
@@ -623,7 +633,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
         else:
             mapset(lonmin=np.nanmin(x), lonmax=np.nanmax(x),
                    latmin=np.nanmin(y), latmax=np.nanmax(y),
-                   user_mapset=0)
+                   user_mapset=0, resolution=resolution_orig)
             set_map()
 
         mymap = plotvars.mymap
@@ -634,13 +644,13 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
 
             # Add cyclic information if missing.
             if lonrange < 360:
-                field, x = addcyclic(field, x)
-                # New code to take account of addcyclic behaviour change from 1.0.7 to 1.1.0
-                # 1.0.7: 1.875, 5.625, ..., 358.125 went to 1.875, 5.625,..., 358.125, 361.875
-                # 1.1.0: 1.875, 5.625, ..., 358.125 went to 1.875, 5.625,..., 358.125, 1.875
-                if abs(x[0]-abs(x[-1])) < 1e-4:
-                    x[-1] = x[-1]+360.0
+                field, x = cartopy_util.add_cyclic_point(field, x)
+
+                
                 lonrange = np.nanmax(x) - np.nanmin(x)
+
+                if x[-1] - x[0] == 360.0:
+                    x[-1] = x[-1] + 0.001 # **cartopy line drawing fix
 
 
             # Shift grid if needed
@@ -648,17 +658,6 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                 x = x - 360
             if plotvars.lonmin > np.nanmax(x):
                 x = x + 360
-
-            #print 'x is ', x
-            field, x = shiftgrid(plotvars.lonmin, field, x)
-
-            # Add cyclic information if missing.
-            lonrange = np.nanmax(x) - plotvars.lonmin
-            if lonrange < 360:
-                field, x = addcyclic(field, x)
-                if abs(x[0]-abs(x[-1])) < 1e-5:
-                    x[-1] = x[-1]+360.0
-                lonrange = np.nanmax(x) - np.nanmin(x)
 
         # Flip latitudes and field if latitudes are in descending order
         if np.ndim(y) == 1:
@@ -687,8 +686,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
             lons = x
             lats = y
         if (np.ndim(field) == 2 and np.ndim(x) == 1 and np.ndim(y) == 1):
-            lons, lats = mymap(*np.meshgrid(x, y))
-
+            lons, lats = x, y
         # Set the plot limits
         if lonrange > 350:
             gset(
@@ -725,6 +723,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
             cscale_ncols = np.size(plotvars.cs)
             colmap = cscale_get_map()
 
+
             cmap = matplotlib.colors.ListedColormap(colmap)
             if (plotvars.levels_extend ==
                     'min' or plotvars.levels_extend == 'both'):
@@ -736,8 +735,13 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
             # filled colour contours
             cfill = mymap.contourf(lons, lats, field * fmult, clevs,
                                    extend=plotvars.levels_extend,
-                                   cmap=cmap, tri=tri, norm=plotvars.norm,
-                                   alpha=alpha)
+                                   cmap=cmap, norm=plotvars.norm,
+                                   alpha=alpha, transform=ccrs.PlateCarree())
+
+
+
+
+
 
         # Block fill
         if blockfill:
@@ -787,8 +791,9 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
             if verbose:
                 print 'con - adding contour lines and labels'
             cs = mymap.contour(lons, lats, field * fmult, clevs, colors=colors,
-                               tri=tri, linewidths=linewidths, 
-                               linestyles=linestyles, alpha=alpha)
+                               linewidths=linewidths, 
+                               linestyles=linestyles, alpha=alpha,
+                               transform=ccrs.PlateCarree())
             if line_labels:
                 nd = ndecs(clevs)
                 fmt = '%d'
@@ -802,68 +807,36 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
             if zero_thick:
                 cs = mymap.contour(lons, lats, field * fmult, [-1e-32, 0],
                                    colors=colors, linewidths=zero_thick,
-                                   linestyles=linestyles, tri=tri, alpha=alpha)
+                                   linestyles=linestyles, alpha=alpha,
+                                   transform=ccrs.PlateCarree())
+
+
+
+
 
         # axes
-        if plotvars.proj == 'cyl':
-            if verbose:
-                print 'con - adding cylindrical axes'
-            lonticks, lonlabels = mapaxis(
-                min=plotvars.lonmin, max=plotvars.lonmax, type=1)
-            latticks, latlabels = mapaxis(
-                min=plotvars.latmin, max=plotvars.latmax, type=2)
-            if axes:
-                if xaxis:
-                    if xticks is None:
-                        axes_plot(xticks=lonticks, xticklabels=lonlabels)
-                    else:
-                        if xticklabels is None:
-                            axes_plot(xticks=xticks, xticklabels=xticks)
-                        else:
-                            axes_plot(xticks=xticks, xticklabels=xticklabels)
-                if yaxis:
-                    if yticks is None:
-                        axes_plot(yticks=latticks, yticklabels=latlabels)
-                    else:
-                        if yticklabels is None:
-                            axes_plot(yticks=yticks, yticklabels=yticks)
-                        else:
-                            axes_plot(yticks=yticks, yticklabels=yticklabels)
+        plot_map_axes(axes=axes, xaxis=xaxis, yaxis=yaxis,
+                      xticks=xticks, xticklabels=xticklabels,
+                      yticks=yticks, yticklabels=yticklabels,
+                      user_xlabel=user_xlabel, user_ylabel=user_ylabel,
+                      verbose=verbose)
 
-                if user_xlabel is not None:
-                    plotvars.plot.set_xlabel(user_xlabel)
-                if user_ylabel is not None:
-                    plotvars.plot.set_ylabel(user_ylabel)
 
-        if plotvars.proj == 'npstere' or plotvars.proj == 'spstere':
-            if verbose:
-                print 'con - adding stereograpic axes'
-            latstep = 30
-            if 90 - abs(plotvars.boundinglat) <= 50:
-                latstep = 10
-            if axes:
-                if xaxis:
-                    if xticks is None:
-                        mymap.drawmeridians(
-                            np.arange(
-                                0, 360, 60), labels=[
-                                1, 1, 1, 1],
-                                fontsize=axis_label_fontsize,
-                                fontweight=axis_label_fontweight)
-                    else:
-                        mymap.drawmeridians(xticks, labels=[1, 1, 1, 1],
-                                            fontsize=axis_label_fontsize,
-                                            fontweight=axis_label_fontweight)
-                if yaxis:
-                    if yticks is None:
-                        mymap.drawparallels(np.arange(-90, 120, latstep))
-                    else:
-                        mymap.drawparallels(yticks)
 
-        # Coastlines and title
-        mymap.drawcoastlines(
-            linewidth=continent_thickness,
-            color=continent_color)
+
+        
+
+        # Coastlines
+        feature = cfeature.NaturalEarthFeature(
+                      name='land', category='physical',
+                      scale=plotvars.resolution,
+                      facecolor='none')
+        mymap.add_feature(feature, edgecolor=continent_color,
+                      linewidth=continent_thickness, 
+                      linestyle=continent_linestyle)
+
+
+
         if ocean_color is not None:
             mymap.drawmapboundary(fill_color=ocean_color, zorder=100)
         if land_color is not None:
@@ -873,11 +846,11 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                 mymap.fillcontinents(color=land_color,lake_color=lake_color, zorder=999)
 
 
-        plotvars.plot.set_title(
-            title,
-            y=1.03,
-            fontsize=title_fontsize,
-            fontweight=title_fontweight)
+        # Title
+        if title != '':
+            map_title(title)
+
+
 
         # Color bar
         if colorbar:
@@ -894,97 +867,9 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                     verbose=verbose)
 
 
-        # Mask off selected area in Lambert Conformal projection if requested
-        if plotvars.proj == 'lcc' and plotvars.lcc_plimits is not None:
-            if plotvars.lcc_plimits is not None:
-                # Create polygons and fill with white
-                xmin = plotvars.lcc_plimits[0]
-                xmax = plotvars.lcc_plimits[1]
-                ymin = plotvars.lcc_plimits[2]
-                ymax = plotvars.lcc_plimits[3]
 
-                # Mask left of plot
-                pts = 176
-                lons = np.concatenate([np.zeros(pts)+xmin,
-                                       np.zeros(pts)+xmin-90])
-                lats = np.concatenate([np.arange(pts)-85, 85-np.arange(pts)])
-                xpts, ypts = mymap(lons, lats)
-                plotvars.plot.fill(xpts, ypts, facecolor='w', alpha=1.0,
-                                   edgecolor='none', zorder=99)
+       
 
-                # Mask right of plot
-                lons = np.concatenate([np.zeros(pts)+xmax,
-                                       np.zeros(pts)+xmax+90])
-                xpts, ypts = mymap(lons, lats)
-                plotvars.plot.fill(xpts, ypts, facecolor='w', alpha=1.0,
-                                   edgecolor='none', zorder=99)
-
-                # Mask above plot
-                pts = xmax-xmin+180
-                lons = np.concatenate([np.arange(pts)+xmin-90,
-                                       xmax+90-np.arange(pts)])
-                lats = np.concatenate([np.zeros(pts) + ymax, np.zeros(pts)+89])
-                xpts, ypts = mymap(lons, lats)
-                plotvars.plot.fill(xpts, ypts, facecolor='w', alpha=1.0,
-                                   edgecolor='none', zorder=99)
-
-                # Mask below plot
-                lats = np.concatenate([np.zeros(pts) + ymin, np.zeros(pts)-89])
-                xpts, ypts = mymap(lons, lats)
-                plotvars.plot.fill(xpts, ypts, facecolor='w', alpha=1.0,
-                                   edgecolor='none', zorder=99)
-
-                # Add some labels
-                if axes:
-                    # Offset for text based on size of text
-                    offset = 3.0*plotvars.axis_label_fontsize/11.0
-                    fs = plotvars.axis_label_fontsize
-                    fw = plotvars.axis_label_fontweight
-                    mymap.drawcoastlines()
-                    mymap.drawparallels(np.arange(-80., 81., 20.))
-                    mymap.drawmeridians(np.arange(-180., 181., 20.),
-                                        fontsize=axis_label_fontsize,
-                                        fontweight=axis_label_fontweight)
-                    if xaxis:
-                        lons = []
-                        for lon in np.arange(19)*20-180:
-                            if lon >= xmin and lon <= xmax:
-                                lons = np.append(lons, lon)
-                        if ymin > 0:
-                            lats = np.zeros(np.size(lons))+ymin-3
-                        else:
-                            lats = np.zeros(np.size(lons))+ymax+3
-                        xpts, ypts = mymap(lons, lats)
-                        for pt in np.arange(np.size(xpts)):
-                            label = str(abs(lons[pt]))
-                            if lons[pt] < 0:
-                                label = label + 'W'
-                            if lons[pt] > 0:
-                                label = label + 'E'
-                            plotvars.plot.text(xpts[pt], ypts[pt], label,
-                                               horizontalalignment='center',
-                                               zorder=100,
-                                               fontsize=fs,
-                                               fontweight=fw)
-                    if yaxis:
-                        lats = []
-                        for lat in np.arange(9)*20-80:
-                            if lat >= ymin and lat <= ymax:
-                                lats = np.append(lats, lat)
-                        lons = np.zeros(np.size(lats))+xmin-offset
-                        xpts, ypts = mymap(lons, lats)
-                        for pt in np.arange(np.size(xpts)):
-                            label = str(abs(lats[pt]))
-                            if lats[pt] < 0:
-                                label = label + 'S'
-                            if lats[pt] > 0:
-                                label = label + 'N'
-                            plotvars.plot.text(xpts[pt], ypts[pt], label,
-                                               horizontalalignment='right',
-                                               verticalalignment='center',
-                                               zorder=100,
-                                               fontsize=fs,
-                                               fontweight=fw)
 
 
         # Reset plot limits if not a user plot
@@ -1010,10 +895,14 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
             if hasattr(f.item('Z'), 'positive'):
                 positive = f.item('Z').positive
             else:
-                errstr = '\n cf-plot - data error \n'
-                errstr = errstr + 'data needs a vertical coordinate direction'
-                errstr = errstr + ' as required in CF data conventions'
-                raise Warning(errstr)
+                errstr = '\ncf-plot - data error \n'
+                errstr += 'data needs a vertical coordinate direction'
+                errstr += ' as required in CF data conventions'
+                errstr += '\nMaking a contour plot assuming positive is up\n\n'
+                errstr += 'If this is incorrect the data needs to be modified to \n'
+                errstr += 'include a correct value for the direction attribute\n\n'
+                print errstr
+                positive='up'
         else:
             positive = 'down'
             if 'theta' in ylabel.split(' '):
@@ -1228,7 +1117,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
 
             cfill = plotvars.plot.contourf(x, y, field * fmult, clevs,
                                            extend=plotvars.levels_extend,
-                                           cmap=cmap, tri=tri,
+                                           cmap=cmap, 
                                            norm=plotvars.norm, alpha=alpha)
 
         # Block fill
@@ -1296,7 +1185,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
         # Contour lines and labels
         if lines:
             cs = plotvars.plot.contour(
-                x, y, field * fmult, clevs, colors=colors, tri=tri, 
+                x, y, field * fmult, clevs, colors=colors, 
                 linewidths=linewidths, linestyles=linestyles)
             if line_labels:
                 nd = ndecs(clevs)
@@ -1314,7 +1203,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                 if zero_thick:
                     cs = plotvars.plot.contour(x, y, field * fmult,
                                                [-1e-32, 0], colors=colors,
-                                               linewidths=zero_thick, tri=tri,
+                                               linewidths=zero_thick,
                                                linestyles=linestyles, alpha=alpha)
         # Color bar
         if colorbar:
@@ -1509,7 +1398,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
 
             cfill = plotvars.plot.contourf(x, y, field * fmult, clevs,
                                            extend=plotvars.levels_extend,
-                                           cmap=cmap, tri=tri,
+                                           cmap=cmap, 
                                            norm=plotvars.norm, alpha=alpha)
 
         # Block fill
@@ -1568,7 +1457,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
         # Contour lines and labels
         if lines:
             cs = plotvars.plot.contour(
-                x, y, field * fmult, clevs, colors=colors, tri=tri,
+                x, y, field * fmult, clevs, colors=colors, 
                 linewidths=linewidths, linestyles=linestyles, alpha=alpha)
             if line_labels:
                 nd = ndecs(clevs)
@@ -1583,7 +1472,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                 if zero_thick:
                     cs = plotvars.plot.contour(x, y, field * fmult,
                                                [-1e-32, 0], colors=colors,
-                                               linewidths=zero_thick, tri=tri,
+                                               linewidths=zero_thick, 
                                                linestyles=linestyles, alpha=alpha)
 
         # Color bar
@@ -1612,14 +1501,26 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
         if user_gset == 0:
             gset()
 
+
     #############
     # Rotated pole
     #############
     if ptype == 6:
-        # Rotated pole plots use a regularly spaced grid
-        # The x and y points from the data are used to make the rotated axes
-        xpts = np.arange(np.size(x))
-        ypts = np.arange(np.size(y))
+
+        # Extract x and y grid points
+        if plotvars.proj == 'cyl':
+            xpts = x
+            ypts = y
+
+            if f.item('longitude'):
+                xpts=f.item('longitude').array
+            if f.item('latitude'):
+                ypts=f.item('latitude').array
+        else:
+            xpts = np.arange(np.size(x))
+            ypts = np.arange(np.size(y))
+
+
 
         if verbose:
             print 'con - making a rotated pole plot'
@@ -1627,13 +1528,38 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
         if plotvars.user_plot == 0:
             gopen(user_plot=0)
 
+
         # Set plot limits
-        gset(
-            xmin=0,
-            xmax=np.size(x) - 1,
-            ymin=0,
-            ymax=np.size(y) - 1,
-            user_gset=user_gset)
+        if plotvars.proj == 'rotated':
+            plotargs={}
+            gset(xmin=0, xmax=np.size(xpts) - 1,
+                 ymin=0, ymax=np.size(ypts) - 1,
+                 user_gset=user_gset)
+            plot=plotvars.plot
+
+        if plotvars.proj == 'cyl':
+            rotated_pole = f.ref('rotated_latitude_longitude')
+            xpole = rotated_pole['grid_north_pole_longitude']
+            ypole = rotated_pole['grid_north_pole_latitude']
+            transform = ccrs.RotatedPole(pole_latitude=ypole,
+                                         pole_longitude=xpole)
+            plotargs={'transform' : transform}
+            if plotvars.user_mapset == 1:
+                set_map()
+            else:
+
+                # Extract lonmin, lonmax, latmin, latmax from rotated grid coordinates
+                xvals, yvals = np.meshgrid(xpts, ypts)
+                points=ccrs.PlateCarree().transform_points(transform, xvals.flatten(),
+                                                           yvals.flatten()) 
+                lons=np.array(points)[:, 0]
+                lats=np.array(points)[:, 1]
+
+                mapset(lonmin=np.min(lons), lonmax=np.max(lons),
+                       latmin=np.min(lats), latmax=np.max(lats),
+                       user_mapset=0, resolution=resolution_orig)
+                set_map()
+            plot=plotvars.mymap
 
         # Get colour scale for use in contouring
         # If colour bar extensions are enabled then the colour map goes
@@ -1642,7 +1568,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
         cscale_ncols = np.size(plotvars.cs)
         colmap = cscale_get_map()
 
-        # Filled contours
+            # Filled contours
         if fill or blockfill:
             colmap = cscale_get_map()
             cmap = matplotlib.colors.ListedColormap(colmap)
@@ -1653,10 +1579,11 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                     'max' or plotvars.levels_extend == 'both'):
                 cmap.set_over(plotvars.cs[-1])
 
-            cfill = plotvars.plot.contourf(xpts, ypts, field * fmult, clevs,
+            cfill = plot.contourf(xpts, ypts, field * fmult, clevs,
                                            extend=plotvars.levels_extend,
-                                           cmap=cmap, tri=tri,
-                                           norm=plotvars.norm, alpha=alpha)
+                                           cmap=cmap, 
+                                           norm=plotvars.norm, alpha=alpha,
+                                           **plotargs)
 
         # Block fill
         if blockfill:
@@ -1672,24 +1599,26 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
 
         # Contour lines and labels
         if lines:
-            cs = plotvars.plot.contour(
-                xpts, ypts, field * fmult, clevs, colors=colors, tri=tri,
-                linewidths=linewidths, linestyles=linestyles)
+            cs = plot.contour(
+                xpts, ypts, field * fmult, clevs, colors=colors, 
+                linewidths=linewidths, linestyles=linestyles,
+                **plotargs)
             if line_labels:
                 nd = ndecs(clevs)
                 fmt = '%d'
                 if nd != 0:
                     fmt = '%1.' + str(nd) + 'f'
-                plotvars.plot.clabel(cs, fmt=fmt, colors=colors,
+                plot.clabel(cs, fmt=fmt, colors=colors,
                                      fontsize=text_fontsize,
                                      fontweight=text_fontweight)
 
             # Thick zero contour line
             if zero_thick:
-                cs = plotvars.plot.contour(xpts, ypts, field * fmult,
+                cs = plot.contour(xpts, ypts, field * fmult,
                                            [-1e-32, 0], colors=colors,
-                                           linewidths=zero_thick, tri=tri,
-                                           linestyles=linestyles, alpha=alpha)
+                                           linewidths=zero_thick, 
+                                           linestyles=linestyles, alpha=alpha,
+                                           **plotargs)
 
         # Color bar
         if colorbar:
@@ -1705,20 +1634,54 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                     colorbar_drawedges=colorbar_drawedges,
                     verbose=verbose)
 
+
         # Rotated grid axes
         if axes:
-            rgaxes(xpole=xpole, ypole=ypole, xvec=x, yvec=y)
-        else:
+            if plotvars.proj == 'cyl':
+                plot_map_axes(axes=axes, xaxis=xaxis, yaxis=yaxis,
+                              xticks=xticks, xticklabels=xticklabels,
+                              yticks=yticks, yticklabels=yticklabels,
+                              user_xlabel=user_xlabel, user_ylabel=user_ylabel,
+                              verbose=verbose)
+            else:
+                rgaxes(xpole=xpole, ypole=ypole, xvec=x, yvec=y,
+                       xticks=xticks, xticklabels=xticklabels, 
+                       yticks=yticks, yticklabels=yticklabels,
+                       axes=axes, xaxis=xaxis, yaxis=yaxis,
+                       xlabel=xlabel, ylabel=ylabel)
+
+
+        
+        if plotvars.proj == 'rotated':
+            # Remove Matplotlib default axis labels
             axes_plot(xticks=[100000000], xticklabels=[''],
                       yticks=[100000000], yticklabels=[''],
                       xlabel='', ylabel='')
 
-        # Title
-        plotvars.plot.set_title(
-            title,
-            y=1.03,
-            fontsize=title_fontsize,
-            fontweight=title_fontweight)
+
+
+        # Add title and coastlines for cylindrical projection
+        if plotvars.proj == 'cyl':
+            # Coastlines
+            feature = cfeature.NaturalEarthFeature(
+                          name='land', category='physical',
+                          scale=plotvars.resolution,
+                          facecolor='none')
+            plotvars.mymap.add_feature(feature, edgecolor=continent_color,
+                          linewidth=continent_thickness, 
+                          linestyle=continent_linestyle)
+
+
+            # Title
+            if title != '':
+                map_title(title)
+
+        # Add title for native grid
+        if plotvars.proj == 'rotated':
+            # Title
+            plotvars.plot.set_title(title, y=1.03,
+                fontsize=title_fontsize,
+                fontweight=title_fontweight)
 
         # reset plot limits if not a user plot
         if plotvars.user_gset == 0:
@@ -1836,7 +1799,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
 
             cfill = plotvars.plot.contourf(x, y, field * fmult, clevs,
                                            extend=plotvars.levels_extend,
-                                           cmap=cmap, tri=tri,
+                                           cmap=cmap, 
                                            norm=plotvars.norm, alpha=alpha)
 
         # Block fill
@@ -1854,7 +1817,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
         # Contour lines and labels
         if lines:
             cs = plotvars.plot.contour(
-                x, y, field * fmult, clevs, colors=colors, tri=tri,
+                x, y, field * fmult, clevs, colors=colors, 
                 linewidths=linewidths, linestyles=linestyles)
             if line_labels:
                 nd = ndecs(clevs)
@@ -1869,7 +1832,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
             if zero_thick:
                 cs = plotvars.plot.contour(x, y, field * fmult, [-1e-32, 0],
                                            colors=colors,
-                                           linewidths=zero_thick, tri=tri,
+                                           linewidths=zero_thick, 
                                            linestyles=linestyles, alpha=alpha)
 
 
@@ -1898,6 +1861,17 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
         if plotvars.user_gset == 0:
             gset()
 
+    ############################
+    # Set axis width if required
+    ############################
+    if plotvars.axis_width is not None:
+        for axis in ['top','bottom','left','right']: 
+            plotvars.plot.spines[axis].set_linewidth(plotvars.axis_width) 
+
+
+
+
+
     ################################
     # Add a master title if reqested
     ################################
@@ -1910,6 +1884,10 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                                   fontsize=plotvars.master_title_fontsize)
 
 
+    # Reset map resolution
+    if plotvars.user_mapset == 0:
+        mapset()
+        mapset(resolution=resolution_orig)
 
 
     ##################
@@ -1925,9 +1903,10 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
         gclose()
 
 
+
+
 def mapset(lonmin=None, lonmax=None, latmin=None, latmax=None, proj='cyl',
-           boundinglat=0, lon_0=0, lat_0=40, resolution='c', user_mapset=1,
-           width=12000000, height=9000000, lat_1=45., lat_2=55, plimits=None):
+           boundinglat=0, lon_0=0, lat_0=40, resolution='110m', user_mapset=1):
     """
      | mapset sets the mapping parameters.
      |
@@ -1936,15 +1915,18 @@ def mapset(lonmin=None, lonmax=None, latmin=None, latmax=None, proj='cyl',
      | latmin=latmin - minimum latitude
      | latmax=latmax - maximum latitude
      | proj=proj - 'cyl' for cylindrical projection. 'npstere' or 'spstere'
-     |      for northern hemisphere or southern hemisphere polar stereographic
-     |      projection. Use'moll' for the mollweide projection.
+     |      for northern hemisphere or southern hemisphere polar stereographic.
+     |      ortho, merc, moll, robin and lcc are abreviations for orthographic,
+     |      mercator, mollweide, robinson and lambert conformal projections
+     |      'rotated' for contour plots on the native rotated grid.
+     |
      | boundinglat=boundinglat - edge of the viewable latitudes in a
      |      stereographic plot
      | lon_0=0 - longitude centre of desired map domain in polar
      |           stereographic and orthogrphic plots
      | lat_0=40 - latitude centre of desired map domain in orthogrphic plots
-     | resolution=resolution - the map resolution - can be one of 'c' (crude),
-     |      'l' (low), 'i' (intermediate), 'h' (high), 'f' (full) or 'None'
+     | resolution='110m' - the map resolution - can be one of '110m',
+     | '50m' or '10m'.  '50m' means 1:50,000,000 and not 50 metre.
      | user_mapset=user_mapset - variable to indicate whether a user call
      |      to mapset has been made.
      |
@@ -1965,25 +1947,9 @@ def mapset(lonmin=None, lonmax=None, latmin=None, latmax=None, proj='cyl',
      | The proj parameter accepts 'npstere' and 'spstere' for northern 
      | hemisphere or southern hemisphere polar stereographic projections.
      | In addition to these the boundinglat parameter sets the edge of the
-     | viewable latitudes and lat_0 sets the centre of desired map domain.
+     | viewable latitudes and lon_0 sets the centre of desired map domain.
      |
-     | Additional map projections via proj are:
-     | ortho, merc, moll, robin and lcc
-     | These are abreviations for orthographic, mercator, mollweide, robinson 
-     | and lambert conformal projections
      |
-     | For Lambert Conformal Projection, lcc, plots the following extra 
-     | parameters are required.
-     | lat_1=45 - first standard parallel
-     | lat_2=55 - second standard parallel
-     | width=12000000 - width of Lambert Conformal Projection, lcc
-     | height=9000000 - height of Lambert Conformal Projection, lcc
-     | plimits=None - plot limits [lonmin, lonmax, latmin, latmax] for lcc plot
-     | See the http://ajheaps.github.io/cf-plot/version_2.1.html for a couple of
-     | examples of using the Lambert Conformal Projection.
-     | Data must be continuous and contiguous and you must select the same 
-     | plot limits as your data.  i.e. if you have data that is -60 to 30 
-     | in longitude then the plot limits must also be -60 to 30 in longitude.
      |
      | Map settings are persistent until a new call to mapset is made. To
      | reset to the default map settings use mapset().
@@ -2003,11 +1969,12 @@ def mapset(lonmin=None, lonmax=None, latmin=None, latmax=None, proj='cyl',
         plotvars.latmax = 90
         plotvars.proj = 'cyl'
         plotvars.user_mapset = 0
-        plotvars.lat_1 = 45
-        plotvars.lat_2 = 55
-        plotvars.lcc_width = 12000000
-        plotvars.lcc_heith = 9000000
-        plotvars.lcc_plimits = None
+
+        plotvars.plot_xmin=None
+        plotvars.plot_xmax=None
+        plotvars.plot_ymin=None
+        plotvars.plot_ymax=None
+
         return
 
     if lonmin is None:
@@ -2035,13 +2002,8 @@ def mapset(lonmin=None, lonmax=None, latmin=None, latmax=None, proj='cyl',
     plotvars.boundinglat = boundinglat
     plotvars.lon_0 = lon_0
     plotvars.lat_0 = lat_0
-    plotvars.lcc_width = width
-    plotvars.lcc_height = height
-    plotvars.lat_1 = lat_1
-    plotvars.lat_2 = lat_2
-    plotvars.lcc_plimits = plimits
     plotvars.user_mapset = user_mapset
-    set_map()
+    #set_map()
 
 
 def levs(min=None, max=None, step=None, manual=None, extend='both'):
@@ -2161,6 +2123,11 @@ def mapaxis(min=None, max=None, type=None):
     """
 
     import numpy as np
+    degsym=''
+    if plotvars.degsym:
+        degsym='$\degree$'
+
+
     if type == 1:
         lonmin = min
         lonmax = max
@@ -2188,16 +2155,15 @@ def mapaxis(min=None, max=None, type=None):
             lon2 = np.mod(lon + 180, 360) - 180
             if lon2 < 0 and lon2 > -180:
                 if lon != 180: 
-                    lonlabels.append(str(abs(lon2)) + 'W')
+                    lonlabels.append(str(abs(lon2)) + degsym + 'W')
 
             if lon2 > 0 and lon2 <= 180:
-                lonlabels.append(str(lon2) + 'E')
+                lonlabels.append(str(lon2) + degsym + 'E')
             if lon2 == 0:
-                lonlabels.append('0')
+                lonlabels.append('0' + degsym )
 
             if lon == 180 or lon == -180:
-                   lonlabels.append('180')
-
+                   lonlabels.append('180' + degsym )
 
         return(lonticks, lonlabels)
 
@@ -2224,11 +2190,11 @@ def mapaxis(min=None, max=None, type=None):
         latlabels = []
         for lat in latticks:
             if lat < 0:
-                latlabels.append(str(abs(lat)) + 'S')
+                latlabels.append(str(abs(lat))  + degsym + 'S')
             if lat > 0:
-                latlabels.append(str(lat) + 'N')
+                latlabels.append(str(lat) + degsym + 'N')
             if lat == 0:
-                latlabels.append('0')
+                latlabels.append('0' + degsym)
 
         return(latticks, latlabels)
 
@@ -2429,7 +2395,7 @@ def ndecs(data=None):
     | ndecs finds the number of decimal places in an array.  Needed to make the
     | colour bar match the contour line labelling.
 
-    | data=data - imput array of values
+    | data=data - input array of values
 
     :Returns:
     |  maximum number of necimal places
@@ -2530,7 +2496,8 @@ def axes_plot(xticks=None, xticklabels=None, yticks=None, yticklabels=None,
       None
     """
 
-    if plotvars.plot_type == 1:
+    
+    if plotvars.plot_type == 1 or (plotvars.plot_type == 6 and plotvars.proj == 'cyl'):
         xmin = plotvars.lonmin
         xmax = plotvars.lonmax
         ymin = plotvars.latmin
@@ -2566,6 +2533,18 @@ def axes_plot(xticks=None, xticklabels=None, yticks=None, yticklabels=None,
     title_fontweight = plotvars.title_fontweight
     text_fontweight = plotvars.text_fontweight
 
+
+    if (plotvars.plot_type == 1 or plotvars.plot_type == 6) and plotvars.proj == 'cyl':
+        plot = plotvars.mymap
+        lon_mid = plotvars.lonmin + (plotvars.lonmax - plotvars.lonmin) / 2.0
+        plotargs={'crs' : ccrs.PlateCarree()}
+        cyl = True
+    else:
+        plot = plotvars.plot
+        plotargs = {}
+        cyl = False
+
+
     if xlabel is not None:
         plotvars.plot.set_xlabel(xlabel, fontsize=axis_label_fontsize,
                                  fontweight=axis_label_fontweight)
@@ -2600,31 +2579,60 @@ def axes_plot(xticks=None, xticklabels=None, yticks=None, yticklabels=None,
         else:
             plot_yticks_labels = yticks
 
+
+    ticklen=np.min([(plotvars.lonmax - plotvars.lonmin)*0.014, (plotvars.latmax-plotvars.latmin)*0.014])
+    lonrange = plotvars.lonmax - plotvars.lonmin
+    latrange = plotvars.latmax - plotvars.latmin
+    lon_mid = plotvars.lonmin + (plotvars.lonmax - plotvars.lonmin) / 2.0
+
     # Set the ticks and tick labels
     if xticks is not None:
-        plotvars.plot.set_xticks(xticks)
-        plotvars.plot.set_xticklabels(
+        # fudge min and max longitude tick positions or the labels wrap
+        xticks_new = xticks
+        if lonrange >= 360:
+            xticks_new[0] = xticks_new[0] + 0.01
+            xticks_new[-1] = xticks_new[-1] - 0.01
+
+        plot.set_xticks(xticks_new, **plotargs)
+        plot.set_xticklabels(
             xticklabels,
             rotation=plotvars.xtick_label_rotation,
             horizontalalignment=plotvars.xtick_label_align)
+
+        # Plot a corresponding tick on the top of the plot - **cartopy feature?
+        proj=ccrs.PlateCarree(central_longitude=lon_mid)
+        for xval in xticks_new:    
+            xpt, ypt = proj.transform_point(xval, plotvars.latmax, ccrs.PlateCarree())
+            ypt2 = ypt + ticklen
+            plot.plot([xpt, xpt], [ypt, ypt2], color='k',
+                                linewidth=0.8, clip_on=False)
+
     if yticks is not None:
-        plotvars.plot.set_yticks(yticks)
-        plotvars.plot.set_yticklabels(
+        plot.set_yticks(yticks, **plotargs)
+        plot.set_yticklabels(
             yticklabels,
             rotation=plotvars.ytick_label_rotation,
             horizontalalignment=plotvars.ytick_label_align)
 
+        # Plot a corresponding tick on the right of the plot - **cartopy feature?
+        proj=ccrs.PlateCarree(central_longitude=lon_mid)
+        for ytick in yticks:
+            xpt, ypt = proj.transform_point(plotvars.lonmax-0.001, ytick, ccrs.PlateCarree())
+            xpt2 = xpt + ticklen * latrange / lonrange
+            plot.plot([xpt, xpt2], [ypt, ypt],
+                                color='k', linewidth=0.8, clip_on=False) 
+
     # Set font size and weight
-    for label in plotvars.plot.xaxis.get_ticklabels():
+    for label in plot.xaxis.get_ticklabels():
         label.set_fontsize(axis_label_fontsize)
         label.set_fontweight(axis_label_fontweight)
-    for label in plotvars.plot.yaxis.get_ticklabels():
+    for label in plot.yaxis.get_ticklabels():
         label.set_fontsize(axis_label_fontsize)
         label.set_fontweight(axis_label_fontweight)
 
     # Title
     if title is not None:
-        plotvars.plot.set_title(
+        plot.set_title(
             title,
             y=1.03,
             fontsize=title_fontsize,
@@ -2651,7 +2659,7 @@ def gset(xmin=None, xmax=None, ymin=None, ymax=None,
      | i.e. the next plot will use the same set of plot limits.
      | Use gset() to reset to undefined plot limits i.e. the full range
      | of the data.
-     |
+     | 
      | To set date axes use date strings i.e.
      | cfp.gset(xmin = '1970-1-1', xmax = '1999-12-31', ymin = 285,
      |          ymax = 295)
@@ -2731,6 +2739,13 @@ def gset(xmin=None, xmax=None, ymin=None, ymax=None,
         plotvars.twinx=twinx
     if twiny is not None:
         plotvars.twiny=twiny
+
+
+    # Turn off default axis tick marks
+    #if plotvars.plot is not None:
+    #    plotvars.plot.set_xticks([])
+    #    plotvars.plot.set_yticks([])
+
 
 
 def gopen(rows=1, columns=1, user_plot=1, file='python',
@@ -2883,14 +2898,18 @@ def gclose(view=True):
     plotvars.plot = None
     plotvars.twinx = None
     plotvars.twiny = None
+    plotvars.plot_xmin=None
+    plotvars.plot_xmax=None
+    plotvars.plot_ymin=None
+    plotvars.plot_ymax=None
+
 
 
 def showplot(*args):
     for data in args:
         plot = data
         plot.show()
-        # dir(plot)
-        # plot=args[0]
+
 
 
 def gpos(pos=1, xmin=None, xmax=None, ymin=None, ymax=None):
@@ -2933,30 +2952,30 @@ def gpos(pos=1, xmin=None, xmax=None, ymin=None, ymax=None):
         errstr = errstr + '\n'
         raise Warning(errstr)
 
-    user_pos = 0
+    user_pos = False
     if all(val is not None for val in [xmin, xmax, ymin, ymax]):
-        user_pos = 1
+        user_pos = True
         plotvars.plot_xmin = xmin
         plotvars.plot_xmax = xmax
         plotvars.plot_ymin = ymin
         plotvars.plot_ymax = ymax
 
-    if plotvars.plot_xmin is not None:
-        user_pos = 1
+
+    # Write user position values into plotvars as these need to 
+    # be retrieved in set_map to add the mymap as a plot
+    plot
 
 
-    if user_pos == 0:
+    if user_pos is False:
         plotvars.plot = plotvars.master_plot.add_subplot(
             plotvars.rows, plotvars.columns, pos)
-    else:        
+    else:    
         delta_x = plotvars.plot_xmax - plotvars.plot_xmin
         delta_y = plotvars.plot_ymax - plotvars.plot_ymin
         plotvars.plot = plotvars.master_plot.add_axes([plotvars.plot_xmin,
              plotvars.plot_ymin, delta_x, delta_y])
 
-
-
-    plotvars.plot.tick_params(which='both', direction='out')
+    plotvars.plot.tick_params(which='both', direction='out', right=True, top=True)
 
     # Set position in global variables
     plotvars.pos = pos
@@ -3086,6 +3105,7 @@ def gvals(dmin=None, dmax=None, tight=0, mystep=None, mod=1):
      |
     """
 
+
     if all(val is None for val in [dmin, dmax]) > 0:
         errstr = '\n gvals error - gvals must have dmin and dmax input\n'
         raise Warning(errstr)
@@ -3128,21 +3148,12 @@ def gvals(dmin=None, dmax=None, tight=0, mystep=None, mod=1):
 
         vals = np.linspace(dmin, dmax, minval)
 
-
         # Try to recalculate if too many decimal places
         if mindecs >=4:
-
             step=0.1
-            if dmax1-dmin1 <= 0.1:
-                 step=0.01
-            if dmax1-dmin1 <= 0.01:
-                 step=0.001
-            if dmax1-dmin1 <= 0.001:
-                 step=0.0001
-            if dmax1-dmin1 <= 0.0001:
-                 step=0.00001
-            if dmax1-dmin1 <= 0.00001:
-                 step=0.000001
+            for val in np.arange(40)+1:
+                if dmax1-dmin1 <= 1.0/10**val:
+                    step = 1.0/(10**(val+1))
 
 
             newvals = [float(int(dmin1))]
@@ -3163,7 +3174,6 @@ def gvals(dmin=None, dmax=None, tight=0, mystep=None, mod=1):
 
             if np.size(newvals) >2:
                 vals=newvals
-
 
         return vals, mult
 
@@ -3518,15 +3528,14 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None):
         ypole = rotated_pole['grid_north_pole_latitude']
 
         for mydim in f.items():
+            name = cf_var_name(field=f, dim=mydim)
             if mydim[:3] == 'dim':
-                if np.size(np.squeeze(f.item(mydim).array)
-                           ) == np.shape(np.squeeze(f.array))[1]:
+                if name in ['grid_longitude', 'longitude', 'x']:
                     x = np.squeeze(f.item(mydim).array)
                     xunits = str(getattr(f.item(mydim), 'units', ''))
                     xlabel = cf_var_name(field=f, dim=mydim)
 
-                if np.size(np.squeeze(f.item(mydim).array)
-                           ) == np.shape(np.squeeze(f.array))[0]:
+                if name in ['grid_latitude', 'latitude', 'y']:
                     y = np.squeeze(f.item(mydim).array)
                     # Flip y and data if reversed
                     if y[0] > y[-1]:
@@ -3534,6 +3543,12 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None):
                         field = np.flipud(field)
                     yunits = str(getattr(f.item(mydim), 'Units', ''))
                     ylabel = cf_var_name(field=f, dim=mydim) + yunits
+
+
+
+
+
+
 
     # time height plot
     if has_height == 1 and has_time == 1:
@@ -3952,7 +3967,7 @@ def bfill(f=None, x=None, y=None, clevs=False, lonlat=False, bound=False,
         xpts_orig = xpts
         ypts_orig = ypts
 
-        # Reduce xpts and ypts by 1 or shiftgrid fails
+        # Reduce xpts and ypts by 1 or shifting of grid fails
         # The last points are the right / upper bounds for the last data box
         xpts = xpts[0:-1]
         ypts = ypts[0:-1]
@@ -3965,10 +3980,8 @@ def bfill(f=None, x=None, y=None, clevs=False, lonlat=False, bound=False,
         # Add cyclic information if missing.
         lonrange = np.nanmax(xpts) - np.nanmin(xpts)
         if lonrange < 360:
-            field, xpts = addcyclic(field, xpts)
+            field, xpts = cartopy_util.add_cyclic_point(field, xpts)
 
-        # shiftgrid on lons and data
-        field, xpts = shiftgrid(plotvars.lonmin, field, xpts)
 
         right_bound = xpts[-1] + (xpts[-1] - xpts[-2])
 
@@ -4040,6 +4053,7 @@ def bfill(f=None, x=None, y=None, clevs=False, lonlat=False, bound=False,
 
 
     if plotvars.plot_type == 1 and plotvars.proj != 'cyl':
+
         for i in np.arange(np.size(levels)-1):
             allverts = []
             xy_stack=np.column_stack(np.where(colarr == i))
@@ -4050,7 +4064,8 @@ def bfill(f=None, x=None, y=None, clevs=False, lonlat=False, bound=False,
                 lons = [xpts[ix], xpts[ix+1], xpts[ix+1], xpts[ix], xpts[ix]]
                 lats = [ypts[iy], ypts[iy], ypts[iy+1], ypts[iy+1], ypts[iy]]
                 
-                txpts, typts = plotvars.mymap(lons, lats)
+                #txpts, typts = plotvars.mymap(lons, lats)
+                txpts, typts = lons, lats
                 verts=[
                     (txpts[0], typts[0]),
                     (txpts[1], typts[1]), 
@@ -4066,8 +4081,9 @@ def bfill(f=None, x=None, y=None, clevs=False, lonlat=False, bound=False,
                 color=plotvars.cs[i]
             else: 
                 color=single_fill_color
-            coll = PolyCollection(allverts, facecolor=color, edgecolors=color, alpha=alpha)
-            plotvars.plot.add_collection(coll)
+            coll = PolyCollection(allverts, facecolor=color, edgecolors=color, alpha=alpha,
+                                  transform=ccrs.PlateCarree())
+            plotvars.mymap.add_collection(coll)
 
     else:
         for i in np.arange(np.size(levels)-1):
@@ -4092,8 +4108,10 @@ def bfill(f=None, x=None, y=None, clevs=False, lonlat=False, bound=False,
             else: 
                 color=single_fill_color
 
-            coll = PolyCollection(allverts, facecolor=color, edgecolors=color, alpha=alpha)
-            plotvars.plot.add_collection(coll)
+            coll = PolyCollection(allverts, facecolor=color, edgecolors=color,
+                                  alpha=alpha, transform=ccrs.PlateCarree())
+
+            plotvars.mymap.add_collection(coll)
 
 
     # Add white for undefined areas
@@ -4122,7 +4140,7 @@ def bfill(f=None, x=None, y=None, clevs=False, lonlat=False, bound=False,
 
 
 
-def regrid(f=None, x=None, y=None, xnew=None, ynew=None, lonlat=None):
+def regrid(f=None, x=None, y=None, xnew=None, ynew=None):
     """
      | regrid - bilinear interpolation of a grid to new grid locations
      |
@@ -4144,8 +4162,6 @@ def regrid(f=None, x=None, y=None, xnew=None, ynew=None, lonlat=None):
     regrid_x = x
     regrid_y = y
 
-    import numpy as np
-
     fieldout = []
 
     # Reverse xpts and field if necessary
@@ -4166,7 +4182,11 @@ def regrid(f=None, x=None, y=None, xnew=None, ynew=None, lonlat=None):
 
         # Find position of new grid point in the x and y arrays
         myxpos = find_pos_in_array(vals=regrid_x, val=xval)
+        #print 'xval is ', xval
+        #print 'vals are ', regrid_x
+        #print 'myxpos is ', myxpos
         myypos = find_pos_in_array(vals=regrid_y, val=yval)
+
 
         myxpos2 = myxpos + 1
         myypos2 = myypos + 1
@@ -4200,9 +4220,9 @@ def regrid(f=None, x=None, y=None, xnew=None, ynew=None, lonlat=None):
 
 def stipple(f=None, x=None, y=None, min=None, max=None,
             size=80, color='k', pts=50, marker='.', edgecolors='k',
-            alpha=1.0):
+            alpha=1.0, ylog=False):
     """
-     | stipple - put dots on the plot to indicate value of interest
+     | stipple - put markers on a plot to indicate value of interest
      |
      | f=None - cf field or field
      | x=None - x points for field
@@ -4214,7 +4234,9 @@ def stipple(f=None, x=None, y=None, min=None, max=None,
      | pts=50 - number of points in the x direction
      | marker='.' - default marker for stipples
      | edegecolors='k' - outline colour
-     | alpha=1.0 - transparency setting - defaul is off.
+     | alpha=1.0 - transparency setting - default is off
+     | ylog=False - set to True if a log pressure stipple plot
+     |              is required
      |
      |
      :Returns:
@@ -4222,7 +4244,6 @@ def stipple(f=None, x=None, y=None, min=None, max=None,
      |
      |
     """
-
 
     if plotvars.plot_type not in [1,2,3]:
         errstr = '\n stipple error - only X-Y, X-Z and Y-Z \n'
@@ -4245,20 +4266,17 @@ def stipple(f=None, x=None, y=None, min=None, max=None,
         xpts = x
         ypts = y
 
+
+
     if plotvars.plot_type == 1:
         # Cylindrical projection
         # Add cyclic information if missing.
         lonrange = np.nanmax(xpts) - np.nanmin(xpts)
         if lonrange < 360:
-            field, xpts = addcyclic(field, xpts)
+            field, xpts = cartopy_util.add_cyclic_point(field, xpts)
 
-        # Shift grid if needed
-        if plotvars.lonmin < np.nanmin(xpts):
-            xpts = xpts - 360
-        if plotvars.lonmin > np.nanmax(xpts):
-            xpts = xpts + 360
 
-        field, xpts = shiftgrid(plotvars.lonmin, field, xpts)
+
 
         if plotvars.proj == 'cyl':
             # Calculate interpolation points
@@ -4269,15 +4287,18 @@ def stipple(f=None, x=None, y=None, min=None, max=None,
                                         pts=pts, stype=2)
 
             # Calculate points in map space
-            xnew_map, ynew_map = plotvars.mymap(xnew, ynew)
+            xnew_map=xnew
+            ynew_map=ynew
+
 
         if plotvars.proj == 'npstere' or plotvars.proj == 'spstere':
             # Calculate interpolation points
             xnew, ynew, xnew_map, ynew_map = polar_regular_grid()
+            # Convert longitudes to be 0 to 360
+            # negative longitudes are incorrectly regridded in polar stereographic projection
+            xnew = np.mod(xnew + 360.0, 360.0)
 
     if plotvars.plot_type >= 2 and plotvars.plot_type <= 3:
-
-
 
         # Flip data if a lat-height plot and lats start at the north pole
         if plotvars.plot_type == 2:
@@ -4286,30 +4307,48 @@ def stipple(f=None, x=None, y=None, min=None, max=None,
                 field = np.fliplr(field)
 
         # Calculate interpolation points
+        ymin = np.nanmin(ypts)
+        ymax = np.nanmax(ypts)
+        if ylog:
+            ymin = np.log10(ymin)
+            ymax = np.log10(ymax)
+
         xnew, ynew = stipple_points(xmin=np.nanmin(xpts),
                                     xmax=np.nanmax(xpts),
-                                    ymin=np.nanmin(ypts),
-                                    ymax=np.nanmax(ypts),
+                                    ymin=ymin,
+                                    ymax=ymax,
                                     pts=pts, stype=2)
+
+        if ylog:
+            ynew = 10**ynew
+
 
     # Get values at the new points
     vals = regrid(f=field, x=xpts, y=ypts, xnew=xnew, ynew=ynew)
 
+
     # Work out which of the points are valid
-    valid_points = np.array([], dtype='int32')
+    valid_points = np.array([], dtype='int64')
     for i in np.arange(np.size(vals)):
         if vals[i] >= min and vals[i] <= max:
             valid_points = np.append(valid_points, i)
 
+
+
     if plotvars.plot_type == 1:
-        plotvars.plot.scatter(
-            xnew_map[valid_points],
-            ynew_map[valid_points],
-            s=size,
-            c=color,
-            marker=marker,
-            edgecolors=edgecolors,
-            alpha=alpha)
+        proj=ccrs.PlateCarree()
+
+        if np.size(valid_points) > 0:
+            plotvars.mymap.scatter(
+                xnew[valid_points],
+                ynew[valid_points],
+                s=size,
+                c=color,
+                marker=marker,
+                edgecolors=edgecolors,
+                alpha=alpha, transform=proj)
+
+
 
     if plotvars.plot_type >= 2 and plotvars.plot_type <= 3:
         plotvars.plot.scatter(
@@ -4320,6 +4359,8 @@ def stipple(f=None, x=None, y=None, min=None, max=None,
             marker=marker,
             edgecolors=edgecolors,
             alpha=alpha)
+
+
 
 
 def stipple_points(xmin=None, xmax=None, ymin=None,
@@ -4522,6 +4563,7 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,
     title_fontweight = plotvars.title_fontweight
     if title_fontsize is None:
         title_fontsize = 15
+    resolution_orig=plotvars.resolution
 
 
     # Set potential user axis labels
@@ -4586,6 +4628,8 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,
     if scale is None:
         scale = np.nanmax(u_data) / 4.0
 
+    print 'scale is ', scale
+
     if key_length is None:
         key_length = scale
 
@@ -4597,20 +4641,28 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,
     if (ptype is not None):
         plotvars.plot_type = ptype
 
+
+    lonrange = np.nanmax(u_x) - np.nanmin(u_x)
+    latrange = np.nanmax(u_y) - np.nanmin(u_y)
+
+
     if plotvars.plot_type == 1:
         # Set up mapping
-        set_map()
+        if (lonrange > 350 and latrange > 170) or plotvars.user_mapset == 1:
+            set_map()
+        else:
+            mapset(lonmin=np.nanmin(u_x), lonmax=np.nanmax(u_x),
+                   latmin=np.nanmin(u_y), latmax=np.nanmax(u_y),
+                   user_mapset=0, resolution=resolution_orig)
+            set_map()
+
+
         mymap = plotvars.mymap
 
-        # add cyclic and shift grid
-        u_data, u_x = addcyclic(u_data, u_x)
-        v_data, v_x = addcyclic(v_data, v_x)
-        if plotvars.lonmin < np.nanmin(u_x):
-            u_x = u_x - 360.0
-        if plotvars.lonmin < np.nanmin(v_x):
-            v_x = v_x - 360.0
-        u_data, u_x = shiftgrid(plotvars.lonmin, u_data, u_x)
-        v_data, v_x = shiftgrid(plotvars.lonmin, v_data, v_x)
+        u_data, u_x = cartopy_util.add_cyclic_point(u_data, u_x)
+        v_data, v_x = cartopy_util.add_cyclic_point(v_data, v_x)
+
+
 
     # stride data points to reduce vector density
     if stride is not None:
@@ -4628,190 +4680,154 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,
         v_data = v_data[0::ystride, 0::xstride]
 
 
-    # Use bilinear interpolation to find new vector positions and values on a
-    # map
-    if pts is not None and plotvars.plot_type == 1:
-        if plotvars.proj != 'npstere' and plotvars.proj != 'spstere':
-            # Calculate interpolation points and values
-            xnew, ynew = stipple_points(xmin=plotvars.lonmin,
-                                        xmax=plotvars.lonmax,
-                                        ymin=plotvars.latmin,
-                                        ymax=plotvars.latmax,
-                                        pts=pts, stype=1)
+    # Map vectors
+    if plotvars.plot_type == 1:
+        lonmin=plotvars.lonmin
+        lonmax=plotvars.lonmax
+        proj=ccrs.PlateCarree()
+  
 
-            u_vals = regrid(f=u_data, x=u_x, y=u_y, xnew=xnew, ynew=ynew)
-            v_vals = regrid(f=v_data, x=u_x, y=u_y, xnew=xnew, ynew=ynew)
-
-            # Plot vectors
-            quiv = plotvars.mymap.quiver(xnew, ynew, u_vals, v_vals,
+        if pts is None:
+            quiv = plotvars.mymap.quiver(u_x, u_y, u_data, v_data, scale=scale,
                                          pivot=pivot, units='inches',
-                                         scale=scale,
-                                         width=width,
-                                         headwidth=headwidth,
+                                         width=width, headwidth=headwidth,
                                          headlength=headlength,
                                          headaxislength=headaxislength,
-                                         color=color)
-     
-
-
-    if plotvars.plot_type == 1 and (plotvars.proj == 'npstere' or plotvars.proj == 'spstere'):
-        # Polar grid
-        # Calculate interpolation points and values
-        if pts is not None:
-            xnew, ynew, xnew_map, ynew_map = polar_regular_grid(pts=pts)
-            u_vals = regrid(f=u_data, x=u_x, y=u_y, xnew=xnew, ynew=ynew)
-            v_vals = regrid(f=v_data, x=u_x, y=u_y, xnew=xnew, ynew=ynew)
-
+                                         color=color, transform=proj)
         else:
-            u_x=np.tile(u_x, (np.shape(u_data)[0],1))
-            u_y=np.tile(u_y, (np.shape(u_data)[1],1)).transpose()
+            if plotvars.proj == 'cyl':
+                # **cartopy 0.16 fix for longitide points in cylindrical projection
+                # when regridding to a number of points
+                # Make points within the plotting region
+                for pt in np.arange(np.size(u_x)):
+                    if u_x[pt] > lonmax:
+                        u_x[pt]=u_x[pt]-360
 
 
-            #Select only points that are visible
-            if plotvars.proj == 'npstere':
-                pts = np.where(u_y > plotvars.boundinglat)
-            else:
-                pts = np.where(u_y < plotvars.boundinglat)
+            quiv = plotvars.mymap.quiver(u_x, u_y, u_data, v_data, scale=scale,
+                                    pivot=pivot, units='inches',
+                                    width=width, headwidth=headwidth,
+                                    headlength=headlength,
+                                    headaxislength=headaxislength,
+                                    color=color,
+                                    regrid_shape=pts, transform=proj)
 
 
-            xnew = u_x[pts]
-            ynew = u_y[pts]
-            xnew_map, ynew_map = mymap(xnew, ynew)
-            u_vals = u_data[pts]
-            v_vals = v_data[pts]
-
-
-
-        # Rotate vector values
-        hem = 1  # Northern hemisphere
-        if plotvars.proj == 'spstere':
-            hem = -1
-        for i in np.arange(np.size(u_vals)):
-            if hem == 1:
-                newu = (u_vals[i] * np.cos(np.radians(xnew[i])) -
-                        hem * v_vals[i] * np.sin(np.radians(xnew[i])))
-                newv = (v_vals[i] * np.cos(np.radians(xnew[i])) + hem *
-                        u_vals[i] * np.sin(np.radians(xnew[i])))
-            else:
-                newu = (hem * u_vals[i] * np.cos(np.radians(xnew[i])) +
-                        hem * v_vals[i] * np.sin(np.radians(xnew[i])))
-                newv = (hem * v_vals[i] * np.cos(np.radians(xnew[i])) -
-                        hem * u_vals[i] * np.sin(np.radians(xnew[i])))
-
-            u_vals[i] = newu
-            v_vals[i] = newv
-
-        # Plot vectors
-        quiv = plotvars.mymap.quiver(xnew_map, ynew_map, u_vals, v_vals,
-                                     pivot=pivot, units='inches',
-                                     scale=scale, width=width,
-                                     headwidth=headwidth,
-                                     headlength=headlength,
-                                     headaxislength=headaxislength,
-                                     color=color)
 
         # Make key_label if none exists
         if key_label is None:
             key_label = str(key_length)
-            if isinstance(u, cf.Field):
-                key_label = supscr(key_label + u.units)
-
+        if isinstance(u, cf.Field):
+            key_label = supscr(key_label + u.units)
         if key_show:
-            quiv_key = plotvars.plot.quiverkey(quiv, key_location[0],
-                                               key_location[1], key_length,
-                                               key_label, labelpos='W',
-                                               color=qkey_color,
-                                               fontproperties={'size':str(plotvars.axis_label_fontsize)})
+            quiv_key = plotvars.mymap.quiverkey(quiv, key_location[0], 
+                                                key_location[1],
+                                                key_length,
+                                                key_label, labelpos='W',
+                                                color=qkey_color,
+                                                fontproperties={'size':str(plotvars.axis_label_fontsize)},
+                                                coordinates='axes')
 
-    # Map vectors
-    if plotvars.plot_type == 1:
 
-        if pts is None:
-            # convert lons, lats into map coordinates
-            x, y = plotvars.mymap(*np.meshgrid(u_x, u_y))
+        # axes
+        plot_map_axes(axes=axes, xaxis=xaxis, yaxis=yaxis,
+                      xticks=xticks, xticklabels=xticklabels,
+                      yticks=yticks, yticklabels=yticklabels,
+                      user_xlabel=user_xlabel, user_ylabel=user_ylabel,
+                      verbose=False)
 
-            # plot vectors and key
-            quiv = plotvars.mymap.quiver(u_x, u_y, u_data, v_data, pivot=pivot,
-                                         units='inches', scale=scale,
+
+        # Coastlines
+        continent_thickness = plotvars.continent_thickness
+        continent_color = plotvars.continent_color
+        continent_linestyle = plotvars.continent_linestyle
+        if continent_thickness is None:
+            continent_thickness = 1.5
+        if continent_color is None:
+            continent_color = 'k'
+        if continent_linestyle is None:
+            continent_linestyle = 'solid'
+
+
+        feature = cfeature.NaturalEarthFeature(
+                      name='land', category='physical',
+                      scale=plotvars.resolution,
+                      facecolor='none')
+        mymap.add_feature(feature, edgecolor=continent_color,
+                      linewidth=continent_thickness, 
+                      linestyle=continent_linestyle)
+
+
+        # Title
+        if title is not None:
+            map_title(title)
+
+
+    if plotvars.plot_type == 6:
+        if u.ref('rotated_latitude_longitude') is not None:
+
+            rotated_pole = u.ref('rotated_latitude_longitude')
+            xpole = float(rotated_pole['grid_north_pole_longitude'])
+            ypole = float(rotated_pole['grid_north_pole_latitude'])
+
+            proj=ccrs.PlateCarree() 
+
+            # Set up mapping
+            if (lonrange > 350 and latrange > 170) or plotvars.user_mapset == 1:
+                set_map()
+
+            else:
+                mapset(lonmin=np.nanmin(u_x), lonmax=np.nanmax(u_x),
+                       latmin=np.nanmin(u_y), latmax=np.nanmax(u_y),
+                       user_mapset=0, resolution=resolution_orig)
+                set_map()
+
+            quiv = plotvars.mymap.quiver(u_x, u_y, u_data, v_data, scale=scale*10, transform=proj,
+                                         pivot=pivot, units='inches',
                                          width=width, headwidth=headwidth,
                                          headlength=headlength,
                                          headaxislength=headaxislength,
                                          color=color)
+            
 
             # Make key_label if none exists
             if key_label is None:
                 key_label = str(key_length)
             if isinstance(u, cf.Field):
                 key_label = supscr(key_label + u.units)
+
             if key_show:
-                quiv_key = plotvars.plot.quiverkey(quiv, key_location[0],
-                                                   key_location[1], key_length,
-                                                   key_label, labelpos='W',
-                                                   color=qkey_color,
-                                                   fontproperties={'size':str(plotvars.axis_label_fontsize)})
+                quiv_key = plotvars.mymap.quiverkey(quiv, key_location[0], 
+                                                    key_location[1],
+                                                    key_length,
+                                                    key_label, labelpos='W',
+                                                    color=qkey_color,
+                                                    fontproperties={'size':str(plotvars.axis_label_fontsize)},
+                                                    coordinates='axes')
 
-        # axes
-        if plotvars.proj == 'cyl':
-            lonticks, lonlabels = mapaxis(
-                min=plotvars.lonmin, max=plotvars.lonmax, type=1)
-            latticks, latlabels = mapaxis(
-                min=plotvars.latmin, max=plotvars.latmax, type=2)
 
-            if axes:
-                if xaxis:
-                    if xticks is None:
-                        axes_plot(xticks=lonticks, xticklabels=lonlabels)
-                    else:
-                        if xticklabels is None:
-                            axes_plot(xticks=xticks, xticklabels=xticks)
-                        else:
-                            axes_plot(xticks=xticks, xticklabels=xticklabels)
-                if yaxis:
-                    if yticks is None:
-                        axes_plot(yticks=latticks, yticklabels=latlabels)
-                    else:
-                        if yticklabels is None:
-                            axes_plot(yticks=yticks, yticklabels=yticks)
-                        else:
-                            axes_plot(yticks=yticks, yticklabels=yticklabels)
+            # Axes on the native grid
+            if plotvars.plot == 'rotated':
+                rgaxes(xpole=xpole, ypole=ypole, xvec=x, yvec=y,
+                       xticks=xticks, xticklabels=xticklabels, 
+                       yticks=yticks, yticklabels=yticklabels,
+                       axes=axes, xaxis=xaxis, yaxis=yaxis,
+                       xlabel=xlabel, ylabel=ylabel)
 
-            if user_xlabel is not None:
-                plotvars.plot.set_xlabel(user_xlabel)
-            if user_ylabel is not None:
-                plotvars.plot.set_ylabel(user_ylabel)
 
-        if plotvars.proj == 'npstere' or plotvars.proj == 'spstere':
-            latstep = 30
-            if 90 - abs(plotvars.boundinglat) <= 50:
-                latstep = 10
-            if axes:
-                if xaxis:
-                    if xticks is None:
-                        mymap.drawmeridians(
-                            np.arange(
-                                0, 360, 60), labels=[
-                                1, 1, 1, 1], fontsize=plotvars.axis_label_fontsize,
-                                             fontweight=plotvars.axis_label_fontweight)
-                    else:
-                        mymap.drawmeridians(xticks, labels=[1, 1, 1, 1],
-                                            fontsize=plotvars.axis_label_fontsize,
-                                            fontweight=plotvars.axis_label_fontweight)
-                if yaxis:
-                    if yticks is None:
-                        mymap.drawparallels(np.arange(-90, 120, latstep))
-                    else:
-                        mymap.drawparallels(yticks)
 
-        # Coastlines and title
-        mymap.drawcoastlines(
-            linewidth=continent_thickness,
-            color=continent_color)
-        if title is not None:
-            plotvars.plot.set_title(
-                title,
-                y=1.03,
-                fontsize=title_fontsize,
-                fontweight=title_fontweight)
+            if plotvars.plot == 'cyl':
+                plot_map_axes(axes=axes, xaxis=xaxis, yaxis=yaxis,
+                              xticks=xticks, xticklabels=xticklabels,
+                              yticks=yticks, yticklabels=yticklabels,
+                              user_xlabel=user_xlabel, user_ylabel=user_ylabel,
+                              verbose=False)
+
+            # Title
+            if title is not None:
+                map_title(title)
+
+
 
     ######################################
     # Latitude or longitude vs height plot
@@ -4982,12 +4998,19 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,
                               xlabel=xlabel, ylabel=ylabel)
 
         # Regrid the data if requested
-        if pts is not None:
+        if pts is not None: 
+
             xnew, ynew = stipple_points(xmin=np.min(u_x), xmax=np.max(u_x),
                                         ymin=np.min(u_y), ymax=np.max(u_y),
                                         pts=pts, stype=1)
-            u_vals = regrid(f=u_data, x=u_x, y=u_y, xnew=xnew, ynew=ynew)
-            v_vals = regrid(f=v_data, x=u_x, y=u_y, xnew=xnew, ynew=ynew)
+
+            if ytype == 0:
+                # Make y interpolation in log space as we have a pressure coordinate
+                u_vals = regrid(f=u_data, x=u_x, y=np.log10(u_y), xnew=xnew, ynew=np.log10(ynew))
+                v_vals = regrid(f=v_data, x=u_x, y=np.log10(u_y), xnew=xnew, ynew=np.log10(ynew))
+            else:
+                u_vals = regrid(f=u_data, x=u_x, y=u_y, xnew=xnew, ynew=ynew)
+                v_vals = regrid(f=v_data, x=u_x, y=u_y, xnew=xnew, ynew=ynew)
 
             u_x = xnew
             u_y = ynew
@@ -5108,6 +5131,10 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,
         cscale()
         gclose()
 
+    if plotvars.user_mapset == 0:
+        mapset()
+        mapset(resolution=resolution_orig)
+
 
 def set_map():
     """
@@ -5127,43 +5154,164 @@ def set_map():
      |
     """
 
+
     # Set up mapping
-    if plotvars.proj == 'cyl' or plotvars.proj == 'merc':
-        lon_mid = plotvars.lonmin + (plotvars.lonmax - plotvars.lonmin) / 2.0
-        lat_mid = plotvars.latmin + (plotvars.latmax - plotvars.latmin) / 2.0
-        mymap = Basemap(projection=plotvars.proj, llcrnrlon=plotvars.lonmin,
-                        urcrnrlon=plotvars.lonmax, llcrnrlat=plotvars.latmin,
-                        urcrnrlat=plotvars.latmax, lon_0=lon_mid,
-                        lat_0=lat_mid, resolution=plotvars.resolution)
+    extent = True
+    lon_mid = plotvars.lonmin + (plotvars.lonmax - plotvars.lonmin) / 2.0
+    lat_mid = plotvars.latmin + (plotvars.latmax - plotvars.latmin) / 2.0
+    lonmin = plotvars.lonmin
+    lonmax = plotvars.lonmax
+    latmin = plotvars.latmin
+    latmax = plotvars.latmax
+
+    if plotvars.proj == 'cyl':
+        proj=ccrs.PlateCarree(central_longitude=lon_mid)
+
+
+        #mymap=plot.subplot(111, projection=proj)
+
+        # Add a plot containing the projection
+        #if plotvars.plot_xmin:
+        #    delta_x = plotvars.plot_xmax - plotvars.plot_xmin
+        #    delta_y = plotvars.plot_ymax - plotvars.plot_ymin
+        #    mymap = plotvars.master_plot.add_axes([plotvars.plot_xmin,
+        #                                               plotvars.plot_ymin,
+        #                                               delta_x, delta_y],
+        #                                               projection=proj)
+        #else:    
+        #    mymap=plotvars.master_plot.add_subplot(plotvars.rows, plotvars.columns, plotvars.pos, projection=proj)
+
+        
+        # Cartopy line plotting and identical left == right fix
+
+        if lonmax - lonmin == 360.0:
+            lonmax = lonmax + 0.01
+
+        # Set map extent
+        #mymap.set_extent((plotvars.lonmin, plotvars.lonmax+ extra,
+        #                  plotvars.latmin, plotvars.latmax),
+        #                  crs=ccrs.PlateCarree())
+
+
+    
+    if plotvars.proj == 'merc':
+        min_latitude=-80.0
+        if plotvars.lonmin > min_latitude:
+            min_latitude=plotvars.lonmin
+        max_latitude=84.0
+        if plotvars.lonmax < max_latitude:
+             max_latitude=plotvars.lonmax
+        proj=ccrs.Mercator(central_longitude=plotvars.lon_0,
+                           min_latitude=min_latitude,
+                           max_latitude=max_latitude)
+        #mymap=plot.subplot(plotvars.rows, plotvars.columns, plotvars.pos, projection=proj)
+        
+
+
+
 
     if plotvars.proj == 'npstere':
-        mymap = Basemap(projection='npstere', boundinglat=plotvars.boundinglat,
-                        round='True', lon_0=plotvars.lon_0, lat_0=90,
-                        resolution=plotvars.resolution)
+        proj = ccrs.NorthPolarStereo(central_longitude=plotvars.lon_0)
+        #mymap=plot.subplot(plotvars.rows, plotvars.columns, plotvars.pos, projection=proj)
+        # **cartopy 0.16 fix
+        # Here we add in 0.01 to the longitude extent as this helps with plotting 
+        # lines and line labels
+        lonmin = plotvars.lon_0-180
+        lonmax = plotvars.lon_0+180.01
+        latmin = plotvars.boundinglat
+        latmax = 90
+        #mymap.set_extent((plotvars.lon_0-180, plotvars.lon_0+180.01,
+        #                  plotvars.boundinglat, 90),
+        #                  crs=ccrs.PlateCarree())
+
+
+
 
     if plotvars.proj == 'spstere':
-        mymap = Basemap(projection='spstere', boundinglat=plotvars.boundinglat,
-                        round='True', lon_0=plotvars.lon_0, lat_0=-90,
-                        resolution=plotvars.resolution)
+        proj = ccrs.SouthPolarStereo(central_longitude=plotvars.lon_0)
+        #mymap=plot.subplot(plotvars.rows, plotvars.columns, plotvars.pos, projection=proj)
+        # **cartopy 0.16 fix
+        # Here we add in 0.01 to the longitude extent as this helps with plotting 
+        # lines and line labels
+        lonmin = plotvars.lon_0-180
+        lonmax = plotvars.lonmax+180.01
+        latmin = -90
+        latmax = plotvars.boundinglat
+        #mymap.set_extent((plotvars.lon_0-180, plotvars.lonmax+180.01,
+        #                  -90, plotvars.boundinglat),
+        #                  crs=ccrs.PlateCarree())
+
 
     if plotvars.proj == 'ortho':
-        mymap = Basemap(projection='ortho',  lon_0=plotvars.lon_0,
-                        lat_0=plotvars.lat_0,
-                        resolution=plotvars.resolution)
+        proj=ccrs.Orthographic(central_longitude=plotvars.lon_0,
+                               central_latitude=plotvars.lat_0)
+        #extent = False
+        #mymap=plot.subplot(plotvars.rows, plotvars.columns, plotvars.pos, projection=proj)
+    
 
-    if plotvars.proj == 'moll' or plotvars.proj == 'robin':
-        mymap = Basemap(
-            projection=plotvars.proj,
-            lon_0=plotvars.lon_0,
-            resolution=plotvars.resolution)
+
+
+
+    if plotvars.proj == 'moll':
+        proj=ccrs.Mollweide(central_longitude=plotvars.lon_0)
+        lonmin = plotvars.lon_0-180.0
+        lonmax = plotvars.lon_0+180.01
+        extent = False
+
+        #mymap=plot.subplot(plotvars.rows, plotvars.columns, plotvars.pos, projection=proj)
+
+    if plotvars.proj == 'robin':
+        proj=ccrs.Robinson(central_longitude=plotvars.lon_0)
+        #mymap=plot.subplot(plotvars.rows, plotvars.columns, plotvars.pos, projection=proj)
 
     if plotvars.proj == 'lcc':
-        mymap = Basemap(
-            projection=plotvars.proj,
-            lon_0=plotvars.lon_0, lat_0=plotvars.lat_0,
-            height=plotvars.lcc_height, width=plotvars.lcc_width,
-            rsphere=(6378137.00, 6356752.3142), area_thresh=1000,
-            resolution=plotvars.resolution)
+        lon_0=plotvars.lonmin+(plotvars.lonmax-plotvars.lonmin)/2.0
+        lat_0=plotvars.latmin+(plotvars.latmax-plotvars.latmin)/2.0
+        proj=ccrs.LambertConformal(central_longitude=lon_0,
+                                   central_latitude=lat_0,
+                                   cutoff=-40)
+        #mymap=plot.subplot(plotvars.rows, plotvars.columns, plotvars.pos, projection=proj)
+        #mymap.set_extent((plotvars.lonmin, plotvars.lonmax,
+        #                  plotvars.latmin, plotvars.latmax),
+        #                  crs=ccrs.PlateCarree())
+
+    if plotvars.proj == 'rotated':
+        proj=ccrs.PlateCarree(central_longitude=lon_mid)
+        #mymap=plot.subplot(plotvars.rows, plotvars.columns, plotvars.pos, projection=proj)
+        #mymap.set_extent((plotvars.lonmin, plotvars.lonmax,
+        #                  plotvars.latmin, plotvars.latmax),
+        #                  crs=ccrs.PlateCarree())
+
+
+    # Add a plot containing the projection
+    if plotvars.plot_xmin:
+        delta_x = plotvars.plot_xmax - plotvars.plot_xmin
+        delta_y = plotvars.plot_ymax - plotvars.plot_ymin
+        mymap = plotvars.master_plot.add_axes([plotvars.plot_xmin,
+                                                   plotvars.plot_ymin,
+                                                   delta_x, delta_y],
+                                                   projection=proj)
+    else:    
+        mymap=plotvars.master_plot.add_subplot(plotvars.rows,
+                                               plotvars.columns,
+                                               plotvars.pos,
+                                               projection=proj)
+
+        
+
+
+    # Set map extent
+    if extent:
+        mymap.set_extent((lonmin, lonmax, latmin, latmax),
+                         crs=ccrs.PlateCarree())
+
+
+
+    # Remove any plotvars.plot axes leaving just the plotvars.mymap axes
+    #if plotvars.plot is not None:
+    plotvars.plot.set_frame_on(False)
+    plotvars.plot.set_xticks([])
+    plotvars.plot.set_yticks([])
 
     # Store map
     plotvars.mymap = mymap
@@ -5194,32 +5342,46 @@ def polar_regular_grid(pts=50):
     boundinglat = plotvars.boundinglat
     lon_0 = plotvars.lon_0
 
-    if plotvars.proj == 'npstere':
-        x, ymin = mymap(lon_0, boundinglat)
-        x, ymax = mymap(lon_0 + 180, boundinglat)
-    if plotvars.proj == 'spstere':
-        x, ymin = mymap(lon_0 + 180, boundinglat)
-        x, ymax = mymap(lon_0, boundinglat)
-    xmin, y = mymap(lon_0 - 90, boundinglat)
-    xmax, y = mymap(lon_0 + 90, boundinglat)
 
-    xnew, ynew = stipple_points(
+    if plotvars.proj == 'npstere':
+        thisproj=ccrs.NorthPolarStereo(central_longitude=lon_0)
+    else:
+        thisproj=ccrs.SouthPolarStereo(central_longitude=lon_0)
+
+    # Find min and max of plotting region in device coordinates
+    lons=np.array([lon_0-90, lon_0, lon_0+90, lon_0+180])
+    lats=np.array([boundinglat, boundinglat, boundinglat, boundinglat])
+    extent=thisproj.transform_points(ccrs.PlateCarree(), lons, lats)    
+
+    xmin=np.min(extent[:,0])
+    xmax=np.max(extent[:,0])  
+    ymin=np.min(extent[:,1])
+    ymax=np.max(extent[:,1])
+
+    
+
+
+
+    # Make up a stipple of points for cover the pole
+    points_device = stipple_points(
         xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax, pts=pts, stype=2)
-    lons, lats = mymap(xnew, ynew, inverse=True)
 
-    # Work out which of the points are valid
-    valid_points = np.array([], dtype='int32')
+    xnew = np.array(points_device)[0, :]
+    ynew = np.array(points_device)[1, :]
+
+    points_polar=ccrs.PlateCarree().transform_points(thisproj, xnew, ynew) 
+
+    lons=np.array(points_polar)[:, 0]
+    lats=np.array(points_polar)[:, 1]
+
+
     if plotvars.proj == 'npstere':
-        for i in np.arange(np.size(lats)):
-            if lats[i] >= boundinglat:
-                valid_points = np.append(valid_points, i)
-    if plotvars.proj == 'spstere':
-        for i in np.arange(np.size(lats)):
-            if lats[i] <= boundinglat:
-                valid_points = np.append(valid_points, i)
+        valid = np.where(lats >= boundinglat)
+    else:
+        valid = np.where(lats <= boundinglat)
 
-    return lons[valid_points], lats[valid_points], xnew[
-        valid_points], ynew[valid_points]
+
+    return lons[valid], lats[valid], xnew[valid], ynew[valid]
 
 
 def cf_var_name(field=None, dim=None):
@@ -5433,7 +5595,7 @@ def process_color_scales():
                 ax1, cmap=cmap, orientation='horizontal', ticks=None)
             cb1.set_ticks([0.0, 1.0])
             cb1.set_ticklabels(['', ''])
-            file = '/home/swsheaps/cf-docs/cfplot_sphinx/images/'
+            file = '/home/andy/cf-docs/cfplot_sphinx/images/'
             file += 'colour_scales/' + scale + '.png'
             plot.savefig(file)
             plot.close()
@@ -5476,10 +5638,13 @@ def reset():
     setvars()
 
 
+
 def setvars(file=None, title_fontsize=None, text_fontsize=None,
+            colorbar_fontsize=None, colorbar_fontweight=None,
             axis_label_fontsize=None, title_fontweight=None,
             text_fontweight=None, axis_label_fontweight=None, fontweight=None,
-            continent_thickness=None, continent_color=None, viewer=None,
+            continent_thickness=None, continent_color=None, 
+            continent_linestyle=None, viewer=None,
             tspace_year=None, tspace_month=None, tspace_day=None,
             tspace_hour=None, xtick_label_rotation=None,
             xtick_label_align=None, ytick_label_rotation=None,
@@ -5491,19 +5656,30 @@ def setvars(file=None, title_fontsize=None, text_fontsize=None,
             lake_color=None, 
             rotated_grid_spacing=None, rotated_deg_spacing=None,
             rotated_continents=None, rotated_grid=None,
-            rotated_labels=None):
+            rotated_labels=None, rotated_grid_thickness=None,
+            legend_frame=None,
+            legend_frame_edge_color=None, legend_frame_face_color=None,
+            degsym=None, axis_width=None):
     """
-     | setvars - set plotting variables
+     | setvars - set plotting variables and their defaults
      |
      | file=None - output file name
      | title_fontsize=None - title fontsize, default=15
-     | text_fontsize='normal' - text font size, default=11
-     | axis_label_fontsize=None - axis label fontsize, default=11
      | title_fontweight='normal' - title fontweight
+     | text_fontsize='normal' - text font size, default=11
      | text_fontweight='normal' - text font weight
+     | axis_label_fontsize=None - axis label fontsize, default=11
      | axis_label_fontweight='normal' - axis font weight
+     | legend_text_size='11' - legend text size
+     | legend_text_weight='normal' - legend text weight
+     | colorbar_textsize='11' - colorbar text size
+     | colorbar_fontweight='normal' - colorbar font weight
+     | legend_text_weight='normal' - legend text weight
+     | master_title_fontsize=30 - master title font size
+     | master_title_fontweight='normal' - master title font weight
      | continent_thickness=1.5 - default=1.5
      | continent_color='k' - default='k' (black)
+     | continent_linestyle='solid' - default='k' (black)
      | viewer='display' - use ImageMagick display program to display
      |                    the pictures.  Set to 'matplotlib' to use the
      |                    built in matplotlib viewer.  display is non-blocking
@@ -5518,24 +5694,26 @@ def setvars(file=None, title_fontsize=None, text_fontsize=None,
      | xtick_label_align='center' - alignment of xtick labels
      | ytick_label_rotation=0 - rotation of ytick labels
      | ytick_label_align='right' - alignment of ytick labels
-     | legend_text_size='11' - legend text size
-     | legend_text_weight='normal' - legend text weight
+
      | cs_uniform=True - make a uniform differential colour scale
      | master_title=None - master title text
      | master_title_location=[0.5,0.95] - master title location
-     | master_title_fontsize=30 - master title font size
-     | master_title_fontweight='normal' - master title font weight
      | dpi=None - dots per inch setting
      | land_color=None - land colour
      | ocean_color=None - ocean colour
      | lake_color=None - lake colour
      | rotated_grid_spacing=10 - rotated grid spacing in degrees
      | rotated_deg_spacing=0.75 - rotated grid spacing between graticule dots
+     | rotated_deg_tickness=1.0 - rotated grid thickness for longitude and latitude lines
      | rotated_continents=True - draw rotated continents
      | rotated_grid=True - draw rotated grid
      | rotated_labels=True - draw rotated grid labels
-
-
+     | legend_frame=True - draw a frame around a lineplot legend
+     | legend_frame_edge_color='k' - color for the legend frame
+     | legend_frame_face_color=None - color for the legend background
+     | degsym=True - add degree symbol to longitude and latitude axis labels
+     | axis_width=None - width of line for the axes
+     |
      | Use setvars() to reset to the defaults
      |
      |
@@ -5548,7 +5726,8 @@ def setvars(file=None, title_fontsize=None, text_fontsize=None,
     """
     vals = [file, title_fontsize, text_fontsize, axis_label_fontsize,
             continent_thickness, title_fontweight, text_fontweight,
-            axis_label_fontweight, fontweight,  continent_color, tspace_year,
+            axis_label_fontweight, fontweight,  continent_color, 
+            continent_linestyle, tspace_year,
             tspace_month, tspace_day, tspace_hour, xtick_label_rotation,
             xtick_label_align, ytick_label_rotation, ytick_label_align,
             legend_text_size, legend_text_weight, cs_uniform, 
@@ -5556,18 +5735,24 @@ def setvars(file=None, title_fontsize=None, text_fontsize=None,
             master_title_fontsize, master_title_fontweight, dpi,
             land_color, ocean_color, lake_color, rotated_grid_spacing,
             rotated_deg_spacing, rotated_continents, rotated_grid,
-            rotated_labels]
+            rotated_grid_thickness,
+            rotated_labels, colorbar_fontsize, colorbar_fontweight,
+            legend_frame, legend_frame_edge_color, legend_frame_face_color,
+            degsym, axis_width]
     if all(val is None for val in vals):
         plotvars.file = None
         plotvars.title_fontsize = 15
         plotvars.text_fontsize = 11
+        plotvars.colorbar_fontsize = 11
         plotvars.axis_label_fontsize = 11
         plotvars.title_fontweight = 'normal'
         plotvars.text_fontweight = 'normal'
+        plotvars.colorbar_fontweight = 'normal'
         plotvars.axis_label_fontweight = 'normal'
         plotvars.fontweight = 'normal'
         plotvars.continent_thickness = None
         plotvars.continent_color = None
+        plotvars.continent_linestyle = None
         plotvars.tspace_year = None
         plotvars.tspace_month = None
         plotvars.tspace_day = None
@@ -5590,9 +5775,15 @@ def setvars(file=None, title_fontsize=None, text_fontsize=None,
         plotvars.lake_color=None
         plotvars.rotated_grid_spacing=10
         plotvars.rotated_deg_spacing=0.75
+        plotvars.rotated_grid_thickness=1.0
         plotvars.rotated_continents=True
         plotvars.rotated_grid=True
         plotvars.rotated_labels=True
+        plotvars.legend_frame=True
+        plotvars.legend_frame_edge_color='k'
+        plotvars.legend_frame_face_color=None
+        plotvars.degsym=False
+        axis_width=None
 
 
     if file is not None:
@@ -5605,12 +5796,18 @@ def setvars(file=None, title_fontsize=None, text_fontsize=None,
         plotvars.continent_thickness = continent_thickness
     if continent_color is not None:
         plotvars.continent_color = continent_color
+    if continent_linestyle is not None:
+        plotvars.continent_linestyle = continent_linestyle
     if text_fontsize is not None:
-        plotvars.text_fontsize = text_fontsize
+        plotvars.text_fontsize = colorbar_fontsize
+    if colorbar_fontsize is not None:
+        plotvars.colorbar_fontsize = colorbar_fontsize
     if text_fontweight is not None:
         plotvars.text_fontweight = text_fontweight
     if axis_label_fontweight is not None:
         plotvars.axis_label_fontweight = axis_label_fontweight
+    if colorbar_fontweight is not None:
+        plotvars.colorbar_fontweight = colorbar_fontweight
     if title_fontweight is not None:
         plotvars.title_fontweight = title_fontweight
     if viewer is not None:
@@ -5658,219 +5855,27 @@ def setvars(file=None, title_fontsize=None, text_fontsize=None,
         plotvars.rotated_grid_spacing=rotated_grid_spacing
     if rotated_deg_spacing is not None:
         plotvars.rotated_deg_spacing=rotated_deg_spacing
+    if rotated_grid_thickness is not None:
+        plotvars.rotated_grid_thickness=rotated_grid_thickness
     if rotated_continents is not None:
         plotvars.rotated_continents=rotated_continents
     if rotated_grid is not None:
         plotvars.rotated_grid=rotated_grid
     if rotated_labels is not None:
         plotvars.rotated_labels=rotated_labels
+    if legend_frame is not None:
+        plotvars.legend_frame=legend_frame
+    if legend_frame_edge_color is not None:
+        plotvars.legend_frame_edge_color=legend_frame_edge_color
+    if legend_frame_face_color is not None:
+        plotvars.legend_frame_face_color=legend_frame_face_color
+    if degsym is not None:
+        plotvars.degsym=degsym
+    if axis_width is not None:
+        plotvars.axis_width=axis_width
 
 
 
-def rgrot(xin=None, yin=None, xpole=None, ypole=None):
-    """
-     | rgrot - rotate longitude and latitude points onto a rotated grid
-     |
-     | xin=xin - longitude locations
-     | yin=yin - latitude locations
-     | xpole=xpole - xpole in degrees
-     | ypole=ypole - ypole in degrees
-     |
-     |
-     |
-     |
-     :Returns:
-       x and y points on rotated grid
-     |
-     |
-     |
-     |
-     |
-     |
-    """
-
-    # Check input parameters
-    if any(val is None for val in [xin, yin, xpole, ypole]):
-        errstr = '\nrgrot error\n'
-        errstr += 'xin, yin, xpole, ypole all need to be passed to rgrot to\n'
-        errstr += 'generate rotated output points\n'
-        raise Warning(errstr)
-
-    # Define output arrays.
-    xout = np.zeros(np.size(xin))
-    yout = np.zeros(np.size(yin))
-
-    # Tolerance limit.
-    tol = 1.0E-6
-
-    # Scale xpole to range -180 to 180.
-    xpole_orig = xpole
-    if (xpole > 180.0):
-        xpole = xpole - 360.0
-
-    # Latitude of zero meridian.
-    x_zero = xpole + 180.0
-
-    # Sine and cosine of latitude of eq pole
-    if (ypole >= 0.0):
-        sin_ypole = np.sin(ypole * np.pi / 180.0)
-        cos_ypole = np.cos(ypole * np.pi / 180.0)
-    else:
-        sin_ypole = -np.sin(ypole * np.pi / 180.0)
-        cos_ypole = -np.cos(ypole * np.pi / 180.0)
-
-    # Transform to rotated grid.
-    for ix in np.arange(np.size(xin)):
-
-        # Scale longitude to range -180 to +180 degs
-        xpt = xin[ix] - x_zero
-        if (xpt > 180.0):
-            xpt = xpt - 360.0
-        if (xpt <= -180.0):
-            xpt = xpt + 360.0
-
-        # Convert latitude & longitude to radians
-        xpt = xpt * np.pi / 180.0
-        ypt = yin[ix] * np.pi / 180.0
-
-        # Calculate latitude.
-        arg = -cos_ypole * np.cos(xpt) * np.cos(ypt) + np.sin(ypt) * sin_ypole
-        arg = min([arg, 1.0])
-        arg = max([arg, -1.0])
-        ypt2 = np.arcsin(arg)
-        yout[ix] = ypt2 * 180.0 / np.pi
-
-        # Calculate longitude.
-        t1 = (np.cos(ypt) * np.cos(xpt) * sin_ypole + np.sin(ypt) * cos_ypole)
-        t2 = np.cos(ypt2)
-        if (t2 < tol):
-            xpt2 = 0.0
-        else:
-            arg = t1 / t2
-            arg = min([arg, 1.0])
-            arg = max([arg, -1.0])
-            xpt2 = np.arccos(arg) * 180.0 / np.pi
-            if (xpt >= 0):
-                xpt2 = abs(xpt2)
-            else:
-                xpt2 = -1.0 * abs(xpt2)
-
-        # Scale longitude to range 0 to 360 degs
-        xout[ix] = xpt2
-
-    # Reset xpole
-    xpole = xpole_orig
-
-    return (xout, yout)
-
-
-def rgunrot(xin=None, yin=None, xpole=None, ypole=None):
-    """
-     | rgunrot - translate points from a rotated grid to longitude/latitude
-     |           grid
-     |
-     | xin=xin - longitude locations
-     | yin=yin - latitude locations
-     | xpole=xpole - xpole in degrees
-     | ypole=ypole - ypole in degrees
-     |
-     |
-     |
-     |
-     :Returns:
-       x and y points on longitude and latitude grid
-     |
-     |
-     |
-     |
-     |
-     |
-    """
-
-    # Check input parameters
-    if any(val is None for val in [xin, yin, xpole, ypole]):
-        errstr = '\nrgurot error\n'
-        errstr += 'xin, yin, xpole, ypole all need to be passed to rgrot\n'
-        errstr += 'to generate rotated output points\n'
-        raise Warning(errstr)
-
-    # Define output arrays.
-    xout = np.zeros(np.size(xin))
-    yout = np.zeros(np.size(yin))
-
-    # Tolerance limit.
-    tol = 1.0E-6
-
-    # Form x and y arrays to hold grid coordinates.
-    nx = np.size(xin)
-    ny = np.size(yin)
-    x = np.zeros([ny, nx])
-    y = np.zeros([ny, nx])
-    for iy in np.arange(ny):
-        x[iy, :] = xin
-    for ix in np.arange(nx):
-        y[:, ix] = yin
-
-    xpole_orig = xpole
-    if (xpole > 180.0):
-        xpole = xpole - 360.0
-
-    # Sine and cosine of latitude of eq pole
-    if (ypole >= 0.0):
-        sin_ypole = np.sin(ypole * np.pi / 180.0)
-        cos_ypole = np.cos(ypole * np.pi / 180.0)
-    else:
-        sin_ypole = -np.sin(ypole * np.pi / 180.0)
-        cos_ypole = -np.cos(ypole * np.pi / 180.0)
-
-    # Scale to -180 to 180
-    xx = x
-    yy = y
-    pts = np.where(xx > 180)
-    xx[pts] = xx[pts] - 360.0
-    pts = np.where(xx < 180)
-    xx[pts] = xx[pts] + 360.0
-    xx = np.pi * xx / 180.0
-    yy = np.pi * yy / 180.0
-
-    arg = cosypole * np.cos(xx) * np.cos(yy) + np.sin(yy) * sinypole
-    pts = WHERE(arg > 1.0)
-    arg[pts] = 1.0
-    pts = np.where(arg <= -1.0)
-    arg[pts] = -1.0
-    ay = np.asin(arg)
-    y = 180.0 * ay / np.pi
-
-    t1 = np.cos(YY) * np.cos(XX) * sinypole - np.sin(YY) * cosypole
-    t2 = np.cos(ay)
-
-    ax = np.zeros([ny, nx])
-
-    pts = np.where(t2 < tol)
-    ax[pts] = 0.0
-
-    pts = np.where(t2 >= tol)
-
-    if (np.size(pts) > 0):
-        arg = t1 / T2
-        pts2 = np.where(arg > 1.0)
-        arg[pts2] = 1.0
-        pts2 = np.where(arg < -1.0)
-        arg[pts2] = -1.0
-        arg = 180.0 * np.acos(arg) / np.pi
-        ax[pts] = arg
-        pts3 = np.where(xx >= 0.0)
-        ax[pts3] = np.abs(ax[pts3])
-        pts3 = np.where(xx < 0.0)
-        ax[pts3] = -1.0 * np.abs(ax[pts3])
-        ax = ax + x0
-
-    x = ax
-
-    # Reset xpole
-    xpole = xpole_orig
-
-    return(x, y)
 
 
 def vloc(xvec=None, yvec=None, lons=None, lats=None):
@@ -5952,7 +5957,9 @@ def vloc(xvec=None, yvec=None, lons=None, lats=None):
     return (xarr, yarr)
 
 
-def rgaxes(xpole=None, ypole=None, xvec=None, yvec=None):
+def rgaxes(xpole=None, ypole=None, xvec=None, yvec=None,
+           xticks=None, xticklabels=None, yticks=None, yticklabels=None,
+           axes=None, xaxis=None, yaxis=None, xlabel=None, ylabel=None):
     """
      | rgaxes - label rotated grid plots
      |
@@ -5960,8 +5967,16 @@ def rgaxes(xpole=None, ypole=None, xvec=None, yvec=None):
      | ypole=None - location of ypole in degrees
      | xvec=None - location of x grid points
      | yvec=None - location of y grid points
-     |
-     |
+     |     
+     | axes=True - plot x and y axes
+     | xaxis=True - plot xaxis
+     | yaxis=True - plot y axis
+     | xticks=None - xtick positions
+     | xticklabels=None - xtick labels
+     | yticks=None - y tick positions
+     | yticklabels=None - ytick labels
+     | xlabel=None - label for x axis
+     | ylabel=None - label for y axis
      |
      :Returns:
       name
@@ -5978,7 +5993,7 @@ def rgaxes(xpole=None, ypole=None, xvec=None, yvec=None):
     continents = plotvars.rotated_continents
     grid = plotvars.rotated_grid
     labels = plotvars.rotated_labels
-
+    grid_thickness=plotvars.rotated_grid_thickness
 
 
 
@@ -5988,19 +6003,11 @@ def rgaxes(xpole=None, ypole=None, xvec=None, yvec=None):
     if (yvec[0] > yvec[np.size(yvec) - 1]):
         yvec = yvec[::-1]
 
-    # Extract map continents
-    m = Basemap(projection='cyl', resolution=plotvars.resolution)
 
-    clines = m.drawcoastlines(linewidth=0.0)
-    paths = clines.get_paths()
-    npaths = len(paths)
 
-    gset(
-        xmin=0,
-        xmax=np.size(xvec) - 1,
-        ymin=0,
-        ymax=np.size(yvec) - 1,
-        user_gset=0)
+
+    gset(xmin=0, xmax=np.size(xvec) - 1,
+        ymin=0, ymax=np.size(yvec) - 1, user_gset=0)
 
     # Set continent thickness and color if not already set
     if plotvars.continent_thickness is None:
@@ -6008,87 +6015,129 @@ def rgaxes(xpole=None, ypole=None, xvec=None, yvec=None):
     if plotvars.continent_color is None:
         continent_color = 'k'
 
+
+
     # Draw continents
     if continents:
-        for i in np.arange(npaths):
-            p = paths[i]
-            pvert = p.vertices
-            lons = pvert[:, 0]
-            lats = pvert[:, 1]
 
-            xout, yout = rgrot(
-                xin=pvert[
-                    :, 0], yin=pvert[
-                    :, 1], xpole=xpole, ypole=ypole)
+        import cartopy.io.shapereader as shpreader
+        import shapefile
+        shpfilename = shpreader.natural_earth(resolution=plotvars.resolution, category='physical', name='coastline')
+        reader = shapefile.Reader(shpfilename)
+        shapes = [s.points for s in reader.shapes()]
+        for shape in shapes:
+            lons, lats = zip(*shape)
+            lons=np.array(lons)
+            lats=np.array(lats)
+
+            rotated_transform = ccrs.RotatedPole(pole_latitude=ypole, pole_longitude=xpole)
+            points=rotated_transform.transform_points(ccrs.PlateCarree(), lons, lats) 
+            xout = np.array(points)[:, 0]
+            yout = np.array(points)[:, 1]
+
             xpts, ypts = vloc(lons=xout, lats=yout, xvec=xvec, yvec=yvec)
             plotvars.plot.plot(xpts, ypts, linewidth=continent_thickness,
                                color=continent_color)
 
-    # Draw grid lines
-    lons = -180 + np.arange(360 / spacing + 1) * spacing
-    lats = -90 + np.arange(180 / spacing + 1) * spacing
+
+
+    if xticks is None:
+        lons = -180 + np.arange(360 / spacing + 1) * spacing
+    else:
+        lons=xticks
+    if yticks is None:
+        lats = -90 + np.arange(180 / spacing + 1) * spacing
+    else:
+        lats=yticks
+
+
+    # Latitudes
+    if axes:
+        if xaxis:
+            for val in np.arange(np.size(lons)):
+                ipts = 179.0 / degspacing
+                lona = np.zeros(int(ipts)) + lons[val]
+                lata = -90 + np.arange(ipts - 1) * degspacing
+
+                rotated_transform = ccrs.RotatedPole(pole_latitude=ypole, pole_longitude=xpole)
+                points=rotated_transform.transform_points(ccrs.PlateCarree(), lona, lata) 
+                xout = np.array(points)[:, 0]
+                yout = np.array(points)[:, 1]
+
+                xpts, ypts = vloc(lons=xout, lats=yout, xvec=xvec, yvec=yvec)
+                if grid:
+                    plotvars.plot.plot(xpts, ypts, ':', linewidth=grid_thickness,
+                                       color='k')
+
+                if labels:
+                    # Make a label unless the axis is all Nans
+                    if (np.size(ypts[5:]) > np.sum(np.isnan(ypts[5:]))):
+                        ymin = np.nanmin(ypts[5:])
+                        loc = np.where(ypts == ymin)[0]
+                        if np.size(loc) > 1:
+                            loc = loc[1]
+
+                        if loc > 0:
+                            if np.isfinite(xpts[loc]):
+                                line = matplotlib.lines.Line2D(
+                                       [xpts[loc], xpts[loc]], [0, -2], color='k')
+                                plotvars.plot.add_line(line)
+                                line.set_clip_on(False)
+                                fw = plotvars.text_fontweight
+                                if xticklabels is None:
+                                    xticklabel=mapaxis(lons[val], lons[val], type=1)[1][0]
+                                else:
+                                    xticklabel=xticks[val]
+                                plotvars.plot.text(xpts[loc], -5,
+                                                   xticklabel,
+                                                   horizontalalignment='center',
+                                                   verticalalignment='top',
+                                                   fontsize=plotvars.text_fontsize,
+                                                   fontweight=fw)
 
 
     # Longitudes
-    for lon in lons:
-        ipts = 179.0 / degspacing
-        lona = np.zeros(int(ipts)) + lon
-        lata = -90 + np.arange(ipts - 1) * degspacing
-        xout, yout = rgrot(xin=lona, yin=lata, xpole=xpole, ypole=ypole)
-        xpts, ypts = vloc(lons=xout, lats=yout, xvec=xvec, yvec=yvec)
-        if grid:
-            plotvars.plot.plot(xpts, ypts, ':', linewidth=continent_thickness,
-                               color='k')
+    if axes:
+        if yaxis:
+            for val in np.arange(np.size(lats)):
+                ipts = 359.0 / degspacing
+                lata = np.zeros(int(ipts)) + lats[val]
+                lona = -180.0 + np.arange(ipts - 1) * degspacing
 
-        if labels:
-            # Make a label unless the axis is all Nans
-            if (np.size(ypts[5:]) > np.sum(np.isnan(ypts[5:]))):
-                ymin = np.nanmin(ypts[5:])
-                loc = np.where(ypts == ymin)[0]
-                if loc > 0:
-                    if np.isfinite(xpts[loc]):
-                        line = matplotlib.lines.Line2D(
-                            [xpts[loc], xpts[loc]], [0, -2], color='k')
-                        plotvars.plot.add_line(line)
-                        line.set_clip_on(False)
-                        fw = plotvars.text_fontweight
-                        plotvars.plot.text(xpts[loc], -5, str(lon),
-                                           horizontalalignment='center',
-                                           verticalalignment='top',
-                                           fontsize=plotvars.text_fontsize,
-                                           fontweight=fw)
+                rotated_transform = ccrs.RotatedPole(pole_latitude=ypole, pole_longitude=xpole)
+                points=rotated_transform.transform_points(ccrs.PlateCarree(), lona, lata) 
+                xout = np.array(points)[:, 0]
+                yout = np.array(points)[:, 1]
+                xpts, ypts = vloc(lons=xout, lats=yout, xvec=xvec, yvec=yvec)
 
-    # Latitudes
-    for lat in lats:
-        ipts = 359.0 / degspacing
-        lata = np.zeros(int(ipts)) + lat
-        lona = -180.0 + np.arange(ipts - 1) * degspacing
-        xout, yout = rgrot(xin=lona, yin=lata, xpole=xpole, ypole=ypole)
-        xpts, ypts = vloc(lons=xout, lats=yout, xvec=xvec, yvec=yvec)
+                if grid:
+                    plotvars.plot.plot(xpts, ypts, ':', linewidth=grid_thickness,
+                                       color='k')
 
-        if grid:
-            plotvars.plot.plot(xpts, ypts, ':', linewidth=continent_thickness,
-                               color='k')
-
-        if labels: 
-            # Make a label unless the axis is all Nans
-            if (np.size(xpts[5:]) > np.sum(np.isnan(xpts[5:]))):
-                xmin = np.nanmin(xpts[5:])
-
-                loc = np.where(xpts == xmin)[0]
-                if np.size(loc) == 1:
-                    if loc > 0:
-                        if np.isfinite(ypts[loc]):
-                            line = matplotlib.lines.Line2D(
-                                   [0, -2], [ypts[loc], ypts[loc]], color='k')
-                            plotvars.plot.add_line(line)
-                            line.set_clip_on(False)
-                            fw = plotvars.text_fontweight
-                            plotvars.plot.text(-5, ypts[loc], str(lat),
-                                               horizontalalignment='right',
-                                               verticalalignment='center',
-                                               fontsize=plotvars.text_fontsize,
-                                               fontweight=fw)
+                if labels: 
+                    # Make a label unless the axis is all Nans
+                    if (np.size(xpts[5:]) > np.sum(np.isnan(xpts[5:]))):
+                        xmin = np.nanmin(xpts[5:])
+                        loc = np.where(xpts == xmin)[0]
+                        if np.size(loc) == 1:
+                            if loc > 0:
+                                if np.isfinite(ypts[loc]):
+                                    line = matplotlib.lines.Line2D(
+                                           [0, -2], [ypts[loc], ypts[loc]], color='k')
+                                    plotvars.plot.add_line(line)
+                                    line.set_clip_on(False)
+                                    fw = plotvars.text_fontweight
+                                    if yticklabels is None:
+                                        yticklabel=mapaxis(lats[val], lats[val], type=2)[1][0]
+                                    else:
+                                        yticklabel=yticks[val]
+    
+                                    plotvars.plot.text(-5, ypts[loc],
+                                                       yticklabel,
+                                                       horizontalalignment='right',
+                                                       verticalalignment='center',
+                                                       fontsize=plotvars.text_fontsize,
+                                                       fontweight=fw)
 
     # Reset yvec
     yvec = yvec_orig
@@ -6097,7 +6146,8 @@ def rgaxes(xpole=None, ypole=None, xvec=None, yvec=None):
 def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
              title=None, ptype=0, linestyle='-', linewidth=1.0, color='k',
              xlog=False, ylog=False, verbose=None, swap_xy=False,
-             marker=None, markersize=5.0, label=None,
+             marker=None, markersize=5.0, markeredgecolor = 'k',
+             markeredgewidth=0.5, label=None,
              legend_location='upper right', xunits=None, yunits=None,
              xlabel=None, ylabel=None, xticks=None, yticks=None,
              xticklabels=None, yticklabels=None, xname=None, yname=None,
@@ -6120,10 +6170,17 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
     | linewidth=1.0 - line width
     | marker=None - marker for points along the line
     | markersize=5.0 - size of the marker
+    | markeredgecolor = 'k' - colour of edge around the marker
+    | markeredgewidth = 0.5 - width of edge around the marker
     | xlog=False - log x-axis
     | ylog=False - log y-axis
     | label=None - line label - label for line
     | legend_location='upper right' - default location of legend
+    |                 Other options are {'best': 0, 'center': 10, 'center left': 6,
+    |                                    'center right': 7, 'lower center': 8, 
+    |                                    'lower left': 3, 'lower right': 4, 'right': 5, 
+    |                                    'upper center': 9, 'upper left': 2, 'upper right': 1}
+
     | verbose=None - change to 1 to get a verbose listing of what lineplot
     |                is doing
     |
@@ -6142,6 +6199,12 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
     | axes=True - plot x and y axes
     | xaxis=True - plot xaxis
     | yaxis=True - plot y axis
+    |
+    |
+    | When making a multiple lineplot the last call to lineplot is the one that
+    | any of the above axis overrides should be placed in.
+    |
+    |
     """
     if verbose:
         print 'lineplot - making a line plot'
@@ -6371,7 +6434,12 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
         xticklabels = xticks
     else:
         if xticklabels is None:
-            xticklabels = xticks
+            xticklabels=[]
+            for val in xticks:
+                xticklabels.append('{}'.format(val))
+
+
+
 
     if yticks is None:
         if abs(maxy - miny) > 1:
@@ -6383,8 +6451,9 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
         else:
              yticks = gvals(dmin=miny, dmax=maxy, tight=tight, mod=0)[0]
     if yticklabels is None:
-        yticklabels = yticks
-
+        yticklabels=[]
+        for val in yticks:
+            yticklabels.append('{}'.format(val))
 
     if xlabel is not None:
         plot_xlabel = xlabel
@@ -6454,9 +6523,11 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
         graph=graph.twiny()
 
     graph.axis([minx, maxx, miny, maxy])
-    graph.tick_params(direction='out', which='both')
-    graph.set_xlabel(plot_xlabel)
-    graph.set_ylabel(plot_ylabel)
+    graph.tick_params(direction='out', which='both', right=True, top=True)
+    graph.set_xlabel(plot_xlabel, fontsize=plotvars.axis_label_fontsize,
+                                 fontweight=plotvars.axis_label_fontweight)
+    graph.set_ylabel(plot_ylabel, fontsize=plotvars.axis_label_fontsize,
+                                 fontweight=plotvars.axis_label_fontweight)
         
     if plotvars.xlog or xlog:
         graph.set_xscale('log')
@@ -6468,18 +6539,23 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
         graph.set_xticklabels(
             xticklabels,
             rotation=plotvars.xtick_label_rotation,
-            horizontalalignment=xlabelalignment)
+            horizontalalignment=xlabelalignment, fontsize=plotvars.axis_label_fontsize,
+                                 fontweight=plotvars.axis_label_fontweight)
     if yticks is not None:
         graph.set_yticks(yticks)
         graph.set_yticklabels(
             yticklabels,
             rotation=plotvars.ytick_label_rotation,
-            horizontalalignment=ylabelalignment)
+            horizontalalignment=ylabelalignment, fontsize=plotvars.axis_label_fontsize,
+                                 fontweight=plotvars.axis_label_fontweight)
 
 
     graph.plot(xpts, ypts, color=color, linestyle=linestyle,
                        linewidth=linewidth, marker=marker,
-                       markersize=markersize, label=label)
+                       markersize=markersize,
+                       markeredgecolor=markeredgecolor, 
+                       markeredgewidth=markeredgewidth,
+                       label=label)
 
     # Time axes sometimes spill over the edge of the plot limits so
     # use tight_layout() to adjust these plots
@@ -6488,12 +6564,22 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
     #        if np.size(f.item('T').array) > 1:
     #            plotvars.master_plot.tight_layout()
 
+
+    # Set axis width if required
+    if plotvars.axis_width is not None:
+        for axis in ['top','bottom','left','right']: 
+            plotvars.plot.spines[axis].set_linewidth(plotvars.axis_width) 
+
+
     # Add a legend if needed
     if label is not None:
         legend_properties = {
             'size': plotvars.legend_text_size,
             'weight': plotvars.legend_text_weight}
-        graph.legend(loc=legend_location, prop=legend_properties)
+        graph.legend(loc=legend_location, prop=legend_properties,
+                     frameon=plotvars.legend_frame,
+                     edgecolor=plotvars.legend_frame_edge_color,
+                     facecolor=plotvars.legend_frame_face_color)
 
     # Set title
     if title is not None:
@@ -7390,9 +7476,11 @@ def trajectory(f=None,
                         axes_plot(yticks=yticks, yticklabels=yticklabels)
 
             if user_xlabel is not None:
-                plotvars.plot.set_xlabel(user_xlabel)
+                plotvars.plot.set_xlabel(user_xlabel, fontsize=axis_label_fontsize,
+                                 fontweight=axis_label_fontweight)
             if user_ylabel is not None:
-                plotvars.plot.set_ylabel(user_ylabel)
+                plotvars.plot.set_ylabel(user_ylabel, fontsize=axis_label_fontsize,
+                                 fontweight=axis_label_fontweight)
 
     if plotvars.proj == 'npstere' or plotvars.proj == 'spstere':
         if verbose:
@@ -7420,11 +7508,23 @@ def trajectory(f=None,
     # Coastlines and title
     continent_thickness = plotvars.continent_thickness
     continent_color = plotvars.continent_color
+    continent_linestyle = plotvars.continent_linestyle
     title_fontsize = plotvars.title_fontsize
     text_fontsize = plotvars.text_fontsize
     title_fontweight = plotvars.title_fontweight
     axis_label_fontsize = plotvars.axis_label_fontsize
-    mymap.drawcoastlines(linewidth=continent_thickness, color=continent_color)
+
+    feature = cfeature.NaturalEarthFeature(
+                  name='land', category='physical',
+                  scale=plotvars.resolution,
+                  facecolor='none')
+    mymap.add_feature(feature, edgecolor=continent_color,
+                      linewidth=continent_thickness, 
+                      linestyle=continent_linestyle)
+
+
+
+
     if title is not None:
         plotvars.plot.set_title(title, y=1.03, fontsize=title_fontsize,
                                 fontweight=title_fontweight)
@@ -7472,8 +7572,8 @@ def trajectory(f=None,
         # Reset plot position
         gpos(pos=plotvars.pos)
 
-        cbar.set_label('Intensity', fontsize=text_fontsize,
-                       fontweight=title_fontweight)
+        cbar.set_label(colorbar_title, fontsize=colorbar_fontsize,
+                       fontweight=colorbar_fontweight)
 
         # Bug in Matplotlib colorbar labelling
         # With clevs=[-1, 1, 10000, 20000, 30000, 40000, 50000, 60000]
@@ -7482,8 +7582,8 @@ def trajectory(f=None,
         cbar.set_ticks([i for i in plotvars.levels])
 
         for t in cbar.ax.get_xticklabels():
-           t.set_fontsize(plotvars.text_fontsize)
-           t.set_fontweight(plotvars.text_fontweight)
+           t.set_fontsize(plotvars.colorbar_fontsize)
+           t.set_fontweight(plotvars.colorbar_fontweight)
 
     # reset plot limits if not a user plot
     if plotvars.user_gset == 0:
@@ -7542,8 +7642,10 @@ def cfplot_colorbar(cfill=None, colorbar_labels=None,
     if verbose:
         print 'con - adding colour bar'
 
+    colorbar_fontsize = plotvars.colorbar_fontsize
+    colorbar_fontweight = plotvars.colorbar_fontweight
 
-    #Work out colour bar labeling
+    # Work out colour bar labeling
     lbot=colorbar_labels
     if colorbar_text_up_down:
         lbot=colorbar_labels[1:][::2]
@@ -7575,8 +7677,8 @@ def cfplot_colorbar(cfill=None, colorbar_labels=None,
                     drawedges=colorbar_drawedges)
         gpos(pos=plotvars.pos)
 
-    cbar.set_label(colorbar_title, fontsize=text_fontsize,
-                   fontweight=text_fontweight)
+    cbar.set_label(colorbar_title, fontsize=colorbar_fontsize,
+                   fontweight=colorbar_fontweight)
 
     #print dir(cbar.ax.xaxis)
     #for tick in cbar.ax.xaxis.get_ticklines():
@@ -7591,14 +7693,14 @@ def cfplot_colorbar(cfill=None, colorbar_labels=None,
         for tick in cbar.ax.xaxis.get_ticklines():
             tick.set_visible(False)
         for t in cbar.ax.get_xticklabels():
-            t.set_fontsize(text_fontsize)
-            t.set_fontweight(text_fontweight)
+            t.set_fontsize(colorbar_fontsize)
+            t.set_fontweight(colorbar_fontweight)
     else:
         for tick in cbar.ax.yaxis.get_ticklines():
             tick.set_visible(False)
         for t in cbar.ax.get_yticklabels():
-            t.set_fontsize(text_fontsize)
-            t.set_fontweight(text_fontweight)
+            t.set_fontsize(colorbar_fontsize)
+            t.set_fontweight(colorbar_fontweight)
 
 
 
@@ -7634,14 +7736,471 @@ def cfplot_colorbar(cfill=None, colorbar_labels=None,
         for ii in ltop:
             cbar.ax.text(shift_l + scaling*(ii-vmin)/(vmax-vmin),
                 1.5, str(ii), transform=cbar.ax.transAxes,
-                va='bottom', ha='center', fontsize=text_fontsize,
-                fontweight=text_fontweight)
+                va='bottom', ha='center', fontsize=colorbar_fontsize,
+                fontweight=colorbar_fontweight)
 
 
         for t in cbar.ax.get_xticklabels():
-            t.set_fontsize(text_fontsize)
-            t.set_fontweight(text_fontweight)
+            t.set_fontsize(colorbar_fontsize)
+            t.set_fontweight(colorbar_fontweight)
 
+
+
+
+
+
+def map_title(title=None):
+    """
+    | map_title is an internal routine to draw a title on a map plot
+    |
+    | title=None - title to put on map plot
+    |
+    |
+    |
+    |
+    |
+    |
+    """
+
+    boundinglat=plotvars.boundinglat
+    lon_0=plotvars.lon_0
+    lonmin=plotvars.lonmin
+    lonmax=plotvars.lonmax
+    latmin=plotvars.latmin
+    latmax=plotvars.latmax
+    polar_range=90-abs(boundinglat)
+
+    if plotvars.proj == 'npstere':
+        mylon=lon_0+180
+        mylat=boundinglat-polar_range/15.0
+        proj=ccrs.NorthPolarStereo(central_longitude=lon_0)
+        lon_mid=lon_0
+        xpt, ypt = proj.transform_point(mylon, mylat, ccrs.PlateCarree())
+
+    if plotvars.proj == 'spstere':
+        mylon=lon_0
+        mylat=boundinglat+polar_range/15.0
+        proj=ccrs.SouthPolarStereo(central_longitude=lon_0)
+        lon_mid=lon_0
+        xpt, ypt = proj.transform_point(mylon, mylat, ccrs.PlateCarree())
+
+    if plotvars.proj == 'cyl':
+        lon_mid = lonmin + (lonmax - lonmin) / 2.0
+        proj=ccrs.PlateCarree(central_longitude=lon_mid)
+        mylon=lon_mid
+        mylat=latmax        
+        xpt, ypt = proj.transform_point(mylon, mylat, ccrs.PlateCarree())
+        ypt=ypt+(latmax-latmin)/40.0
+
+    if plotvars.proj=='lcc':
+        lon_mid = lonmin + (lonmax - lonmin) / 2.0
+        proj=ccrs.LambertConformal(central_longitude=plotvars.lon_0,
+                                   central_latitude=plotvars.lat_0,
+                                   cutoff=plotvars.latmin)
+        mylon=lon_mid
+        mylat=latmax 
+        xpt, ypt = proj.transform_point(0.0, mylat, ccrs.PlateCarree())
+
+
+
+    plotvars.mymap.text(xpt, ypt, title, va='bottom', 
+        ha='center',
+        rotation='horizontal', rotation_mode='anchor',
+        fontsize=plotvars.title_fontsize,
+        fontweight=plotvars.title_fontweight)
+
+
+
+
+def plot_map_axes(axes=None, xaxis=None, yaxis=None,
+                  xticks=None, xticklabels=None,
+                  yticks=None, yticklabels=None,
+                  user_xlabel=None, user_ylabel=None,
+                  verbose=None):
+    """
+    | plot_map_axes is an internal routine to draw the axes on a map plot
+    |
+    | axes=None - Boolean for drawing axes
+    | xaxis=None - Boolean for drawing x-axis
+    | yaxis=None - Boolean for drawing x-axis
+    | xticks=None - user defined xticks
+    | xticklabels=None - user defined xtick labels
+    | yticks=None - user defined yticks
+    | yticklabels=None - user defined ytick labels
+    | user_xlabel=None - user defined xlabel
+    | user_ylabel=None - user defined ylabel
+    | verbose=None
+    |
+    |
+    |
+    |
+    |
+    """
+    # Font definitions
+    title_fontsize = plotvars.title_fontsize
+    text_fontsize = plotvars.text_fontsize
+    axis_label_fontsize = plotvars.axis_label_fontsize
+    text_fontweight = plotvars.text_fontweight
+    title_fontweight = plotvars.title_fontweight
+    axis_label_fontweight = plotvars.axis_label_fontweight
+
+
+    # Map parameters
+    boundinglat=plotvars.boundinglat
+    lon_0=plotvars.lon_0
+    lonmin=plotvars.lonmin
+    lonmax=plotvars.lonmax
+    latmin=plotvars.latmin
+    latmax=plotvars.latmax
+    polar_range=90-abs(boundinglat)
+
+
+
+    # Cylindrical
+    if plotvars.proj == 'cyl':
+
+        if verbose:
+            print 'con - adding cylindrical axes'
+        lonticks, lonlabels = mapaxis(
+            min=plotvars.lonmin, max=plotvars.lonmax, type=1)
+        latticks, latlabels = mapaxis(
+            min=plotvars.latmin, max=plotvars.latmax, type=2)
+
+        if axes:
+            if xaxis:
+                if xticks is None:
+                    axes_plot(xticks=lonticks, xticklabels=lonlabels)
+                else:
+                    if xticklabels is None:
+                        axes_plot(xticks=xticks, xticklabels=xticks)
+                    else:
+                        axes_plot(xticks=xticks, xticklabels=xticklabels)
+            if yaxis:
+                if yticks is None:
+                    axes_plot(yticks=latticks, yticklabels=latlabels)
+                else:
+                    if yticklabels is None:
+                        axes_plot(yticks=yticks, yticklabels=yticks)
+                    else:
+                        axes_plot(yticks=yticks, yticklabels=yticklabels)
+
+            if user_xlabel is not None:
+                plot.text(0.5, -0.10, xlabel, va='bottom', 
+                          ha='center',
+                          rotation='horizontal', rotation_mode='anchor',
+                          transform=plotvars.mymap.transAxes,
+                          fontsize=axis_label_fontsize,
+                          fontweight=axis_label_fontweight)
+
+            if user_ylabel is not None:
+                plot.text(-0.05, 0.50, ylabel, va='bottom', 
+                          ha='center',
+                          rotation='vertical', rotation_mode='anchor',
+                          transform=plotvars.mymap.transAxes, 
+                          fontsize=axis_label_fontsize,
+                          fontweight=axis_label_fontweight)
+
+        
+    # Polar stereographic
+    if plotvars.proj == 'npstere' or plotvars.proj == 'spstere':
+        if verbose:
+            print 'con - adding stereograpic axes'
+
+        mymap=plotvars.mymap
+        latrange = 90-abs(boundinglat)
+        latstep = 30
+        if 90 - abs(boundinglat) <= 50:
+            latstep = 10
+
+        proj=ccrs.Geodetic()
+
+        # Add 
+        if axes:
+            if xaxis:
+               if yticks is None:
+                   latvals=np.arange(5)*30-60
+               else:
+                   latvals=np.array(yticks)
+
+               if plotvars.proj == 'npstere':
+                   latvals=latvals[np.where(latvals>=boundinglat)]
+               else:
+                   latvals=latvals[np.where(latvals<=boundinglat)]
+
+               for lat in latvals:
+                   if abs(lat - boundinglat) > 1:
+                       lons=np.arange(361)
+                       lats=np.zeros(361)+lat
+                       mymap.plot(lons, lats, color='k', 
+                                  linewidth=1, linestyle='--',
+                                  transform=proj) 
+
+            if yaxis:
+                if xticks is None:
+                    lonvals=np.arange(7)*60
+                else:
+                    lonvals=xticks
+
+                for lon in lonvals:
+                    label = mapaxis(lon, lon, 1)[1][0]
+
+                    if plotvars.proj == 'npstere':
+                        lats=np.arange(90-boundinglat)+boundinglat
+                    else:
+                        lats=np.arange(boundinglat+91)-90
+                    lons=np.zeros(np.size(lats))+lon
+                    mymap.plot(lons, lats, color='k', 
+                               linewidth=1, linestyle='--',
+                               transform=proj) 
+
+
+
+
+            # Add longitude labels
+            if plotvars.proj == 'npstere':
+                proj=ccrs.NorthPolarStereo(central_longitude=lon_0)
+                pole=90
+                latpt = boundinglat - latrange/40.0
+            else:
+                proj=ccrs.SouthPolarStereo(central_longitude=lon_0)
+                pole=-90
+                latpt = boundinglat + latrange/40.0
+
+            lon_mid, lat_mid =  proj.transform_point(0,pole, ccrs.PlateCarree())
+
+
+            for xtick in lonvals:
+                label = mapaxis(xtick, xtick, 1)[1][0]
+                lonr, latr = proj.transform_point(xtick,latpt, ccrs.PlateCarree())
+
+                v_align='center'
+                if lonr < 1:
+                    h_align = 'right'
+                if lonr > 1:
+                    h_align = 'left'
+                if abs(lonr) <= 1:
+                    h_align = 'center'
+                    if latr < 1:
+                        v_align = 'top'
+                    if latr > 1:
+                        v_align = 'bottom'
+
+                mymap.text(lonr, latr, label, horizontalalignment=h_align,
+                           verticalalignment=v_align,
+                           fontsize=axis_label_fontsize,
+                           fontweight=axis_label_fontweight, zorder=101)
+
+
+        # Make the plot circular by blanking off around the plot
+        # Find min and max of plotting region in map coordinates
+        lons=np.arange(360)
+        lats=np.zeros(np.size(lons))+boundinglat
+        device_coords=proj.transform_points(ccrs.PlateCarree(), lons, lats)    
+
+        xmin=np.min(device_coords[:,0])
+        xmax=np.max(device_coords[:,0])  
+        ymin=np.min(device_coords[:,1])
+        ymax=np.max(device_coords[:,1])
+
+
+        # blank off data past the bounding latitude
+        pts=np.where(device_coords[:,0] >= 0.0)
+        xpts=np.append(device_coords[:,0][pts], np.zeros(np.size(pts))+xmax)
+        ypts=np.append(device_coords[:,1][pts], device_coords[:,1][pts][::-1])
+        mymap.fill(xpts, ypts, alpha=1.0, color='w', zorder=100)
+
+        xpts=np.append(np.zeros(np.size(pts))+xmin, -1.0* device_coords[:,0][pts])
+        ypts=np.append(device_coords[:,1][pts], device_coords[:,1][pts][::-1])
+        mymap.fill(xpts, ypts, alpha=1.0, color='w', zorder=100)
+
+
+        # Turn off map outside the cicular plot area
+        mymap.outline_patch.set_visible(False)
+
+
+        # Draw a line around the bounding latitude
+        lons=np.arange(361)
+        lats=np.zeros(np.size(lons))+boundinglat
+        device_coords=proj.transform_points(ccrs.PlateCarree(), lons, lats)    
+        mymap.plot(device_coords[:,0], device_coords[:,1], color='k',
+                   zorder=100, clip_on=False)
+
+        # Modify xlim and ylim values as the default values clip the plot slightly
+        xmax = np.max(np.abs(mymap.set_xlim(None)))
+        mymap.set_xlim((-xmax, xmax), emit=False)
+        ymax = np.max(np.abs(mymap.set_ylim(None)))
+        mymap.set_ylim((-ymax, ymax), emit=False)
+
+
+
+
+    # Lambert conformal 
+    if plotvars.proj == 'lcc':
+        lon_0=plotvars.lonmin+(plotvars.lonmax-plotvars.lonmin)/2.0
+        lat_0=plotvars.latmin+(plotvars.latmax-plotvars.latmin)/2.0
+
+        mymap=plotvars.mymap
+        proj=ccrs.LambertConformal(central_longitude=lon_0,
+                                   central_latitude=lat_0,
+                                   cutoff=-40)
+
+        lonmin=plotvars.lonmin
+        lonmax=plotvars.lonmax
+        latmin=plotvars.latmin
+        latmax=plotvars.latmax
+
+        # Modify xlim and ylim values as the default values clip the plot slightly
+        xmin = mymap.set_xlim(None)[0]
+        xmax = mymap.set_xlim(None)[1]
+        ymin = mymap.set_ylim(None)[0]
+        ymax = mymap.set_ylim(None)[1]
+
+        mymap.set_ylim(ymin*1.05, ymax, emit=False)
+        mymap.set_ylim(None)
+
+        # Mask off contours that appear because of the plot extention
+        #mymap.add_patch(mpatches.Polygon([[xmin, ymin], [xmax,ymin],
+        #                                  [xmax, ymin*1.05], [xmin, ymin*1.05]],
+        #                         facecolor='red'))
+
+                                 #transform=ccrs.PlateCarree()))
+
+        lons=np.arange(lonmax-lonmin+1)+lonmin
+        lats=np.arange(latmax-latmin+1)+latmin
+        nlons=np.size(lons)
+        nlats=np.size(lats)
+        verts=[]
+        for lat in lats:
+            verts.append([lonmin, lat])
+        for lon in lons:
+            verts.append([lon, latmax])
+        for lat in lats[::-1]:
+            verts.append([lonmax, lat])
+        for lon in lons[::-1]:
+            verts.append([lon, latmin])
+
+
+        # Mask left and right of plot
+        lats=np.arange(latmax-latmin+1)+latmin
+        lons=np.zeros(np.size(lats))+lonmin
+        npts=np.size(lats)
+        device_coords=proj.transform_points(ccrs.PlateCarree(), lons, lats)
+        xmin=np.min(device_coords[:,0]) 
+        xmax=np.max(device_coords[:,0]) 
+        ymin=np.min(device_coords[:,1]) 
+        ymax=np.max(device_coords[:,1]) 
+
+        # Left
+        mymap.fill([xmin, xmin, xmax, xmin], 
+                   [ymin, ymax, ymax, ymin],
+                   alpha=1.0, color='w', zorder=100)
+        mymap.plot([xmin, xmax], [ymin, ymax], color='k', zorder=101, clip_on=False)
+
+        # Right
+        mymap.fill([-xmin, -xmin, -xmax, -xmin], 
+                   [ymin, ymax, ymax, ymin],
+                   alpha=1.0, color='w', zorder=100)
+        mymap.plot([-xmin, -xmax], [ymin, ymax], color='k', zorder=101, clip_on=False)
+
+
+        # Upper
+        lons=np.arange(lonmax-lonmin+1)+lonmin
+        lats=np.zeros(np.size(lons))+latmax
+        device_coords=proj.transform_points(ccrs.PlateCarree(), lons, lats)
+        ymax=np.max(device_coords[:,1]) 
+
+        xpts=np.append(device_coords[:,0], device_coords[:,0][::-1])
+        ypts=np.append(device_coords[:,1], np.zeros(np.size(lons))+ymax)
+
+        mymap.fill(xpts, ypts, alpha=1.0, color='w', zorder=100)
+        mymap.plot(device_coords[:,0], device_coords[:,1], color='k', zorder=101, clip_on=False)
+
+
+
+        # Lower
+        lons=np.arange(lonmax-lonmin+1)+lonmin
+        lats=np.zeros(np.size(lons))+latmin
+        device_coords=proj.transform_points(ccrs.PlateCarree(), lons, lats)
+        ymin=np.min(device_coords[:,1])*1.05
+
+        xpts=np.append(device_coords[:,0], device_coords[:,0][::-1])
+        ypts=np.append(device_coords[:,1], np.zeros(np.size(lons))+ymin)
+
+        mymap.fill(xpts, ypts, alpha=1.0, color='w', zorder=100)
+        mymap.plot(device_coords[:,0], device_coords[:,1], color='k', zorder=101, clip_on=False)
+           
+        # Turn off drawing of the rectangular box around the plot
+        mymap.outline_patch.set_visible(False)
+
+
+ 
+        # Draw longitudes and latitudes if requested
+        fs = plotvars.axis_label_fontsize
+        fw = plotvars.axis_label_fontweight
+        lw=1.0
+        if axes and xaxis:
+            if xticks is None:
+                map_xticks, map_xticklabels=mapaxis(min=plotvars.lonmin, max=plotvars.lonmax, type=1)
+            else:
+                map_xticks=xticks
+                if xticklabels is None:
+                    map_xticklabels=xticks
+                else:
+                    map_xticklabels=xticklabels
+
+            if axes and xaxis:
+                lats=np.arange(latmax-latmin+1)+latmin
+                for tick in np.arange(np.size(map_xticks)):
+                    lons=np.zeros(np.size(lats))+map_xticks[tick]
+                    device_coords=proj.transform_points(ccrs.PlateCarree(), lons, lats)
+                    mymap.plot(device_coords[:,0], device_coords[:,1], 
+                               linewidth=lw, linestyle='--', color='k', zorder=101)
+
+                    device_coords=proj.transform_point(map_xticks[tick], latmin-3, ccrs.PlateCarree())
+                    mymap.text(device_coords[0], device_coords[1],
+                               map_xticklabels[tick], 
+                               horizontalalignment='center', 
+                               fontsize=fs,
+                               fontweight=fw,
+                               zorder=101)
+
+
+
+
+        if yticks is None:
+            map_yticks, map_yticklabels=mapaxis(min=plotvars.latmin, max=plotvars.latmax, type=2)
+        else:
+            map_yticks=yticks
+            if yticklabels is None:
+                map_yticklabels=yticks
+            else:
+                map_yticklabels=yticklabels
+
+        if axes and yaxis:
+            lons=np.arange(lonmax-lonmin+1)+lonmin
+            for tick in np.arange(np.size(map_yticks)):
+                lats=np.zeros(np.size(lons))+map_yticks[tick]
+                device_coords=proj.transform_points(ccrs.PlateCarree(), lons, lats)
+                mymap.plot(device_coords[:,0], device_coords[:,1],
+                           linewidth=lw, linestyle='--', color='k', zorder=101)
+
+                device_coords=proj.transform_point(lonmin-1, map_yticks[tick], ccrs.PlateCarree())
+                mymap.text(device_coords[0], device_coords[1],
+                           map_yticklabels[tick], 
+                           horizontalalignment='right',
+                           verticalalignment='center', 
+                           fontsize=fs,
+                           fontweight=fw,
+                           zorder=101)
+
+                device_coords=proj.transform_point(lonmax+1, map_yticks[tick], ccrs.PlateCarree())
+                mymap.text(device_coords[0], device_coords[1],
+                           map_yticklabels[tick], 
+                           horizontalalignment='left',
+                           verticalalignment='center', 
+                           fontsize=fs,
+                           fontweight=fw,
+                           zorder=101)
 
 
 
