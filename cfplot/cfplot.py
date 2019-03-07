@@ -187,7 +187,10 @@ plotvars = pvars(lonmin=-180, lonmax=180, latmin=-90, latmax=90, proj='cyl',
                  rotated_grid=True, rotated_labels=True,
                  legend_frame=True, legend_frame_edge_color='k',
                  legend_frame_face_color=None, degsym=global_degsym,
-                 axis_width=None)
+                 axis_width=None, grid=True, grid_spacing=1,
+                 grid_lons=None, grid_lats=None,
+                 grid_colour='grey', grid_linestyle='--', 
+                 grid_thickness=1.0)
 
 
 # Check for iPython notebook inline
@@ -305,6 +308,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
 
         field, x, y, ptype, colorbar_title, xlabel, ylabel, xpole, ypole =\
             cf_data_assign(f, colorbar_title, verbose=verbose)
+
         if user_xlabel is not None:
             xlabel = user_xlabel
         if user_ylabel is not None:
@@ -641,7 +645,6 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
 
         lonrange = np.nanmax(x) - np.nanmin(x)
         if lonrange > 350 and np.ndim(y) == 1:
-
             # Add cyclic information if missing.
             if lonrange < 360:
                 field, x = cartopy_util.add_cyclic_point(field, x)
@@ -659,6 +662,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
             if plotvars.lonmin > np.nanmax(x):
                 x = x + 360
 
+
         # Flip latitudes and field if latitudes are in descending order
         if np.ndim(y) == 1:
             if y[0] > y[-1]:
@@ -669,16 +673,21 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
         # in polar plots. Subsample the grid to remove this problem
         if plotvars.proj == 'npstere':
             myypos = find_pos_in_array(vals=y, val=plotvars.boundinglat)
-            y = y[myypos:]
-            field = field[myypos:, :]
+            if myypos != -1:
+                y = y[myypos:]
+                field = field[myypos:, :]
 
         if plotvars.proj == 'spstere':
             myypos = find_pos_in_array(
                 vals=y, val=plotvars.boundinglat, above=1)
-            y = y[0:myypos + 1]
-            field = field[0:myypos + 1, :]
+            if myypos != -1:
+                y = y[0:myypos + 1]
+                field = field[0:myypos + 1, :]
+
 
         # Create the meshgrid if required
+
+
         if (np.ndim(field) == 1 and np.ndim(x) == 1 and np.ndim(y) == 1):
             lons = x
             lats = y
@@ -748,32 +757,44 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
             if verbose:
                 print 'con - adding blockfill'
             if isinstance(f, cf.Field):
-                if getattr(f.coord('lon'), 'hasbounds', False):
-                    xpts = np.squeeze(f.coord('lon').bounds.array[:, 0])
-                    ypts = np.squeeze(f.coord('lat').bounds.array[:, 0])
-                    # Add last longitude point
-                    xpts = np.append(xpts, f.coord('lon').bounds.array[-1, 1])
-                    # Add last latitude point
-                    ypts = np.append(ypts, f.coord('lat').bounds.array[-1, 1])
+
+
+                if f.ref('transverse_mercator'):
+                    # Special case for transverse mercator
                     bfill(
-                        f=field_orig *
-                        fmult,
-                        x=xpts,
-                        y=ypts,
+                        f=f,
                         clevs=clevs,
-                        lonlat=1,
-                        bound=1,
                         alpha=alpha)
+
                 else:
-                    bfill(
-                        f=field_orig *
-                        fmult,
-                        x=x_orig,
-                        y=y_orig,
-                        clevs=clevs,
-                        lonlat=1,
-                        bound=0,
-                        alpha=alpha)
+
+                    if getattr(f.coord('lon'), 'hasbounds', False):
+                        xpts = np.squeeze(f.coord('lon').bounds.array[:, 0])
+                        ypts = np.squeeze(f.coord('lat').bounds.array[:, 0])
+                        # Add last longitude point
+                        xpts = np.append(xpts, f.coord('lon').bounds.array[-1, 1])
+                        # Add last latitude point
+                        ypts = np.append(ypts, f.coord('lat').bounds.array[-1, 1])
+                        
+                        bfill(
+                            f=field_orig *
+                            fmult,
+                            x=xpts,
+                            y=ypts,
+                            clevs=clevs,
+                            lonlat=1,
+                            bound=1,
+                            alpha=alpha)
+                    else:
+                        bfill(
+                            f=field_orig *
+                            fmult,
+                            x=x_orig,
+                            y=y_orig,
+                            clevs=clevs,
+                            lonlat=1,
+                            bound=0,
+                            alpha=alpha)
 
             else:
                 bfill(
@@ -785,6 +806,10 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                     lonlat=1,
                     bound=0,
                     alpha=alpha)
+
+
+
+
 
         # Contour lines and labels
         if lines:
@@ -3572,6 +3597,54 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None):
         field = np.rot90(field)
         field = np.flipud(field)
 
+
+    # UKCP grid
+    if f.ref('transverse_mercator'):
+        ptype = 1
+        field = np.squeeze(f.array)
+
+        # Find the auxiliary lons and lats if provided
+        has_lons = False
+        has_lats = False
+        for mydim in f.items():
+            if mydim[:3] == 'aux':
+                name = cf_var_name(field=f, dim=mydim)
+                if name in ['longitude']:
+                    x = np.squeeze(f.item(mydim).array)
+                    has_lons = True
+                if name in ['latitude']:
+                    y = np.squeeze(f.item(mydim).array)
+                    has_lats = True
+
+
+        # Calculate lons and lats if no auxiliary data for these
+        if not has_lons or not has_lats:
+            xpts = f.item('X').array
+            ypts = f.item('Y').array
+            field = np.squeeze(f.array)
+
+            false_easting = f.ref('transverse_mercator')['false_easting']
+            false_northing = f.ref('transverse_mercator')['false_northing']
+            central_longitude = f.ref('transverse_mercator')['longitude_of_central_meridian']
+            central_latitude = f.ref('transverse_mercator')['latitude_of_projection_origin']
+            scale_factor = f.ref('transverse_mercator')['scale_factor_at_central_meridian']
+
+            # Set the transform
+            transform = ccrs.TransverseMercator(false_easting = false_easting,
+                                                false_northing = false_northing,
+                                                central_longitude = central_longitude,
+                                                central_latitude = central_latitude,
+                                                scale_factor = scale_factor)
+
+            # Calculate the longitude and latitude points
+            xvals, yvals = np.meshgrid(xpts, ypts)
+            points = ccrs.PlateCarree().transform_points(transform, xvals, yvals) 
+            x = np.array(points)[:, :, 0]
+            y = np.array(points)[:, :, 1]
+
+
+
+
     # None of the above
     if ptype is None:
         ptype = 0
@@ -3609,6 +3682,10 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None):
             else:
                 colorbar_title = colorbar_title + \
                     '(' + supscr(str(f.Units)) + ')'
+
+
+
+
 
     # Return data
     return(field, x, y, ptype, colorbar_title, xlabel, ylabel, xpole, ypole)
@@ -3935,59 +4012,87 @@ def bfill(f=None, x=None, y=None, clevs=False, lonlat=False, bound=False,
     """
 
 
-    # If single_fll_color is defined then turn off whiting out the background.
+    # If single_fill_color is defined then turn off whiting out the background.
     if single_fill_color is not None:
         white = False
   
-    # Assign f to field as this may be modified in lat-lon plots
-    field = f
 
-    if bound:
-        xpts = x
-        ypts = y
+    # Set the default map transform
+    transform=ccrs.PlateCarree()
 
-    if bound == 0:
-        # Find x box boundaries
-        xpts = x[0] - (x[1] - x[0]) / 2.0
-        for ix in np.arange(np.size(x) - 1):
-            xpts = np.append(xpts, x[ix] + (x[ix + 1] - x[ix]) / 2.0)
-        xpts = np.append(xpts, x[ix + 1] + (x[ix + 1] - x[ix]) / 2.0)
+    transverse_mercator = False
+    if isinstance(f, cf.Field):
+        if f.ref('transverse_mercator'):
+            transverse_mercator = True
 
-        # Find y box boundaries
-        ypts = y[0] - (y[1] - y[0]) / 2.0
-        for iy in np.arange(np.size(y) - 1):
-            ypts = np.append(ypts, y[iy] + (y[iy + 1] - y[iy]) / 2.0)
-        ypts = np.append(ypts, y[iy + 1] + (y[iy + 1] - y[iy]) / 2.0)
+    if transverse_mercator:
+       # Case of transverse mercator of which UKCP is an example
+        false_easting = f.ref('transverse_mercator')['false_easting']
+        false_northing = f.ref('transverse_mercator')['false_northing']
+        central_longitude = f.ref('transverse_mercator')['longitude_of_central_meridian']
+        central_latitude = f.ref('transverse_mercator')['latitude_of_projection_origin']
+        scale_factor = f.ref('transverse_mercator')['scale_factor_at_central_meridian']
+        transform = ccrs.TransverseMercator(false_easting = false_easting,
+                                            false_northing = false_northing,
+                                            central_longitude = central_longitude,
+                                            central_latitude = central_latitude,
+                                            scale_factor = scale_factor)
 
-    # Shift lon grid if needed
-    if lonlat:
-
-        # Extract upper bound and original rhs of box longitude bounding points
-        upper_bound = ypts[-1]
-        xpts_orig = xpts
-        ypts_orig = ypts
-
-        # Reduce xpts and ypts by 1 or shifting of grid fails
-        # The last points are the right / upper bounds for the last data box
-        xpts = xpts[0:-1]
-        ypts = ypts[0:-1]
-
-        if plotvars.lonmin < np.nanmin(xpts):
-            xpts = xpts - 360
-        if plotvars.lonmin > np.nanmax(xpts):
-            xpts = xpts + 360
-
-        # Add cyclic information if missing.
-        lonrange = np.nanmax(xpts) - np.nanmin(xpts)
-        if lonrange < 360:
-            field, xpts = cartopy_util.add_cyclic_point(field, xpts)
+        # Extract the axes and data
+        xpts = np.append(f.item('X').bounds.array[:,0], f.item('X').bounds.array[-1,1])
+        ypts = np.append(f.item('Y').bounds.array[:,0], f.item('Y').bounds.array[-1,1])
+        field = np.squeeze(f.array)
 
 
-        right_bound = xpts[-1] + (xpts[-1] - xpts[-2])
+    else:
+        # Assign f to field as this may be modified in lat-lon plots
+        field = f
 
-        # Add end x and y end points
-        xpts = np.append(xpts, right_bound)
-        ypts = np.append(ypts, upper_bound)
+        if bound:
+            xpts = x
+            ypts = y
+        else:
+            # Find x box boundaries
+            xpts = x[0] - (x[1] - x[0]) / 2.0
+            for ix in np.arange(np.size(x) - 1):
+                xpts = np.append(xpts, x[ix] + (x[ix + 1] - x[ix]) / 2.0)
+            xpts = np.append(xpts, x[ix + 1] + (x[ix + 1] - x[ix]) / 2.0)
+
+            # Find y box boundaries
+            ypts = y[0] - (y[1] - y[0]) / 2.0
+            for iy in np.arange(np.size(y) - 1):
+                ypts = np.append(ypts, y[iy] + (y[iy + 1] - y[iy]) / 2.0)
+            ypts = np.append(ypts, y[iy + 1] + (y[iy + 1] - y[iy]) / 2.0)
+
+        # Shift lon grid if needed
+        if lonlat:
+            # Extract upper bound and original rhs of box longitude bounding points
+            upper_bound = ypts[-1]
+            xpts_orig = xpts
+            ypts_orig = ypts
+    
+            # Reduce xpts and ypts by 1 or shifting of grid fails
+            # The last points are the right / upper bounds for the last data box
+            xpts = xpts[0:-1]
+            ypts = ypts[0:-1]
+
+            if plotvars.lonmin < np.nanmin(xpts):
+                xpts = xpts - 360
+            if plotvars.lonmin > np.nanmax(xpts):
+                xpts = xpts + 360
+
+            # Add cyclic information if missing.
+            lonrange = np.nanmax(xpts) - np.nanmin(xpts)
+            if lonrange < 360:
+                field, xpts = cartopy_util.add_cyclic_point(field, xpts)
+
+
+            right_bound = xpts[-1] + (xpts[-1] - xpts[-2])
+
+            # Add end x and y end points
+            xpts = np.append(xpts, right_bound)
+            ypts = np.append(ypts, upper_bound)
+
 
 
     levels=np.array(deepcopy(clevs)).astype('float')
@@ -4082,7 +4187,7 @@ def bfill(f=None, x=None, y=None, clevs=False, lonlat=False, bound=False,
             else: 
                 color=single_fill_color
             coll = PolyCollection(allverts, facecolor=color, edgecolors=color, alpha=alpha,
-                                  transform=ccrs.PlateCarree())
+                                  transform=transform)
             plotvars.mymap.add_collection(coll)
 
     else:
@@ -4109,7 +4214,7 @@ def bfill(f=None, x=None, y=None, clevs=False, lonlat=False, bound=False,
                 color=single_fill_color
 
             coll = PolyCollection(allverts, facecolor=color, edgecolors=color,
-                                  alpha=alpha, transform=ccrs.PlateCarree())
+                                  alpha=alpha, transform=transform)
 
             plotvars.mymap.add_collection(coll)
 
@@ -4627,8 +4732,6 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,
 
     if scale is None:
         scale = np.nanmax(u_data) / 4.0
-
-    print 'scale is ', scale
 
     if key_length is None:
         key_length = scale
@@ -5168,18 +5271,6 @@ def set_map():
         proj=ccrs.PlateCarree(central_longitude=lon_mid)
 
 
-        #mymap=plot.subplot(111, projection=proj)
-
-        # Add a plot containing the projection
-        #if plotvars.plot_xmin:
-        #    delta_x = plotvars.plot_xmax - plotvars.plot_xmin
-        #    delta_y = plotvars.plot_ymax - plotvars.plot_ymin
-        #    mymap = plotvars.master_plot.add_axes([plotvars.plot_xmin,
-        #                                               plotvars.plot_ymin,
-        #                                               delta_x, delta_y],
-        #                                               projection=proj)
-        #else:    
-        #    mymap=plotvars.master_plot.add_subplot(plotvars.rows, plotvars.columns, plotvars.pos, projection=proj)
 
         
         # Cartopy line plotting and identical left == right fix
@@ -5187,10 +5278,6 @@ def set_map():
         if lonmax - lonmin == 360.0:
             lonmax = lonmax + 0.01
 
-        # Set map extent
-        #mymap.set_extent((plotvars.lonmin, plotvars.lonmax+ extra,
-        #                  plotvars.latmin, plotvars.latmax),
-        #                  crs=ccrs.PlateCarree())
 
 
     
@@ -5204,10 +5291,7 @@ def set_map():
         proj=ccrs.Mercator(central_longitude=plotvars.lon_0,
                            min_latitude=min_latitude,
                            max_latitude=max_latitude)
-        #mymap=plot.subplot(plotvars.rows, plotvars.columns, plotvars.pos, projection=proj)
         
-
-
 
 
     if plotvars.proj == 'npstere':
@@ -5220,9 +5304,7 @@ def set_map():
         lonmax = plotvars.lon_0+180.01
         latmin = plotvars.boundinglat
         latmax = 90
-        #mymap.set_extent((plotvars.lon_0-180, plotvars.lon_0+180.01,
-        #                  plotvars.boundinglat, 90),
-        #                  crs=ccrs.PlateCarree())
+
 
 
 
@@ -5237,19 +5319,16 @@ def set_map():
         lonmax = plotvars.lonmax+180.01
         latmin = -90
         latmax = plotvars.boundinglat
-        #mymap.set_extent((plotvars.lon_0-180, plotvars.lonmax+180.01,
-        #                  -90, plotvars.boundinglat),
-        #                  crs=ccrs.PlateCarree())
+
 
 
     if plotvars.proj == 'ortho':
         proj=ccrs.Orthographic(central_longitude=plotvars.lon_0,
                                central_latitude=plotvars.lat_0)
-        #extent = False
-        #mymap=plot.subplot(plotvars.rows, plotvars.columns, plotvars.pos, projection=proj)
+        lonmin = plotvars.lon_0-180.0
+        lonmax = plotvars.lon_0+180.01
+        extent = False
     
-
-
 
 
     if plotvars.proj == 'moll':
@@ -5258,11 +5337,11 @@ def set_map():
         lonmax = plotvars.lon_0+180.01
         extent = False
 
-        #mymap=plot.subplot(plotvars.rows, plotvars.columns, plotvars.pos, projection=proj)
+
 
     if plotvars.proj == 'robin':
         proj=ccrs.Robinson(central_longitude=plotvars.lon_0)
-        #mymap=plot.subplot(plotvars.rows, plotvars.columns, plotvars.pos, projection=proj)
+
 
     if plotvars.proj == 'lcc':
         lon_0=plotvars.lonmin+(plotvars.lonmax-plotvars.lonmin)/2.0
@@ -5270,17 +5349,28 @@ def set_map():
         proj=ccrs.LambertConformal(central_longitude=lon_0,
                                    central_latitude=lat_0,
                                    cutoff=-40)
-        #mymap=plot.subplot(plotvars.rows, plotvars.columns, plotvars.pos, projection=proj)
-        #mymap.set_extent((plotvars.lonmin, plotvars.lonmax,
-        #                  plotvars.latmin, plotvars.latmax),
-        #                  crs=ccrs.PlateCarree())
 
     if plotvars.proj == 'rotated':
         proj=ccrs.PlateCarree(central_longitude=lon_mid)
-        #mymap=plot.subplot(plotvars.rows, plotvars.columns, plotvars.pos, projection=proj)
-        #mymap.set_extent((plotvars.lonmin, plotvars.lonmax,
-        #                  plotvars.latmin, plotvars.latmax),
-        #                  crs=ccrs.PlateCarree())
+
+
+
+    if plotvars.proj == 'OSGB':
+        proj=ccrs.OSGB()
+
+    if plotvars.proj == 'EuroPP':
+        proj=ccrs.EuroPP()
+
+
+    if plotvars.proj == 'UKCP':
+        # Special case of TransverseMercator for UKCP
+        proj=ccrs.TransverseMercator()
+
+    if plotvars.proj == 'TransverseMercator':
+        proj=ccrs.TransverseMercator()
+        lonmin = plotvars.lon_0-180.0
+        lonmax = plotvars.lon_0+180.01
+        extent = False
 
 
     # Add a plot containing the projection
@@ -5301,9 +5391,21 @@ def set_map():
 
 
     # Set map extent
-    if extent:
-        mymap.set_extent((lonmin, lonmax, latmin, latmax),
-                         crs=ccrs.PlateCarree())
+    set_extent = True
+    if plotvars.proj == 'OSGB' or plotvars.proj == 'EuroPP' or plotvars.proj == 'UKCP':
+        set_extent = False
+
+    if extent and set_extent:
+        mymap.set_extent((lonmin, lonmax, latmin, latmax), crs=ccrs.PlateCarree())
+
+
+    if plotvars.proj == 'UKCP':
+        # Special case of TransverseMercator for UKCP
+        mymap.set_extent((-11, 3, 49, 61), crs=ccrs.PlateCarree())
+
+    if plotvars.proj == 'EuroPP':
+        # EuroPP somehow needs some limits setting.
+        mymap.set_extent((-12, 25, 30, 75), crs=ccrs.PlateCarree())
 
 
 
@@ -5659,7 +5761,9 @@ def setvars(file=None, title_fontsize=None, text_fontsize=None,
             rotated_labels=None, rotated_grid_thickness=None,
             legend_frame=None,
             legend_frame_edge_color=None, legend_frame_face_color=None,
-            degsym=None, axis_width=None):
+            degsym=None, axis_width=None, grid=None,
+            grid_spacing=None, grid_lons=None, grid_lats=None,
+            grid_colour=None, grid_linestyle=None, grid_thickness=None):
     """
      | setvars - set plotting variables and their defaults
      |
@@ -5704,7 +5808,7 @@ def setvars(file=None, title_fontsize=None, text_fontsize=None,
      | lake_color=None - lake colour
      | rotated_grid_spacing=10 - rotated grid spacing in degrees
      | rotated_deg_spacing=0.75 - rotated grid spacing between graticule dots
-     | rotated_deg_tickness=1.0 - rotated grid thickness for longitude and latitude lines
+     | rotated_deg_tkickness=1.0 - rotated grid thickness for longitude and latitude lines
      | rotated_continents=True - draw rotated continents
      | rotated_grid=True - draw rotated grid
      | rotated_labels=True - draw rotated grid labels
@@ -5713,6 +5817,13 @@ def setvars(file=None, title_fontsize=None, text_fontsize=None,
      | legend_frame_face_color=None - color for the legend background
      | degsym=True - add degree symbol to longitude and latitude axis labels
      | axis_width=None - width of line for the axes
+     | grid=True - draw grid
+     | grid_spacing=1 - grid spacing in degrees
+     | grid_lons=None - grid longitudes
+     | gid_lats=None - grid latitudes
+     | grid_colour='grey' - grid colour
+     | grid_linestyle='--' - grid line style
+     | grid_thickness=1.0 - grid thickness
      |
      | Use setvars() to reset to the defaults
      |
@@ -5738,7 +5849,8 @@ def setvars(file=None, title_fontsize=None, text_fontsize=None,
             rotated_grid_thickness,
             rotated_labels, colorbar_fontsize, colorbar_fontweight,
             legend_frame, legend_frame_edge_color, legend_frame_face_color,
-            degsym, axis_width]
+            degsym, axis_width, grid, grid_spacing, grid_lons, grid_lats,
+            grid_colour, grid_linestyle, grid_thickness]
     if all(val is None for val in vals):
         plotvars.file = None
         plotvars.title_fontsize = 15
@@ -5783,7 +5895,14 @@ def setvars(file=None, title_fontsize=None, text_fontsize=None,
         plotvars.legend_frame_edge_color='k'
         plotvars.legend_frame_face_color=None
         plotvars.degsym=False
-        axis_width=None
+        plotvars.axis_width=None
+        plotvars.grid=True 
+        plotvars.grid_spacing=1
+        plotvars.grid_lons=None
+        plotvars.grid_lats=None
+        plotvars.grid_colour='grey' 
+        plotvars.grid_linestyle='--' 
+        plotvars.grid_thickness=1.0
 
 
     if file is not None:
@@ -5873,6 +5992,20 @@ def setvars(file=None, title_fontsize=None, text_fontsize=None,
         plotvars.degsym=degsym
     if axis_width is not None:
         plotvars.axis_width=axis_width
+    if grid is not None:
+        plotvars.grid=grid
+    if grid_spacing is not None:
+        plotvars.grid_spacing=grid_spacing
+    if grid_lons is not None:
+        plotvars.grid_lons=grid_lons
+    if grid_lats is not None:
+        plotvars.grid_lats=grid_lats
+    if grid_colour is not None:
+        plotvars.grid_colour=grid_colour
+    if grid_linestyle is not None:
+        plotvars.grid_linestyle=grid_linestyle
+    if grid_thickness is not None:
+        plotvars.grid_thickness=grid_thickness
 
 
 
@@ -8202,6 +8335,31 @@ def plot_map_axes(axes=None, xaxis=None, yaxis=None,
                            fontweight=fw,
                            zorder=101)
 
+
+
+    # UKCP grid
+    if plotvars.proj == 'UKCP' and plotvars.grid:
+        lonmin = -11
+        lonmax = 3
+        latmin = 49
+        latmax = 61
+        spacing = plotvars.grid_spacing
+        if plotvars.grid_lons is None:
+            lons = np.arange(30 / spacing + 1) * spacing
+            lons = np.append((lons*-1)[::-1], lons[1:])
+        else:
+            lons=plotvars.grid_lons
+        if plotvars.grid_lats is None:
+            lats = np.arange(90.0 / spacing + 1) * spacing
+        else:
+            lats=plotvars.grid_lats
+
+
+
+        plotvars.mymap.gridlines(color=plotvars.grid_colour, 
+                                 linewidth=plotvars.grid_thickness, 
+                                 linestyle=plotvars.grid_linestyle,
+                                 xlocs=lons, ylocs=lats)
 
 
 
