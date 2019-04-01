@@ -4040,8 +4040,10 @@ def bfill(f=None, x=None, y=None, clevs=False, lonlat=False, bound=False,
         white = False
   
 
-    # Set the default map transform
-    transform=ccrs.PlateCarree()
+    # Set the default map coordinates for the data to be PlateCarree
+    plotargs = {}
+    if lonlat:
+        plotargs = {'transform' : ccrs.PlateCarree()}
 
     transverse_mercator = False
     if isinstance(f, cf.Field):
@@ -4179,10 +4181,7 @@ def bfill(f=None, x=None, y=None, clevs=False, lonlat=False, bound=False,
         if np.size(pts) > 0:
             colarr[pts]=-1
 
-    if lonlat:
-        plotargs = {'transform' : transform}
-    else:
-        plotargs = {}
+    #print 'plotargs are ', **plotargs
 
     if plotvars.plot_type == 1 and plotvars.proj != 'cyl':
 
@@ -4247,9 +4246,9 @@ def bfill(f=None, x=None, y=None, clevs=False, lonlat=False, bound=False,
                                   alpha=alpha, zorder=zorder, **plotargs)
 
             if lonlat:
-                plotvars.mymap.add_collection(coll, zorder=zorder, **plotargs)
+                plotvars.mymap.add_collection(coll)
             else:
-                plotvars.plot.add_collection(coll, zorder=zorder)
+                plotvars.plot.add_collection(coll)
 
 
 
@@ -4273,8 +4272,15 @@ def bfill(f=None, x=None, y=None, clevs=False, lonlat=False, bound=False,
 
         # Make the collection and add it to the plot.
         color=plotvars.cs[i]
-        coll = PolyCollection(allverts, facecolor='#ffffff', edgecolors='#ffffff', alpha=alpha)
-        plotvars.plot.add_collection(coll, zorder=zorder)
+        coll = PolyCollection(allverts, facecolor='#ffffff', edgecolors='#ffffff', 
+                              alpha=alpha, zorder=zorder, **plotargs)
+
+        if lonlat:
+            plotvars.mymap.add_collection(coll)
+        else:
+            plotvars.plot.add_collection(coll)
+
+
 
 
 
@@ -7852,7 +7858,6 @@ def cfplot_colorbar(cfill=None, colorbar_labels=None,
     |
     """
 
-    print 'colorbar_labels are', type(colorbar_labels), colorbar_labels
 
 
     if verbose:
