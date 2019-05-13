@@ -7540,7 +7540,7 @@ def traj(f=None, title=None, ptype=0, linestyle='-', linewidth=1.0, linecolor='b
     ##################################
     # Line, symbol and vector plotting
     ##################################
-    for track in np.arange(np.shape(lons)[1]):
+    for track in np.arange(np.shape(lons)[0]):
         
         xpts = lons[track, :]
         ypts = lats[track, :]
@@ -7640,7 +7640,7 @@ def traj(f=None, title=None, ptype=0, linestyle='-', linewidth=1.0, linecolor='b
 
 
 
-        for track in np.arange(np.shape(lons)[1]):
+        for track in np.arange(np.shape(lons)[0]):
             xpts = lons[track, :]
             ypts = lats[track, :]
             data2 = data[track, :]
