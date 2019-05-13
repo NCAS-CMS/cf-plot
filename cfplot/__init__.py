@@ -11,7 +11,7 @@ See the cf-plot home page http://ajheaps.github.io/cf-plot for a gallery of plot
 
 __author__ = 'Andy Heaps - andy.heaps@ncas.ac.uk'
 __date__ = '13th May 2019'
-__version__ = '2.4.4'
+__version__ = '2.4.5'
 
 from cfplot import *
 
