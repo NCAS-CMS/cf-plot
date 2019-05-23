@@ -330,6 +330,8 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
         xlabel = ''
         ylabel = ''
 
+
+
     # Set contour line styles
     matplotlib.rcParams['contour.negative_linestyle'] = negative_linestyle
 
@@ -986,7 +988,14 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
 
         if myrange < 1:
             ystep = abs(ymax - ymin)/10.
-
+        if abs(ymax - ymin) > 1:
+            ystep = 1
+        if abs(ymax - ymin) > 10:
+            ystep = 10
+        if abs(ymax - ymin) > 100:
+            ystep = 100
+        if abs(ymax - ymin) > 1000:
+            ystep = 200
         if abs(ymax - ymin) > 2000:
             ystep = 500
         if abs(ymax - ymin) > 5000:
@@ -996,10 +1005,9 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
 
         # Work out ticks and tick labels
         if ylog is False or ylog == 0:
-            heightticks = gvals(
-                dmin=min(
-                    ymin, ymax), dmax=max(
-                    ymin, ymax), tight=1, mystep=ystep, mod=0)[0]
+            heightticks = gvals(dmin=min(ymin, ymax), 
+                                dmax=max(ymin, ymax), 
+                                tight=1, mystep=ystep, mod=0)[0]
 
             if myrange < 1 and myrange > 0.1:
                 heightticks=np.arange(10)/10.0
@@ -1556,15 +1564,13 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
             xpts = x
             ypts = y
 
-            if f.item('longitude'):
-                xpts=f.item('longitude').array
-            if f.item('latitude'):
-                ypts=f.item('latitude').array
+            #if f.item('longitude'):
+            #    xpts=f.item('longitude').array
+            #if f.item('latitude'):
+            #    ypts=f.item('latitude').array
         else:
             xpts = np.arange(np.size(x))
             ypts = np.arange(np.size(y))
-
-
 
         if verbose:
             print 'con - making a rotated pole plot'
@@ -1593,11 +1599,15 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
             else:
 
                 # Extract lonmin, lonmax, latmin, latmax from rotated grid coordinates
-                xvals, yvals = np.meshgrid(xpts, ypts)
-                points=ccrs.PlateCarree().transform_points(transform, xvals.flatten(),
-                                                           yvals.flatten())
+                     
+                #xvals, yvals = np.meshgrid(xpts, ypts)
+                points=ccrs.PlateCarree().transform_points(transform, xpts.flatten(),
+                                                           ypts.flatten())
                 lons=np.array(points)[:, 0]
                 lats=np.array(points)[:, 1]
+
+                print 'min / max lons are', np.min(lons), np.max(lons)
+                print 'min / max lats are', np.min(lats), np.max(lats)
 
                 mapset(lonmin=np.min(lons), lonmax=np.max(lons),
                        latmin=np.min(lats), latmax=np.max(lats),
@@ -2653,11 +2663,12 @@ def axes_plot(xticks=None, xticklabels=None, yticks=None, yticklabels=None,
 
         # Plot a corresponding tick on the top of the plot - **cartopy feature?
         proj=ccrs.PlateCarree(central_longitude=lon_mid)
-        for xval in xticks_new:    
-            xpt, ypt = proj.transform_point(xval, plotvars.latmax, ccrs.PlateCarree())
-            ypt2 = ypt + ticklen
-            plot.plot([xpt, xpt], [ypt, ypt2], color='k',
-                                linewidth=0.8, clip_on=False)
+        if plotvars.plot_type ==1:
+            for xval in xticks_new:    
+                xpt, ypt = proj.transform_point(xval, plotvars.latmax, ccrs.PlateCarree())
+                ypt2 = ypt + ticklen
+                plot.plot([xpt, xpt], [ypt, ypt2], color='k',
+                          linewidth=0.8, clip_on=False)
 
     if yticks is not None:
         plot.set_yticks(yticks, **plotargs)
@@ -3339,12 +3350,13 @@ def gvals(dmin=None, dmax=None, tight=0, mystep=None, mod=1):
     return vals, mult
 
 
-def cf_data_assign(f=None, colorbar_title=None, verbose=None):
+def cf_data_assign(f=None, colorbar_title=None, verbose=None, rotated_vect=False):
     """
      | Check cf input data is okay and return data for contour plot.
      | This is an internal routine not used by the user.
      | f=None - input cf field
      | colorbar_title=None - input colour bar title
+     | rotated vect=False - return 1D x and y for rotated plot vectors
      | verbose=None - set to 1 to get a verbose idea of what the
      |          cf_data_assign is doing
 
@@ -3541,10 +3553,14 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None):
                 if (xunits in lat_units):
                     xunits = 'degrees'
                 xlabel = name + ' (' + xunits + ')'
-            if name[0:1] == 'p' or name[
-                    0:5] == 'theta' or name[0:6] == 'height':
-                yunits = str(getattr(f.item(mydim), 'Units', ''))
-                ylabel = name + ' (' + yunits + ')'
+            if name[0:1] == 'p' or \
+                name[0:5] == 'theta' or \
+                name[0:6] == 'height' or \
+                name[0:6] == 'hybrid' or \
+                name[0:5] == 'level' or \
+                name[0:5] == 'model':
+                    yunits = str(getattr(f.item(mydim), 'Units', ''))
+                    ylabel = name + ' (' + yunits + ')'
 
     if (np.size(lons) > 1 and np.size(height) > 1):
         ptype = 3
@@ -3557,8 +3573,12 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None):
                 if (xunits in lon_units):
                     xunits = 'degrees'
                 xlabel = name + ' (' + xunits + ')'
-            if name[0:1] == 'p' or name[
-                    0:5] == 'theta' or name[0:6] == 'height':
+            if name[0:1] == 'p' or \
+                name[0:5] == 'theta' or \
+                name[0:6] == 'height' or \
+                name[0:6] == 'hybrid' or \
+                name[0:5] == 'level' or \
+                name[0:5] == 'model':
                 yunits = str(getattr(f.item(mydim), 'Units', ''))
                 ylabel = name + ' (' + yunits + ')'
 
@@ -3579,6 +3599,7 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None):
         xpole = rotated_pole['grid_north_pole_longitude']
         ypole = rotated_pole['grid_north_pole_latitude']
 
+        # Extract grid x and y coordinates
         for mydim in f.items():
             name = cf_var_name(field=f, dim=mydim)
             if mydim[:3] == 'dim':
@@ -3595,6 +3616,45 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None):
                         field = np.flipud(field)
                     yunits = str(getattr(f.item(mydim), 'Units', ''))
                     ylabel = cf_var_name(field=f, dim=mydim) + yunits
+
+        
+        # Extract auxiliary lons and lats if they exist
+        if plotvars.proj != 'rotated' and not rotated_vect:
+            has_lons = False
+            has_lats = False
+            for mydim in f.items():
+                if mydim[:3] == 'aux':
+                    name = cf_var_name(field=f, dim=mydim)
+                    if name in ['longitude']:
+                        x = np.squeeze(f.item(mydim).array)
+                        has_lons = True
+                    if name in ['latitude']:
+                        y = np.squeeze(f.item(mydim).array)
+                        has_lats = True
+
+            if not has_lons or not has_lats:
+                # Generate the grid using the x and y from above
+                xvals, yvals = np.meshgrid(x, y)
+
+
+                x = xvals
+                y = yvals
+
+                #rotated_pole = f.ref('rotated_latitude_longitude')
+                #xpole = rotated_pole['grid_north_pole_longitude']
+                #ypole = rotated_pole['grid_north_pole_latitude']
+                #transform = ccrs.RotatedPole(pole_latitude=ypole,
+                #                         pole_longitude=xpole)
+                #points=ccrs.PlateCarree().transform_points(transform,
+                #                                           xvals.flatten(),
+                #                                           yvals.flatten())
+
+                #x=np.array(points)[:, 0]
+                #y=np.array(points)[:, 1]
+
+
+
+
 
 
 
@@ -3652,6 +3712,7 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None):
             central_longitude = f.ref('transverse_mercator')['longitude_of_central_meridian']
             central_latitude = f.ref('transverse_mercator')['latitude_of_projection_origin']
             scale_factor = f.ref('transverse_mercator')['scale_factor_at_central_meridian']
+
 
             # Set the transform
             transform = ccrs.TransverseMercator(false_easting = false_easting,
@@ -4620,7 +4681,7 @@ def find_pos_in_array(vals=None, val=None, above=False):
 
 
 def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,
-         key_length=None, key_label=None, ptype=None, title=None,
+         key_length=None, key_label=None, ptype=None, title=None, magmin=None,
          width=0.02, headwidth=3, headlength=5, headaxislength=4.5,
          pivot='middle', key_location=[0.95, -0.06], key_show=True, axes=True,
          xaxis=True, yaxis=True, xticks=None, xticklabels=None, yticks=None,
@@ -4643,6 +4704,9 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,
      |            grid - takes one or two values.
      |            If one value is passed then this is used for both the x and
      |            y axes.
+     | magmin=None - don't plot any vects with less than this magnitude. 
+     |               Note this keyword doesn't work in the polar 
+                     stereographic projection.
      | key_length=None - length of the key.  Generally takes one value but in
      |                   the case of two supplied values the second vector
      |                   scaling applies to the v field.
@@ -4718,11 +4782,16 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,
     user_xlabel = xlabel
     user_ylabel = ylabel
 
-    # Extract required data for contouring
+
+    rotated_vect=False
+    if u.ref('rotated_latitude_longitude') is not None:
+        rotated_vect = True
+
+    # Extract required data 
     # If a cf-python field
     if isinstance(u, cf.Field):
         u_data, u_x, u_y, ptype, colorbar_title, xlabel, ylabel, xpole, \
-            ypole = cf_data_assign(u, colorbar_title)
+            ypole = cf_data_assign(u, colorbar_title, rotated_vect=rotated_vect)
     elif isinstance(u, cf.FieldList):
         raise TypeError("Can't plot a field list")
     else:
@@ -4736,7 +4805,7 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,
 
     if isinstance(v, cf.Field):
         v_data, v_x, v_y, ptype, colorbar_title, xlabel, ylabel, xpole, \
-            ypole = cf_data_assign(v, colorbar_title)
+            ypole = cf_data_assign(v, colorbar_title, rotated_vect=rotated_vect)
     elif isinstance(v, cf.FieldList):
         raise TypeError("Can't plot a field list")
     else:
@@ -4747,6 +4816,16 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,
         v_y = deepcopy(y)
         xlabel = ''
         ylabel = ''
+
+
+    # If a minimum magnitude is specified mask these data points
+    if magmin is not None:
+        mag = np.sqrt(u_data**2 + v_data**2)
+        invalid = np.where(mag <= magmin)
+        if np.size(invalid) > 0:
+            u_data[invalid] = np.nan
+            v_data[invalid] = np.nan
+
 
     # Reset xlabel and ylabel values with user defined labels in specified
     if user_xlabel is not None:
@@ -4826,6 +4905,9 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,
         v_data = v_data[0::ystride, 0::xstride]
 
 
+
+
+
     # Map vectors
     if plotvars.plot_type == 1:
         lonmin=plotvars.lonmin
@@ -4849,7 +4931,6 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,
                 for pt in np.arange(np.size(u_x)):
                     if u_x[pt] > lonmax:
                         u_x[pt]=u_x[pt]-360
-
 
             quiv = plotvars.mymap.quiver(u_x, u_y, u_data, v_data, scale=scale,
                                     pivot=pivot, units='inches',
@@ -4914,9 +4995,9 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,
     if plotvars.plot_type == 6:
         if u.ref('rotated_latitude_longitude') is not None:
 
-            rotated_pole = u.ref('rotated_latitude_longitude')
-            xpole = float(rotated_pole['grid_north_pole_longitude'])
-            ypole = float(rotated_pole['grid_north_pole_latitude'])
+            #rotated_pole = u.ref('rotated_latitude_longitude')
+            #xpole = float(rotated_pole['grid_north_pole_longitude'])
+            #ypole = float(rotated_pole['grid_north_pole_latitude'])
 
             proj=ccrs.PlateCarree() 
 
@@ -4929,6 +5010,7 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,
                        latmin=np.nanmin(u_y), latmax=np.nanmax(u_y),
                        user_mapset=0, resolution=resolution_orig)
                 set_map()
+
 
             quiv = plotvars.mymap.quiver(u_x, u_y, u_data, v_data, scale=scale*10, transform=proj,
                                          pivot=pivot, units='inches',
@@ -7536,11 +7618,12 @@ def traj(f=None, title=None, ptype=0, linestyle='-', linewidth=1.0, linecolor='b
     if plotvars.proj == 'spstere':
         proj = ccrs.SouthPolarStereo(central_longitude=plotvars.lon_0)
 
-      
+    ntracks = np.shape(lons)[0]
+    
     ##################################
     # Line, symbol and vector plotting
     ##################################
-    for track in np.arange(np.shape(lons)[0]):
+    for track in np.arange(ntracks):
         
         xpts = lons[track, :]
         ypts = lats[track, :]
@@ -7640,10 +7723,23 @@ def traj(f=None, title=None, ptype=0, linestyle='-', linewidth=1.0, linecolor='b
 
 
 
-        for track in np.arange(np.shape(lons)[0]):
+        # For polar stereographic plots mask any points outside the plotting limb
+        if plotvars.proj == 'npstere':
+            pts = np.where(lats < plotvars.boundinglat)
+            if np.size(pts) > 0:
+                lats[pts] = np.nan
+
+        if plotvars.proj == 'spstere':
+            pts = np.where(lats > plotvars.boundinglat)
+            if np.size(pts) > 0:
+                lats[pts] = np.nan
+
+
+        for track in np.arange(ntracks):
             xpts = lons[track, :]
             ypts = lats[track, :]
             data2 = data[track, :]
+
 
 
             for i in np.arange(np.size(levs)-1):
@@ -8190,26 +8286,27 @@ def plot_map_axes(axes=None, xaxis=None, yaxis=None,
             lon_mid, lat_mid =  proj.transform_point(0,pole, ccrs.PlateCarree())
 
 
-            for xtick in lonvals:
-                label = mapaxis(xtick, xtick, 1)[1][0]
-                lonr, latr = proj.transform_point(xtick,latpt, ccrs.PlateCarree())
+            if axis_label_fontsize > 0.0:
+                for xtick in lonvals:
+                    label = mapaxis(xtick, xtick, 1)[1][0]
+                    lonr, latr = proj.transform_point(xtick,latpt, ccrs.PlateCarree())
 
-                v_align='center'
-                if lonr < 1:
-                    h_align = 'right'
-                if lonr > 1:
-                    h_align = 'left'
-                if abs(lonr) <= 1:
-                    h_align = 'center'
-                    if latr < 1:
-                        v_align = 'top'
-                    if latr > 1:
-                        v_align = 'bottom'
+                    v_align='center'
+                    if lonr < 1:
+                        h_align = 'right'
+                    if lonr > 1:
+                        h_align = 'left'
+                    if abs(lonr) <= 1:
+                        h_align = 'center'
+                        if latr < 1:
+                            v_align = 'top'
+                        if latr > 1:
+                            v_align = 'bottom'
 
-                mymap.text(lonr, latr, label, horizontalalignment=h_align,
-                           verticalalignment=v_align,
-                           fontsize=axis_label_fontsize,
-                           fontweight=axis_label_fontweight, zorder=101)
+                    mymap.text(lonr, latr, label, horizontalalignment=h_align,
+                               verticalalignment=v_align,
+                               fontsize=axis_label_fontsize,
+                               fontweight=axis_label_fontweight, zorder=101)
 
 
 

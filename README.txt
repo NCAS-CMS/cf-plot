@@ -1,6 +1,6 @@
-======
+=======
 cf-plot
-======
+=======
 
 cf-plot is a set of Python plotting routines for the contour, vector and line plots that climate
 researchers commonly make.  
