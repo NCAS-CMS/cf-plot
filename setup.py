@@ -1,5 +1,4 @@
-from distutils.core import setup, Extension
-from distutils.command.build import build
+from setuptools import setup
 import os
 import fnmatch
 import sys
@@ -18,19 +17,22 @@ def find_package_data_files(directory):
 package_data = [f for f in find_package_data_files('cfplot/colourmaps')]
 
 
-
 setup(
-    name="cf-plot",
-    version="2.4.8",
-    author="Andy Heaps",
-    author_email="andy.heaps@ncas.ac.uk",
-    packages=['cfplot'],
-    package_dir={'cfplot':'cfplot'},
-    package_data={'cfplot': package_data},
-    include_package_data=True,
-    url="http://ajheaps.github.io/cf-plot",
-    license='LICENSE.txt',
-    description="Climate contour, vector and line plots in Python",
-    long_description=open('README.txt').read(),
-    long_description_content_type="text/markdown"
+    name = "cf-plot",
+    version = "3.0.2",
+    author = "Andy Heaps",
+    author_email = "andy.heaps@ncas.ac.uk",
+    packages = ['cfplot'],
+    package_dir = {'cfplot':'cfplot'},
+    package_data = {'cfplot': package_data},
+    include_package_data = True,
+    install_requires = ['matplotlib (>=3.1.0)'],
+    url = "http://ajheaps.github.io/cf-plot",
+    license = 'LICENSE.txt',
+    description = "Climate contour, vector and line plots in Python",
+    long_description = open('README.txt').read(),
+    long_description_content_type = "text/markdown"
 )
+
+
+
