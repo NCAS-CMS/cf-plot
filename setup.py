@@ -19,14 +19,14 @@ package_data = [f for f in find_package_data_files('cfplot/colourmaps')]
 
 setup(
     name = "cf-plot",
-    version = "3.0.2",
+    version = "3.0.3",
     author = "Andy Heaps",
     author_email = "andy.heaps@ncas.ac.uk",
     packages = ['cfplot'],
     package_dir = {'cfplot':'cfplot'},
     package_data = {'cfplot': package_data},
     include_package_data = True,
-    install_requires = ['matplotlib (>=3.1.0)'],
+    install_requires = ['matplotlib >=3.1.0'],
     url = "http://ajheaps.github.io/cf-plot",
     license = 'LICENSE.txt',
     description = "Climate contour, vector and line plots in Python",
