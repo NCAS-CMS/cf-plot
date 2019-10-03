@@ -192,8 +192,7 @@ plotvars = pvars(lonmin=-180, lonmax=180, latmin=-90, latmax=90, proj='cyl',
                  legend_frame=True, legend_frame_edge_color='k',
                  legend_frame_face_color=None, degsym=global_degsym,
                  axis_width=None, grid=True, grid_spacing=1,
-                 grid_lons=None, grid_lats=None,
-                 grid_colour='grey', grid_linestyle='--', 
+                 grid_colour='k', grid_linestyle='--', 
                  grid_thickness=1.0)
 
 
@@ -5625,6 +5624,7 @@ def cf_var_name(field=None, dim=None):
     id = getattr(field.construct(dim), 'id', False)
     #ncvar = getattr(field.construct(dim), 'ncvar', False)
     nc = field.construct(dim).nc_get_variable(False)
+    ncvar = False
     if nc:
         ncvar = field.construct(dim).nc_get_variable()
     short_name = getattr(field.construct(dim), 'short_name', False)
@@ -5878,7 +5878,7 @@ def setvars(file=None, title_fontsize=None, text_fontsize=None,
             legend_frame=None,
             legend_frame_edge_color=None, legend_frame_face_color=None,
             degsym=None, axis_width=None, grid=None,
-            grid_spacing=None, grid_lons=None, grid_lats=None,
+            grid_spacing=None,
             grid_colour=None, grid_linestyle=None, grid_thickness=None):
     """
      | setvars - set plotting variables and their defaults
@@ -5935,9 +5935,7 @@ def setvars(file=None, title_fontsize=None, text_fontsize=None,
      | axis_width=None - width of line for the axes
      | grid=True - draw grid
      | grid_spacing=1 - grid spacing in degrees
-     | grid_lons=None - grid longitudes
-     | grid_lats=None - grid latitudes
-     | grid_colour='grey' - grid colour
+     | grid_colour='k' - grid colour
      | grid_linestyle='--' - grid line style
      | grid_thickness=1.0 - grid thickness
      |
@@ -5965,7 +5963,7 @@ def setvars(file=None, title_fontsize=None, text_fontsize=None,
             rotated_grid_thickness,
             rotated_labels, colorbar_fontsize, colorbar_fontweight,
             legend_frame, legend_frame_edge_color, legend_frame_face_color,
-            degsym, axis_width, grid, grid_spacing, grid_lons, grid_lats,
+            degsym, axis_width, grid, grid_spacing,
             grid_colour, grid_linestyle, grid_thickness]
     if all(val is None for val in vals):
         plotvars.file = None
@@ -6014,9 +6012,7 @@ def setvars(file=None, title_fontsize=None, text_fontsize=None,
         plotvars.axis_width=None
         plotvars.grid=True 
         plotvars.grid_spacing=1
-        plotvars.grid_lons=None
-        plotvars.grid_lats=None
-        plotvars.grid_colour='grey' 
+        plotvars.grid_colour='k' 
         plotvars.grid_linestyle='--' 
         plotvars.grid_thickness=1.0
 
@@ -6112,10 +6108,6 @@ def setvars(file=None, title_fontsize=None, text_fontsize=None,
         plotvars.grid=grid
     if grid_spacing is not None:
         plotvars.grid_spacing=grid_spacing
-    if grid_lons is not None:
-        plotvars.grid_lons=grid_lons
-    if grid_lats is not None:
-        plotvars.grid_lats=grid_lats
     if grid_colour is not None:
         plotvars.grid_colour=grid_colour
     if grid_linestyle is not None:
@@ -8322,8 +8314,9 @@ def plot_map_axes(axes=None, xaxis=None, yaxis=None,
                    if abs(lat - boundinglat) > 1:
                        lons=np.arange(361)
                        lats=np.zeros(361)+lat
-                       mymap.plot(lons, lats, color='k', 
-                                  linewidth=1, linestyle='--',
+                       mymap.plot(lons, lats, color=plotvars.grid_colour, 
+                                  linewidth=plotvars.grid_thickness, 
+                                  linestyle=plotvars.grid_linestyle,
                                   transform=proj) 
 
             if yaxis:
@@ -8340,8 +8333,9 @@ def plot_map_axes(axes=None, xaxis=None, yaxis=None,
                     else:
                         lats=np.arange(boundinglat+91)-90
                     lons=np.zeros(np.size(lats))+lon
-                    mymap.plot(lons, lats, color='k', 
-                               linewidth=1, linestyle='--',
+                    mymap.plot(lons, lats, color=plotvars.grid_colour, 
+                               linewidth=plotvars.grid_thickness, 
+                               linestyle=plotvars.grid_linestyle,
                                transform=proj) 
 
 
@@ -8360,7 +8354,7 @@ def plot_map_axes(axes=None, xaxis=None, yaxis=None,
             lon_mid, lat_mid =  proj.transform_point(0,pole, ccrs.PlateCarree())
 
 
-            if axis_label_fontsize > 0.0:
+            if xaxis and axis_label_fontsize > 0.0:
                 for xtick in lonvals:
                     label = mapaxis(xtick, xtick, 1)[1][0]
                     lonr, latr = proj.transform_point(xtick,latpt, ccrs.PlateCarree())
@@ -8547,7 +8541,10 @@ def plot_map_axes(axes=None, xaxis=None, yaxis=None,
                     lons=np.zeros(np.size(lats))+map_xticks[tick]
                     device_coords=proj.transform_points(ccrs.PlateCarree(), lons, lats)
                     mymap.plot(device_coords[:,0], device_coords[:,1], 
-                               linewidth=lw, linestyle='--', color='k', zorder=101)
+                               linewidth=plotvars.grid_thickness, 
+                               linestyle=plotvars.grid_linestyle, 
+                               color=plotvars.grid_colour, 
+                               zorder=101)
 
                     device_coords=proj.transform_point(map_xticks[tick], latmin-3, ccrs.PlateCarree())
                     mymap.text(device_coords[0], device_coords[1],
@@ -8575,7 +8572,9 @@ def plot_map_axes(axes=None, xaxis=None, yaxis=None,
                 lats=np.zeros(np.size(lons))+map_yticks[tick]
                 device_coords=proj.transform_points(ccrs.PlateCarree(), lons, lats)
                 mymap.plot(device_coords[:,0], device_coords[:,1],
-                           linewidth=lw, linestyle='--', color='k', zorder=101)
+                           linewidth=plotvars.grid_thickness,
+                           linestyle=plotvars.grid_linestyle,
+                           color=plotvars.grid_colour, zorder=101)
 
                 device_coords=proj.transform_point(lonmin-1, map_yticks[tick], ccrs.PlateCarree())
                 mymap.text(device_coords[0], device_coords[1],
@@ -8604,22 +8603,22 @@ def plot_map_axes(axes=None, xaxis=None, yaxis=None,
         latmin = 49
         latmax = 61
         spacing = plotvars.grid_spacing
-        if plotvars.grid_lons is None:
+        if xticks is None:
             lons = np.arange(30 / spacing + 1) * spacing
             lons = np.append((lons*-1)[::-1], lons[1:])
         else:
-            lons=plotvars.grid_lons
-        if plotvars.grid_lats is None:
+            lons=xticks
+        if yticks is None:
             lats = np.arange(90.0 / spacing + 1) * spacing
         else:
-            lats=plotvars.grid_lats
+            lats=yticks
 
 
-
-        plotvars.mymap.gridlines(color=plotvars.grid_colour, 
-                                 linewidth=plotvars.grid_thickness, 
-                                 linestyle=plotvars.grid_linestyle,
-                                 xlocs=lons, ylocs=lats)
+        if plotvars.grid:
+            plotvars.mymap.gridlines(color=plotvars.grid_colour, 
+                                     linewidth=plotvars.grid_thickness, 
+                                     linestyle=plotvars.grid_linestyle,
+                                     xlocs=lons, ylocs=lats)
 
 
 
