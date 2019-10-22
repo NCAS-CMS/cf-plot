@@ -761,7 +761,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
 
                 else:
 
-                    if f.coord('X', 'has_bounds', False):
+                    if f.coord('X').has_bounds():
                         xpts = np.squeeze(f.coord('X').bounds.array[:, 0])
                         ypts = np.squeeze(f.coord('Y').bounds.array[:, 0])
                         # Add last longitude point
@@ -1163,24 +1163,24 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                 hasbounds = True
 
                 if ptype == 2:
-                    if f.coord('Y', 'has_bounds', False):
+                    if f.coord('Y').has_bounds() is False:
                         hasbounds = False
                         xpts = np.squeeze(f.coord('Y').bounds.array)[:, 0]
                         xpts = np.append(xpts, f.coord('Y').bounds.array[-1, 1])
 
                 if ptype == 3:
-                    if f.coord('X', 'has_bounds', False):
+                    if f.coord('X').has_bounds() is False:
                         hasbounds = False
                         xpts = np.squeeze(f.coord('X').bounds.array)[:, 0]
                         xpts = np.append(xpts, f.coord('X').bounds.array[-1, 1])
 
                 if ptype == 7:
-                    if f.coord('T', 'has_bounds', False):
+                    if f.coord('T').has_bounds() is False:
                         hasbounds = False
                         xpts = np.squeeze(f.coord('T').bounds.array)[:, 0]
                         xpts = np.append(xpts, f.coord('T').bounds.array[-1, 1])
 
-                if f.coord('Z', 'has_bounds', False):
+                if f.coord('Z').has_bounds() is False:
                     hasbounds = False
                     ypts = np.squeeze(f.coord('Z').bounds.array)[:, 0]
                     ypts = np.append(ypts, f.coord('Z').bounds.array[-1, 1])
@@ -1448,7 +1448,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
         # Block fill
         if blockfill:
             if isinstance(f, cf.Field):
-                if f.coord('X').has_bounds:
+                if f.coord('X').has_bounds():
                     if ptype == 4:
                         xpts = np.squeeze(f.coord('X').bounds.array)[:, 0]
                         xpts = np.append(xpts, f.coord('X').bounds.array[-1, 1])
@@ -5622,11 +5622,7 @@ def cf_var_name(field=None, dim=None):
     """
 
     id = getattr(field.construct(dim), 'id', False)
-    #ncvar = getattr(field.construct(dim), 'ncvar', False)
-    nc = field.construct(dim).nc_get_variable(False)
-    ncvar = False
-    if nc:
-        ncvar = field.construct(dim).nc_get_variable()
+    ncvar = field.construct(dim).nc_get_variable(False)
     short_name = getattr(field.construct(dim), 'short_name', False)
     long_name = getattr(field.construct(dim), 'long_name', False)
     standard_name = getattr(field.construct(dim), 'standard_name', False)
