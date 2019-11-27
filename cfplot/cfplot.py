@@ -1,6 +1,6 @@
 """
 Climate contour/vector plots using cf-python, matplotlib and cartopy.
-Andy Heaps NCAS-CMS September 2018
+Andy Heaps NCAS-CMS November 2019
 """
 import cf
 import numpy as np
@@ -1163,30 +1163,34 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                 hasbounds = True
 
                 if ptype == 2:
-                    if f.coord('Y').has_bounds() is False:
-                        hasbounds = False
+                    if f.coord('Y').has_bounds():
                         xpts = np.squeeze(f.coord('Y').bounds.array)[:, 0]
                         xpts = np.append(xpts, f.coord('Y').bounds.array[-1, 1])
+                        ypts = np.squeeze(f.coord('Z').bounds.array)[:, 0]
+                        ypts = np.append(xpts, f.coord('Z').bounds.array[-1, 1])
+                    else:
+                        hasbounds = False
 
                 if ptype == 3:
-                    if f.coord('X').has_bounds() is False:
-                        hasbounds = False
+                    if f.coord('X').has_bounds():
                         xpts = np.squeeze(f.coord('X').bounds.array)[:, 0]
                         xpts = np.append(xpts, f.coord('X').bounds.array[-1, 1])
+                        ypts = np.squeeze(f.coord('Z').bounds.array)[:, 0]
+                        ypts = np.append(xpts, f.coord('Z').bounds.array[-1, 1])
+                    else:
+                        hasbounds = False
 
                 if ptype == 7:
-                    if f.coord('T').has_bounds() is False:
-                        hasbounds = False
+                    if f.coord('T').has_bounds():
                         xpts = np.squeeze(f.coord('T').bounds.array)[:, 0]
                         xpts = np.append(xpts, f.coord('T').bounds.array[-1, 1])
+                        ypts = np.squeeze(f.coord('Z').bounds.array)[:, 0]
+                        ypts = np.append(xpts, f.coord('Z').bounds.array[-1, 1])
+                    else:
+                        hasbounds = False
 
-                if f.coord('Z').has_bounds() is False:
-                    hasbounds = False
-                    ypts = np.squeeze(f.coord('Z').bounds.array)[:, 0]
-                    ypts = np.append(ypts, f.coord('Z').bounds.array[-1, 1])
 
-
-                if hasbounds is False:
+                if hasbounds:
                     bfill(
                         f=field_orig *
                         fmult,
