@@ -26,7 +26,12 @@ setup(
     package_dir = {'cfplot':'cfplot'},
     package_data = {'cfplot': package_data},
     include_package_data = True,
-    install_requires = ['matplotlib >=3.1.0'],
+    install_requires = [
+        'matplotlib >=3.1.0',
+        'cf-python >= 3',
+        'scipy',
+        'cartopy'
+    ],
     url = "http://ajheaps.github.io/cf-plot",
     license = 'LICENSE.txt',
     description = "Climate contour, vector and line plots in Python",
