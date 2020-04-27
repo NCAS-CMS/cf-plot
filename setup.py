@@ -2,7 +2,7 @@ from setuptools import setup
 import os
 import fnmatch
 import sys
-import imp
+import importlib
 import subprocess
 
 
@@ -19,7 +19,7 @@ package_data = [f for f in find_package_data_files('cfplot/colourmaps')]
 
 setup(
     name = "cf-plot",
-    version = "3.0.17",
+    version = "3.0.18",
     author = "Andy Heaps",
     author_email = "andy.heaps@ncas.ac.uk",
     packages = ['cfplot'],
@@ -28,8 +28,8 @@ setup(
     include_package_data = True,
     install_requires = ['matplotlib >=3.1.0',
                         'cf-python >= 3',
-                        'scipy,'
-                        'cartopy'
+                        'scipy >= 1.4.0',
+                        'cartopy >= 0.17.0'
                         ],
     url = "http://ajheaps.github.io/cf-plot",
     license = 'LICENSE.txt',
