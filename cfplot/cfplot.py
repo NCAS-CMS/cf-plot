@@ -184,7 +184,7 @@ plotvars = pvars(lonmin=-180, lonmax=180, latmin=-90, latmax=90, proj='cyl',
                  tspace_hour=None, xtick_label_rotation=0,
                  xtick_label_align='center', ytick_label_rotation=0,
                  ytick_label_align='right', legend_text_size=11,
-                 legend_text_weight='normal', tight=False,
+                 legend_text_weight='normal',
                  cs_uniform=True, master_title=None,
                  master_title_location=[0.5, 0.95], master_title_fontsize=30,
                  master_title_fontweight='normal', dpi=None,
@@ -447,7 +447,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                 print('con - generating automatic contour levels')
             dmin = np.nanmin(field)
             dmax = np.nanmax(field)
-            clevs, mult = gvals(dmin=dmin, dmax=dmax, tight=0)
+            clevs, mult = gvals(dmin=dmin, dmax=dmax)
             fmult = 10**-mult
         else:
             # Use step to generate the levels
@@ -484,7 +484,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
     # Test for large numer of decimal places and fix if necessary
     if plotvars.levels is None:
         if isinstance(clevs[0], float):
-            fix_floats(clevs)
+            clevs = fix_floats(clevs)
 
 
     # Set the colour scale
@@ -1044,7 +1044,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
         if ylog is False or ylog == 0:
             heightticks = gvals(dmin=min(ymin, ymax), 
                                 dmax=max(ymin, ymax), 
-                                tight=1, mystep=ystep, mod=0)[0]
+                                mystep=ystep, mod=False)[0]
 
             if myrange < 1 and myrange > 0.1:
                 heightticks=np.arange(10)/10.0
@@ -1839,17 +1839,16 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                 xmax -
                 xmin) /
             10.0,
-            tight=1,
-            mod=0)[0]
+            mod=False)[0]
         xaxislabels = xaxisticks
         if ymin < ymax:
             yaxisticks = gvals(
                 dmin=ymin, dmax=ymax, mystep=(
-                    ymax - ymin) / 10.0, tight=1, mod=0)[0]
+                    ymax - ymin) / 10.0, mod=False)[0]
         if ymax < ymin:
             yaxisticks = gvals(
                 dmin=ymax, dmax=ymin, mystep=(
-                    ymin - ymax) / 10.0, tight=1, mod=0)[0]
+                    ymin - ymax) / 10.0, mod=False)[0]
         yaxislabels = yaxisticks
 
         if user_xlabel is not None:
@@ -2415,7 +2414,7 @@ def timeaxis(dtimes=None):
         # Catch tvals if not properly defined and use gvals to generate some
         # year tick marks
         if np.size(tvals) < 2:
-            tvals = gvals(dmin=yearmin, dmax=yearmax, tight=1)[0]
+            tvals = gvals(dmin=yearmin, dmax=yearmax)[0]
 
         for year in tvals:
             time_ticks.append(np.min(
@@ -2696,14 +2695,14 @@ def axes_plot(xticks=None, xticklabels=None, yticks=None, yticklabels=None,
 
     if xstep is not None:
         ticks, mult = gvals(plotvars.xmin, plotvars.xmax,
-                            tight=1, mystep=xstep)
+                            mystep=xstep)
 
         plot_xticks = ticks * 10**mult
         plot_xticks_labels = plot_xticks
 
     if ystep is not None:
         ticks, mult = gvals(plotvars.ymin, plotvars.ymax,
-                            tight=1, mystep=ystep)
+                            mystep=ystep)
         plot_yticks = ticks * 10**mult
         plot_yticks_labels = plot_yticks
 
@@ -3291,7 +3290,143 @@ def supscr(text=None):
     return tform
 
 
-def gvals(dmin=None, dmax=None, tight=0, mystep=None, mod=1):
+
+def gvals(dmin=None, dmax=None, mystep=None, mod=True): 
+    """
+     | gvals - work out a sensible set of values between two limits
+     | This is an internal routine used for contour levels and axis
+     | labelling and is not generally used by the user.
+
+     | dmin = None - minimum
+     | dmax = None - maximum
+     | mystep = None - use this step
+     | mod = True - modify data to make use of a multipler
+     |
+     |
+     |
+     |
+     |
+     |
+    """
+
+    import numpy as np
+    from copy import deepcopy
+
+    # Copies of inputs as these might be changed
+    dmin1 = deepcopy(dmin)
+    dmax1 = deepcopy(dmax)
+
+    # Swap values if dmin1 > dmax1 as this returns no values
+    if dmax1 < dmin1:
+        dmin1, dmax1 = dmax1, dmin1
+
+    # Data range
+    data_range = dmax1 - dmin1
+
+    # field multiplier
+    mult = 0
+
+
+    # Return some values if dmin1 = dmax1
+    if dmin1 == dmax1:
+        vals = [dmin1 - 0.001, dmin1, dmin1 + 0.001]
+        mult = 0
+        return vals, mult    
+
+
+
+
+    # Modify if requested or if out of range 0.001 to 2000000
+    if data_range < 0.001:
+        while dmax1 <= 3:
+            dmin1 = dmin1 * 10.0
+            dmax1 = dmax1 * 10.0
+            data_range = dmax1 - dmin1
+            mult = mult - 1
+
+    if data_range > 2000000:
+        while dmax1 > 10:
+            dmin1 = dmin1 / 10.0
+            dmax1 = dmax1 / 10.0
+            data_range = dmax1 - dmin1
+            mult = mult + 1
+
+
+    if data_range >= 0.001 and data_range <= 2000000:
+
+        # Calculate an appropriate step
+        step = None
+        test_steps = [0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1,
+                      0.2, 0.5, 1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000,
+                      20000, 50000, 100000]
+
+        if mystep is not None:
+            step = mystep
+        else:
+            for val in test_steps:
+                nvals = data_range / val 
+
+                if val < 1:
+                    if nvals > 8:
+                        step = val
+                else:
+                    if nvals > 11:
+                        step = val
+
+
+        # Return an error if no step found
+        if step is None:
+            errstr = '\n\n cfp.gvals - no valid step values found \n\n'
+            errstr += 'cfp.gvals(' + str(dmin1) + ',' + str(dmax1) + ')\n\n'
+            raise Warning(errstr)
+
+        # values  < 0.0
+        vals = None
+        vals1 = None
+        if dmin1 < 0.0:
+            vals1 = (np.arange(-dmin1 / step) * -step)[::-1] - step
+
+        # values  >= 0.0
+        vals2 = None
+        if dmax1 >= 0.0:
+            vals2 = np.arange(dmax1 / step + 1) * step
+
+        
+        if vals1 is not None and vals2 is None:
+            vals = vals1
+        if vals2 is not None and vals1 is None:
+            vals = vals2
+        if vals1 is not None and vals2 is not None:
+            vals = np.concatenate((vals1, vals2))
+        
+        # Round off decimal numbers so that 
+        # (np.arange(4) * -0.1)[3] = -0.30000000000000004 gives -0.3 as expected
+        if step < 1:
+            vals=vals.round(6)
+
+        # Change values to integers for values >= 1
+        if step >= 1:
+            vals = vals.astype(int)
+
+        pts = np.where(np.logical_and(vals >= dmin1, vals <= dmax1))
+        if np.min(pts) > -1:
+            vals = vals[pts]
+
+        if mod is False:
+            vals = vals * 10**mult
+            mult = 0
+
+        return(vals, mult)
+
+
+
+
+
+
+
+
+
+def gvals_orig(dmin=None, dmax=None, tight=0, mystep=None, mod=1):
     """
      | gvals - work out a sensible set of values between two limits
      | This is an internal routine used for contour levels and axis
@@ -3327,14 +3462,15 @@ def gvals(dmin=None, dmax=None, tight=0, mystep=None, mod=1):
     dmin2 = deepcopy(dmin)
     dmax2 = deepcopy(dmax)
 
-    mult = 0  # field multiplyer
+    mult = 0  # field multiplier
 
-    # Generate an inital step
+    # Generate an initial step
     step = (dmax - dmin) / 16.0
 
     # Don't modify if dmin1 and dmax1 are both negative as this will create a
     # race condition
     if dmin1 < 0 and dmax1 <= 0:
+        print('min and max < 0')
         mod = 0
 
 
@@ -3342,6 +3478,7 @@ def gvals(dmin=None, dmax=None, tight=0, mystep=None, mod=1):
     # Return a linspace set of values if dmax1 - dmin1 is <= 3
     data_range = dmax1 - dmin1
     if data_range <= 3 and data_range > 0.001:
+        print('in small range code')
         mult = 0
         mindecs = 40 # minimum number of decimal places - a high starting value
         minval = 0 # spacing value of the minimum number of decimal spaces
@@ -3385,11 +3522,11 @@ def gvals(dmin=None, dmax=None, tight=0, mystep=None, mod=1):
 
         return vals, mult
 
-   
 
     if mod == 1:
         if (mystep is not None):
             step = mystep
+
 
         if step < 1:
             while dmax1 <= 3:
@@ -3397,6 +3534,7 @@ def gvals(dmin=None, dmax=None, tight=0, mystep=None, mod=1):
                 dmin1 = dmin1 * 10.0
                 dmax1 = dmax1 * 10.0
                 mult = mult - 1
+
 
             for val in [1, 2, 5, 10, 20, 25, 50, 100, 200, 250, 500, 1000, 2000,
                     2500, 5000, 10000, 20000, 25000, 50000, 100000,
@@ -3439,8 +3577,9 @@ def gvals(dmin=None, dmax=None, tight=0, mystep=None, mod=1):
         vals = np.append(vals, np.nanmax(vals) + step)
 
 
+
     # Remove upper and lower limits if tight=0 - i.e. a contour plot
-    if tight == 0 and np.size(vals) > 1:
+    if np.size(vals) > 2:
         if np.nanmax(vals) >= dmax1:
             vals = vals[0:-1]
         if np.nanmin(vals) <= dmin1:
@@ -3448,6 +3587,14 @@ def gvals(dmin=None, dmax=None, tight=0, mystep=None, mod=1):
 
     # Return values if there are five or more
     if np.size(vals) >= 5:
+        # Trim any values outside of the input data range
+        pts = np.where(vals >= dmin1)
+        if pts[0][0] != -1:
+            vals = vals[pts]
+        pts = np.where(vals <= dmax1)
+        if pts[0][0] != -1:
+            vals = vals[pts]
+
         return vals, mult
 
     if mystep is not None:
@@ -3494,6 +3641,8 @@ def gvals(dmin=None, dmax=None, tight=0, mystep=None, mod=1):
             vals = vals[0:-1]
         if np.nanmin(vals) <= dmin1:
             vals = vals[1:]
+
+
 
     return vals, mult
 
@@ -5314,9 +5463,8 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,
             heightticks = gvals(
                 dmin=ymin,
                 dmax=ymax,
-                tight=1,
                 mystep=ystep,
-                mod=0)[0]
+                mod=False)[0]
             heightlabels = heightticks
 
             if axes:
@@ -6717,20 +6865,18 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
                 has_count = has_count + 1
                 x = np.squeeze(f.construct(mydim).array)
 
-                #x label
+                # x label
                 xlabel_units = str(getattr(f.construct(mydim), 'Units', ''))
                 plot_xlabel = cf_var_name(field=f, dim=mydim) + ' ('
                 plot_xlabel += xlabel_units + ')'
                 y = np.squeeze(f.array)
 
-                #y label
+                # y label
                 if hasattr(f, 'id'):
                     plot_ylabel = f.id
                 nc = f.nc_get_variable(False)
                 if nc:
                     plot_ylabel = f.nc_get_variable()
-                #if hasattr(f, 'ncvar'):
-                #    plot_ylabel = f.ncvar
                 if hasattr(f, 'short_name'):
                     plot_ylabel = f.short_name
                 if hasattr(f, 'long_name'):
@@ -6780,7 +6926,7 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
         ztype = 1
     if xlabel_units in ['meter', 'metre', 'm', 'kilometer', 'kilometre', 'km']:
         ztype = 2
-    if cf_field:
+    if cf_field and f.has_construct('Z'):
         myz = f.construct('Z')
         if len(myz.array) > 1:
             zlabel = ''
@@ -6843,7 +6989,7 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
 
 
 
-    if cf_field:
+    if cf_field and f.has_construct('T'):
         taxis = f.construct('T')
 
 
@@ -6852,7 +6998,7 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
         maxy = np.min(y)
 
     if ztype == 2:
-        if cf_field:
+        if cf_field and f.has_construct('Z'):
             if f.construct('Z').positive == 'down':
                 miny = np.max(y)
                 maxy = np.min(y)
@@ -6878,7 +7024,7 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
 
 
 
-        if cf_field:
+        if cf_field and f.has_construct('T'):
             taxis = f.construct('T')
             if time_xstr or time_ystr:
                 ref_time = f.construct('T').units
@@ -6923,12 +7069,11 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
         else:
             yticklabels = list(map(str, yticks))
 
-    mod = 0
-    tight = 0
-    if plotvars.user_gset == 1:
-        tight = 1
+    mod = False
 
 
+    xmult = 0
+    ymult = 0
 
 
     if xticks is None:
@@ -6938,11 +7083,11 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
             xticks, xticklabels = mapaxis(minx, maxx, type=2)
     if cf_field:
         if xticks is None:
-            if f.construct('T') is not None:
+            if f.has_construct('T'):
                 if np.size(f.construct('T').array) > 1:
                     xticks, xticklabels, plot_xlabel = timeaxis(taxis)
     if xticks is None:
-        xticks = gvals(dmin=minx, dmax=maxx, tight=tight, mod=mod)[0]
+        xticks, ymult = gvals(dmin=minx, dmax=maxx, mod=mod)
 
         # Fix long floating point numbers if necessary
         fix_floats(xticks)
@@ -6959,15 +7104,16 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
     if yticks is None:
         if abs(maxy - miny) > 1:
              if miny < maxy:
-                 yticks = gvals(dmin=miny, dmax=maxy, tight=tight, mod=mod)[0]
+                 yticks, ymult = gvals(dmin=miny, dmax=maxy, mod=mod)
              if maxy < miny:
-                 yticks = gvals(dmin=maxy, dmax=miny, tight=tight, mod=mod)[0]
+                 yticks, ymult = gvals(dmin=maxy, dmax=miny, mod=mod)
 
         else:
-             yticks = gvals(dmin=miny, dmax=maxy, tight=tight, mod=0)[0]
+             yticks, ymult = gvals(dmin=miny, dmax=maxy, mod=mod)
 
              # Fix long floating point numbers if necessary
              fix_floats(yticks)
+
     if yticklabels is None:
         yticklabels=[]
 
@@ -7024,6 +7170,9 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
         yticklabels = yticks
         plot_xlabel = ''
         plot_ylabel = ''
+
+    
+
 
 
     # Make graph
@@ -7920,7 +8069,7 @@ def traj(f=None, title=None, ptype=0, linestyle='-', linewidth=1.0, linecolor='b
                 print('traj - generating automatic legend levels')
             dmin = np.nanmin(data)
             dmax = np.nanmax(data)
-            levs, mult = gvals(dmin=dmin, dmax=dmax, tight=0, mod=0)
+            levs, mult = gvals(dmin=dmin, dmax=dmax, mod=False)
 
         # Add extend options to the levels if set
         if plotvars.levels_extend == 'min' or plotvars.levels_extend == 'both':
@@ -8375,6 +8524,7 @@ def cbar(labels = None,
                 mid_point = (lbot[i+1]-lbot[i])/2.0+lbot[i]
                 lbot_new.append(mid_point) 
             lbot = lbot_new
+            print('lbot is', lbot)
 
 
         colorbar = matplotlib.colorbar.ColorbarBase(ax1, cmap=cmap,
@@ -8390,6 +8540,15 @@ def cbar(labels = None,
 
 
     else:
+
+        if mid is not None:
+            lbot_new = []
+            for i in np.arange(len(labels)):
+                mid_point = (lbot[i+1]-lbot[i])/2.0+lbot[i]
+                lbot_new.append(mid_point) 
+            lbot = lbot_new
+            print('lbot is', lbot)
+
         ax1 = plotvars.master_plot.add_axes(position)
         colorbar = matplotlib.colorbar.ColorbarBase(
                     ax1, cmap=cmap,
@@ -9042,6 +9201,17 @@ def fix_floats(data):
     | 0.399999999999999999999
     | 
     """
+
+
+    # Return unchecked if any values have an e in them, for example 7.85e-8
+    has_e = False
+    for val in data:
+        if 'e' in str(val):
+            has_e = True
+    if has_e:
+        return(data)
+
+
     data_ndecs = np.zeros(len(data))
     for i in np.arange(len(data)):
         data_ndecs[i] = len(str(float(data[i])).split('.')[1])
@@ -9058,10 +9228,22 @@ def fix_floats(data):
                 data[i] = round(data[i], ndecs_max)
 
         else:
-            # fix to two decimal places
+            # fix to two or more decimal places
+            
+            nd = 2
+            data_range = 0.0            
+            data_temp=data
 
-            for i in np.arange(len(data)):
-                data[i] = round(data[i], 2)
+            while data_range == 0.0:
+                data_temp = deepcopy(data)
+
+                for i in np.arange(len(data_temp)):
+                    data_temp[i] = round(data_temp[i], nd)
+
+                data_range = np.max(data_temp) - np.min(data_temp)
+                nd = nd + 1
+
+            data = data_temp
 
 
     return(data)
