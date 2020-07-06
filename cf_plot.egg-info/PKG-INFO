@@ -1,0 +1,24 @@
+Metadata-Version: 2.1
+Name: cf-plot
+Version: 3.0.20
+Summary: Climate contour, vector and line plots in Python
+Home-page: http://ajheaps.github.io/cf-plot
+Author: Andy Heaps
+Author-email: andy.heaps@ncas.ac.uk
+License: LICENSE.txt
+Description: =======
+        cf-plot
+        =======
+        
+        cf-plot is a set of Python plotting routines for the contour, vector and line plots that climate
+        researchers commonly make.  
+        
+        
+        Documentation
+        =============
+        Please refer to the cf-plot homepage http://ajheaps.github.io/cf-plot
+        
+        
+        
+Platform: UNKNOWN
+Description-Content-Type: text/markdown

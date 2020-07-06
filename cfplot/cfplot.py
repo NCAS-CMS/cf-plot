@@ -200,7 +200,8 @@ plotvars = pvars(lonmin=-180, lonmax=180, latmin=-90, latmax=90, proj='cyl',
                  grid_colour='k', grid_linestyle='--', 
                  grid_thickness=1.0, aspect='equal',
                  graph_xmin=None, graph_xmax=None,
-                 graph_ymin=None, graph_ymax=None)
+                 graph_ymin=None, graph_ymax=None,
+                 level_spacing='linear')
 
 
 # Check for iPython notebook inline
@@ -230,7 +231,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
         colorbar_text_down_up=False, colorbar_drawedges=True,
         colorbar_fraction=None, colorbar_thick=None,
         colorbar_anchor=None, colorbar_labels=None,
-        linestyles=None, zorder=None):
+        linestyles=None, zorder=None, level_spacing='linear'):
     """
      | con is the interface to contouring in cf-plot. The minimum use is con(f)
      | where f is a 2 dimensional array. If a cf field is passed then an
@@ -310,6 +311,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
      |                               labels bottom and top starting in the bottom position 
      | colorbar_drawedges=True - draw internal delimeter lines in the colorbar
      | zorder=None - order of drawing
+     | level_spacing='linear' - Default of linear level spacing.  Also takes 'log', 'loglike'
      :Returns:
       None
 
@@ -432,59 +434,15 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
         plotvars.plot_type = ptype
 
     # Get contour levels
-    includes_zero = 0
-    if plotvars.user_levs == 1:
-        # User defined
-        if verbose:
-            print('con - using user defined contour levels')
-        clevs = plotvars.levels
-        mult = 0
-        fmult = 1
-    else:
-        if plotvars.levels_step is None:
-            # Automatic levels
-            if verbose:
-                print('con - generating automatic contour levels')
-            dmin = np.nanmin(field)
-            dmax = np.nanmax(field)
-            clevs, mult = gvals(dmin=dmin, dmax=dmax)
-            fmult = 10**-mult
-        else:
-            # Use step to generate the levels
-            step = plotvars.levels_step
-            dmin = np.nanmin(field)
-            dmax = np.nanmax(field)
-            if isinstance(step, int):
-                dmin = int(np.nanmin(field))
-                dmax = int(np.nanmax(field))
-            fmult = 1
-            mult = 0
-            clevs = []
-            if dmin < 0:
-               clevs = ((np.arange(-1*dmin/step+1)*-step)[::-1])
-            if dmax > 0:
-                if np.size(clevs) > 0:
-                    clevs = np.concatenate((clevs[:-1], np.arange(dmax/step+1)*step))
-                else:
-                    clevs = np.arange(dmax/step+1)*step
-
-            # Strip out any outlying values
-            pts = np.where(np.logical_and(clevs >= dmin, clevs <= dmax))
-            clevs = clevs[pts]
-
-            # Throw an error if less than two levels
-            if np.size(clevs) < 2:
-                errstr = "\n\ncfp.con error - need more than two levels "
-                errstr += "to make a contour plot\n"
-                raise TypeError(errstr)
-
-            
+    clevs, mult, fmult = calculate_levels(dmin=np.nanmin(field), 
+                                          dmax=np.nanmax(field),
+                                          level_spacing=level_spacing,
+                                          verbose=verbose)
 
 
-    # Test for large numer of decimal places and fix if necessary
-    if plotvars.levels is None:
-        if isinstance(clevs[0], float):
-            clevs = fix_floats(clevs)
+
+
+
 
 
     # Set the colour scale
@@ -1813,6 +1771,17 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
             gopen(user_plot=0)
         user_gset = plotvars.user_gset
 
+
+        # Set axis labels to None
+        xplotlabel = None
+        yplotlabel = None 
+
+        cf_field = False
+        if f is not None:
+            if isinstance(f, cf.Field):
+                cf_field = True
+
+
         # Work out axes if none are supplied
         if any(val is None for val in [
                plotvars.xmin, plotvars.xmax, plotvars.ymin, plotvars.ymax]):
@@ -1826,39 +1795,112 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
             ymin = plotvars.ymin
             ymax = plotvars.ymax
 
-        xstep = (xmax - xmin) / 10.0
-        ystep = (ymax - ymin) / 10.0
 
-        # Set plot limits and set default plot labels
-        gset(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax, user_gset=user_gset)
+        # Change from date string to a number if strings are passed
+        time_xstr = False
+        time_ystr = False
 
-        xaxisticks = gvals(
-            dmin=xmin,
-            dmax=xmax,
-            mystep=(
-                xmax -
-                xmin) /
-            10.0,
-            mod=False)[0]
-        xaxislabels = xaxisticks
-        if ymin < ymax:
-            yaxisticks = gvals(
-                dmin=ymin, dmax=ymax, mystep=(
-                    ymax - ymin) / 10.0, mod=False)[0]
-        if ymax < ymin:
-            yaxisticks = gvals(
-                dmin=ymax, dmax=ymin, mystep=(
-                    ymin - ymax) / 10.0, mod=False)[0]
-        yaxislabels = yaxisticks
+        try:
+            float(xmin)
+        except:
+            time_xstr = True
+        try:
+            float(ymin)
+        except:
+            time_ystr = True
+
+
+
+
+
+        xaxisticks = None
+        yaxisticks = None
+        xtimeaxis = False
+        ytimeaxis = False
+
+
+
+        if cf_field and f.has_construct('T'):
+            if np.size(f.construct('T').array) > 1:
+
+                taxis = f.construct('T')
+
+
+                data_axes = f.get_data_axes()
+                count = 1
+                for d in data_axes:
+                    i = f.constructs.domain_axis_identity(d)
+                    try:
+                        c = f.coordinate(i)
+                        if np.size(c.array) > 1:
+                            test_for_time_axis = False
+                            sn = getattr(c, 'standard_name', 'NoName')
+                            an = c.get_property('axis', 'NoName')
+                            if (sn == 'time' or an == 'T'):
+                                test_for_time_axis = True
+
+                            if count == 1:
+                                if test_for_time_axis:
+                                    ytimeaxis = True
+                            elif count == 2:
+                                 if test_for_time_axis:
+                                    xtimeaxis = True
+                            count += 1
+                    except ValueError:
+                        print("no sensible coordinates for this axis")
+
+
+                if time_xstr or time_ystr:
+                    ref_time = f.construct('T').units
+                    ref_calendar = f.construct('T').calendar
+                    ref_time_origin = str(f.construct('T').Units.reftime)
+                    time_units = cf.Units(ref_time, ref_calendar)
+
+                    if time_xstr:
+                        t = cf.Data(cf.dt(xmin), units=time_units)
+                        xmin = t.array
+                        t = cf.Data(cf.dt(xmax), units=time_units)
+                        xmax = t.array
+                        taxis = cf.Data([xmin, xmax], units=time_units)
+                        taxis.calendar=ref_calendar
+
+                    if time_ystr:
+                        t = cf.Data(cf.dt(ymin), units=time_units)
+                        ymin = t.array
+                        t = cf.Data(cf.dt(ymax), units=time_units)
+                        ymax = t.array
+                        taxis = cf.Data([ymin, ymax], units=time_units)
+                        taxis.calendar=ref_calendar
+
+
+                if xtimeaxis:
+                    xaxisticks, xaxislabels, xplotlabel = timeaxis(taxis)
+                if ytimeaxis:
+                    yaxisticks, yaxislabels, yplotlabel = timeaxis(taxis)
+
+
+
+        if xaxisticks is None:
+            xaxisticks = gvals(dmin=xmin, dmax=xmax, mod=False)[0]
+            xaxislabels = xaxisticks
+
+        if yaxisticks is None:
+            yaxisticks = gvals(dmin=ymax, dmax=ymin, mod=False)[0]
+            yaxislabels = yaxisticks
 
         if user_xlabel is not None:
             xplotlabel = user_xlabel
         else:
-            xplotlabel = ''
+            if xplotlabel is None:
+                xplotlabel = xlabel
         if user_ylabel is not None:
             yplotlabel = user_ylabel
         else:
-            yplotlabel = ''
+            if yplotlabel is None:
+                yplotlabel = ylabel
+
+
+
 
         # Draw axes
         if axes:
@@ -1889,6 +1931,22 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
             ylabel = ''
 
 
+        # Swap axes if requested
+        if swap_axes:
+            x, y = y, x
+            field = np.flipud(np.rot90(field))
+            xmin, ymin = ymin, xmin
+            xmax, ymax = ymax, xmax
+            xplotlabel, yplotlabel = yplotlabel, xplotlabel
+            xaxisticks, yaxisticks = yaxisticks, xaxisticks
+            xaxislabels, yaxislabels = yaxislabels, xaxislabels
+
+
+
+        # Set plot limits and set default plot labels
+        gset(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax, user_gset=user_gset)
+
+        # Draw axes
         axes_plot(xticks=xaxisticks, xticklabels=xaxislabels,
                   yticks=yaxisticks, yticklabels=yaxislabels,
                   xlabel=xplotlabel, ylabel=yplotlabel)
@@ -2506,10 +2564,9 @@ def timeaxis(dtimes=None):
 
         not_found = 0
         hour_counter = 0
-        #span = 0
         axis_label = 'Time (hour)'
         if span >= 24:
-            axis_label = 'Time (day and hour)'
+            axis_label = 'Time'
         time_ticks = []
         time_labels = []
 
@@ -2517,11 +2574,10 @@ def timeaxis(dtimes=None):
             mytime = cf.Data(myday, dtimes.Units) + cf.Data(hour_counter, 'hour')
             if mytime >= tmin and mytime <= tmax:
                 time_ticks.append(np.min(mytime.array))
-                #label = str(mytime.year) + '-' + \
-                #    str(mytime.month) + '-' + str(mytime.day)
-               
                 label = str(mytime.year) + '-' + str(mytime.month) + '-' +\
-                        str(mytime.day)+ ' ' + str(mytime.hour) + ':00:00'
+                        str(mytime.day)
+                if (hour_counter/24 != int(hour_counter/24)):
+                    label += ' ' + str(mytime.hour) + ':00:00'
                 time_labels.append(label)
             else:
                 not_found = not_found + 1
@@ -3329,7 +3385,7 @@ def gvals(dmin=None, dmax=None, mystep=None, mod=True):
 
     # Return some values if dmin1 = dmax1
     if dmin1 == dmax1:
-        vals = [dmin1 - 0.001, dmin1, dmin1 + 0.001]
+        vals = np.array([dmin1 - 0.001, dmin1, dmin1 + 0.001])
         mult = 0
         return vals, mult    
 
@@ -3831,8 +3887,18 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None, rotated_vect=False
         has_time = 1
 
 
+
+
     # assign field data
     field = np.squeeze(f.array)
+
+    # Change Boolean data to integer
+    if str(f.dtype) == 'bool':
+        warnstr ='\n\n\n Warning - boolean data found - converting to integer\n\n\n'
+        print(warnstr)
+        g = deepcopy(f)
+        g.dtype = int
+        field=np.squeeze(g.array)
 
     # Check what plot type is required.
     # 0=simple contour plot, 1=map plot, 2=latitude-height plot,
@@ -3894,6 +3960,8 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None, rotated_vect=False
         y = time
 
 
+
+
     # Rotated pole
     if f.ref('rotated_latitude_longitude', False):
         ptype = 6
@@ -3923,27 +3991,33 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None, rotated_vect=False
 
         
     # Extract auxiliary lons and lats if they exist
-    if plotvars.proj != 'rotated' and not rotated_vect:
-        has_lons = False
-        has_lats = False
-        for mydim in list(f.auxiliary_coordinates()):
-            name = cf_var_name(field=f, dim=mydim)
-            if name in ['longitude']:
-                x = np.squeeze(f.construct(mydim).array)
-                has_lons = True
-            if name in ['latitude']:
-                y = np.squeeze(f.construct(mydim).array)
-                has_lats = True
+    if ptype == 1:
+        if plotvars.proj != 'rotated' and not rotated_vect:
+            has_lons = False
+            has_lats = False
+            for mydim in list(f.auxiliary_coordinates()):
+                name = cf_var_name(field=f, dim=mydim)
+                if name in ['longitude']:
+                    x = np.squeeze(f.construct(mydim).array)
+                    has_lons = True
+                if name in ['latitude']:
+                    y = np.squeeze(f.construct(mydim).array)
+                    has_lats = True
 
-            if not has_lons or not has_lats:
-                # Generate the grid using the x and y from above
-                xvals, yvals = np.meshgrid(x, y)
+                if not has_lons or not has_lats:
+                #if has_lons and has_lats:
 
-            x = xvals
-            y = yvals
+                    # Generate the grid using the x and y from above
+                    xvals, yvals = np.meshgrid(x, y)
 
-        if has_lons and has_lats:
-            ptype = 1
+                    #x = xvals
+                    #y = yvals
+
+                x = xvals
+                y = yvals
+
+
+
 
 
 
@@ -4019,18 +4093,36 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None, rotated_vect=False
     # None of the above
     if ptype is None:
         ptype = 0
-        for mydim in list(f.dimension_coordinates()):
-            if np.size(np.squeeze(f.construct(mydim).array)
-                       ) == np.shape(np.squeeze(f.array))[1]:
-                x = np.squeeze(f.construct(mydim).array)
-                xunits = str(getattr(f.construct(mydim), 'units', ''))
-                xlabel = cf_var_name(field=f, dim=mydim) + xunits
 
-            if np.size(np.squeeze(f.construct(mydim).array)
-                       ) == np.shape(np.squeeze(f.array))[0]:
-                y = np.squeeze(f.construct(mydim).array)
-                yunits = str(getattr(f.construct(mydim), 'Units', ''))
-                ylabel = cf_var_name(field=f, dim=mydim) + yunits
+
+        data_axes = f.get_data_axes()
+        count = 1
+        for d in data_axes:
+            i = f.constructs.domain_axis_identity(d)
+            try:
+                c = f.coordinate(i)
+                if np.size(c.array) > 1:
+                    if count == 1:
+                        y = c
+                    elif count == 2:
+                        x = c
+                    count += 1
+            except ValueError:
+                print("/n/ncf-plot - no sensible coordinates for this axis/n/n")
+                print(c, "/n/n")
+
+
+        #if count == 3:
+        #    print('x is ', x)
+        #    print('y is ', y)
+        #else:
+        #    print('/n/ncf-plot data assign error/n/n')
+
+
+        xunits = str(getattr(f.construct(mydim), 'units', ''))
+        xlabel = cf_var_name(field=f, dim=mydim) + xunits
+        yunits = str(getattr(f.construct(mydim), 'Units', ''))
+        ylabel = cf_var_name(field=f, dim=mydim) + yunits
 
     # Assign colorbar_title
     if (colorbar_title is None):
@@ -6243,7 +6335,7 @@ def setvars(file=None, title_fontsize=None, text_fontsize=None,
      | axis_label_fontweight='normal' - axis font weight
      | legend_text_size='11' - legend text size
      | legend_text_weight='normal' - legend text weight
-     | colorbar_textsize='11' - colorbar text size
+     | colorbar_fontsize='11' - colorbar text size
      | colorbar_fontweight='normal' - colorbar font weight
      | legend_text_weight='normal' - legend text weight
      | master_title_fontsize=30 - master title font size
@@ -6252,7 +6344,7 @@ def setvars(file=None, title_fontsize=None, text_fontsize=None,
      | continent_color='k' - default='k' (black)
      | continent_linestyle='solid' - default='k' (black)
      | viewer='display' - use ImageMagick display program
-     |                    'matplotlib' to use image widget to view the picture.  
+     |                    'matplotlib' to use image widget to view the picture  
      | tspace_year=None - time axis spacing in years
      | tspace_month=None - time axis spacing in months
      | tspace_day=None - time axis spacing in days
@@ -6637,9 +6729,6 @@ def rgaxes(xpole=None, ypole=None, xvec=None, yvec=None,
         lats = -90 + np.arange(180 / spacing + 1) * spacing
     else:
         lats=yticks
-
-    # print('ajh - lons are', lons)
-    # print('ajh - lats are ', lats)
                                 
     # Work out how far from plot to plot the longitude and latitude labels
     xlim = plotvars.plot.get_xlim()
@@ -6664,8 +6753,6 @@ def rgaxes(xpole=None, ypole=None, xvec=None, yvec=None,
                 xout = np.array(points)[:, 0]
                 yout = np.array(points)[:, 1]
 
-
-                #print('ajh - yvec is ', yvec)
                 xpts, ypts = vloc(lons=xout, lats=yout, xvec=xvec, yvec=yvec)
                 if grid:
                     plotvars.plot.plot(xpts, ypts, ':', linewidth=grid_thickness,
@@ -6747,7 +6834,7 @@ def rgaxes(xpole=None, ypole=None, xvec=None, yvec=None,
 
 
 def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
-             title=None, ptype=0, linestyle='-', linewidth=1.0, color='k',
+             title=None, ptype=0, linestyle='-', linewidth=1.0, color=None,
              xlog=False, ylog=False, verbose=None, swap_xy=False,
              marker=None, markersize=5.0, markeredgecolor = 'k',
              markeredgewidth=0.5, label=None,
@@ -6769,7 +6856,7 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
     | x - x locations of data in y
     | y - y locations of data in x
     | linestyle='-' - line style
-    | color='k - line color
+    | color=None - line color.  Defaults to Matplotlib colour scheme unless specified
     | linewidth=1.0 - line width
     | marker=None - marker for points along the line
     | markersize=5.0 - size of the marker
@@ -7185,6 +7272,9 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
     if lines is False:
         linewidth = 0.0
 
+    colorarg = {}
+    if color is not None:
+        colorarg={'color' : color}
 
     graph=plotvars.plot
 
@@ -7223,7 +7313,7 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
                                  fontweight=plotvars.axis_label_fontweight)
 
 
-    graph.plot(xpts, ypts, color=color, linestyle=linestyle,
+    graph.plot(xpts, ypts, **colorarg, linestyle=linestyle,
                        linewidth=linewidth, marker=marker,
                        markersize=markersize,
                        markeredgecolor=markeredgecolor, 
@@ -8444,8 +8534,9 @@ def cbar(labels = None,
     plotvars.norm = matplotlib.colors.BoundaryNorm(
         boundaries = levs, ncolors=ncolors)
 
-    # Needs testing
+    # Change boundaries to floats
     boundaries=levs.astype(float)
+
 
 
     # Add colorbar extensions if definded by levs.  Using boundaries[0]-1
@@ -8524,7 +8615,7 @@ def cbar(labels = None,
                 mid_point = (lbot[i+1]-lbot[i])/2.0+lbot[i]
                 lbot_new.append(mid_point) 
             lbot = lbot_new
-            print('lbot is', lbot)
+
 
 
         colorbar = matplotlib.colorbar.ColorbarBase(ax1, cmap=cmap,
@@ -8708,9 +8799,9 @@ def plot_map_axes(axes=None, xaxis=None, yaxis=None,
     """
     | plot_map_axes is an internal routine to draw the axes on a map plot
     |
-    | axes=None - Boolean for drawing axes
-    | xaxis=None - Boolean for drawing x-axis
-    | yaxis=None - Boolean for drawing x-axis
+    | axes=None - drawing axes
+    | xaxis=None - drawing x-axis
+    | yaxis=None - drawing x-axis
     | xticks=None - user defined xticks
     | xticklabels=None - user defined xtick labels
     | yticks=None - user defined yticks
@@ -9247,6 +9338,88 @@ def fix_floats(data):
 
 
     return(data)
+
+
+
+def calculate_levels(dmin=None, dmax=None, level_spacing=None, verbose=None):
+
+
+    includes_zero = 0
+    strip_outliers = True
+    if plotvars.user_levs == 1:
+        # User defined
+        if verbose:
+            print('cfp.calculate_levels - using user defined contour levels')
+        clevs = plotvars.levels
+        mult = 0
+        fmult = 1
+    else:
+        if plotvars.levels_step is None:
+            # Automatic levels
+            mult = 0
+            fmult = 1
+            if verbose:
+                print('cfp.calculate_levels - generating automatic contour levels')
+            if level_spacing =='linear':
+                clevs, mult = gvals(dmin=dmin, dmax=dmax)
+                fmult = 10**-mult
+                strip_outliers = False
+            if level_spacing == 'log':
+                clevs=[]
+                for i in np.arange(61):
+                    val = 10**(i-30.)
+                    clevs.append("{:.0e}".format(val))
+                clevs = np.float64(clevs)
+            if level_spacing == 'loglike':
+                clevs=[]
+                for i in np.arange(61):
+                    val = 10**(i-30.)
+                    clevs.append("{:.0e}".format(val))
+                    clevs.append("{:.0e}".format(val*2))
+                    clevs.append("{:.0e}".format(val*5))
+                clevs = np.float64(clevs)
+
+        else:
+            # Use step to generate the levels
+            print('cfp.calculate_levels - using specified step to generate automatic contour levels')
+
+            step = plotvars.levels_step
+            if isinstance(step, int):
+                dmin = int(dmin)
+                dmax = int(dmax)
+            fmult = 1
+            mult = 0
+            clevs = []
+            if dmin < 0:
+               clevs = ((np.arange(-1*dmin/step+1)*-step)[::-1])
+            if dmax > 0:
+                if np.size(clevs) > 0:
+                    clevs = np.concatenate((clevs[:-1], np.arange(dmax/step+1)*step))
+                else:
+                    clevs = np.arange(dmax/step+1)*step
+
+    # Strip any outliers
+    if strip_outliers:
+        pts = np.where(np.logical_and(clevs >= dmin, clevs <= dmax))
+        clevs = clevs[pts]
+
+    # Throw an error if less than two levels
+    if np.size(clevs) < 2:
+        errstr = "\n\n\ncfp.calculate_levels error - need more than two levels "
+        errstr += "to make a contour plot\n"
+        errstr += "levels calculated are " + str(clevs)
+        errstr += "\n\n\n"
+        raise TypeError(errstr)
+
+
+
+    # Test for large numer of decimal places and fix if necessary
+    if plotvars.levels is None:
+        if isinstance(clevs[0], float):
+            clevs = fix_floats(clevs)
+
+
+    return(clevs, mult, fmult)
 
 
 
