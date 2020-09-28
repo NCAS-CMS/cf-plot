@@ -219,7 +219,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
         colorbar_text_down_up=False, colorbar_drawedges=True,
         colorbar_fraction=None, colorbar_thick=None,
         colorbar_anchor=None, colorbar_labels=None,
-        linestyles=None, zorder=None, level_spacing='linear'):
+        linestyles=None, zorder=1, level_spacing='linear'):
     """
      | con is the interface to contouring in cf-plot. The minimum use is con(f)
      | where f is a 2 dimensional array. If a cf field is passed then an
@@ -255,7 +255,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
      |                      for polar stereographic plots this is vertical.
      | colorbar_shrink=None - value to shrink the colorbar by.  If the colorbar
      |                        exceeds the plot area then values of 1.0, 0.55
-     |                        or 0.5m ay help it better fit the plot area.
+     |                        or 0.5m may help it better fit the plot area.
      | colorbar_position=None - position of colorbar
      |                          [xmin, ymin, x_extent,y_extent] in normalised
      |                          coordinates. Use when a common colorbar
@@ -300,7 +300,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
      |                   lines or array of widths
      | linestyles=None - takes 'solid', 'dashed', 'dashdot' or 'dotted'
      | alpha=1.0 - transparency setting.  The default is no transparency.
-     | zorder=None - order of drawing
+     | zorder=1 - order of drawing
      | level_spacing='linear' - Default of linear level spacing.  Also takes 'log', 'loglike'
      :Returns:
       None
@@ -406,6 +406,9 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
     # Set size of color bar if not specified
     if colorbar_shrink is None:
         colorbar_shrink = 1.0
+        if plotvars.proj == 'npstere' or plotvars.proj == 'spstere':
+            colorbar_shrink = 0.8
+
 
     # Set plot type if user specified
     if (ptype is not None):
@@ -732,8 +735,9 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                 fmt = '%d'
                 if nd != 0:
                     fmt = '%1.' + str(nd) + 'f'
-                plotvars.plot.clabel(cs, fmt=fmt, colors=colors,
+                plotvars.plot.clabel(cs, levels=clevs, fmt=fmt, zorder=zorder, colors=colors,
                                      fontsize=text_fontsize)
+
 
             # Thick zero contour line
             if zero_thick:
@@ -1072,11 +1076,8 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                 fmt = '%d'
                 if nd != 0:
                     fmt = '%1.' + str(nd) + 'f'
-                plotvars.plot.clabel(
-                    cs,
-                    fmt=fmt,
-                    colors=colors,
-                    fontsize=text_fontsize)
+                plotvars.plot.clabel(cs,fmt=fmt,colors=colors, zorder=zorder,
+                                     fontsize=text_fontsize)
 
                 # Thick zero contour line
                 if zero_thick:
@@ -1327,7 +1328,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                 fmt = '%d'
                 if nd != 0:
                     fmt = '%1.' + str(nd) + 'f'
-                plotvars.plot.clabel(cs, fmt=fmt, colors=colors,
+                plotvars.plot.clabel(cs, fmt=fmt, colors=colors, zorder=zorder,
                                      fontsize=text_fontsize)
 
                 # Thick zero contour line
@@ -1468,7 +1469,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                 fmt = '%d'
                 if nd != 0:
                     fmt = '%1.' + str(nd) + 'f'
-                plot.clabel(cs, fmt=fmt, colors=colors,
+                plot.clabel(cs, fmt=fmt, colors=colors, zorder=zorder,
                             fontsize=text_fontsize)
 
             # Thick zero contour line
@@ -1753,7 +1754,8 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                 fmt = '%d'
                 if nd != 0:
                     fmt = '%1.' + str(nd) + 'f'
-                plotvars.plot.clabel(cs, fmt=fmt, colors=colors, fontsize=text_fontsize)
+                plotvars.plot.clabel(cs, fmt=fmt, colors=colors, zorder=zorder,
+                                     fontsize=text_fontsize)
 
             # Thick zero contour line
             if zero_thick:
@@ -2754,7 +2756,8 @@ def gclose(view=True):
         if type is None:
             file = file + '.png'
         plotvars.master_plot.savefig(
-            file, papertype='a4', orientation=plotvars.orientation, dpi=plotvars.dpi)
+            #file, papertype='a4', orientation=plotvars.orientation, dpi=plotvars.dpi)
+            file, orientation=plotvars.orientation, dpi=plotvars.dpi)
         plot.close()
     else:
         if plotvars.viewer == 'display' and interactive is False:
@@ -2763,7 +2766,8 @@ def gclose(view=True):
             if disp is not None:
                 tfile = 'cfplot.png'
                 plotvars.master_plot.savefig(
-                    tfile, papertype='a4', orientation=plotvars.orientation, dpi=plotvars.dpi)
+                    #tfile, papertype='a4', orientation=plotvars.orientation, dpi=plotvars.dpi)
+                    tfile, orientation=plotvars.orientation, dpi=plotvars.dpi)
                 matplotlib.pyplot.ioff()
                 subprocess.Popen([disp, tfile])
             else:
@@ -4095,7 +4099,7 @@ def regrid(f=None, x=None, y=None, xnew=None, ynew=None):
 
 def stipple(f=None, x=None, y=None, min=None, max=None,
             size=80, color='k', pts=50, marker='.', edgecolors='k',
-            alpha=1.0, ylog=False, zorder=None):
+            alpha=1.0, ylog=False, zorder=1):
     """
      | stipple - put markers on a plot to indicate value of interest
      |
@@ -4112,7 +4116,7 @@ def stipple(f=None, x=None, y=None, min=None, max=None,
      | alpha=1.0 - transparency setting - default is off
      | ylog=False - set to True if a log pressure stipple plot
      |              is required
-     | zorder=None - plotting order
+     | zorder=2 - plotting order
      |
      |
      :Returns:
@@ -4332,7 +4336,7 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,
          pivot='middle', key_location=[0.95, -0.06], key_show=True, axes=True,
          xaxis=True, yaxis=True, xticks=None, xticklabels=None, yticks=None,
          yticklabels=None, xlabel=None, ylabel=None, ylog=False, color='k',
-         zorder=None):
+         zorder=1):
     """
      | vect - plot vectors
      |
@@ -4389,7 +4393,7 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,
      | ylabel=None - label for y axis
      | ylog=False - log y axis
      | color='k' - colour for the vectors - default is black.
-     | zorder=None - plotting order
+     | zorder=3 - plotting order
      |
      :Returns:
       None
