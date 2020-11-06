@@ -1,6 +1,6 @@
 """
 Climate contour/vector plots using cf-python, matplotlib and cartopy.
-Andy Heaps NCAS-CMS August 2020
+Andy Heaps NCAS-CMS November 2020
 """
 import numpy as np
 import subprocess
@@ -190,7 +190,7 @@ plotvars = pvars(lonmin=-180, lonmax=180, latmin=-90, latmax=90, proj='cyl',
                  grid_thickness=1.0, aspect='equal',
                  graph_xmin=None, graph_xmax=None,
                  graph_ymin=None, graph_ymax=None,
-                 level_spacing='linear')
+                 level_spacing=None, tight=False)
 
 # Check for iPython notebook inline
 # and set the viewer to None if found
@@ -219,7 +219,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
         colorbar_text_down_up=False, colorbar_drawedges=True,
         colorbar_fraction=None, colorbar_thick=None,
         colorbar_anchor=None, colorbar_labels=None,
-        linestyles=None, zorder=1, level_spacing='linear'):
+        linestyles=None, zorder=1, level_spacing=None):
     """
      | con is the interface to contouring in cf-plot. The minimum use is con(f)
      | where f is a 2 dimensional array. If a cf field is passed then an
@@ -301,7 +301,8 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
      | linestyles=None - takes 'solid', 'dashed', 'dashdot' or 'dotted'
      | alpha=1.0 - transparency setting.  The default is no transparency.
      | zorder=1 - order of drawing
-     | level_spacing='linear' - Default of linear level spacing.  Also takes 'log', 'loglike'
+     | level_spacing=None - Default of 'linear' level spacing.  Also takes 'log', 'loglike',
+     |                      'outlier' and 'inspect'
      :Returns:
       None
 
@@ -415,9 +416,15 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
         plotvars.plot_type = ptype
 
     # Get contour levels if none are defined
+    spacing = 'linear'
+    if plotvars.level_spacing is not None:
+        spacing = plotvars.level_spacing
+    if level_spacing is not None: 
+        spacing = level_spacing
+
     if plotvars.levels is None:
         clevs, mult, fmult = calculate_levels(field=field,
-                                              level_spacing=level_spacing,
+                                              level_spacing=spacing,
                                               verbose=verbose)
     else:
         clevs = plotvars.levels
@@ -2741,6 +2748,11 @@ def gclose(view=True):
     if matplotlib.is_interactive():
         interactive = True
 
+    # Remove whitespace if requested
+    saveargs = {}
+    if plotvars.tight:
+        saveargs = {'bbox_inches': 'tight'}
+
     file = plotvars.file
     if file is not None:
         # Save a file
@@ -2756,8 +2768,7 @@ def gclose(view=True):
         if type is None:
             file = file + '.png'
         plotvars.master_plot.savefig(
-            #file, papertype='a4', orientation=plotvars.orientation, dpi=plotvars.dpi)
-            file, orientation=plotvars.orientation, dpi=plotvars.dpi)
+            file, orientation=plotvars.orientation, dpi=plotvars.dpi, **saveargs)
         plot.close()
     else:
         if plotvars.viewer == 'display' and interactive is False:
@@ -2766,8 +2777,7 @@ def gclose(view=True):
             if disp is not None:
                 tfile = 'cfplot.png'
                 plotvars.master_plot.savefig(
-                    #tfile, papertype='a4', orientation=plotvars.orientation, dpi=plotvars.dpi)
-                    tfile, orientation=plotvars.orientation, dpi=plotvars.dpi)
+                    tfile, orientation=plotvars.orientation, dpi=plotvars.dpi, **saveargs)
                 matplotlib.pyplot.ioff()
                 subprocess.Popen([disp, tfile])
             else:
@@ -3001,7 +3011,7 @@ def gvals(dmin=None, dmax=None, mystep=None, mod=True):
 
     # Return some values if dmin1 = dmax1
     if dmin1 == dmax1:
-        vals = np.array([dmin1 - 0.001, dmin1, dmin1 + 0.001])
+        vals = np.array([dmin1 - 1, dmin1, dmin1 + 1])
         mult = 0
         return vals, mult
 
@@ -5486,7 +5496,8 @@ def setvars(file=None, title_fontsize=None, text_fontsize=None,
             legend_frame_edge_color=None, legend_frame_face_color=None,
             degsym=None, axis_width=None, grid=None,
             grid_spacing=None,
-            grid_colour=None, grid_linestyle=None, grid_thickness=None):
+            grid_colour=None, grid_linestyle=None, grid_thickness=None,
+            tight=None, level_spacing=None):
     """
      | setvars - set plotting variables and their defaults
      |
@@ -5541,6 +5552,9 @@ def setvars(file=None, title_fontsize=None, text_fontsize=None,
      | grid_colour='k' - grid colour
      | grid_linestyle='--' - grid line style
      | grid_thickness=1.0 - grid thickness
+     | tight=False - remove whitespace around the plot
+     | level_spacing=None - default contour level spacing - takes 'linear', 'log', 'loglike', 
+     |                      'outlier' and 'inspect'
      |
      | Use setvars() to reset to the defaults
      |
@@ -5568,7 +5582,7 @@ def setvars(file=None, title_fontsize=None, text_fontsize=None,
             rotated_labels, colorbar_fontsize, colorbar_fontweight,
             legend_frame, legend_frame_edge_color, legend_frame_face_color,
             degsym, axis_width, grid, grid_spacing,
-            grid_colour, grid_linestyle, grid_thickness]
+            grid_colour, grid_linestyle, grid_thickness, tight, level_spacing]
     if all(val is None for val in vals):
         plotvars.file = None
         plotvars.title_fontsize = 15
@@ -5620,6 +5634,8 @@ def setvars(file=None, title_fontsize=None, text_fontsize=None,
         plotvars.grid_linestyle = '--'
         plotvars.grid_thickness = 1.0
         matplotlib.pyplot.ioff()
+        plotvars.tight = False
+        plotvars.level_spacing = None
 
     if file is not None:
         plotvars.file = file
@@ -5717,7 +5733,10 @@ def setvars(file=None, title_fontsize=None, text_fontsize=None,
         plotvars.grid_linestyle = grid_linestyle
     if grid_thickness is not None:
         plotvars.grid_thickness = grid_thickness
-
+    if tight is not None:
+        plotvars.tight = tight
+    if level_spacing is not None:
+        plotvars.level_spacing = level_spacing
 
 def vloc(xvec=None, yvec=None, lons=None, lats=None):
     """
@@ -6079,9 +6098,19 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
                 errstr += "received " + str(np.squeeze(f.data).ndim) + " dimensions\n\n"
                 raise TypeError(errstr)
 
+            if x is not None:
+                if isinstance(x, cf.Field):
+                    errstr = "\n\ncfp.lineplot error - two or more cf-fields passed for plotting.\n"
+                    errstr += "To plot two cf-fields open a graphics plot with cfp.gopen(), \n"
+                    errstr += "plot the two fields separately with cfp.lineplot and then close\n"
+                    errstr += "the graphics plot with cfp.gclose()\n\n"
+                    raise TypeError(errstr)
+
         elif isinstance(f, cf.FieldList):
             errstr = "\n\ncfp.lineplot - cannot plot a field list\n\n"
             raise TypeError(errstr)
+
+
 
     plot_xlabel = ''
     plot_ylabel = ''
@@ -6402,6 +6431,12 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
 
     if plotvars.twiny:
         graph = graph.twiny()
+
+    # Reset y limits if minx = maxy
+    if plotvars.xmin is None:
+        if miny == maxy:
+            miny = miny - 1.0
+            maxy = maxy + 1.0
 
     graph.axis([minx, maxx, miny, maxy])
     graph.tick_params(direction='out', which='both', right=True, top=True)
@@ -7362,14 +7397,22 @@ def traj(f=None, title=None, ptype=0, linestyle='-', linewidth=1.0, linecolor='b
             ypts = lats[track, :]
             data2 = data[track, :]
 
+
+
             for i in np.arange(np.size(levs)-1):
                 color = plotvars.cs[i]
-                pts = np.where(np.logical_and(data2 >= levs[i], data2 <= levs[i+1]))
+
+                if np.ma.is_masked(data2):
+                    pts = np.ma.where(np.logical_and(data2 >= levs[i], data2 <= levs[i+1]))
+                else:
+                    pts = np.where(np.logical_and(data2 >= levs[i], data2 <= levs[i+1]))
+
                 if zorder is None:
                     plot_zorder = 101
                 else:
                     plot_zorder = zorder
                 if np.size(pts) > 0:
+
                     mymap.scatter(xpts[pts], ypts[pts],
                                   s=markersize*15,
                                   c=color,
@@ -8307,7 +8350,13 @@ def calculate_levels(field=None, level_spacing=None, verbose=None):
     dmin = np.nanmin(field)
     dmax = np.nanmax(field)
 
-    strip_outliers = True
+    tight = True
+
+    field2 = deepcopy(field)
+
+
+
+
     if plotvars.user_levs == 1:
         # User defined
         if verbose:
@@ -8322,11 +8371,36 @@ def calculate_levels(field=None, level_spacing=None, verbose=None):
             fmult = 1
             if verbose:
                 print('cfp.calculate_levels - generating automatic contour levels')
+
+            if level_spacing == 'outlier' or level_spacing == 'inspect':
+                hist = np.histogram(field, 100)[0]
+                pts = np.size(field)
+                rate = 0.01
+                outlier_detected = False
+
+                if sum(hist[1:-2]) ==0:
+                    if hist[0] / hist[-1] < rate:
+                        outlier_detected = True
+                        pts = np.where(field == dmin)
+                        field2[pts] = dmax
+                        dmin = np.nanmin(field2)
+                            
+                    if hist[-1] / hist[0] < rate:
+                        outlier_detected = True
+                        pts = np.where(field == dmax)
+                        field2[pts] = dmin
+                        dmax = np.nanmax(field2)
+                            
+                clevs, mult = gvals(dmin=dmin, dmax=dmax)
+                fmult = 10**-mult
+                tight = False
+
             if level_spacing == 'linear':
                 clevs, mult = gvals(dmin=dmin, dmax=dmax)
                 fmult = 10**-mult
-                strip_outliers = False
-            if level_spacing == 'log':
+                tight = False
+
+            if level_spacing == 'log' or level_spacing == 'loglike':
 
                 if dmin < 0.0 and dmax < 0.0:
                     dmin1 = abs(dmax)
@@ -8343,14 +8417,24 @@ def calculate_levels(field=None, level_spacing=None, verbose=None):
                     pts = np.where(field > 0.0)
                     close_above = np.min(field[pts])
                     dmin1 = min(abs(close_below), close_above)
-                    print('close_min, close_max, dmin1 are', close_below, close_above, dmin1)
 
-                clevs = []
-                for i in np.arange(31):
-                    val = 10**(i-30.)
-                    clevs.append("{:.0e}".format(val))
+                # Generate levels 
+                if level_spacing == 'log':
+                    clevs = []
+                    for i in np.arange(31):
+                        val = 10**(i-30.)
+                        clevs.append("{:.0e}".format(val))
 
-                # Strip any outliers
+                if level_spacing == 'loglike':
+                    clevs = []
+                    for i in np.arange(61):
+                        val = 10**(i-30.)
+                        clevs.append("{:.0e}".format(val))
+                        clevs.append("{:.0e}".format(val*2))
+                        clevs.append("{:.0e}".format(val*5))
+                    clevs = np.float64(clevs)
+
+                # Remove out of range levels
                 clevs = np.float64(clevs)
                 pts = np.where(np.logical_and(clevs >= abs(dmin1), clevs <= abs(dmax1)))
                 clevs = clevs[pts]
@@ -8361,19 +8445,10 @@ def calculate_levels(field=None, level_spacing=None, verbose=None):
                 if dmin <= 0.0 and dmax >= 0.0:
                     clevs = np.concatenate([-1.0*clevs[::-1], [0.0], clevs])
 
-            if level_spacing == 'loglike':
-                clevs = []
-                for i in np.arange(61):
-                    val = 10**(i-30.)
-                    clevs.append("{:.0e}".format(val))
-                    clevs.append("{:.0e}".format(val*2))
-                    clevs.append("{:.0e}".format(val*5))
-                clevs = np.float64(clevs)
-
     # Use step to generate the levels
     if plotvars.levels_step is not None:
         if verbose:
-            print('calculate_levels - using specified step to generatecontour levels')
+            print('calculate_levels - using specified step to generate contour levels')
 
         step = plotvars.levels_step
 
@@ -8394,12 +8469,12 @@ def calculate_levels(field=None, level_spacing=None, verbose=None):
         if isinstance(step, int):
             clevs = clevs.astype(int)
 
-    # Strip any outliers
-    if strip_outliers:
+    # Remove any out of data range values
+    if tight:
         pts = np.where(np.logical_and(clevs >= dmin, clevs <= dmax))
         clevs = clevs[pts]
 
-    # Add an extra level if less than two levels are present
+    # Add an extra contour level if less than two levels are present
     if np.size(clevs) < 2:
         clevs.append(clevs[0]+0.001)
 
