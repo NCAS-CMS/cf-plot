@@ -525,6 +525,11 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
     else:
         cbar_labels = clabels
 
+    # Turn off line_labels if the field is all the same
+    # Matplotlib 3.2.2 throws an error if there are no line labels
+    if np.nanmin(field) == np.nanmax(field):
+        line_labels = False
+
     # Add mult to colorbar_title if used
     if (colorbar_title is None):
         colorbar_title = ''
