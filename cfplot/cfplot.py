@@ -1,6 +1,6 @@
 """
 Climate contour/vector plots using cf-python, matplotlib and cartopy.
-Andy Heaps NCAS-CMS November 2020
+Andy Heaps NCAS-CMS April 2021
 """
 import numpy as np
 import subprocess
@@ -15,6 +15,10 @@ from distutils.version import StrictVersion
 import cartopy.crs as ccrs
 import cartopy.util as cartopy_util
 import cartopy.feature as cfeature
+from scipy.interpolate import griddata
+import shapely.geometry as sgeom
+import shapely
+from matplotlib.collections import PatchCollection
 
 # Check for the minimum cf-python version
 cf_version_min = '3.0.0b2'
@@ -219,7 +223,9 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
         colorbar_text_down_up=False, colorbar_drawedges=True,
         colorbar_fraction=None, colorbar_thick=None,
         colorbar_anchor=None, colorbar_labels=None,
-        linestyles=None, zorder=1, level_spacing=None):
+        linestyles=None, zorder=1, level_spacing=None,
+        ugrid=False, face_lons=False, face_lats=False, face_connectivity=False,
+        titles=False):
     """
      | con is the interface to contouring in cf-plot. The minimum use is con(f)
      | where f is a 2 dimensional array. If a cf field is passed then an
@@ -303,6 +309,12 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
      | zorder=1 - order of drawing
      | level_spacing=None - Default of 'linear' level spacing.  Also takes 'log', 'loglike',
      |                      'outlier' and 'inspect'
+     | ugrid=False - flag for contouring ugrid data
+     | face_lons=None - longitude points for face vertices
+     | face_lats=None - latitude points for face verticies
+     | face_connectivity=None - connectivity for face verticies
+     | titles=False - set to True to have a dimensions title
+
      :Returns:
       None
 
@@ -316,25 +328,63 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
     user_xlabel = xlabel
     user_ylabel = ylabel
 
+    # Test for UGRID blockfill
+    #ugrid_blockfill = False
+    #if face_lons and face_lats and face_connectivity:
+    #    print('ajh - in ugrid blockfill')
+    #    ugrid_blockfill = True
+    #    field = np.squeeze(f.array)
+    #    x = np.squeeze(face_lons.array)
+    #    y = np.squeeze(face_lats.array)
+
+
+    # Extract data for faces if a UGRID blockplot
+    blockfill_ugrid = False
+    if face_lons and face_lats and face_connectivity:
+        blockfill_ugrid = True
+        fill = False
+        ugrid = True
+        if isinstance(f, cf.Field):
+            field = f.array
+        else:
+            field = f
+        field_orig = deepcopy(field)
+        if isinstance(face_lons, cf.Field):
+            face_lons_array = face_lons.array
+        else:
+            face_lons_array = face_lons
+
+        if isinstance(face_lats, cf.Field):
+            face_lats_array = face_lats.array
+        else:
+            face_lats_array = face_lats
+
+        if isinstance(face_connectivity, cf.Field):
+            face_connectivity_array = face_connectivity.array
+        else:
+            face_connectivity_array = face_connectivity
+
+
+
     # Extract required data for contouring
     # If a cf-python field
     if isinstance(f, cf.Field):
 
         # Check data is 2D
         ndims = np.squeeze(f.data).ndim
-        if ndims != 2:
-            errstr = "\n\ncfp.con error need a 2 dimensional field to contour\n"
-            errstr += "received " + str(np.squeeze(f.data).ndim)
-            if ndims == 1:
-                errstr += " dimension\n\n"
-            else:
-                errstr += " dimensions\n\n"
+        ugrid = False
+        if ndims == 1:
+            ugrid = True      
+        if ndims > 2:
+            errstr = "\n\ncfp.con error need a 1 or 2 dimensional field to contour\n"
+            errstr += "received " + str(np.squeeze(f.data).ndim) + " dimensions\n\n"
             raise TypeError(errstr)
 
         # Extract data
         if verbose:
             print('con - calling cf_data_assign')
 
+        #if not ugrid_blockfill:
         field, x, y, ptype, colorbar_title, xlabel, ylabel, xpole, ypole =\
             cf_data_assign(f, colorbar_title, verbose=verbose)
 
@@ -386,7 +436,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                 raise TypeError(errstr)
 
     # Turn off colorbar if fill is turned off
-    if not fill and not blockfill:
+    if not fill and not blockfill and not blockfill_ugrid:
         colorbar = False
 
     # Revert to default colour scale if cscale_flag flag is set
@@ -536,7 +586,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
     if (mult != 0):
         colorbar_title = colorbar_title + ' *10$^{' + str(mult) + '}$'
 
-    # Catch null titles
+    # Catch null title
     if title is None:
         title = ''
     if plotvars.title is not None:
@@ -582,6 +632,59 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
         else:
             yticklabels = list(map(str, yticks))
 
+    # Calculate a set of dimension titles if requested
+    if titles: 
+        title_dims = ''
+        if not colorbar:
+            title_dims = colorbar_title + '\n'
+        if  isinstance(f, cf.Field):
+            xtitle, xunits = cf_var_name_titles(f, 'X')
+            if xtitle is not None:
+                xvalues = f.construct('X').array
+                if len(xvalues) > 1:
+                    xvalue = ''
+                else:
+                    xvalue = str(xvalues)
+                title_dims += 'x: ' + xtitle + ' ' + xvalue + ' '  + xunits + '\n'
+            ytitle, yunits = cf_var_name_titles(f, 'Y')
+            if ytitle is not None:
+                yvalues = f.construct('Y').array
+                if len(yvalues) > 1:
+                    yvalue = ''
+                else:
+                    yvalue = str(yvalues)
+                title_dims += 'y: '  + ytitle + ' ' + yvalue + ' ' + yunits + '\n'
+            ztitle, zunits = cf_var_name_titles(f, 'Z')
+            if ztitle is not None:
+                zvalues = f.construct('Z').array
+                if len(zvalues) > 1:
+                    zvalue = ''
+                else:
+                    zvalue = str(zvalues)
+                title_dims +=  'z: '  + ztitle + ' ' + zvalue + ' ' + zunits + '\n'
+            ttitle, tunits = cf_var_name_titles(f, 'T')
+            if ztitle is not None:
+                tvalues = f.construct('T').dtarray
+                if len(tvalues) > 1:
+                    tvalue = ''
+                else:
+                    tvalue = str(cf.Data(tvalues).datetime_as_string)
+                title_dims += 't: '  + ttitle + ' ' + tvalue + '\n'
+            if len(f.cell_methods) > 0:
+                title_dims += 'cell methods: '
+                i = 0
+                for method in f.cell_methods:
+                    axis = f.cell_methods[method].get_axes()[0]
+                    dim = f.constructs.domain_axis_identity(axis)
+                    collapse = f.cell_methods[method].method
+                    if i > 0:
+                        title_dims += ', '
+                    title_dims += dim + ': ' + collapse
+
+
+
+
+
     ##################
     # Map contour plot
     ##################
@@ -615,44 +718,121 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
         user_mapset = plotvars.user_mapset
 
         lonrange = np.nanmax(x) - np.nanmin(x)
-        if lonrange > 350 and np.ndim(y) == 1:
-            # Add cyclic information if missing.
-            if lonrange < 360:
-                # field, x = cartopy_util.add_cyclic_point(field, x)
-                field, x = add_cyclic(field, x)
+        
+        # Extract data for faces if a UGRID blockplot
+        #blockfill_ugrid = False
+        #if face_lons and face_lats and face_connectivity:
+        #    print('ugrid blockplot')
+        #    blockfill_ugrid = True
+        #    fill = False
+        #    ugrid = True
+        #    field_orig = deepcopy(field)
+        #    if isinstance(face_lons, cf.Field):
+        #        face_lons_array = face_lons.array
+        #    else:
+        #        face_lons_array = face_lons
 
-                lonrange = np.nanmax(x) - np.nanmin(x)
+        #    if isinstance(face_lats, cf.Field):
+        #        face_lats_array = face_lats.array
+        #    else:
+        #        face_lats_array = face_lats
 
-                # cartopy line drawing fix
-                if x[-1] - x[0] == 360.0:
-                    x[-1] = x[-1] + 0.001
+        #    if isinstance(face_connectivity, cf.Field):
+        #        face_connectivity_array = face_connectivity.array
+        #    else:
+        #        face_connectivity_array = face_connectivity
 
-            # Shift grid if needed
-            if plotvars.lonmin < np.nanmin(x):
-                x = x - 360
-            if plotvars.lonmin > np.nanmax(x):
-                x = x + 360
+        if not blockfill_ugrid:
+            if not ugrid:
+                if lonrange > 350 and np.ndim(y) == 1:
+                    # Add cyclic information if missing.
+                    if lonrange < 360:
+                        # field, x = cartopy_util.add_cyclic_point(field, x)
+                        field, x = add_cyclic(field, x)
 
-        # Flip latitudes and field if latitudes are in descending order
-        if np.ndim(y) == 1:
-            if y[0] > y[-1]:
-                y = y[::-1]
-                field = np.flipud(field)
+                        lonrange = np.nanmax(x) - np.nanmin(x)
+
+                        # cartopy line drawing fix
+                        if x[-1] - x[0] == 360.0:
+                            x[-1] = x[-1] + 0.001
+
+                    # Shift grid if needed
+                    if plotvars.lonmin < np.nanmin(x):
+                        x = x - 360
+                    if plotvars.lonmin > np.nanmax(x):
+                        x = x + 360
+            else:
+                # Get the ugrid data within the map coordinates
+                # Matplotlib tricontour cannot plot missing data so we need to split 
+                # the missing data into a separate field to deal with this
+
+                field_modified = deepcopy(field)
+                pts_nan = np.where(np.isnan(field_modified))
+                field_modified[pts_nan] = -1e30
+
+                field_ugrid, lons_ugrid, lats_ugrid = ugrid_window(field_modified, x, y)
+                #pts_real  = np.where(np.isfinite(field_ugrid))
+                pts_real = np.where(field_ugrid > -1e29)
+                pts_nan = np.where(field_ugrid < -1e29)
+
+
+                field_ugrid_nan = []
+                lons_ugrid_nan = []
+                lats_ugrid_nan = []
+                if np.size(pts_nan) > 0:
+                    field_ugrid_nan = deepcopy(field_ugrid)
+                    lons_ugrid_nan = deepcopy(lons_ugrid)
+                    lats_ugrid_nan = deepcopy(lats_ugrid)
+                    field_ugrid_nan[:] = 0
+                    field_ugrid_nan[pts_nan] = 1
+
+
+                field_ugrid_real = deepcopy(field_ugrid[pts_real])
+                lons_ugrid_real = deepcopy(lons_ugrid[pts_real])
+                lats_ugrid_real = deepcopy(lats_ugrid[pts_real])
+
+
+        if not ugrid:
+            # Flip latitudes and field if latitudes are in descending order
+            if np.ndim(y) == 1:
+                if y[0] > y[-1]:
+                    y = y[::-1]
+                    field = np.flipud(field)
 
         # Plotting a sub-area of the grid produces stray contour labels
         # in polar plots. Subsample the latitudes to remove this problem
-        if plotvars.proj == 'npstere':
-            myypos = find_pos_in_array(vals=y, val=plotvars.boundinglat)
-            if myypos != -1:
-                y = y[myypos:]
-                field = field[myypos:, :]
 
-        if plotvars.proj == 'spstere':
-            myypos = find_pos_in_array(
-                vals=y, val=plotvars.boundinglat, above=True)
-            if myypos != -1:
-                y = y[0:myypos + 1]
-                field = field[0:myypos + 1, :]
+        if plotvars.proj == 'npstere' and np.ndim(y) == 1:
+            if not blockfill_ugrid:
+                if ugrid:
+                    pts = np.where(lats_ugrid > plotvars.boundinglat - 5)
+                    pts = np.array(pts).flatten()
+                    lons_ugrid_real = lons_ugrid_real[pts]
+                    lats_ugrid_real = lats_ugrid_real[pts]
+                    field_ugrid_real = field_ugrid_real[pts]
+                else:
+                    myypos = find_pos_in_array(vals=y, val=plotvars.boundinglat)
+                    if myypos != -1:
+                        y = y[myypos:]
+                        field = field[myypos:, :]
+
+        if plotvars.proj == 'spstere' and np.ndim(y) == 1:
+            if not blockfill_ugrid:
+                if ugrid:
+                    pts = np.where(lats_ugrid_real < plotvars.boundinglat + 5)
+                    lons_ugrid_real = lons_ugrid_real[pts]
+                    lats_ugrid_real = lats_ugrid_real[pts]
+                    field_ugrid_real = field_ugrid_real[pts]
+                else:
+                    myypos = find_pos_in_array(vals=y, val=plotvars.boundinglat, above=True)
+                    if myypos != -1:
+                        y = y[0:myypos + 1]
+                        field = field[0:myypos + 1, :]
+
+
+
+
+
 
         # Set the longitudes and latitudes
         lons, lats = x, y
@@ -679,6 +859,9 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                      ymax=np.nanmax(lats),
                      user_gset=0)
 
+
+
+
         # Filled contours
         if fill:
             if verbose:
@@ -697,12 +880,26 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                     'max' or plotvars.levels_extend == 'both'):
                 cmap.set_over(plotvars.cs[-1])
 
+
+
+
+
             # Filled colour contours
-            mymap.contourf(lons, lats, field * fmult, clevs,
-                           extend=plotvars.levels_extend,
-                           cmap=cmap, norm=plotvars.norm,
-                           alpha=alpha, transform=ccrs.PlateCarree(),
-                           zorder=zorder)
+            if not ugrid:
+                mymap.contourf(lons, lats, field * fmult, clevs,
+                               extend=plotvars.levels_extend,
+                               cmap=cmap, norm=plotvars.norm,
+                               alpha=alpha, transform=ccrs.PlateCarree(),
+                               zorder=zorder)
+            else:
+                if np.size(field_ugrid_real) > 0: 
+                    mymap.tricontourf(lons_ugrid_real, lats_ugrid_real, field_ugrid_real * fmult,
+                                      clevs, extend=plotvars.levels_extend,
+                                      cmap=cmap, norm=plotvars.norm,
+                                      alpha=alpha, transform=ccrs.PlateCarree(),
+                                      zorder=zorder)
+
+
 
         # Block fill
         if blockfill:
@@ -734,13 +931,30 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                 bfill(f=field_orig * fmult, x=x_orig, y=y_orig, clevs=clevs,
                       lonlat=1, bound=0, alpha=alpha, zorder=zorder)
 
+        # Block fill for ugrid
+        if blockfill_ugrid:
+            if verbose:
+                print('con - adding blockfill for UGRID')
+            bfill_ugrid(f=field_orig * fmult, face_lons=face_lons_array, 
+                       face_lats=face_lats_array, 
+                       face_connectivity=face_connectivity_array, clevs=clevs,
+                       alpha=alpha, zorder=zorder)
+
         # Contour lines and labels
         if lines:
             if verbose:
                 print('con - adding contour lines and labels')
-            cs = mymap.contour(lons, lats, field * fmult, clevs, colors=colors,
-                               linewidths=linewidths, linestyles=linestyles, alpha=alpha,
-                               transform=ccrs.PlateCarree(), zorder=zorder)
+
+            if not ugrid:
+                cs = mymap.contour(lons, lats, field * fmult, clevs, colors=colors,
+                                   linewidths=linewidths, linestyles=linestyles, alpha=alpha,
+                                   transform=ccrs.PlateCarree(), zorder=zorder)
+            else:
+
+                cs = mymap.tricontour(lons_ugrid_real, lats_ugrid_real, field_ugrid_real * fmult,
+                                      clevs, colors=colors,
+                                      linewidths=linewidths, linestyles=linestyles, alpha=alpha,
+                                      transform=ccrs.PlateCarree(), zorder=zorder)
 
             if line_labels:
                 nd = ndecs(clevs)
@@ -757,6 +971,19 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                                    colors=colors, linewidths=zero_thick,
                                    linestyles=linestyles, alpha=alpha,
                                    transform=ccrs.PlateCarree(), zorder=zorder)
+
+
+
+        # Add a ugrid mask if there is one
+        if ugrid and not blockfill_ugrid:
+            if np.size(field_ugrid_nan) > 0:
+                cmap_white = matplotlib.colors.ListedColormap([1.0, 1.0, 1.0])
+                mymap.tricontourf(lons_ugrid_nan, lats_ugrid_nan, field_ugrid_nan , [0.5, 1.5],
+                                  extend='neither',
+                                  cmap=cmap_white, norm=plotvars.norm,
+                                  alpha=alpha, transform=ccrs.PlateCarree(),
+                                  zorder=zorder)
+
         # Axes
         plot_map_axes(axes=axes, xaxis=xaxis, yaxis=yaxis,
                       xticks=xticks, xticklabels=xticklabels,
@@ -788,6 +1015,10 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
         # Title
         if title != '':
             map_title(title)
+
+        # Titles for dimensions
+        if titles:
+            dim_titles(title_dims, dims=True)
 
         # Color bar
         if colorbar:
@@ -1098,6 +1329,12 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                                                linewidths=zero_thick,
                                                linestyles=linestyles, alpha=alpha,
                                                zorder=zorder)
+
+        # Titles for dimensions
+        if titles:
+            dim_titles(title_dims, dims=True)
+
+
         # Color bar
         if colorbar:
             cbar(labels=cbar_labels,
@@ -1350,6 +1587,9 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                                                linewidths=zero_thick,
                                                linestyles=linestyles, alpha=alpha,
                                                zorder=zorder)
+        # Titles for dimensions
+        if titles:
+            dim_titles(title_dims, dims=True)
 
         # Color bar
         if colorbar:
@@ -1491,6 +1731,10 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                                   linewidths=zero_thick,
                                   linestyles=linestyles, alpha=alpha,
                                   zorder=zorder, **plotargs)
+
+        # Titles for dimensions
+        if titles:
+            dim_titles(title_dims, dims=True)
 
         # Color bar
         if colorbar:
@@ -1776,6 +2020,10 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                                            linewidths=zero_thick,
                                            linestyles=linestyles, alpha=alpha,
                                            zorder=zorder)
+
+        # Titles for dimensions
+        if titles:
+            dim_titles(title_dims, dims=True)
 
         # Color bar
         if colorbar:
@@ -3164,6 +3412,9 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None, rotated_vect=False
     xpole = None
     ypole = None
     ptype = None
+    field = None
+    x = None
+    y = None
 
     # Extract coordinate data if a matching CF standard_name or axis is found
     for mydim in list(f.dimension_coordinates()):
@@ -3359,8 +3610,9 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None, rotated_vect=False
                 yunits = str(getattr(f.construct(mydim), 'Units', ''))
                 ylabel = cf_var_name(field=f, dim=mydim) + yunits
 
+
     # Extract auxiliary lons and lats if they exist
-    if ptype == 1:
+    if ptype == 1 or ptype is None:
         if plotvars.proj != 'rotated' and not rotated_vect:
             aux_lons = False
             aux_lats = False
@@ -3376,6 +3628,7 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None, rotated_vect=False
             if aux_lons and aux_lats:
                 x = xpts
                 y = ypts
+                ptype = 1
 
     # time height plot
     if has_height == 1 and has_time == 1:
@@ -3458,8 +3711,9 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None, rotated_vect=False
                         x = c
                     count += 1
             except ValueError:
-                print("/n/ncf-plot - no sensible coordinates for this axis/n/n")
-                print(c, "/n/n")
+                errstr = "\n\ncf_data_assign - cannot find data to return\n\n" 
+                errstr += str(c) + "\n\n"
+                raise Warning(errstr)
 
         xunits = str(getattr(f.construct(mydim), 'units', ''))
         xlabel = cf_var_name(field=f, dim=mydim) + xunits
@@ -3487,6 +3741,7 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None, rotated_vect=False
             else:
                 colorbar_title = colorbar_title + \
                     '(' + supscr(str(f.Units)) + ')'
+
 
     # Return data
     return(field, x, y, ptype, colorbar_title, xlabel, ylabel, xpole, ypole)
@@ -5268,6 +5523,50 @@ def cf_var_name(field=None, dim=None):
         name = standard_name
 
     return name
+
+
+def cf_var_name_titles(field=None, dim=None):
+    """
+     | cf_var_name - return the name from a supplied dimension
+     |               in the following preference order:
+     |               standard_name
+     |               long_name
+     |               short_name
+     |               ncvar
+     |
+     | field=None - field
+     | dim=None - dimension required - 'dim0', 'dim1' etc.
+     |
+     :Returns:
+      name
+    """
+
+    name = None
+    units = None
+    if field.has_construct(dim):
+
+        id = getattr(field.construct(dim), 'id', False)
+        ncvar = field.construct(dim).nc_get_variable(False)
+        short_name = getattr(field.construct(dim), 'short_name', False)
+        long_name = getattr(field.construct(dim), 'long_name', False)
+        standard_name = getattr(field.construct(dim), 'standard_name', False)
+
+        #name = 'No Name'
+        if id:
+            name = id
+        if ncvar:
+            name = ncvar
+        if short_name:
+            name = short_name
+        if long_name:
+            name = long_name
+        if standard_name:
+            name = standard_name
+
+        units = getattr(field.construct(dim), 'units', '()')
+        if units[0] != '(':
+            units = '(' + units + ')'
+    return name, units
 
 
 def process_color_scales():
@@ -7781,12 +8080,12 @@ def cbar(labels=None,
             t.set_fontweight(fontweight)
 
 
-def map_title(title=None):
+def map_title(title=None, dims=False):
     """
     | map_title is an internal routine to draw a title on a map plot
     |
     | title=None - title to put on map plot
-    |
+    | dim=False - draw a set of dimension titles
     |
     |
     |
@@ -7802,45 +8101,146 @@ def map_title(title=None):
     latmax = plotvars.latmax
     polar_range = 90-abs(boundinglat)
 
+    if plotvars.proj == 'cyl':
+        lon_mid = lonmin + (lonmax - lonmin) / 2.0
+        mylon = lon_mid
+        if dims:
+            mylon = lonmin
+        proj = ccrs.PlateCarree(central_longitude=lon_mid)
+        mylat = latmax
+        xpt, ypt = proj.transform_point(mylon, mylat, ccrs.PlateCarree())
+        ypt = ypt + (latmax - latmin) / 40.0
+
+
     if plotvars.proj == 'npstere':
-        mylon = lon_0+180
+        mylon = lon_0 + 180
         mylat = boundinglat-polar_range/15.0
         proj = ccrs.NorthPolarStereo(central_longitude=lon_0)
-        lon_mid = lon_0
         xpt, ypt = proj.transform_point(mylon, mylat, ccrs.PlateCarree())
+        if dims:
+            mylon = lon_0 + 180
+            mylat = boundinglat-polar_range/15.0
+            xpt_mid, ypt = proj.transform_point(mylon, mylat, ccrs.PlateCarree())
+            mylon = lon_0 - 90
+            xpt, ypt_mid = proj.transform_point(mylon, mylat, ccrs.PlateCarree())
 
     if plotvars.proj == 'spstere':
         mylon = lon_0
         mylat = boundinglat+polar_range/15.0
         proj = ccrs.SouthPolarStereo(central_longitude=lon_0)
-        lon_mid = lon_0
-        xpt, ypt = proj.transform_point(mylon, mylat, ccrs.PlateCarree())
+        if dims:
+            mylon = lon_0 + 0
+            #mylat = boundinglat-polar_range/15.0
+            mylat = boundinglat-polar_range/15.0
+            xpt_mid, ypt = proj.transform_point(mylon, mylat, ccrs.PlateCarree())
+            mylon = lon_0 - 90
+            xpt, ypt_mid = proj.transform_point(mylon, mylat, ccrs.PlateCarree())
+        
 
-    if plotvars.proj == 'cyl':
-        lon_mid = lonmin + (lonmax - lonmin) / 2.0
-        proj = ccrs.PlateCarree(central_longitude=lon_mid)
-        mylon = lon_mid
-        mylat = latmax
-        xpt, ypt = proj.transform_point(mylon, mylat, ccrs.PlateCarree())
-        ypt = ypt + (latmax - latmin) / 40.0
 
     if plotvars.proj == 'lcc':
-        lon_mid = lonmin + (lonmax - lonmin) / 2.0
+        mylon = lonmin + (lonmax - lonmin) / 2.0
+        if dims:
+            mylon = lonmin
         lat_0 = 40
         if latmin <= 0 and latmax <= 0:
             lat_0 = 40
         proj = ccrs.LambertConformal(central_longitude=plotvars.lon_0,
                                      central_latitude=lat_0,
                                      cutoff=plotvars.latmin)
-        mylon = lon_mid
         mylat = latmax
-        xpt, ypt = proj.transform_point(0.0, mylat, ccrs.PlateCarree())
+        xpt, ypt = proj.transform_point(mylon, mylat, ccrs.PlateCarree())
 
-    plotvars.mymap.text(xpt, ypt, title, va='bottom',
-                        ha='center',
-                        rotation='horizontal', rotation_mode='anchor',
-                        fontsize=plotvars.title_fontsize,
-                        fontweight=plotvars.title_fontweight)
+    fontsize = plotvars.title_fontsize
+
+    if dims:
+        halign = 'left'
+        fontsize = plotvars.axis_label_fontsize
+
+        # Get plot position
+        this_plot = plotvars.plot
+        l, b, w, h = this_plot.get_position().bounds
+        print('initial l, b, w, h are ', l, b, w, h)
+ 
+        # Shift to left
+        #if plotvars.plot_type == 1 and plotvars.proj !=cyl:
+        l = l - 0.1
+        this_plot.set_position([l, b, w, h])
+
+        l, b, w, h = this_plot.get_position().bounds
+        print('changed l, b, w, h are ', l, b, w, h)
+
+
+        plotvars.plot.text(l + w , b + h, title, va='bottom',
+                            ha=halign,
+                            rotation='horizontal', rotation_mode='anchor',
+                            fontsize=fontsize,
+                            fontweight=plotvars.title_fontweight)
+
+
+    else:
+        halign = 'center'
+        plotvars.mymap.text(xpt, ypt, title, va='bottom',
+                            ha=halign,
+                            rotation='horizontal', rotation_mode='anchor',
+                            fontsize=fontsize,
+                            fontweight=plotvars.title_fontweight)
+
+
+
+
+def dim_titles(title=None, dims=False):
+    """
+    | dim_titles is an internal routine to draw a set of dimension titles on a  plot
+    |
+    | title=None - title to put on map plot
+    | dim=False - draw a set of dimension titles
+    |
+    |
+    |
+    |
+    |
+    """
+
+    # Get plot position
+    if plotvars.plot_type == 1:
+        this_plot = plotvars.mymap
+    else:
+        this_plot = plotvars.plot
+    l, b, w, h = this_plot.get_position().bounds
+
+    valign = 'bottom'
+ 
+    # Shift down if a cylindrical plot else to the left
+    if plotvars.plot_type == 1 and plotvars.proj != 'cyl':
+        l = l - 0.1
+        myx = 1.2
+        myy = 1.0
+        valign = 'top'
+    elif plotvars.plot_type == 1 and plotvars.proj == 'cyl':
+        lonrange = plotvars.lonmax - plotvars.lonmin
+        latrange = plotvars.latmax - plotvars.latmin
+        if (lonrange / latrange) > 1.1:
+            myx = 0.0
+            myy = 1.02
+        else:
+            l = l - 0.1
+            myx = 1.1
+            myy = 1.0
+            valign = 'top'
+    else:
+        h = h - 0.1
+        myx = 0.0
+        myy = 1.02
+
+    this_plot.set_position([l, b, w, h])
+    this_plot.text(myx, myy, title, va=valign,
+                   ha='left',
+                   fontsize=plotvars.axis_label_fontsize,
+                   fontweight=plotvars.axis_label_fontweight,
+                   transform=this_plot.transAxes)
+
+
 
 
 def plot_map_axes(axes=None, xaxis=None, yaxis=None,
@@ -8276,6 +8676,7 @@ def add_cyclic(field, lons):
     | add_cyclic routine.
     """
 
+
     try:
         field, lons = cartopy_util.add_cyclic_point(field, lons)
     except Exception:
@@ -8284,6 +8685,98 @@ def add_cyclic(field, lons):
         field, lons = cartopy_util.add_cyclic_point(field, lons)
 
     return field, lons
+
+
+
+def ugrid_window(field, lons,lats):
+
+    field_ugrid = deepcopy(field)
+    lons_ugrid = deepcopy(lons)
+    lats_ugrid = deepcopy(lats)
+
+
+    # Fix longitudes to be -180 to 180
+    # lons_ugrid = ((lons_ugrid + plotvars.lonmin) % 360) + plotvars.lonmin
+
+    # Test data to get appropiate longitude offset to perform remapping
+    found_lon = False
+    for ilon in [-360, 0, 360]:
+        lons_test = lons_ugrid + ilon
+        if np.min(lons_test) <= plotvars.lonmin:
+            found_lon = True
+            lons_offset = ilon
+
+    if found_lon:
+        lons_ugrid = lons_ugrid + lons_offset
+        pts = np.where(lons_ugrid < plotvars.lonmin)
+        lons_ugrid[pts] = lons_ugrid[pts] + 360.0
+    else:
+        errstr = '/n/n cf-plot error - cannot determine grid offset in add_cyclic_ugrid/n/n'
+        raise Warning(errstr)
+
+    field_wrap = deepcopy(field_ugrid)
+    lons_wrap = deepcopy(lons_ugrid)
+    lats_wrap = deepcopy(lats_ugrid)
+    delta = 120.0
+
+    pts_left = np.where(lons_wrap >= plotvars.lonmin + 360 - delta)
+    lons_left = lons_wrap[pts_left] - 360.0
+    lats_left = lats_wrap[pts_left]
+    field_left = field_wrap[pts_left]
+
+    field_wrap = np.concatenate([field_wrap, field_left])
+    lons_wrap = np.concatenate([lons_wrap, lons_left])
+    lats_wrap = np.concatenate([lats_wrap, lats_left])
+
+    # Make a line of interpolated data on left hand side of plot and insert this into the data 
+    # on both the left and the right before contouring
+    lons_new = np.zeros(181) + plotvars.lonmin
+    lats_new = np.arange(181) - 90
+    field_new = griddata((lons_wrap, lats_wrap), field_wrap, (lons_new, lats_new), method='linear')
+
+    # Remove any non finite points in the interpolated data
+    pts = np.where(np.isfinite(field_new))
+    field_new = field_new[pts]
+    lons_new = lons_new[pts]
+    lats_new = lats_new[pts]
+
+    # Add the interpolated data to the left
+    field_ugrid = np.concatenate([field_ugrid, field_new])
+    lons_ugrid = np.concatenate([lons_ugrid, lons_new])
+    lats_ugrid = np.concatenate([lats_ugrid, lats_new])
+
+    # Add to the right if a fiull globe is being plotted
+    # The 359.99 here is needed or Cartopy will map 360 back to 0
+
+    if plotvars.lonmax - plotvars.lonmin == 360:
+        field_ugrid = np.concatenate([field_ugrid, field_new])
+        lons_ugrid = np.concatenate([lons_ugrid, lons_new + 359.95])
+        lats_ugrid = np.concatenate([lats_ugrid, lats_new])
+    else:
+        lons_new2 = np.zeros(181) + plotvars.lonmax
+        lats_new2 = np.arange(181) - 90
+        field_new2 = griddata((lons_wrap, lats_wrap), field_wrap, (lons_new2, lats_new2), method='linear')
+
+        # Remove any non finite points in the interpolated data
+        pts = np.where(np.isfinite(field_new2))
+        field_new2 = field_new2[pts]
+        lons_new2 = lons_new2[pts]
+        lats_new2 = lats_new2[pts]
+
+        # Add the interpolated data to the right
+        field_ugrid = np.concatenate([field_ugrid, field_new2])
+        lons_ugrid = np.concatenate([lons_ugrid, lons_new2])
+        lats_ugrid = np.concatenate([lats_ugrid, lats_new2])
+
+    # Finally remove any point off to the right of plotvars.lonmax
+    pts = np.where(lons_ugrid <= plotvars.lonmax)
+    if np.size(pts) > 0:
+        field_ugrid = field_ugrid[pts]
+        lons_ugrid = lons_ugrid[pts]
+        lats_ugrid = lats_ugrid[pts]
+
+    return field_ugrid, lons_ugrid, lats_ugrid
+
 
 
 def max_ndecs_data(data):
@@ -8719,3 +9212,124 @@ def stream(u=None, v=None, x=None, y=None, density=None, linewidth=None,
     if plotvars.user_mapset == 0:
         mapset()
         mapset(resolution=resolution_orig)
+
+
+def bfill_ugrid(f=None, face_lons=None, face_lats=None, face_connectivity=None, clevs=None,
+                alpha=None, zorder=None):
+
+    """
+     | bfill_ugrid - block fill a UGRID field with colour rectangles
+     | This is an internal routine and is not generally used by the user.
+     |
+     | f=None - field
+     | face_lons=None - longitude points for face vertices
+     | face_lats=None - latitude points for face verticies
+     | face_connectivity=None - connectivity for face verticies
+     | clevs=None - levels for filling
+     | lonlat=False - lonlat data
+     | bound=False - x and y are cf data boundaries
+     | alpha=alpha - transparency setting 0 to 1
+     | zorder=None - plotting order
+     |
+      :Returns:
+        None
+     |
+     |
+     |
+     |
+    """
+
+
+
+    # Colour faces according to value
+    # Set faces to white initially
+    cols = ['#000000' for x in range(len(face_connectivity))]
+
+    levs = deepcopy(np.array(clevs))
+
+    if plotvars.levels_extend == 'min' or plotvars.levels_extend == 'both':
+        levs = np.concatenate([[-1e20], levs])
+    ilevs_max = np.size(levs)
+    if plotvars.levels_extend == 'max' or plotvars.levels_extend == 'both':
+        levs = np.concatenate([levs, [1e20]])
+    else:
+        ilevs_max = ilevs_max - 1
+
+    for ilev in np.arange(ilevs_max):
+        lev = levs[ilev]  
+        col = plotvars.cs[ilev]
+        pts = np.where(f.squeeze() >= lev)[0]
+
+
+        if np.min(pts) >= 0:
+            for val in np.arange(np.size(pts)):
+                pt = pts[val]
+
+                cols[pt]=col
+    
+    plotargs = {'transform': ccrs.PlateCarree()}
+
+    coords_all = []
+
+    for iface in np.arange(len(face_connectivity)):
+        lons = np.array([face_lons[i] for i in face_connectivity[iface]])
+        lats = np.array([face_lats[i] for i in face_connectivity[iface]])
+
+        coords = [(lons[i], lats[i]) for i in np.arange(len(lons))]
+
+        if (np.max(lons) - np.min(lons)) > 100: 
+            if np.max(lons) > 180:
+                for i in np.arange(len(lons)):
+                    lons[i] = (lons[i] + 180) % 360 - 180
+
+            else:
+                for i in np.arange(len(lons)):
+                    lons[i] = lons[i] % 360
+
+            coords = [(lons[i], lats[i]) for i in np.arange(len(lons))]
+
+        # Add extra verticies if any of the points are at the north or south pole
+        if np.max(lats) == 90 or np.min(lats) == -90:
+            geom = sgeom.Polygon([(face_lons[i], face_lats[i]) for i in face_connectivity[iface]])
+            geom_cyl = ccrs.PlateCarree().project_geometry(geom, ccrs.Geodetic())
+            coords = geom_cyl[0].exterior.coords[:]
+
+        coords_all.append(coords)
+
+    plotvars.mymap.add_collection(PolyCollection(coords_all, facecolors=cols, edgecolors=None,
+                                  alpha=alpha, zorder=zorder, **plotargs))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
