@@ -2420,7 +2420,10 @@ def timeaxis(dtimes=None):
     yearmax = max(dtimes.year.array)
     tmin = min(dtimes.dtarray)
     tmax = max(dtimes.dtarray)
-    calendar = dtimes.calendar
+    if hasattr(dtimes, 'calendar'):
+        calendar = dtimes.calendar
+    else:
+        calendar = 'standard'
 
     if plotvars.user_gset != 0:
         if isinstance(plotvars.xmin, str):
@@ -3826,13 +3829,13 @@ def check_data(field=None, x=None, y=None):
         raise Warning(errstr)
 
 
-def cscale(cmap=None, ncols=None, white=None, below=None,
+def cscale(scale=None, ncols=None, white=None, below=None,
            above=None, reverse=False, uniform=False):
     """
     | cscale - choose and manipulate colour maps.  Around 200 colour scales are
     |          available - see the gallery section for more details.
     |
-    | cmap=None - name of colour map
+    | scale=None - name of colour map
     | ncols=None - number of colours for colour map
     | white=None - change these colours to be white
     | below=None - change the number of colours below the mid point of
@@ -3865,12 +3868,12 @@ def cscale(cmap=None, ncols=None, white=None, below=None,
     """
 
     # If no map requested reset to default
-    if cmap is None:
-        cmap = 'scale1'
+    if scale is None:
+        scale = 'scale1'
         plotvars.cscale_flag = 0
         return
     else:
-        plotvars.cs_user = cmap
+        plotvars.cs_user = scale
         plotvars.cscale_flag = 1
         vals = [ncols, white, below, above]
         if any(val is not None for val in vals):
@@ -3878,10 +3881,10 @@ def cscale(cmap=None, ncols=None, white=None, below=None,
         if reverse is not False or uniform is not False:
             plotvars.cscale_flag = 2
 
-    if cmap == 'scale1' or cmap == '':
-        if cmap == 'scale1':
+    if scale == 'scale1' or scale == '':
+        if scale == 'scale1':
             myscale = cscale1
-        if cmap == 'viridis':
+        if scale == 'viridis':
             myscale = viridis
         # convert cscale1 or viridis from hex to rgb
         r = []
@@ -3897,15 +3900,15 @@ def cscale(cmap=None, ncols=None, white=None, below=None,
             b.append(rgb[2])
     else:
         package_path = os.path.dirname(__file__)
-        file = os.path.join(package_path, 'colourmaps/' + cmap + '.rgb')
+        file = os.path.join(package_path, 'colourmaps/' + scale + '.rgb')
         if os.path.isfile(file) is False:
-            if os.path.isfile(cmap) is False:
+            if os.path.isfile(scale) is False:
                 errstr = '\ncscale error - colour scale not found:\n'
                 errstr = errstr + 'File ' + file + ' not found\n'
-                errstr = errstr + 'File ' + cmap + ' not found\n'
+                errstr = errstr + 'File ' + scale + ' not found\n'
                 raise Warning(errstr)
             else:
-                file = cmap
+                file = scale
 
         # Read in rgb values and convert to hex
         f = open(file, 'r')
