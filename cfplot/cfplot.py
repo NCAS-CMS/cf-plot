@@ -3378,7 +3378,7 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None, rotated_vect=False
 
     # Check input data has the correct number of dimensions
     # Take into account rotated pole fields having extra dimensions
-    ndim = len(f.domain_axes.filter_by_size(cf.gt(1)))
+    ndim = len(f.domain_axes().filter_by_size(cf.gt(1)))
     if f.ref('rotated_latitude_longitude', False) is False:
         if (ndim > 2 or ndim < 1):
             print('')
