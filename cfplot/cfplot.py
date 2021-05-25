@@ -670,13 +670,13 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                 else:
                     tvalue = str(cf.Data(tvalues).datetime_as_string)
                 title_dims += 't: '  + ttitle + ' ' + tvalue + '\n'
-            if len(f.cell_methods) > 0:
+            if len(f.cell_methods()) > 0:
                 title_dims += 'cell methods: '
                 i = 0
-                for method in f.cell_methods:
-                    axis = f.cell_methods[method].get_axes()[0]
+                for method in f.cell_methods():
+                    axis = f.cell_methods()[method].get_axes()[0]
                     dim = f.constructs.domain_axis_identity(axis)
-                    collapse = f.cell_methods[method].method
+                    collapse = f.cell_methods()[method].method
                     if i > 0:
                         title_dims += ', '
                     title_dims += dim + ': ' + collapse
@@ -907,7 +907,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                 print('con - adding blockfill')
             if isinstance(f, cf.Field):
 
-                if f.ref('grid_mapping_name:transverse_mercator', False):
+                if f.ref('grid_mapping_name:transverse_mercator', default=False):
                     # Special case for transverse mercator
                     bfill(f=f, clevs=clevs, alpha=alpha, zorder=zorder)
 
@@ -3379,7 +3379,7 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None, rotated_vect=False
     # Check input data has the correct number of dimensions
     # Take into account rotated pole fields having extra dimensions
     ndim = len(f.domain_axes().filter_by_size(cf.gt(1)))
-    if f.ref('rotated_latitude_longitude', False) is False:
+    if f.ref('rotated_latitude_longitude', default=False) is False:
         if (ndim > 2 or ndim < 1):
             print('')
             if (ndim > 2):
@@ -3588,7 +3588,7 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None, rotated_vect=False
         y = time
 
     # Rotated pole
-    if f.ref('rotated_latitude_longitude', False):
+    if f.ref('rotated_latitude_longitude', default=False):
         ptype = 6
 
         rotated_pole = f.ref('rotated_latitude_longitude')
@@ -3655,7 +3655,7 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None, rotated_vect=False
         field = np.flipud(field)
 
     # UKCP grid
-    if f.ref('transverse_mercator', False):
+    if f.ref('transverse_mercator', default=False):
         ptype = 1
         field = np.squeeze(f.array)
 
@@ -4076,7 +4076,7 @@ def bfill(f=None, x=None, y=None, clevs=False, lonlat=False, bound=False,
 
     if isinstance(f, cf.Field):
 
-        if f.ref('transverse_mercator', False):
+        if f.ref('transverse_mercator', default=False):
             lonlat = True
 
             # Case of transverse mercator of which UKCP is an example
@@ -4704,7 +4704,7 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,
 
     rotated_vect = False
     if isinstance(u, cf.Field):
-        if u.ref('rotated_latitude_longitude', False):
+        if u.ref('rotated_latitude_longitude', default=False):
             rotated_vect = True
 
     # Extract required data

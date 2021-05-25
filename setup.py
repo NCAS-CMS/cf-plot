@@ -19,7 +19,7 @@ package_data = [f for f in find_package_data_files('cfplot/colourmaps')]
 
 setup(
     name = "cf-plot",
-    version = "3.1.5",
+    version = "3.1.6",
     author = "Andy Heaps",
     author_email = "andy.heaps@ncas.ac.uk",
     packages = ["cfplot"],
@@ -27,7 +27,7 @@ setup(
     package_data = {"cfplot": package_data},
     include_package_data = True,
     install_requires = ["matplotlib >=3.1.0",
-                        "cf-python >= 3",
+                        "cf-python >= 3.9.0",
                         "scipy >= 1.4.0",
                         "cartopy >= 0.17.0"
                         ],
