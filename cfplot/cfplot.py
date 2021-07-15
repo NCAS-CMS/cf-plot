@@ -194,7 +194,7 @@ plotvars = pvars(lonmin=-180, lonmax=180, latmin=-90, latmax=90, proj='cyl',
                  grid_thickness=1.0, aspect='equal',
                  graph_xmin=None, graph_xmax=None,
                  graph_ymin=None, graph_ymax=None,
-                 level_spacing=None, tight=False)
+                 level_spacing=None, tight=False, gpos_called=False)
 
 # Check for iPython notebook inline
 # and set the viewer to None if found
@@ -364,7 +364,10 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
         else:
             face_connectivity_array = face_connectivity
 
-
+    # Call gpos(1) if not already called
+    if plotvars.rows > 1 or plotvars.columns > 1:
+        if plotvars.gpos_called is False:
+            gpos(1)
 
     # Extract required data for contouring
     # If a cf-python field
@@ -634,54 +637,9 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
 
     # Calculate a set of dimension titles if requested
     if titles: 
-        title_dims = ''
+        title_dims = generate_titles(f)
         if not colorbar:
-            title_dims = colorbar_title + '\n'
-        if  isinstance(f, cf.Field):
-            xtitle, xunits = cf_var_name_titles(f, 'X')
-            if xtitle is not None:
-                xvalues = f.construct('X').array
-                if len(xvalues) > 1:
-                    xvalue = ''
-                else:
-                    xvalue = str(xvalues)
-                title_dims += 'x: ' + xtitle + ' ' + xvalue + ' '  + xunits + '\n'
-            ytitle, yunits = cf_var_name_titles(f, 'Y')
-            if ytitle is not None:
-                yvalues = f.construct('Y').array
-                if len(yvalues) > 1:
-                    yvalue = ''
-                else:
-                    yvalue = str(yvalues)
-                title_dims += 'y: '  + ytitle + ' ' + yvalue + ' ' + yunits + '\n'
-            ztitle, zunits = cf_var_name_titles(f, 'Z')
-            if ztitle is not None:
-                zvalues = f.construct('Z').array
-                if len(zvalues) > 1:
-                    zvalue = ''
-                else:
-                    zvalue = str(zvalues)
-                title_dims +=  'z: '  + ztitle + ' ' + zvalue + ' ' + zunits + '\n'
-            ttitle, tunits = cf_var_name_titles(f, 'T')
-            if ztitle is not None:
-                tvalues = f.construct('T').dtarray
-                if len(tvalues) > 1:
-                    tvalue = ''
-                else:
-                    tvalue = str(cf.Data(tvalues).datetime_as_string)
-                title_dims += 't: '  + ttitle + ' ' + tvalue + '\n'
-            if len(f.cell_methods()) > 0:
-                title_dims += 'cell methods: '
-                i = 0
-                for method in f.cell_methods():
-                    axis = f.cell_methods()[method].get_axes()[0]
-                    dim = f.constructs.domain_axis_identity(axis)
-                    collapse = f.cell_methods()[method].method
-                    if i > 0:
-                        title_dims += ', '
-                    title_dims += dim + ': ' + collapse
-
-
+            title_dims = colorbar_title + '\n' + title_dims
 
 
 
@@ -1648,7 +1606,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
             plot = plotvars.plot
 
         if plotvars.proj == 'cyl':
-            rotated_pole = f.ref('rotated_latitude_longitude')
+            rotated_pole = f.ref('grid_mapping_name:rotated_latitude_longitude')
             xpole = rotated_pole['grid_north_pole_longitude']
             ypole = rotated_pole['grid_north_pole_latitude']
 
@@ -2907,6 +2865,7 @@ def gopen(rows=1, columns=1, user_plot=1, file='cfplot.png',
         plotvars.file = file
     plotvars.orientation = orientation
     plotvars.user_plot = user_plot
+    plotvars.gpos_called = False
 
     # Set user defined plot area to None
     plotvars.plot_xmin = None
@@ -2955,7 +2914,7 @@ def gopen(rows=1, columns=1, user_plot=1, file='cfplot.png',
         hspace=hspace)
 
     # Set initial subplot
-    if user_position is False:
+    if user_position is False and rows == 1 and columns == 1:
         gpos(pos=1)
 
     # Change tick length for plots > 2x2
@@ -3055,6 +3014,7 @@ def gclose(view=True):
     plotvars.graph_xmax = None
     plotvars.graph_ymin = None
     plotvars.graph_ymax = None
+    plotvars.gpos_called = False
 
 
 def gpos(pos=1, xmin=None, xmax=None, ymin=None, ymax=None):
@@ -3089,6 +3049,7 @@ def gpos(pos=1, xmin=None, xmax=None, ymin=None, ymax=None):
 
     """
 
+
     # Check inputs are okay
     if pos < 1 or pos > plotvars.rows * plotvars.columns:
         errstr = 'pos error - pos out of range:\n range = 1 - '
@@ -3096,6 +3057,7 @@ def gpos(pos=1, xmin=None, xmax=None, ymin=None, ymax=None):
         errstr = errstr + '\n input pos was ' + str(pos)
         errstr = errstr + '\n'
         raise Warning(errstr)
+
 
     user_pos = False
     if all(val is not None for val in [xmin, xmax, ymin, ymax]):
@@ -3111,15 +3073,21 @@ def gpos(pos=1, xmin=None, xmax=None, ymin=None, ymax=None):
     plotvars.graph_ymin = None
     plotvars.graph_ymax = None
 
+    # Set gpos_called
+    plotvars.gpos_called = True
+
+
     if user_pos is False:
         plotvars.plot = plotvars.master_plot.add_subplot(
             plotvars.rows, plotvars.columns, pos)
     else:
         delta_x = plotvars.plot_xmax - plotvars.plot_xmin
         delta_y = plotvars.plot_ymax - plotvars.plot_ymin
+
         plotvars.plot = plotvars.master_plot.add_axes([plotvars.plot_xmin,
                                                        plotvars.plot_ymin,
                                                        delta_x, delta_y])
+
 
     plotvars.plot.tick_params(which='both', direction='out', right=True, top=True)
 
@@ -3379,7 +3347,7 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None, rotated_vect=False
     # Check input data has the correct number of dimensions
     # Take into account rotated pole fields having extra dimensions
     ndim = len(f.domain_axes().filter_by_size(cf.gt(1)))
-    if f.ref('rotated_latitude_longitude', default=False) is False:
+    if f.ref('grid_mapping_name:rotated_latitude_longitude', default=False) is False:
         if (ndim > 2 or ndim < 1):
             print('')
             if (ndim > 2):
@@ -3588,10 +3556,10 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None, rotated_vect=False
         y = time
 
     # Rotated pole
-    if f.ref('rotated_latitude_longitude', default=False):
+    if f.ref('grid_mapping_name:rotated_latitude_longitude', default=False):
         ptype = 6
 
-        rotated_pole = f.ref('rotated_latitude_longitude')
+        rotated_pole = f.ref('grid_mapping_name:rotated_latitude_longitude')
         xpole = rotated_pole['grid_north_pole_longitude']
         ypole = rotated_pole['grid_north_pole_latitude']
 
@@ -3655,7 +3623,7 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None, rotated_vect=False
         field = np.flipud(field)
 
     # UKCP grid
-    if f.ref('transverse_mercator', default=False):
+    if f.ref('grid_mapping_name:transverse_mercator', default=False):
         ptype = 1
         field = np.squeeze(f.array)
 
@@ -3677,7 +3645,7 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None, rotated_vect=False
             ypts = f.construct('Y').array
             field = np.squeeze(f.array)
 
-            ref = f.ref('transverse_mercator')
+            ref = f.ref('grid_mapping_name:transverse_mercator')
             false_easting = ref['false_easting']
             false_northing = ref['false_northing']
             central_longitude = ref['longitude_of_central_meridian']
@@ -4076,11 +4044,11 @@ def bfill(f=None, x=None, y=None, clevs=False, lonlat=False, bound=False,
 
     if isinstance(f, cf.Field):
 
-        if f.ref('transverse_mercator', default=False):
+        if f.ref('grid_mapping_name:transverse_mercator', default=False):
             lonlat = True
 
             # Case of transverse mercator of which UKCP is an example
-            ref = f.ref('transverse_mercator')
+            ref = f.ref('grid_mapping_name:transverse_mercator')
             false_easting = ref['false_easting']
             false_northing = ref['false_northing']
             central_longitude = ref['longitude_of_central_meridian']
@@ -4609,7 +4577,7 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,
          pivot='middle', key_location=[0.95, -0.06], key_show=True, axes=True,
          xaxis=True, yaxis=True, xticks=None, xticklabels=None, yticks=None,
          yticklabels=None, xlabel=None, ylabel=None, ylog=False, color='k',
-         zorder=1):
+         zorder=1, titles=None):
     """
      | vect - plot vectors
      |
@@ -4667,6 +4635,7 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,
      | ylog=False - log y axis
      | color='k' - colour for the vectors - default is black.
      | zorder=3 - plotting order
+     | titles=None - generate dimension and cell_methods titles for plot
      |
      :Returns:
       None
@@ -4704,7 +4673,7 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,
 
     rotated_vect = False
     if isinstance(u, cf.Field):
-        if u.ref('rotated_latitude_longitude', default=False):
+        if u.ref('grid_mapping_name:rotated_latitude_longitude', default=False):
             rotated_vect = True
 
     # Extract required data
@@ -4798,9 +4767,22 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,
     if key_length is None:
         key_length = scale
 
+    # Calculate a set of dimension titles if requested
+    if titles: 
+        title_dims = generate_titles(u)
+        title_dims = 'u\n' + title_dims
+        title_dims2 = generate_titles(v)
+        title_dims2 = 'v\n' + title_dims2
+
+
     # Open a new plot if necessary
     if plotvars.user_plot == 0:
         gopen(user_plot=0)
+
+    # Call gpos(1) if not already called
+    if plotvars.rows > 1 or plotvars.columns > 1:
+        if plotvars.gpos_called is False:
+            gpos(1)
 
     # Set plot type if user specified
     if (ptype is not None):
@@ -4914,8 +4896,14 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,
         if title is not None:
             map_title(title)
 
+        # Titles for dimensions
+        if titles:
+            dim_titles(title_dims, title2=title_dims2, dims=True)
+
+
+
     if plotvars.plot_type == 6:
-        if u.ref('rotated_latitude_longitude', False):
+        if u.ref('grid_mapping_name:rotated_latitude_longitude', False):
             proj = ccrs.PlateCarree()
 
             # Set up mapping
@@ -4968,6 +4956,13 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,
             # Title
             if title is not None:
                 map_title(title)
+
+
+            # Titles for dimensions
+            if titles:
+                dim_titles(title_dims, titles2=dim_titles2, dims=True)
+
+
 
     ######################################
     # Latitude or longitude vs height plot
@@ -5248,6 +5243,11 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,
                                     fontsize=plotvars.title_fontsize,
                                     fontweight=title_fontweight)
 
+            # Titles for dimensions
+            if titles:
+                dim_titles(title_dims, titles2=dim_titles2, dims=True)
+
+
     ##########
     # Save plot
     ##########
@@ -5378,6 +5378,17 @@ def set_map():
         lonmin = plotvars.lon_0-180.0
         lonmax = plotvars.lon_0+180.01
         extent = False
+
+
+    if plotvars.proj == 'LambertCylindrical':
+        proj = ccrs.LambertCylindrical()
+        lonmin = plotvars.lonmin
+        lonmax = plotvars.lonmax
+        latmin = plotvars.latmin
+        latmax = plotvars.latmax
+        extent = True
+
+
 
     # Add a plot containing the projection
     if plotvars.plot_xmin:
@@ -6315,7 +6326,7 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
              legend_location='upper right', xunits=None, yunits=None,
              xlabel=None, ylabel=None, xticks=None, yticks=None,
              xticklabels=None, yticklabels=None, xname=None, yname=None,
-             axes=True, xaxis=True, yaxis=True, zorder=None):
+             axes=True, xaxis=True, yaxis=True, titles=False, zorder=None):
     """
     | lineplot is the interface to line plotting in cf-plot.
     | The minimum use is lineplot(f) where f is a CF field.
@@ -6344,7 +6355,7 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
     |                                    'center right': 7, 'lower center': 8,
     |                                    'lower left': 3, 'lower right': 4, 'right': 5,
     |                                    'upper center': 9, 'upper left': 2, 'upper right': 1}
-    |
+    | titles=False - set to True to have a dimensions title
     | verbose=None - change to 1 to get a verbose listing of what lineplot
     |                is doing
     | zorder=None - plotting order
@@ -6388,6 +6399,11 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
     ##################
     if plotvars.user_plot == 0:
         gopen(user_plot=0)
+
+    # Call gpos(1) if not already called
+    if plotvars.rows > 1 or plotvars.columns > 1:
+        if plotvars.gpos_called is False:
+            gpos(1)
 
     ##################
     # Extract required data
@@ -6716,6 +6732,14 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
         plot_xlabel = ''
         plot_ylabel = ''
 
+
+
+    # Generate titles if requested
+    if titles: 
+        title_dims = generate_titles(f)
+
+
+
     # Make graph
     if verbose:
         print('lineplot - making graph')
@@ -6798,6 +6822,13 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
     if title is not None:
         graph.set_title(title, fontsize=plotvars.title_fontsize,
                         fontweight=plotvars.title_fontweight)
+
+    # Titles for dimensions
+    if titles:
+        plotvars.plot = graph
+        plotvars.plot_type = 0
+        dim_titles(title_dims, dims=True)
+
 
     ##################
     # Save or view plot
@@ -7550,6 +7581,11 @@ def traj(f=None, title=None, ptype=0, linestyle='-', linewidth=1.0, linecolor='b
     if plotvars.user_plot == 0:
         gopen(user_plot=0)
 
+    # Call gpos(1) if not already called
+    if plotvars.rows > 1 or plotvars.columns > 1:
+        if plotvars.gpos_called is False:
+            gpos(1)
+
     # Set up mapping
     if plotvars.user_mapset == 0:
         plotvars.lonmin = -180
@@ -8192,11 +8228,12 @@ def map_title(title=None, dims=False):
 
 
 
-def dim_titles(title=None, dims=False):
+def dim_titles(title=None, title2=None, dims=False):
     """
     | dim_titles is an internal routine to draw a set of dimension titles on a  plot
     |
-    | title=None - title to put on map plot
+    | title=None - title to put on the plot
+    | title2=None - additional title to put to the right of the first title
     | dim=False - draw a set of dimension titles
     |
     |
@@ -8210,6 +8247,7 @@ def dim_titles(title=None, dims=False):
         this_plot = plotvars.mymap
     else:
         this_plot = plotvars.plot
+
     l, b, w, h = this_plot.get_position().bounds
 
     valign = 'bottom'
@@ -8238,6 +8276,13 @@ def dim_titles(title=None, dims=False):
 
     this_plot.set_position([l, b, w, h])
     this_plot.text(myx, myy, title, va=valign,
+                   ha='left',
+                   fontsize=plotvars.axis_label_fontsize,
+                   fontweight=plotvars.axis_label_fontweight,
+                   transform=this_plot.transAxes)
+
+    if title2 is not None:
+        this_plot.text(myx + 0.3, myy, title2, va=valign,
                    ha='left',
                    fontsize=plotvars.axis_label_fontsize,
                    fontweight=plotvars.axis_label_fontweight,
@@ -9148,6 +9193,11 @@ def stream(u=None, v=None, x=None, y=None, density=None, linewidth=None,
     if plotvars.user_plot == 0:
         gopen(user_plot=0)
 
+    # Call gpos(1) if not already called
+    if plotvars.rows > 1 or plotvars.columns > 1:
+        if plotvars.gpos_called is False:
+            gpos(1)
+
     # Set plot type if user specified
     if (ptype is not None):
         plotvars.plot_type = ptype
@@ -9312,8 +9362,55 @@ def bfill_ugrid(f=None, face_lons=None, face_lats=None, face_connectivity=None, 
 
 
 
+def generate_titles(f=None):
+    '''Generate a set of title dims to put at the top of plots'''
 
+    title_dims = ''
+    if isinstance(f, cf.Field):
+        xtitle, xunits = cf_var_name_titles(f, 'X')
+        if xtitle is not None:
+            xvalues = f.construct('X').array
+            if len(xvalues) > 1:
+                xvalue = ''
+            else:
+                xvalue = str(xvalues)
+            title_dims += 'x: ' + xtitle + ' ' + xvalue + ' '  + xunits + '\n'
+        ytitle, yunits = cf_var_name_titles(f, 'Y')
+        if ytitle is not None:
+            yvalues = f.construct('Y').array
+            if len(yvalues) > 1:
+                yvalue = ''
+            else:
+                yvalue = str(yvalues)
+            title_dims += 'y: '  + ytitle + ' ' + yvalue + ' ' + yunits + '\n'
+        ztitle, zunits = cf_var_name_titles(f, 'Z')
+        if ztitle is not None:
+            zvalues = f.construct('Z').array
+            if len(zvalues) > 1:
+                zvalue = ''
+            else:
+                zvalue = str(zvalues)
+            title_dims +=  'z: '  + ztitle + ' ' + zvalue + ' ' + zunits + '\n'
+        ttitle, tunits = cf_var_name_titles(f, 'T')
+        if ztitle is not None:
+            tvalues = f.construct('T').dtarray
+            if len(tvalues) > 1:
+                tvalue = ''
+            else:
+                tvalue = str(cf.Data(tvalues).datetime_as_string)
+            title_dims += 't: '  + ttitle + ' ' + tvalue + '\n'
+        if len(f.cell_methods()) > 0:
+            title_dims += 'cell methods: '
+            i = 0
+            for method in f.cell_methods():
+                axis = f.cell_methods()[method].get_axes()[0]
+                dim = f.constructs.domain_axis_identity(axis)
+                collapse = f.cell_methods()[method].method
+                if i > 0:
+                    title_dims += ', '
+                title_dims += dim + ': ' + collapse
 
+    return title_dims
 
 
 
