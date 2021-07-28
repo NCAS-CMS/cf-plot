@@ -194,7 +194,8 @@ plotvars = pvars(lonmin=-180, lonmax=180, latmin=-90, latmax=90, proj='cyl',
                  grid_thickness=1.0, aspect='equal',
                  graph_xmin=None, graph_xmax=None,
                  graph_ymin=None, graph_ymax=None,
-                 level_spacing=None, tight=False, gpos_called=False)
+                 level_spacing=None, tight=False, gpos_called=False,
+                 titles_con_called=False)
 
 # Check for iPython notebook inline
 # and set the viewer to None if found
@@ -225,7 +226,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
         colorbar_anchor=None, colorbar_labels=None,
         linestyles=None, zorder=1, level_spacing=None,
         ugrid=False, face_lons=False, face_lats=False, face_connectivity=False,
-        titles=False):
+        titles=False, mytest=False):
     """
      | con is the interface to contouring in cf-plot. The minimum use is con(f)
      | where f is a 2 dimensional array. If a cf field is passed then an
@@ -327,16 +328,6 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
     # Set potential user axis labels
     user_xlabel = xlabel
     user_ylabel = ylabel
-
-    # Test for UGRID blockfill
-    #ugrid_blockfill = False
-    #if face_lons and face_lats and face_connectivity:
-    #    print('ajh - in ugrid blockfill')
-    #    ugrid_blockfill = True
-    #    field = np.squeeze(f.array)
-    #    x = np.squeeze(face_lons.array)
-    #    y = np.squeeze(face_lats.array)
-
 
     # Extract data for faces if a UGRID blockplot
     blockfill_ugrid = False
@@ -637,6 +628,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
 
     # Calculate a set of dimension titles if requested
     if titles: 
+        plotvars.titles_con_called = True
         title_dims = generate_titles(f)
         if not colorbar:
             title_dims = colorbar_title + '\n' + title_dims
@@ -649,6 +641,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
     if ptype == 1:
         if verbose:
             print('con - making a map plot')
+
 
         # Open a new plot if necessary
         if plotvars.user_plot == 0:
@@ -664,6 +657,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
             plotvars.latmin = -90
             plotvars.latmax = 90
 
+
         if (lonrange > 350 and latrange > 170) or plotvars.user_mapset == 1:
             set_map()
         else:
@@ -672,33 +666,18 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                    user_mapset=0, resolution=resolution_orig)
             set_map()
 
+
+
+
         mymap = plotvars.mymap
         user_mapset = plotvars.user_mapset
 
         lonrange = np.nanmax(x) - np.nanmin(x)
         
-        # Extract data for faces if a UGRID blockplot
-        #blockfill_ugrid = False
-        #if face_lons and face_lats and face_connectivity:
-        #    print('ugrid blockplot')
-        #    blockfill_ugrid = True
-        #    fill = False
-        #    ugrid = True
-        #    field_orig = deepcopy(field)
-        #    if isinstance(face_lons, cf.Field):
-        #        face_lons_array = face_lons.array
-        #    else:
-        #        face_lons_array = face_lons
 
-        #    if isinstance(face_lats, cf.Field):
-        #        face_lats_array = face_lats.array
-        #    else:
-        #        face_lats_array = face_lats
 
-        #    if isinstance(face_connectivity, cf.Field):
-        #        face_connectivity_array = face_connectivity.array
-        #    else:
-        #        face_connectivity_array = face_connectivity
+
+
 
         if not blockfill_ugrid:
             if not ugrid:
@@ -788,10 +767,6 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                         field = field[0:myypos + 1, :]
 
 
-
-
-
-
         # Set the longitudes and latitudes
         lons, lats = x, y
 
@@ -867,11 +842,11 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
 
                 if f.ref('grid_mapping_name:transverse_mercator', default=False):
                     # Special case for transverse mercator
-                    bfill(f=f, clevs=clevs, alpha=alpha, zorder=zorder)
+                    bfill(f=f, clevs=clevs, lonlat=False, alpha=alpha, zorder=zorder)
 
                 else:
 
-                    if f.coord('X').has_bounds():
+                    if f.coord('X').has_bounds() and f.coord('Y').has_bounds():
                         xpts = np.squeeze(f.coord('X').bounds.array[:, 0])
                         ypts = np.squeeze(f.coord('Y').bounds.array[:, 0])
                         # Add last longitude point
@@ -880,14 +855,14 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                         ypts = np.append(ypts, f.coord('Y').bounds.array[-1, 1])
 
                         bfill(f=field_orig * fmult, x=xpts, y=ypts, clevs=clevs,
-                              lonlat=1, bound=1, alpha=alpha, zorder=zorder)
+                              lonlat=True, bound=1, alpha=alpha, zorder=zorder)
                     else:
                         bfill(f=field_orig * fmult, x=x_orig, y=y_orig, clevs=clevs,
-                              lonlat=1, bound=0, alpha=alpha, zorder=zorder)
+                              lonlat=True, bound=0, alpha=alpha, zorder=zorder)
 
             else:
                 bfill(f=field_orig * fmult, x=x_orig, y=y_orig, clevs=clevs,
-                      lonlat=1, bound=0, alpha=alpha, zorder=zorder)
+                      lonlat=True, bound=0, alpha=alpha, zorder=zorder)
 
         # Block fill for ugrid
         if blockfill_ugrid:
@@ -986,6 +961,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                  text_down_up=colorbar_text_down_up, drawedges=colorbar_drawedges,
                  fraction=colorbar_fraction, thick=colorbar_thick,
                  anchor=colorbar_anchor, levs=clevs, verbose=verbose)
+
 
         # Reset plot limits if not a user plot
         if plotvars.user_gset == 0:
@@ -1230,7 +1206,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                 hasbounds = True
 
                 if ptype == 2:
-                    if f.coord('Y').has_bounds():
+                    if f.coord('Y').has_bounds() and f.coord('Z').has_bounds():
                         xpts = np.squeeze(f.coord('Y').bounds.array)[:, 0]
                         xpts = np.append(xpts, f.coord('Y').bounds.array[-1, 1])
                         ypts = np.squeeze(f.coord('Z').bounds.array)[:, 0]
@@ -1239,7 +1215,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                         hasbounds = False
 
                 if ptype == 3:
-                    if f.coord('X').has_bounds():
+                    if f.coord('X').has_bounds() and f.coord('Z').has_bounds():
                         xpts = np.squeeze(f.coord('X').bounds.array)[:, 0]
                         xpts = np.append(xpts, f.coord('X').bounds.array[-1, 1])
                         ypts = np.squeeze(f.coord('Z').bounds.array)[:, 0]
@@ -1248,7 +1224,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                         hasbounds = False
 
                 if ptype == 7:
-                    if f.coord('T').has_bounds():
+                    if f.coord('T').has_bounds() and f.coord('Z').has_bounds():
                         xpts = np.squeeze(f.coord('T').bounds.array)[:, 0]
                         xpts = np.append(xpts, f.coord('T').bounds.array[-1, 1])
                         ypts = np.squeeze(f.coord('Z').bounds.array)[:, 0]
@@ -1258,14 +1234,14 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
 
                 if hasbounds:
                     bfill(f=field_orig * fmult, x=xpts, y=ypts, clevs=clevs,
-                          lonlat=0, bound=1, alpha=alpha, zorder=zorder)
+                          lonlat=False, bound=1, alpha=alpha, zorder=zorder)
                 else:
                     bfill(f=field_orig * fmult, x=x_orig, y=y_orig, clevs=clevs,
-                          lonlat=0, bound=0, alpha=alpha, zorder=zorder)
+                          lonlat=False, bound=0, alpha=alpha, zorder=zorder)
 
             else:
                 bfill(f=field_orig * fmult, x=x_orig, y=y_orig, clevs=clevs,
-                      lonlat=0, bound=0, alpha=alpha, zorder=zorder)
+                      lonlat=False, bound=0, alpha=alpha, zorder=zorder)
 
         # Contour lines and labels
         if lines:
@@ -1511,20 +1487,20 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                         field_orig = np.flipud(np.rot90(field_orig))
 
                     bfill(f=field_orig * fmult, x=xpts, y=ypts, clevs=clevs,
-                          lonlat=0, bound=1, alpha=alpha, zorder=zorder)
+                          lonlat=False, bound=1, alpha=alpha, zorder=zorder)
                 else:
                     if swap_axes:
                         x_orig, y_orig = y_orig, x_orig
                         field_orig = np.flipud(np.rot90(field_orig))
                     bfill(f=field_orig * fmult, x=x_orig, y=y_orig, clevs=clevs,
-                          lonlat=0, bound=0, alpha=alpha, zorder=zorder)
+                          lonlat=False, bound=0, alpha=alpha, zorder=zorder)
 
             else:
                 if swap_axes:
                     x_orig, y_orig = y_orig, x_orig
                     field_orig = np.flipud(np.rot90(field_orig))
                 bfill(f=field_orig * fmult, x=x_orig, y=y_orig, clevs=clevs,
-                      lonlat=0, bound=0, alpha=alpha, zorder=zorder)
+                      lonlat=False, bound=0, alpha=alpha, zorder=zorder)
 
         # Contour lines and labels
         if lines:
@@ -1664,7 +1640,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                   x=xpts,
                   y=ypts,
                   clevs=clevs,
-                  lonlat=0,
+                  lonlat=False,
                   bound=0,
                   alpha=alpha,
                   zorder=zorder)
@@ -1821,7 +1797,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                 for d in data_axes:
                     i = f.constructs.domain_axis_identity(d)
                     try:
-                        c = f.coordinate(i)
+                        c = f.coordinate([i])
                         if np.size(c.array) > 1:
                             test_for_time_axis = False
                             sn = getattr(c, 'standard_name', 'NoName')
@@ -1956,7 +1932,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
         # Block fill
         if blockfill:
             bfill(f=field_orig * fmult, x=x_orig, y=y_orig, clevs=clevs,
-                  lonlat=0, bound=0, alpha=alpha, zorder=zorder)
+                  lonlat=False, bound=0, alpha=alpha, zorder=zorder)
 
         # Contour lines and labels
         if lines:
@@ -3015,6 +2991,8 @@ def gclose(view=True):
     plotvars.graph_ymin = None
     plotvars.graph_ymax = None
     plotvars.gpos_called = False
+    plotvars.mymap = None
+    plotvars.titles_con_called = False
 
 
 def gpos(pos=1, xmin=None, xmax=None, ymin=None, ymax=None):
@@ -3049,6 +3027,8 @@ def gpos(pos=1, xmin=None, xmax=None, ymin=None, ymax=None):
 
     """
 
+    # Reset mymap
+    plotvars.mymap = None
 
     # Check inputs are okay
     if pos < 1 or pos > plotvars.rows * plotvars.columns:
@@ -3076,6 +3056,8 @@ def gpos(pos=1, xmin=None, xmax=None, ymin=None, ymax=None):
     # Set gpos_called
     plotvars.gpos_called = True
 
+    # Reset titles_con_called
+    plotvars.titles_con_called = False
 
     if user_pos is False:
         plotvars.plot = plotvars.master_plot.add_subplot(
@@ -3672,9 +3654,8 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None, rotated_vect=False
         data_axes = f.get_data_axes()
         count = 1
         for d in data_axes:
-            i = f.constructs.domain_axis_identity(d)
             try:
-                c = f.coordinate(i)
+                c = f.coordinate(filter_by_axis  = [d])
                 if np.size(c.array) > 1:
                     if count == 1:
                         y = c
@@ -3683,7 +3664,7 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None, rotated_vect=False
                     count += 1
             except ValueError:
                 errstr = "\n\ncf_data_assign - cannot find data to return\n\n" 
-                errstr += str(c) + "\n\n"
+                errstr += str(f.constructs.domain_axis_identity(d)) + "\n\n"
                 raise Warning(errstr)
 
         xunits = str(getattr(f.construct(mydim), 'units', ''))
@@ -4006,8 +3987,8 @@ def cscale_get_map():
     return (colmap)
 
 
-def bfill(f=None, x=None, y=None, clevs=False, lonlat=False, bound=False,
-          alpha=1.0, single_fill_color=None, white=True, zorder=None):
+def bfill(f=None, x=None, y=None, clevs=False, lonlat=None, bound=False,
+          alpha=1.0, single_fill_color=None, white=True, zorder=4):
     """
      | bfill - block fill a field with colour rectangles
      | This is an internal routine and is not generally used by the user.
@@ -4016,14 +3997,14 @@ def bfill(f=None, x=None, y=None, clevs=False, lonlat=False, bound=False,
      | x=None - x points for field
      | y=None - y points for field
      | clevs=None - levels for filling
-     | lonlat=False - lonlat data
+     | lonlat=None - longitude and latitude data
      | bound=False - x and y are cf data boundaries
      | alpha=alpha - transparency setting 0 to 1
      | white=True - colour unplotted areas white
      | single_fill_color=None - colour for a blockfill between two levels
      |                        - makes maplotlib named colours or
      |                        - hexadecimal notation - '#d3d3d3' for grey
-     | zorder=None - plotting order
+     | zorder=4 - plotting order
      |
       :Returns:
         None
@@ -4032,6 +4013,11 @@ def bfill(f=None, x=None, y=None, clevs=False, lonlat=False, bound=False,
      |
      |
     """
+
+    # Set lonlat if not specified
+    lonlat = False
+    if plotvars.plot_type == 1:
+        lonlat = True
 
     # If single_fill_color is defined then turn off whiting out the background.
     if single_fill_color is not None:
@@ -4170,6 +4156,7 @@ def bfill(f=None, x=None, y=None, clevs=False, lonlat=False, bound=False,
         if np.size(pts) > 0:
             colarr[pts] = -1
 
+
     if plotvars.plot_type == 1 and plotvars.proj != 'cyl':
 
         for i in np.arange(np.size(levels)-1):
@@ -4207,6 +4194,7 @@ def bfill(f=None, x=None, y=None, clevs=False, lonlat=False, bound=False,
                 plotvars.plot.add_collection(coll)
     else:
         for i in np.arange(np.size(levels)-1):
+
             allverts = []
             xy_stack = np.column_stack(np.where(colarr == i))
             for pt in np.arange(np.shape(xy_stack)[0]):
@@ -4230,6 +4218,9 @@ def bfill(f=None, x=None, y=None, clevs=False, lonlat=False, bound=False,
 
             coll = PolyCollection(allverts, facecolor=color, edgecolors=color,
                                   alpha=alpha, zorder=zorder, **plotargs)
+
+
+
 
             if lonlat:
                 plotvars.mymap.add_collection(coll)
@@ -4577,7 +4568,7 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,
          pivot='middle', key_location=[0.95, -0.06], key_show=True, axes=True,
          xaxis=True, yaxis=True, xticks=None, xticklabels=None, yticks=None,
          yticklabels=None, xlabel=None, ylabel=None, ylog=False, color='k',
-         zorder=1, titles=None):
+         zorder=3, titles=None, alpha=1.0):
     """
      | vect - plot vectors
      |
@@ -4636,6 +4627,7 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,
      | color='k' - colour for the vectors - default is black.
      | zorder=3 - plotting order
      | titles=None - generate dimension and cell_methods titles for plot
+     | alpha=1.0 - transparency setting.  The default is no transparency.
      |
      :Returns:
       None
@@ -4834,7 +4826,7 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,
                                          headlength=headlength,
                                          headaxislength=headaxislength,
                                          color=color, transform=proj,
-                                         zorder=zorder)
+                                         alpha=alpha, zorder=zorder)
         else:
             if plotvars.proj == 'cyl':
                 # **cartopy 0.16 fix for longitide points in cylindrical projection
@@ -4851,7 +4843,7 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,
                                          headaxislength=headaxislength,
                                          color=color,
                                          regrid_shape=pts, transform=proj,
-                                         zorder=zorder)
+                                         alpha=alpha, zorder=zorder)
 
         # Make key_label if none exists
         if key_label is None:
@@ -4898,8 +4890,10 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,
 
         # Titles for dimensions
         if titles:
-            dim_titles(title_dims, title2=title_dims2, dims=True)
-
+            if plotvars.titles_con_called is False:
+                dim_titles(title_dims, title2=title_dims2, dims=True)
+            else:
+                dim_titles(title2=title_dims, title3=title_dims2, dims=True)
 
 
     if plotvars.plot_type == 6:
@@ -4921,7 +4915,7 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,
                                          width=width, headwidth=headwidth,
                                          headlength=headlength,
                                          headaxislength=headaxislength,
-                                         color=color, zorder=zorder)
+                                         color=color, alpha=alpha, zorder=zorder)
 
             # Make key_label if none exists
             if key_label is None:
@@ -5162,7 +5156,7 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,
                                     width=width, headwidth=headwidth,
                                     headlength=headlength,
                                     headaxislength=headaxislength,
-                                    color=color, zorder=zorder)
+                                    color=color, alpha=alpha, zorder=zorder)
 
         # Plot single key
         if np.size(scale) == 1:
@@ -5278,6 +5272,13 @@ def set_map():
      |
      |
     """
+
+
+    # Return if mymap is already set
+    if plotvars.mymap is not None:
+        return
+
+
 
     # Set up mapping
     extent = True
@@ -8228,7 +8229,7 @@ def map_title(title=None, dims=False):
 
 
 
-def dim_titles(title=None, title2=None, dims=False):
+def dim_titles(title=None, title2=None, title3=None, dims=False):
     """
     | dim_titles is an internal routine to draw a set of dimension titles on a  plot
     |
@@ -8274,7 +8275,25 @@ def dim_titles(title=None, title2=None, dims=False):
         myx = 0.0
         myy = 1.02
 
+
     this_plot.set_position([l, b, w, h])
+
+    if title3 is not None:
+        this_plot.text(myx + 0.3, myy, title2, va=valign,
+                   ha='left',
+                   fontsize=plotvars.axis_label_fontsize,
+                   fontweight=plotvars.axis_label_fontweight,
+                   transform=this_plot.transAxes)
+
+        this_plot.text(myx + 0.6, myy, title3, va=valign,
+                   ha='left',
+                   fontsize=plotvars.axis_label_fontsize,
+                   fontweight=plotvars.axis_label_fontweight,
+                   transform=this_plot.transAxes)
+
+        return
+
+
     this_plot.text(myx, myy, title, va=valign,
                    ha='left',
                    fontsize=plotvars.axis_label_fontsize,
@@ -8287,6 +8306,9 @@ def dim_titles(title=None, title2=None, dims=False):
                    fontsize=plotvars.axis_label_fontsize,
                    fontweight=plotvars.axis_label_fontweight,
                    transform=this_plot.transAxes)
+
+
+
 
 
 
