@@ -4819,6 +4819,18 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,
         lonmax = plotvars.lonmax
         proj = ccrs.PlateCarree()
 
+        # Fix for high latitude vectors as described at https://github.com/SciTools/cartopy/issues/1179
+        if plotvars.proj != 'cyl':
+            u_src_crs = u_data / np.cos(u_y[:, np.newaxis] / 180 * np.pi)
+            v_src_crs = v_data
+            magnitude = np.ma.sqrt(u_data**2 + v_data**2)
+            magn_src_crs = np.ma.sqrt(u_src_crs**2 + v_src_crs**2)
+
+            u_data = u_src_crs * magnitude / magn_src_crs
+            v_data = v_src_crs * magnitude / magn_src_crs
+
+
+
         if pts is None:
             quiv = plotvars.mymap.quiver(u_x, u_y, u_data, v_data, scale=scale,
                                          pivot=pivot, units='inches',
