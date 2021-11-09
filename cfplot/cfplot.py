@@ -12,6 +12,7 @@ import sys
 import matplotlib.pyplot as plot
 from matplotlib.collections import PolyCollection
 from distutils.version import StrictVersion
+import cartopy
 import cartopy.crs as ccrs
 import cartopy.util as cartopy_util
 import cartopy.feature as cfeature
@@ -695,7 +696,12 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
 
                     # Shift grid if needed
                     if plotvars.lonmin < np.nanmin(x):
-                        x = x - 360
+                        # Cartopy feature at version 0.20.0 
+                        # -360 to 0 creates strange contours
+                        vers = cartopy.__version__.split('.')
+                        val = int(vers[0] +vers[1])
+                        if val < 20:
+                            x = x - 360
                     if plotvars.lonmin > np.nanmax(x):
                         x = x + 360
             else:
@@ -814,9 +820,6 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                 cmap.set_over(plotvars.cs[-1])
 
 
-
-
-
             # Filled colour contours
             if not ugrid:
                 mymap.contourf(lons, lats, field * fmult, clevs,
@@ -831,8 +834,6 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                                       cmap=cmap, norm=plotvars.norm,
                                       alpha=alpha, transform=ccrs.PlateCarree(),
                                       zorder=zorder)
-
-
 
         # Block fill
         if blockfill:
