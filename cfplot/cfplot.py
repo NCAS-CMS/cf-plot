@@ -373,6 +373,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
         if ndims > 2:
             errstr = "\n\ncfp.con error need a 1 or 2 dimensional field to contour\n"
             errstr += "received " + str(np.squeeze(f.data).ndim) + " dimensions\n\n"
+            errstr += str(f)
             raise TypeError(errstr)
 
         # Extract data
@@ -635,6 +636,11 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
             title_dims = colorbar_title + '\n' + title_dims
 
 
+    # Check if data is well formed
+    # i.e. dimensions have only recognizable X, Y, Z, T or a subset
+    well_formed = False
+    if isinstance(f, cf.Field):
+        well_formed = check_well_formed(f)
 
     ##################
     # Map contour plot
@@ -819,7 +825,10 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                     'max' or plotvars.levels_extend == 'both'):
                 cmap.set_over(plotvars.cs[-1])
 
-
+            # For fast map contours add transform_first=True to contourf command
+            # and make lons and lats 2D
+            # lons, lats = np.meshgrid(lons, lats)
+            
             # Filled colour contours
             if not ugrid:
                 mymap.contourf(lons, lats, field * fmult, clevs,
@@ -983,7 +992,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
 
         # Work out which way is up
         positive = None
-        if isinstance(f, cf.Field):
+        if isinstance(f, cf.Field) and well_formed:
             if hasattr(f.construct('Z'), 'positive'):
                 positive = f.construct('Z').positive
             else:
@@ -1268,8 +1277,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
         # Titles for dimensions
         if titles:
             dim_titles(title_dims, dims=True)
-
-
+        
         # Color bar
         if colorbar:
             cbar(labels=cbar_labels,
@@ -1769,7 +1777,8 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
             xmax = plotvars.xmax
             ymin = plotvars.ymin
             ymax = plotvars.ymax
-
+            
+            
         # Change from date string to a number if strings are passed
         time_xstr = False
         time_ystr = False
@@ -1787,6 +1796,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
         yaxisticks = None
         xtimeaxis = False
         ytimeaxis = False
+
 
         if cf_field and f.has_construct('T'):
             if np.size(f.construct('T').array) > 1:
@@ -1841,7 +1851,24 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                     xaxisticks, xaxislabels, xplotlabel = timeaxis(taxis)
                 if ytimeaxis:
                     yaxisticks, yaxislabels, yplotlabel = timeaxis(taxis)
+                
 
+        if cf_field:
+            coords = list(f.coords())
+            mycoords = []
+            for coord in coords:
+                if np.size(f.coord(coord).array) > 1:
+                    mycoords.append(coord)
+            mycoords.reverse()
+            
+            if f.coord(mycoords[0]).X:
+                xaxisticks, xaxislabels = mapaxis(np.min(f.coord('X').array), np.max(f.coord('X').array), type=1)
+                xlabel = 'longitude'
+                
+            if f.coord(mycoords[1]).Y:
+                yaxisticks, yaxislabels = mapaxis(np.min(f.coord('Y').array), np.max(f.coord('Y').array), type=2)
+                ylabel = 'latitude'
+                
         if xaxisticks is None:
             xaxisticks = gvals(dmin=xmin, dmax=xmax, mod=False)[0]
             xaxislabels = xaxisticks
@@ -3359,10 +3386,10 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None, rotated_vect=False
     time = None
     xlabel = ''
     ylabel = ''
-    has_lons = None
-    has_lats = None
-    has_height = None
-    has_time = None
+    has_lons = False
+    has_lats = False
+    has_height = False
+    has_time = False
     xpole = None
     ypole = None
     ptype = None
@@ -3371,108 +3398,36 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None, rotated_vect=False
     y = None
 
     # Extract coordinate data if a matching CF standard_name or axis is found
-    for mydim in list(f.dimension_coordinates()):
-        sn = getattr(f.construct(mydim), 'standard_name', 'NoName')
-        an = f.construct(mydim).get_property('axis', 'NoName')
-
-        standard_name_x = ['longitude']
-        vs = 'cf_data_assign standard_name, axis - assigned '
-        if (sn in standard_name_x or an == 'X'):
+    for mycoord in f.coords():
+        c = f.coord(mycoord)
+        if c.X:
             if verbose:
-                print(vs + 'lons -', sn, an)
-            lons = np.squeeze(f.construct(mydim).array)
-
-        standard_name_y = ['latitude']
-        if (sn in standard_name_y or an == 'Y'):
+                print(vs + 'lons -', mydim)
+            lons = np.squeeze(f.construct(mycoord).array)
+            if np.size(lons) > 1:
+                has_lons = True
+            
+        if c.Y:
             if verbose:
-                print(vs + 'lats -', sn, an)
-            lats = np.squeeze(f.construct(mydim).array)
-
-        standard_name_z = ['pressure', 'air_pressure', 'height', 'depth']
-        if (sn in standard_name_z or an == 'Z'):
+                print(vs + 'lats -', mydim)
+            lats = np.squeeze(f.construct(mycoord).array)
+            if np.size(lats) > 1:
+                has_lats = True
+            
+        if c.Z:
             if verbose:
-                print(vs + 'height -', sn, an)
-            height = np.squeeze(f.construct(mydim).array)
-
-        standard_name_t = ['time']
-        if (sn in standard_name_t or an == 'T'):
+                print(vs + 'height -', mydim)
+            height = np.squeeze(f.construct(mycoord).array)
+            if np.size(height) > 1:
+                has_height = True
+            
+        if c.T:
             if verbose:
-                print(vs + 'time -', sn, an)
-            time = np.squeeze(f.construct(mydim).array)
-
-    # CF defined units
-    lon_units = ['degrees_east', 'degree_east', 'degree_E',
-                 'degrees_E', 'degreeE', 'degreesE']
-    lat_units = ['degrees_north', 'degree_north', 'degree_N',
-                 'degrees_N', 'degreeN', 'degreesN']
-
-    height_units = ['mb', 'mbar', 'millibar', 'decibar', 'atmosphere',
-                    'atm', 'pascal', 'Pa', 'hPa']
-
-    time_units = ['day', 'days', 'd', 'hour', 'hours', 'hr', 'h', 'minute',
-                  'minutes', 'min', 'mins', 'second', 'seconds', 'sec',
-                  'secs', 's']
-
-    # Extract coordinate data if a matching CF set of units is found
-    for mydim in list(f.dimension_coordinates()):
-        units = getattr(f.construct(mydim), 'units', False)
-        if units in lon_units:
-            if lons is None:
-                if verbose:
-                    print('cf_data_assign units - assigned lons -', units)
-                lons = np.squeeze(f.construct(mydim).array)
-        if units in lat_units:
-            if lats is None:
-                if verbose:
-                    print('cf_data_assign units - assigned lats -', units)
-                lats = np.squeeze(f.construct(mydim).array)
-        if units in height_units:
-            if height is None:
-                if verbose:
-                    print('cf_data_assign units - assigned height -', units)
-                height = np.squeeze(f.construct(mydim).array)
-        if units in time_units:
-            if time is None:
-                if verbose:
-                    print('cf_data_assign units - assigned time -', units)
-                time = np.squeeze(f.construct(mydim).array)
-
-    # Extract coordinate data from variable name if not already assigned
-    for mydim in list(f.dimension_coordinates()):
-        name = cf_var_name(field=f, dim=mydim)
-        vs = 'cf_data_assign dimension name - assigned '
-        if name[0:3] == 'lon':
-            if lons is None:
-                if verbose:
-                    print(vs + 'lons' + '-', name)
-                lons = np.squeeze(f.construct(mydim).array)
-
-        if name[0:3] == 'lat':
-            if lats is None:
-                if verbose:
-                    print(vs+'lats' + '-', name)
-                lats = np.squeeze(f.construct(mydim).array)
-
-        if (name[0:5] == 'theta' or name == 'p' or name == 'air_pressure'):
-            if height is None:
-                if verbose:
-                    print(vs+'height' + '-', name)
-                height = np.squeeze(f.construct(mydim).array)
-
-        if name[0:1] == 't':
-            if time is None:
-                if verbose:
-                    print(vs+'time ' + '-', name)
-                time = np.squeeze(f.construct(mydim).array)
-
-    if np.size(lons) > 1:
-        has_lons = 1
-    if np.size(lats) > 1:
-        has_lats = 1
-    if np.size(height) > 1:
-        has_height = 1
-    if np.size(time) > 1:
-        has_time = 1
+                print(vs + 'time -', mydim)
+            time = np.squeeze(f.construct(mycoord).array)
+            if np.size(time) > 1:
+                has_time = True
+                    
 
     # assign field data
     field = np.squeeze(f.array)
@@ -3488,55 +3443,118 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None, rotated_vect=False
     # Check what plot type is required.
     # 0=simple contour plot, 1=map plot, 2=latitude-height plot,
     # 3=longitude-time plot, 4=latitude-time plot.
-    if (np.size(lons) > 1 and np.size(lats) > 1):
+    if has_lons and has_lats:
         ptype = 1
         x = lons
         y = lats
 
-    if (np.size(lats) > 1 and np.size(height) > 1):
+    if has_lats and has_height:
         ptype = 2
         x = lats
         y = height
-        for mydim in list(f.dimension_coordinates()):
-            name = cf_var_name(field=f, dim=mydim)
-            if name[0:3] == 'lat':
-                xunits = str(getattr(f.construct(mydim), 'Units', ''))
-                if (xunits in lat_units):
-                    xunits = 'degrees'
-                xlabel = name + ' (' + xunits + ')'
-            if (name[0:1] == 'p' or name == 'air_pressure' or
-                    name[0:5] == 'theta' or name[0:6] == 'height' or
-                    name[0:6] == 'hybrid' or name[0:5] == 'level' or
-                    name[0:5] == 'model'):
-                yunits = str(getattr(f.construct(mydim), 'Units', ''))
-                ylabel = name + ' (' + yunits + ')'
-
-    if (np.size(lons) > 1 and np.size(height) > 1):
+        
+        xname = cf_var_name(field=f, dim='Y')
+        xunits = str(getattr(f.construct('Y'), 'Units', ''))
+        if xunits == 'degrees_north':
+            xunits = 'degrees'
+        if xunits != '':
+            xlabel = xname + ' (' + xunits + ')'
+        else:
+            xlabel = xname
+            
+        yname = cf_var_name(field=f, dim='Z')
+        yunits = str(getattr(f.construct('Z'), 'Units', ''))
+        if yunits != '':
+            ylabel = yname + ' (' + yunits + ')'
+        else:
+            ylabel = yname 
+                         
+    if has_lons and has_height:
         ptype = 3
         x = lons
         y = height
-        for mydim in list(f.dimension_coordinates()):
-            name = cf_var_name(field=f, dim=mydim)
-            if name[0:3] == 'lon':
-                xunits = str(getattr(f.construct(mydim), 'Units', ''))
-                if (xunits in lon_units):
-                    xunits = 'degrees'
-                xlabel = name + ' (' + xunits + ')'
-            if (name[0:1] == 'p' or name[0:5] == 'theta' or
-                    name[0:6] == 'height' or name[0:6] == 'hybrid' or
-                    name[0:5] == 'level' or name[0:5] == 'model'):
-                yunits = str(getattr(f.construct(mydim), 'Units', ''))
-                ylabel = name + ' (' + yunits + ')'
-
-    if (np.size(lons) > 1 and np.size(time) > 1):
+        
+        xname = cf_var_name(field=f, dim='X')
+        xunits = str(getattr(f.construct('X'), 'Units', ''))
+        if xunits == 'degrees_east':
+            xunits = 'degrees'
+        if xunits != '':
+            xlabel = xname + ' (' + xunits + ')'
+        else:
+            xlabel = xname
+            
+        yname = cf_var_name(field=f, dim='Z')
+        yunits = str(getattr(f.construct('Z'), 'Units', ''))
+        if yunits != '':
+            ylabel = yname + ' (' + yunits + ')'
+        else:
+            ylabel = yname 
+        
+    if has_lons and has_time:
         ptype = 4
         x = lons
         y = time
+        
+        xname = cf_var_name(field=f, dim='X')
+        xunits = str(getattr(f.construct('X'), 'Units', ''))
+        if xunits == 'degrees_east':
+            xunits = 'degrees'
+        if xunits != '':
+            xlabel = xname + ' (' + xunits + ')'
+        else:
+            xlabel = xname
+            
+        yname = cf_var_name(field=f, dim='T')
+        yunits = str(getattr(f.construct('T'), 'Units', ''))
+        if yunits != '':
+            ylabel = yname + ' (' + yunits + ')'
+        else:
+            ylabel = yname 
 
-    if np.size(lats) > 1 and np.size(time) > 1:
+    if has_lats and has_time:
         ptype = 5
         x = lats
         y = time
+        
+        xname = cf_var_name(field=f, dim='Y')
+        xunits = str(getattr(f.construct('Y'), 'Units', ''))
+        if xunits == 'degrees_north':
+            xunits = 'degrees'
+        if xunits != '':
+            xlabel = xname + ' (' + xunits + ')'
+        else:
+            xlabel = xname
+            
+        yname = cf_var_name(field=f, dim='T')
+        yunits = str(getattr(f.construct('T'), 'Units', ''))
+        if yunits != '':
+            ylabel = yname + ' (' + yunits + ')'
+        else:
+            ylabel = yname 
+
+    # time height plot
+    if has_height and has_time:
+        ptype = 7
+        x = time
+        y = height
+        
+        xname = cf_var_name(field=f, dim='T')
+        xunits = str(getattr(f.construct('T'), 'Units', ''))
+        if xunits != '':
+            xlabel = xname + ' (' + xunits + ')'
+        else:
+            xlabel = xname
+            
+        yname = cf_var_name(field=f, dim='Z')
+        yunits = str(getattr(f.construct('Z'), 'Units', ''))
+        if yunits != '':
+            ylabel = yname + ' (' + yunits + ')'
+        else:
+            ylabel = yname 
+
+        # Rotate array to get it as time vs height
+        field = np.rot90(field)
+        field = np.flipud(field)
 
     # Rotated pole
     if f.ref('grid_mapping_name:rotated_latitude_longitude', default=False):
@@ -3584,26 +3602,6 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None, rotated_vect=False
                 y = ypts
                 ptype = 1
 
-    # time height plot
-    if has_height == 1 and has_time == 1:
-        ptype = 7
-        for mydim in list(f.dimension_coordinates()):
-            if np.size(np.squeeze(f.construct(mydim).array)
-                       ) == np.shape(np.squeeze(f.array))[0]:
-                x = np.squeeze(f.construct(mydim).array)
-                xunits = str(getattr(f.construct(mydim), 'units', ''))
-                xlabel = cf_var_name(field=f, dim=mydim) + xunits
-
-            if np.size(np.squeeze(f.construct(mydim).array)
-                       ) == np.shape(np.squeeze(f.array))[1]:
-                y = np.squeeze(f.construct(mydim).array)
-                yunits = '(' + str(getattr(f.construct(mydim), 'Units', ''))
-                yunits += ')'
-                ylabel = cf_var_name(field=f, dim=mydim) + yunits
-
-        # Rotate array to get it as time vs height
-        field = np.rot90(field)
-        field = np.flipud(field)
 
     # UKCP grid
     if f.ref('grid_mapping_name:transverse_mercator', default=False):
@@ -3648,6 +3646,7 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None, rotated_vect=False
             x = np.array(points)[:, :, 0]
             y = np.array(points)[:, :, 1]
 
+
     # None of the above
     if ptype is None:
         ptype = 0
@@ -3659,19 +3658,27 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None, rotated_vect=False
                 c = f.coordinate(filter_by_axis  = [d])
                 if np.size(c.array) > 1:
                     if count == 1:
+                        
                         y = c
+                        mycoord = 'dimensioncoordinate'+str(d[-1])
+                        yunits = str(getattr(f.coord(mycoord), 'Units', ''))
+                        if yunits != '':
+                            yunits = '(' + yunits + ')'
+                        ylabel = cf_var_name(field=f, dim=mycoord) + yunits                         
                     elif count == 2:
                         x = c
+                        mycoord = 'dimensioncoordinate'+str(d[-1])
+                        xunits = str(getattr(f.coord(mycoord), 'units', ''))
+                        if xunits != '':
+                            xunits = '(' + xunits + ')'
+                        xlabel = cf_var_name(field=f, dim=mycoord) + xunits
                     count += 1
             except ValueError:
                 errstr = "\n\ncf_data_assign - cannot find data to return\n\n" 
                 errstr += str(f.constructs.domain_axis_identity(d)) + "\n\n"
                 raise Warning(errstr)
 
-        xunits = str(getattr(f.construct(mydim), 'units', ''))
-        xlabel = cf_var_name(field=f, dim=mydim) + xunits
-        yunits = str(getattr(f.construct(mydim), 'Units', ''))
-        ylabel = cf_var_name(field=f, dim=mydim) + yunits
+
 
     # Assign colorbar_title
     if (colorbar_title is None):
@@ -3695,7 +3702,7 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None, rotated_vect=False
                 colorbar_title = colorbar_title + \
                     '(' + supscr(str(f.Units)) + ')'
 
-
+        
     # Return data
     return(field, x, y, ptype, colorbar_title, xlabel, ylabel, xpole, ypole)
 
@@ -4102,6 +4109,7 @@ def bfill(f=None, x=None, y=None, clevs=False, lonlat=None, bound=False,
             ypts = np.append(ypts, upper_bound)
 
     levels = np.array(deepcopy(clevs)).astype('float')
+    
 
     # Polar stereographic
     # Set points past plotting limb to be plotvars.boundinglat
@@ -4157,6 +4165,16 @@ def bfill(f=None, x=None, y=None, clevs=False, lonlat=None, bound=False,
         if np.size(pts) > 0:
             colarr[pts] = -1
 
+
+
+    #print('in new pcolormesh code')
+    #xpts = np.array(xpts)
+    #print('shapes are', np.shape(xpts), np.shape(ypts), np.shape(field))
+    #print('types are ', type(xpts), type(ypts), type(field))
+    #print(xpts)
+    #plotvars.mymap.pcolormesh(xpts, ypts, field, transform=ccrs.PlateCarree(), cmap=cmap)
+
+    #return
 
     if plotvars.plot_type == 1 and plotvars.proj != 'cyl':
 
@@ -5591,8 +5609,8 @@ def cf_var_name_titles(field=None, dim=None):
         if standard_name:
             name = standard_name
 
-        units = getattr(field.construct(dim), 'units', '()')
-        if units[0] != '(':
+        units = getattr(field.construct(dim), 'units', '')
+        if len(units) > 0:
             units = '(' + units + ')'
     return name, units
 
@@ -9400,40 +9418,61 @@ def bfill_ugrid(f=None, face_lons=None, face_lats=None, face_connectivity=None, 
 def generate_titles(f=None):
     '''Generate a set of title dims to put at the top of plots'''
 
+
+    mycoords = find_dim_names(f)
+    
+    well_formed = check_well_formed(f)
+    
+    coords = [None, None, None, None]
+    for i in np.arange(len(mycoords)):
+        coords[i] = mycoords[i]
+
     title_dims = ''
     if isinstance(f, cf.Field):
-        xtitle, xunits = cf_var_name_titles(f, 'X')
-        if xtitle is not None:
-            xvalues = f.construct('X').array
-            if len(xvalues) > 1:
-                xvalue = ''
-            else:
-                xvalue = str(xvalues)
-            title_dims += 'x: ' + xtitle + ' ' + xvalue + ' '  + xunits + '\n'
-        ytitle, yunits = cf_var_name_titles(f, 'Y')
-        if ytitle is not None:
-            yvalues = f.construct('Y').array
-            if len(yvalues) > 1:
-                yvalue = ''
-            else:
-                yvalue = str(yvalues)
-            title_dims += 'y: '  + ytitle + ' ' + yvalue + ' ' + yunits + '\n'
-        ztitle, zunits = cf_var_name_titles(f, 'Z')
-        if ztitle is not None:
-            zvalues = f.construct('Z').array
-            if len(zvalues) > 1:
-                zvalue = ''
-            else:
-                zvalue = str(zvalues)
-            title_dims +=  'z: '  + ztitle + ' ' + zvalue + ' ' + zunits + '\n'
-        ttitle, tunits = cf_var_name_titles(f, 'T')
-        if ztitle is not None:
-            tvalues = f.construct('T').dtarray
-            if len(tvalues) > 1:
-                tvalue = ''
-            else:
-                tvalue = str(cf.Data(tvalues).datetime_as_string)
-            title_dims += 't: '  + ttitle + ' ' + tvalue + '\n'
+        if coords[0] is not None:
+            xtitle, xunits = cf_var_name_titles(f, coords[0])
+            if xtitle is not None:
+                xvalues = f.construct(coords[0]).array
+                if len(xvalues) > 1:
+                    xvalue = ''
+                else:
+                    xvalue = str(xvalues)
+                title_dims += 'x: ' + xtitle + ' ' + xvalue + ' '  + xunits + '\n'
+                
+        if coords[1] is not None:
+            ytitle, yunits = cf_var_name_titles(f, coords[1])
+            if ytitle is not None:
+                yvalues = f.construct(coords[1]).array
+                if len(yvalues) > 1:
+                    yvalue = ''
+                else:
+                    yvalue = str(yvalues)
+                title_dims += 'y: '  + ytitle + ' ' + yvalue + ' ' + yunits + '\n'
+            
+        if coords[2] is not None:
+            ztitle, zunits = cf_var_name_titles(f, coords[2])
+            if ztitle is not None:
+                zvalues = f.construct(coords[2]).array
+                if len(zvalues) > 1:
+                    zvalue = ''
+                else:
+                    zvalue = str(zvalues)
+                title_dims +=  'z: '  + ztitle + ' ' + zvalue + ' ' + zunits + '\n'
+            
+        if coords[3] is not None:
+            ttitle, tunits = cf_var_name_titles(f, coords[3])
+            if ttitle is not None:
+                if well_formed:
+                    tvalues = f.construct(coords[3]).dtarray
+                else:
+                    tvalues = f.construct(coords[3]).array
+                    
+                if len(tvalues) > 1:
+                    tvalue = ''
+                else:
+                    tvalue = str(cf.Data(tvalues).datetime_as_string)
+                title_dims += 't: '  + ttitle + ' ' + tvalue + '\n'
+                
         if len(f.cell_methods()) > 0:
             title_dims += 'cell methods: '
             i = 0
@@ -9448,14 +9487,63 @@ def generate_titles(f=None):
     return title_dims
 
 
+def check_well_formed(field):
+    ''' 
+        Check the coordinates are all recognizably of the form X, Y, Z, T
+        returns boolean
+    ''' 
+            
+    coords = list(field.coords())
+    mycoords = deepcopy(coords)
+        
+    for i in np.arange(len(coords)):
+        c = field.coord(coords[i])
+        if c.X:
+            mycoords[i] = 'X'
+        if c.Y:
+            mycoords[i] = 'Y'
+        if c.Z:
+            mycoords[i] = 'Z'
+        if c.T:
+            mycoords[i] = 'T'
+            
+        
+    # Check if the coordtinates are all of the form X, Y, Z, T    
+    well_formed = True
+    dimension_coords = ['dimensioncoordinate0','dimensioncoordinate1','dimensioncoordinate2','dimensioncoordinate3']
+    for i in np.arange(4):
+        if dimension_coords[i] in mycoords:
+            well_formed = False
+                
+        
+    return well_formed
 
 
 
-
-
-
-
-
+def find_dim_names(field):
+    ''' Find the field dimension names
+        returns:
+        coordinates in the order [X, Y, Z, T]            
+    '''
+        
+    coords = list(field.coords())
+    mycoords = deepcopy(coords)
+        
+    for i in np.arange(len(coords)):
+        c = field.coord(coords[i])
+        if c.X:
+            mycoords[i] = 'X'
+        if c.Y:
+            mycoords[i] = 'Y'
+        if c.Z:
+            mycoords[i] = 'Z'
+        if c.T:
+            mycoords[i] = 'T'
+            
+    # Return the reverse of the coordinates so that they are in the order [X, Y, Z, T]
+    mycoords.reverse()
+        
+    return mycoords
 
 
 
