@@ -227,7 +227,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
         colorbar_anchor=None, colorbar_labels=None,
         linestyles=None, zorder=1, level_spacing=None,
         ugrid=False, face_lons=False, face_lats=False, face_connectivity=False,
-        titles=False, mytest=False):
+        titles=False, mytest=False, transform_first=None, blockfill_fast=None):
     """
      | con is the interface to contouring in cf-plot. The minimum use is con(f)
      | where f is a 2 dimensional array. If a cf field is passed then an
@@ -316,6 +316,12 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
      | face_lats=None - latitude points for face verticies
      | face_connectivity=None - connectivity for face verticies
      | titles=False - set to True to have a dimensions title
+     | transform_first=None - Cartopy should transform the points before calling the contouring algorithm, 
+     |                         which can have a significant impact on speed (it is much faster to transform
+     |                         points than it is to transform patches) If this is unset and the number of points
+     |                         in the x direction is > 400 then it is set to True.
+     | blockfill_fast=None - Use pcolormesh blockfill.  This is possibly less reliable that the usual code but is 
+     |                       faster for higher resolution datasets.
 
      :Returns:
       None
@@ -330,6 +336,10 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
     user_xlabel = xlabel
     user_ylabel = ylabel
 
+    # Set blockfill to True if blockfill_fast is not None
+    if blockfill_fast is not None:
+        blockfill=True
+         
     # Extract data for faces if a UGRID blockplot
     blockfill_ugrid = False
     if face_lons and face_lats and face_connectivity:
@@ -827,7 +837,15 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
 
             # For fast map contours add transform_first=True to contourf command
             # and make lons and lats 2D
-            # lons, lats = np.meshgrid(lons, lats)
+            if transform_first is None and np.ndim(lons) == 1 and np.ndim(lats) == 1:
+                if np.size(lons) >= 400:
+                    transform_first = True
+            
+            if transform_first:
+                if np.ndim(lons) == 1 and np.ndim(lats) == 1:
+                    lons, lats = np.meshgrid(lons, lats)
+                    
+                    
             
             # Filled colour contours
             if not ugrid:
@@ -835,7 +853,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                                extend=plotvars.levels_extend,
                                cmap=cmap, norm=plotvars.norm,
                                alpha=alpha, transform=ccrs.PlateCarree(),
-                               zorder=zorder)
+                               zorder=zorder, transform_first=transform_first)
             else:
                 if np.size(field_ugrid_real) > 0: 
                     mymap.tricontourf(lons_ugrid_real, lats_ugrid_real, field_ugrid_real * fmult,
@@ -852,7 +870,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
 
                 if f.ref('grid_mapping_name:transverse_mercator', default=False):
                     # Special case for transverse mercator
-                    bfill(f=f, clevs=clevs, lonlat=False, alpha=alpha, zorder=zorder)
+                    bfill(f=f, clevs=clevs, lonlat=False, alpha=alpha, fast=blockfill_fast,zorder=zorder)
 
                 else:
 
@@ -865,14 +883,14 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                         ypts = np.append(ypts, f.coord('Y').bounds.array[-1, 1])
 
                         bfill(f=field_orig * fmult, x=xpts, y=ypts, clevs=clevs,
-                              lonlat=True, bound=1, alpha=alpha, zorder=zorder)
+                              lonlat=True, bound=1, alpha=alpha, fast=blockfill_fast, zorder=zorder)
                     else:
                         bfill(f=field_orig * fmult, x=x_orig, y=y_orig, clevs=clevs,
-                              lonlat=True, bound=0, alpha=alpha, zorder=zorder)
+                              lonlat=True, bound=0, alpha=alpha, fast=blockfill_fast, zorder=zorder)
 
             else:
                 bfill(f=field_orig * fmult, x=x_orig, y=y_orig, clevs=clevs,
-                      lonlat=True, bound=0, alpha=alpha, zorder=zorder)
+                      lonlat=True, bound=0, alpha=alpha, fast=blockfill_fast, zorder=zorder)
 
         # Block fill for ugrid
         if blockfill_ugrid:
@@ -881,7 +899,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
             bfill_ugrid(f=field_orig * fmult, face_lons=face_lons_array, 
                        face_lats=face_lats_array, 
                        face_connectivity=face_connectivity_array, clevs=clevs,
-                       alpha=alpha, zorder=zorder)
+                       alpha=alpha, fast=blockfill_fast, zorder=zorder)
 
         # Contour lines and labels
         if lines:
@@ -992,9 +1010,12 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
 
         # Work out which way is up
         positive = None
+        myz = find_z(f)
+        
+        
         if isinstance(f, cf.Field) and well_formed:
-            if hasattr(f.construct('Z'), 'positive'):
-                positive = f.construct('Z').positive
+            if hasattr(f.construct(myz), 'positive'):
+                positive = f.construct(myz).positive
             else:
                 errstr = "\ncf-plot - data error \n"
                 errstr += "data needs a vertical coordinate direction"
@@ -1002,7 +1023,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                 errstr += "\nMaking a contour plot assuming positive is down\n\n"
                 errstr += "If this is incorrect the data needs to be modified to \n"
                 errstr += "include a correct value for the direction attribute\n"
-                errstr += "such as in f.coord(\'Z\').postive=\'down\'"
+                errstr += "such as in f.coord(\'Z\').positive=\'down\'"
                 errstr += "\n\n"
                 print(errstr)
                 positive = 'down'
@@ -1228,7 +1249,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                     if f.coord('X').has_bounds() and f.coord('Z').has_bounds():
                         xpts = np.squeeze(f.coord('X').bounds.array)[:, 0]
                         xpts = np.append(xpts, f.coord('X').bounds.array[-1, 1])
-                        ypts = np.squeeze(f.coord('Z').bounds.array)[:, 0]
+                        ypts = np.squeeAllTrop_UpStrat_Eq_Total_AllWN_Timeseries_2ze(f.coord('Z').bounds.array)[:, 0]
                         ypts = np.append(xpts, f.coord('Z').bounds.array[-1, 1])
                     else:
                         hasbounds = False
@@ -1244,14 +1265,14 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
 
                 if hasbounds:
                     bfill(f=field_orig * fmult, x=xpts, y=ypts, clevs=clevs,
-                          lonlat=False, bound=1, alpha=alpha, zorder=zorder)
+                          lonlat=False, bound=1, alpha=alpha, fast=blockfill_fast, zorder=zorder)
                 else:
                     bfill(f=field_orig * fmult, x=x_orig, y=y_orig, clevs=clevs,
-                          lonlat=False, bound=0, alpha=alpha, zorder=zorder)
+                          lonlat=False, bound=0, alpha=alpha, fast=blockfill_fast, zorder=zorder)
 
             else:
                 bfill(f=field_orig * fmult, x=x_orig, y=y_orig, clevs=clevs,
-                      lonlat=False, bound=0, alpha=alpha, zorder=zorder)
+                      lonlat=False, bound=0, alpha=alpha, fast=blockfill_fast, zorder=zorder)
 
         # Contour lines and labels
         if lines:
@@ -1496,20 +1517,20 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                         field_orig = np.flipud(np.rot90(field_orig))
 
                     bfill(f=field_orig * fmult, x=xpts, y=ypts, clevs=clevs,
-                          lonlat=False, bound=1, alpha=alpha, zorder=zorder)
+                          lonlat=False, bound=1, alpha=alpha, fast=blockfill_fast, zorder=zorder)
                 else:
                     if swap_axes:
                         x_orig, y_orig = y_orig, x_orig
                         field_orig = np.flipud(np.rot90(field_orig))
                     bfill(f=field_orig * fmult, x=x_orig, y=y_orig, clevs=clevs,
-                          lonlat=False, bound=0, alpha=alpha, zorder=zorder)
+                          lonlat=False, bound=0, alpha=alpha, fast=blockfill_fast, zorder=zorder)
 
             else:
                 if swap_axes:
                     x_orig, y_orig = y_orig, x_orig
                     field_orig = np.flipud(np.rot90(field_orig))
                 bfill(f=field_orig * fmult, x=x_orig, y=y_orig, clevs=clevs,
-                      lonlat=False, bound=0, alpha=alpha, zorder=zorder)
+                      lonlat=False, bound=0, alpha=alpha, fast=blockfill_fast, zorder=zorder)
 
         # Contour lines and labels
         if lines:
@@ -1651,7 +1672,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                   clevs=clevs,
                   lonlat=False,
                   bound=0,
-                  alpha=alpha,
+                  alpha=alpha, fast=blockfill_fast,
                   zorder=zorder)
 
         # Contour lines and labels
@@ -1860,14 +1881,14 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                 if np.size(f.coord(coord).array) > 1:
                     mycoords.append(coord)
             mycoords.reverse()
-            
-            if f.coord(mycoords[0]).X:
-                xaxisticks, xaxislabels = mapaxis(np.min(f.coord('X').array), np.max(f.coord('X').array), type=1)
-                xlabel = 'longitude'
+            for icoord in np.arange(len(mycoords)):
+                if f.coord(mycoords[icoord]).X:
+                    xaxisticks, xaxislabels = mapaxis(np.min(f.coord('X').array), np.max(f.coord('X').array), type=1)
+                    xlabel = 'longitude'
                 
-            if f.coord(mycoords[1]).Y:
-                yaxisticks, yaxislabels = mapaxis(np.min(f.coord('Y').array), np.max(f.coord('Y').array), type=2)
-                ylabel = 'latitude'
+                if f.coord(mycoords[icoord]).Y:
+                    yaxisticks, yaxislabels = mapaxis(np.min(f.coord('Y').array), np.max(f.coord('Y').array), type=2)
+                    ylabel = 'latitude'
                 
         if xaxisticks is None:
             xaxisticks = gvals(dmin=xmin, dmax=xmax, mod=False)[0]
@@ -1960,7 +1981,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
         # Block fill
         if blockfill:
             bfill(f=field_orig * fmult, x=x_orig, y=y_orig, clevs=clevs,
-                  lonlat=False, bound=0, alpha=alpha, zorder=zorder)
+                  lonlat=False, bound=0, alpha=alpha, fast=blockfill_fast, zorder=zorder)
 
         # Contour lines and labels
         if lines:
@@ -2708,11 +2729,12 @@ def axes_plot(xticks=None, xticklabels=None, yticks=None, yticklabels=None,
                              horizontalalignment=plotvars.ytick_label_align)
 
         # Plot a corresponding tick on the right of the plot - cartopy feature?
-        proj = ccrs.PlateCarree(central_longitude=lon_mid)
-        for ytick in yticks:
-            xpt, ypt = proj.transform_point(plotvars.lonmax-0.001, ytick, ccrs.PlateCarree())
-            xpt2 = xpt + xticklen
-            plot.plot([xpt, xpt2], [ypt, ypt], color='k', linewidth=0.8, clip_on=False)
+        if plotvars.plot_type == 1:
+            proj = ccrs.PlateCarree(central_longitude=lon_mid)
+            for ytick in yticks:
+                xpt, ypt = proj.transform_point(plotvars.lonmax-0.001, ytick, ccrs.PlateCarree())
+                xpt2 = xpt + xticklen
+                plot.plot([xpt, xpt2], [ypt, ypt], color='k', linewidth=0.8, clip_on=False)
 
     # Set font size and weight
     for label in plot.xaxis.get_ticklabels():
@@ -3396,6 +3418,10 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None, rotated_vect=False
     field = None
     x = None
     y = None
+    
+    
+    # Check for multiple Z coordinates
+    myz = find_z(f)
 
     # Extract coordinate data if a matching CF standard_name or axis is found
     for mycoord in f.coords():
@@ -3462,8 +3488,8 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None, rotated_vect=False
         else:
             xlabel = xname
             
-        yname = cf_var_name(field=f, dim='Z')
-        yunits = str(getattr(f.construct('Z'), 'Units', ''))
+        yname = cf_var_name(field=f, dim=myz)
+        yunits = str(getattr(f.construct(myz), 'Units', ''))
         if yunits != '':
             ylabel = yname + ' (' + yunits + ')'
         else:
@@ -3483,8 +3509,8 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None, rotated_vect=False
         else:
             xlabel = xname
             
-        yname = cf_var_name(field=f, dim='Z')
-        yunits = str(getattr(f.construct('Z'), 'Units', ''))
+        yname = cf_var_name(field=f, dim=myz)
+        yunits = str(getattr(f.construct(myz), 'Units', ''))
         if yunits != '':
             ylabel = yname + ' (' + yunits + ')'
         else:
@@ -3996,7 +4022,7 @@ def cscale_get_map():
 
 
 def bfill(f=None, x=None, y=None, clevs=False, lonlat=None, bound=False,
-          alpha=1.0, single_fill_color=None, white=True, zorder=4):
+          alpha=1.0, single_fill_color=None, white=True, zorder=4, fast=None):
     """
      | bfill - block fill a field with colour rectangles
      | This is an internal routine and is not generally used by the user.
@@ -4013,6 +4039,7 @@ def bfill(f=None, x=None, y=None, clevs=False, lonlat=None, bound=False,
      |                        - makes maplotlib named colours or
      |                        - hexadecimal notation - '#d3d3d3' for grey
      | zorder=4 - plotting order
+     | fast=None - use fast plotting with pcolormesh which is useful for larger datasets
      |
       :Returns:
         None
@@ -4021,6 +4048,10 @@ def bfill(f=None, x=None, y=None, clevs=False, lonlat=None, bound=False,
      |
      |
     """
+
+    
+
+
 
     # Set lonlat if not specified
     lonlat = False
@@ -4138,6 +4169,9 @@ def bfill(f=None, x=None, y=None, clevs=False, lonlat=None, bound=False,
 
     cmap = matplotlib.colors.ListedColormap(cols)
 
+
+    levels_orig = deepcopy(levels)
+
     if single_fill_color is None:
         if plotvars.levels_extend == 'both' or plotvars.levels_extend == 'min':
             levels = np.insert(levels, 0, -1e30)
@@ -4150,6 +4184,8 @@ def bfill(f=None, x=None, y=None, clevs=False, lonlat=None, bound=False,
         if plotvars.levels_extend == 'both' or plotvars.levels_extend == 'max':
             cmap.set_over(plotvars.cs[-1])
             cols = cols[:-1]
+
+
 
     # Colour array for storing the cell colour.  Start with -1 as the default
     # as the colours run from 0 to np.size(levels)-1
@@ -4165,60 +4201,97 @@ def bfill(f=None, x=None, y=None, clevs=False, lonlat=None, bound=False,
         if np.size(pts) > 0:
             colarr[pts] = -1
 
+    norm = matplotlib.colors.BoundaryNorm(levels, cmap.N)
 
-
-    #print('in new pcolormesh code')
-    #xpts = np.array(xpts)
-    #print('shapes are', np.shape(xpts), np.shape(ypts), np.shape(field))
-    #print('types are ', type(xpts), type(ypts), type(field))
-    #print(xpts)
-    #plotvars.mymap.pcolormesh(xpts, ypts, field, transform=ccrs.PlateCarree(), cmap=cmap)
-
-    #return
-
-    if plotvars.plot_type == 1 and plotvars.proj != 'cyl':
-
-        for i in np.arange(np.size(levels)-1):
-            allverts = []
-            xy_stack = np.column_stack(np.where(colarr == i))
-
-            for pt in np.arange(np.shape(xy_stack)[0]):
-                ix = xy_stack[pt][1]
-                iy = xy_stack[pt][0]
-                lons = [xpts[ix], xpts[ix+1], xpts[ix+1], xpts[ix], xpts[ix]]
-                lats = [ypts[iy], ypts[iy], ypts[iy+1], ypts[iy+1], ypts[iy]]
-
-                txpts, typts = lons, lats
-                verts = [
-                    (txpts[0], typts[0]),
-                    (txpts[1], typts[1]),
-                    (txpts[2], typts[2]),
-                    (txpts[3], typts[3]),
-                    (txpts[4], typts[4]),
-                    ]
-
-                allverts.append(verts)
-
-            # Make the collection and add it to the plot.
-            if single_fill_color is None:
-                color = plotvars.cs[i]
-            else:
-                color = single_fill_color
-            coll = PolyCollection(allverts, facecolor=color, edgecolors=color, alpha=alpha,
-                                  zorder=zorder, **plotargs)
-
-            if lonlat:
-                plotvars.mymap.add_collection(coll)
-            else:
-                plotvars.plot.add_collection(coll)
+    if fast:
+        if lonlat:
+            for offset in [0, 360.0]:
+                plotvars.mymap.pcolormesh(xpts+offset, ypts, field, transform=ccrs.PlateCarree(), cmap=cmap, norm=norm)
+        else:
+            plotvars.plot.pcolormesh(xpts, ypts, field, cmap=cmap, norm=norm)
+        
+        
+    
     else:
-        for i in np.arange(np.size(levels)-1):
+    
+        if plotvars.plot_type == 1 and plotvars.proj != 'cyl':
 
+            for i in np.arange(np.size(levels)-1):
+                allverts = []
+                xy_stack = np.column_stack(np.where(colarr == i))
+
+                for pt in np.arange(np.shape(xy_stack)[0]):
+                    ix = xy_stack[pt][1]
+                    iy = xy_stack[pt][0]
+                    lons = [xpts[ix], xpts[ix+1], xpts[ix+1], xpts[ix], xpts[ix]]
+                    lats = [ypts[iy], ypts[iy], ypts[iy+1], ypts[iy+1], ypts[iy]]
+
+                    txpts, typts = lons, lats
+                    verts = [
+                        (txpts[0], typts[0]),
+                        (txpts[1], typts[1]),
+                        (txpts[2], typts[2]),
+                        (txpts[3], typts[3]),
+                        (txpts[4], typts[4]),
+                        ]
+
+                    allverts.append(verts)
+
+                # Make the collection and add it to the plot.
+                if single_fill_color is None:
+                    color = plotvars.cs[i]
+                else:
+                    color = single_fill_color
+                coll = PolyCollection(allverts, facecolor=color, edgecolors=color, alpha=alpha,
+                                      zorder=zorder, **plotargs)
+
+                if lonlat:
+                    plotvars.mymap.add_collection(coll)
+                else:
+                    plotvars.plot.add_collection(coll)
+        else:
+            for i in np.arange(np.size(levels)-1):
+
+                allverts = []
+                xy_stack = np.column_stack(np.where(colarr == i))
+                for pt in np.arange(np.shape(xy_stack)[0]):
+                    ix = xy_stack[pt][1]
+                    iy = xy_stack[pt][0]
+                    verts = [
+                        (xpts[ix], ypts[iy]),
+                        (xpts[ix+1], ypts[iy]),
+                        (xpts[ix+1], ypts[iy+1]),
+                        (xpts[ix], ypts[iy+1]),
+                        (xpts[ix], ypts[iy]),
+                        ]
+
+                    allverts.append(verts)
+
+                # Make the collection and add it to the plot.
+                if single_fill_color is None:
+                    color = plotvars.cs[i]
+                else:
+                    color = single_fill_color
+
+                coll = PolyCollection(allverts, facecolor=color, edgecolors=color,
+                                      alpha=alpha, zorder=zorder, **plotargs)
+
+
+
+
+                if lonlat:
+                    plotvars.mymap.add_collection(coll)
+                else:
+                    plotvars.plot.add_collection(coll)
+
+        # Add white for undefined areas
+        if white:
             allverts = []
-            xy_stack = np.column_stack(np.where(colarr == i))
+            xy_stack = np.column_stack(np.where(colarr == -1))
             for pt in np.arange(np.shape(xy_stack)[0]):
                 ix = xy_stack[pt][1]
                 iy = xy_stack[pt][0]
+
                 verts = [
                     (xpts[ix], ypts[iy]),
                     (xpts[ix+1], ypts[iy]),
@@ -4230,49 +4303,14 @@ def bfill(f=None, x=None, y=None, clevs=False, lonlat=None, bound=False,
                 allverts.append(verts)
 
             # Make the collection and add it to the plot.
-            if single_fill_color is None:
-                color = plotvars.cs[i]
-            else:
-                color = single_fill_color
-
-            coll = PolyCollection(allverts, facecolor=color, edgecolors=color,
+            color = plotvars.cs[i]
+            coll = PolyCollection(allverts, facecolor='#ffffff', edgecolors='#ffffff',
                                   alpha=alpha, zorder=zorder, **plotargs)
-
-
-
 
             if lonlat:
                 plotvars.mymap.add_collection(coll)
             else:
                 plotvars.plot.add_collection(coll)
-
-    # Add white for undefined areas
-    if white:
-        allverts = []
-        xy_stack = np.column_stack(np.where(colarr == -1))
-        for pt in np.arange(np.shape(xy_stack)[0]):
-            ix = xy_stack[pt][1]
-            iy = xy_stack[pt][0]
-
-            verts = [
-                (xpts[ix], ypts[iy]),
-                (xpts[ix+1], ypts[iy]),
-                (xpts[ix+1], ypts[iy+1]),
-                (xpts[ix], ypts[iy+1]),
-                (xpts[ix], ypts[iy]),
-                ]
-
-            allverts.append(verts)
-
-        # Make the collection and add it to the plot.
-        color = plotvars.cs[i]
-        coll = PolyCollection(allverts, facecolor='#ffffff', edgecolors='#ffffff',
-                              alpha=alpha, zorder=zorder, **plotargs)
-
-        if lonlat:
-            plotvars.mymap.add_collection(coll)
-        else:
-            plotvars.plot.add_collection(coll)
 
 
 def regrid(f=None, x=None, y=None, xnew=None, ynew=None):
@@ -5550,6 +5588,20 @@ def cf_var_name(field=None, dim=None):
      |
     """
 
+    # Check for multiple Z coordinates
+    # Adjust dim if necessary
+    if dim == 'Z':
+        z_count = 0
+        z_names =[]
+        for mycoord in list(field.coords()):
+            if field.coord(mycoord).Z:
+                z_count += 1
+                z_names.append(mycoord)
+                            
+        if z_count > 1:
+            dim = z_names[-1]
+            
+            
     id = getattr(field.construct(dim), 'id', False)
     ncvar = field.construct(dim).nc_get_variable(False)
     short_name = getattr(field.construct(dim), 'short_name', False)
@@ -6543,14 +6595,17 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
         ztype = 1
     if xlabel_units in ['meter', 'metre', 'm', 'kilometer', 'kilometre', 'km']:
         ztype = 2
-    if cf_field and f.has_construct('Z'):
-        myz = f.construct('Z')
-        if len(myz.array) > 1:
+        
+        
+    myz = find_z(f)
+    if cf_field and f.has_construct(myz):
+        z_coord = f.construct(myz)
+        if len(z_coord.array) > 1:
             zlabel = ''
-            if hasattr(myz, 'long_name'):
-                zlabel = myz.long_name
-            if hasattr(myz, 'standard_name'):
-                zlabel = myz.standard_name
+            if hasattr(z_coord, 'long_name'):
+                zlabel = z_coord.long_name
+            if hasattr(z_coord, 'standard_name'):
+                zlabel = z_coord.standard_name
             if zlabel == 'atmosphere_hybrid_height_coordinate':
                 ztype = 2
 
@@ -8995,6 +9050,15 @@ def calculate_levels(field=None, level_spacing=None, verbose=None):
                 tight = False
 
             if level_spacing == 'linear':
+                if isinstance(np.ma.min(dmin), np.ma.core.MaskedConstant) or \
+                   isinstance(np.ma.min(dmax), np.ma.core.MaskedConstant):
+                   errstr = 'cf-plot calculate_levels error - data is entirely masked\n'
+                   errstr += 'setting levels to 0 and 0.1 to produce a plot'
+                   print(errstr)
+                   dmin = 0.0
+                   dmax = 0.1
+
+            
                 clevs, mult = gvals(dmin=dmin, dmax=dmax)
                 fmult = 10**-mult
                 tight = False
@@ -9418,61 +9482,38 @@ def bfill_ugrid(f=None, face_lons=None, face_lats=None, face_connectivity=None, 
 def generate_titles(f=None):
     '''Generate a set of title dims to put at the top of plots'''
 
-
     mycoords = find_dim_names(f)
-    
     well_formed = check_well_formed(f)
-    
-    coords = [None, None, None, None]
-    for i in np.arange(len(mycoords)):
-        coords[i] = mycoords[i]
 
     title_dims = ''
     if isinstance(f, cf.Field):
-        if coords[0] is not None:
-            xtitle, xunits = cf_var_name_titles(f, coords[0])
-            if xtitle is not None:
-                xvalues = f.construct(coords[0]).array
-                if len(xvalues) > 1:
-                    xvalue = ''
+        for idim in np.arange(len(mycoords)):
+            mycoord = mycoords[idim]
+            if mycoord == 'Z':
+                mycoord = find_z(f)
+            
+            title, units = cf_var_name_titles(f, mycoord)
+            if not f.coord(mycoord).T:
+                values = f.construct(mycoord).array
+                if len(values) > 1:
+                    value = ''
                 else:
-                    xvalue = str(xvalues)
-                title_dims += 'x: ' + xtitle + ' ' + xvalue + ' '  + xunits + '\n'
+                    value = str(values)
+                title_dims += mycoord + ': ' + title + ' ' + value + ' '  + units + '\n'
                 
-        if coords[1] is not None:
-            ytitle, yunits = cf_var_name_titles(f, coords[1])
-            if ytitle is not None:
-                yvalues = f.construct(coords[1]).array
-                if len(yvalues) > 1:
-                    yvalue = ''
-                else:
-                    yvalue = str(yvalues)
-                title_dims += 'y: '  + ytitle + ' ' + yvalue + ' ' + yunits + '\n'
-            
-        if coords[2] is not None:
-            ztitle, zunits = cf_var_name_titles(f, coords[2])
-            if ztitle is not None:
-                zvalues = f.construct(coords[2]).array
-                if len(zvalues) > 1:
-                    zvalue = ''
-                else:
-                    zvalue = str(zvalues)
-                title_dims +=  'z: '  + ztitle + ' ' + zvalue + ' ' + zunits + '\n'
-            
-        if coords[3] is not None:
-            ttitle, tunits = cf_var_name_titles(f, coords[3])
-            if ttitle is not None:
+            else:
                 if well_formed:
-                    tvalues = f.construct(coords[3]).dtarray
+                    values = f.construct(mycoord).dtarray
                 else:
-                    tvalues = f.construct(coords[3]).array
+                    values = f.construct(mycoord).array
                     
-                if len(tvalues) > 1:
-                    tvalue = ''
+                if len(values) > 1:
+                    value = ''
                 else:
-                    tvalue = str(cf.Data(tvalues).datetime_as_string)
-                title_dims += 't: '  + ttitle + ' ' + tvalue + '\n'
-                
+                    value = str(cf.Data(values).datetime_as_string)
+                title_dims += mycoord + ': '  + title + ' ' + value + '\n'
+
+  
         if len(f.cell_methods()) > 0:
             title_dims += 'cell methods: '
             i = 0
@@ -9520,33 +9561,138 @@ def check_well_formed(field):
 
 
 
+
+
+
 def find_dim_names(field):
-    ''' Find the field dimension names
+    ''' Find the field dimension coordinate names
+        Ignores auxiliary coordinates (for now)
         returns:
-        coordinates in the order [X, Y, Z, T]            
+        coordinates in the order [T, X, Y, Z]       
     '''
         
-    coords = list(field.coords())
+    # Get the field domain axes
+    daxes = list(field.get_data_axes())
+        
+    # Get the field coordinates
+    dcoords = list(field.coords())     
+        
+        
+    # Calculate the number of coordinates of type X, Y, Z and T
+    nx = 0
+    ny = 0
+    nz = 0
+    nt = 0
+    for i in np.arange(len(dcoords)):
+        if field.coord(dcoords[i]).X:
+            nx += 1
+        if field.coord(dcoords[i]).Y:
+            ny += 1            
+        if field.coord(dcoords[i]).Z:
+            nz += 1        
+        if field.coord(dcoords[i]).T:
+            #print('ajh - t found - ', coords[i])
+            nt += 1      
+                
+                
+    #print('ajh - find_dim_names - nx, ny, nz, nt are ', nx, ny, nz, nt)
+        
+   
+    # Strip out any auxiliary coordinates if the field is not a trajectory field
+    remove_aux = True
+    if field.get_property('featureType', False) is not False:
+        if field.featureType == 'trajectory':
+            remove_aux = False
+                
+                
+    # Strip out any auxiliary coordinates if the field is not a trajectory field
+    if remove_aux:
+        for i in np.arange(len(dcoords)):
+            if dcoords[i][:-1] == 'auxiliarycoordinate':
+                dcoords[i] = 'aux' 
+        dcoords = list(filter(('aux').__ne__,dcoords))
+        
+        
+    #print('ajh - daxes are', daxes)
+    #print('ajh - dcoords are', dcoords)
+        
+        
+        
+    # Convert these into corresponding dimension coordinates
+    if remove_aux:
+        coords = []
+        for i in np.arange(len(daxes)):
+            val = daxes[i]
+            coord = None
+            for j in np.arange(len(dcoords)):
+            
+                #print(ajh - daxes[i], dcoords[j], field.get_data_axes(dcoords[j])[0])
+                
+                if daxes[i] == field.get_data_axes(dcoords[j])[0]:
+                    coord = dcoords[j]      
+        
+            if coord is not None:
+                coords.append(coord)
+            else:
+                errstr = 'find_data_names error  - cannot find a coordinate for ' + daxes[i] + '\n'
+                errstr += 'in the data\n'
+                raise Warning(errstr)
+    else:
+        coords = dcoords
+        
+    #print('ajh - coords are', coords)
+    #print('ajh - dcoords are', dcoords)
+        
+
+                
+    # Make a copy of coords in mycoords
     mycoords = deepcopy(coords)
         
-    for i in np.arange(len(coords)):
-        c = field.coord(coords[i])
-        if c.X:
-            mycoords[i] = 'X'
-        if c.Y:
-            mycoords[i] = 'Y'
-        if c.Z:
-            mycoords[i] = 'Z'
-        if c.T:
-            mycoords[i] = 'T'
+    # Convert to X, Y, Z, T if coordinate is one of these
+    # If the number of coordinates of this type is greater than 1 then don't do this as f.coord('Z') gives an 
+    # error as there are more that one coordinates to return
+    for i in np.arange(len(daxes)):
+        if field.coord(coords[i]).X:
+            if nx == 1:
+                mycoords[i] = 'X'
+        if field.coord(coords[i]).Y:
+            if ny == 1:
+                mycoords[i] = 'Y'            
+        if field.coord(coords[i]).Z:
+            if nz == 1:
+                mycoords[i] = 'Z'  
+        if field.coord(coords[i]).T:
+            if nt == 1:
+                mycoords[i] = 'T'            
+            
             
     # Return the reverse of the coordinates so that they are in the order [X, Y, Z, T]
     mycoords.reverse()
         
+    #print('ajh - find_dim_names - mycoords are ', mycoords)
+        
     return mycoords
 
 
+def find_z(f):
+    ''' Find the Z coordinate if it exists'''
 
+    myz ='Z'
+    z_count = 0
+    z_names =[]
+    
+    mycoords = find_dim_names(f)
+    
+    myz = None
+    for mycoord in mycoords:
+        if f.coord(mycoord).Z:
+            myz = mycoord
+
+    #if myz is None:
+    #    errstr = 'cf-plot error - cannot find the Z coordinate'
+    #    raise Warning(errstr)
+
+    return myz
 
 
 
