@@ -9677,6 +9677,11 @@ def find_dim_names(field):
 def find_z(f):
     ''' Find the Z coordinate if it exists'''
 
+    # Return if f is undefined
+    if f is None:
+        return None
+        
+        
     myz ='Z'
     z_count = 0
     z_names =[]

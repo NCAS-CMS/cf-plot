@@ -10,8 +10,8 @@ See the cf-plot home page http://ajheaps.github.io/cf-plot for a gallery of plot
 '''
 
 __author__ = 'Andy Heaps - andy.heaps@ncas.ac.uk'
-__date__ = '5th May 2022'
-__version__ = '3.1.21'
+__date__ = '16th June 2022'
+__version__ = '3.1.22'
 
 from .cfplot import *
 
