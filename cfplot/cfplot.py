@@ -58,6 +58,16 @@ except Exception:
     matplotlib.use('Agg')
 
 
+# Check for user setting of pre_existing_data_dir pointing to central cartopy setup
+# This is used in the cfview simple setup process
+try:
+    pre_existing_data_dir = os.environ["pre_existing_data_dir"]
+    cartopy.config["pre_existing_data_dir"] = pre_existing_data_dir
+except:
+    pass
+
+
+
 # Code to check if the ImageMagick display command is available
 def which(program):
     def is_exe(fpath):
