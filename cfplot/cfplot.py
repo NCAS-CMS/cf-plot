@@ -712,8 +712,15 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                     # Add cyclic information if missing.
                     if lonrange < 360:
                         # field, x = cartopy_util.add_cyclic_point(field, x)
-                        field, x = add_cyclic(field, x)
-
+                        # Call add_cyclic_point it spacing is regular
+                        x_regular = True
+                        xspacing = x[1] - x[0]
+                        for ix in np.arange(len(x) - 1):
+                            if x[ix+1] - x[ix] != xspacing:
+                                x_regular = False
+                        if x_regular:
+                            field, x = add_cyclic(field, x)
+                            
                         lonrange = np.nanmax(x) - np.nanmin(x)
 
                         # cartopy line drawing fix
@@ -3265,7 +3272,7 @@ def gvals(dmin=None, dmax=None, mystep=None, mod=True):
     dmin1 = deepcopy(dmin)
     dmax1 = deepcopy(dmax)
 
-    # Swap values if dmin1 > dmax1 as this returns no values
+    # Swap values if dmin1 > dmax1 
     if dmax1 < dmin1:
         dmin1, dmax1 = dmax1, dmin1
 
@@ -3274,6 +3281,7 @@ def gvals(dmin=None, dmax=None, mystep=None, mod=True):
 
     # field multiplier
     mult = 0
+    vals = None
 
     # Return some values if dmin1 = dmax1
     if dmin1 == dmax1:
@@ -3296,8 +3304,9 @@ def gvals(dmin=None, dmax=None, mystep=None, mod=True):
             data_range = dmax1 - dmin1
             mult = mult + 1
 
-    if data_range >= 0.001 and data_range <= 2000000:
 
+    if data_range >= 0.001 and data_range <= 2000000:
+        
         # Calculate an appropriate step
         step = None
         test_steps = [0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1,
@@ -3357,8 +3366,13 @@ def gvals(dmin=None, dmax=None, mystep=None, mod=True):
         if mod is False:
             vals = vals * 10**mult
             mult = 0
+            
+    # Catch if no values have been defined    
+    if vals is None:
+        vals = np.array([dmin, dmax])
 
-        return(vals, mult)
+
+    return(vals, mult)
 
 
 def cf_data_assign(f=None, colorbar_title=None, verbose=None, rotated_vect=False):
@@ -8092,11 +8106,12 @@ def cbar(labels=None,
 
             if plotvars.plot_type == 1 and plotvars.proj == 'cyl':
 
-                # Move plot up if aspect ratio is < 1.1
+                # Move plot up if aspect ratio is < 1.5
                 lonrange = plotvars.lonmax - plotvars.lonmin
                 latrange = plotvars.latmax - plotvars.latmin
-                if (lonrange / latrange) < 1.1:
-                    this_plot.set_position([l, b + fraction, w, h - fraction])
+                
+                if (lonrange / latrange) <= 1.5:
+                    this_plot.set_position([l, b + 0.08, w, h - 0.12])
                     l, b, w, h = this_plot.get_position().bounds
 
                 ax1 = plotvars.master_plot.add_axes([l + w * (1.0 - shrink)/2.0,
@@ -8165,6 +8180,12 @@ def cbar(labels=None,
     # With clevs=[-1, 1, 10000, 20000, 30000, 40000, 50000, 60000]
     # Labels are [0, 2, 10001, 20001, 30001, 40001, 50001, 60001]
     # With a +1 near to the colorbar label
+
+
+    # Check for an extraneous level compared to the levs
+    if len(labels) > len(levs):
+        labels = labels[:len(levs)]
+
     colorbar.set_ticklabels([str(i) for i in labels])
     if orientation == 'horizontal':
         for tick in colorbar.ax.xaxis.get_ticklines():
@@ -8296,7 +8317,6 @@ def map_title(title=None, dims=False):
         # Get plot position
         this_plot = plotvars.plot
         l, b, w, h = this_plot.get_position().bounds
-        print('initial l, b, w, h are ', l, b, w, h)
  
         # Shift to left
         #if plotvars.plot_type == 1 and plotvars.proj !=cyl:
@@ -8304,7 +8324,6 @@ def map_title(title=None, dims=False):
         this_plot.set_position([l, b, w, h])
 
         l, b, w, h = this_plot.get_position().bounds
-        print('changed l, b, w, h are ', l, b, w, h)
 
 
         plotvars.plot.text(l + w , b + h, title, va='bottom',
@@ -8358,10 +8377,18 @@ def dim_titles(title=None, title2=None, title3=None, dims=False):
     elif plotvars.plot_type == 1 and plotvars.proj == 'cyl':
         lonrange = plotvars.lonmax - plotvars.lonmin
         latrange = plotvars.latmax - plotvars.latmin
-        if (lonrange / latrange) > 1.1:
+        if (lonrange / latrange) > 1.5:
             myx = 0.0
             myy = 1.02
-        else:
+            #h = h - 0.015
+            
+        if (lonrange / latrange) > 1.2 and (lonrange / latrange) <= 1.5:
+            myx = 0.0
+            myy = 1.02
+            h = h - 0.015        
+        
+        
+        if (lonrange / latrange) <= 1.2:
             l = l - 0.1
             myx = 1.1
             myy = 1.0
@@ -9068,7 +9095,13 @@ def calculate_levels(field=None, level_spacing=None, verbose=None):
                    dmin = 0.0
                    dmax = 0.1
 
-            
+                #if dmax - dmin < 1e-12:
+                #   errstr = 'cf-plot calculate_levels error - field difference is < 1e-12\n'
+                #   errstr += 'setting levels to min-0.1 and min+0.1 to produce a plot'
+                #   print(errstr)
+                #   dmin = dmin - 1
+                #   dmax = dmin + 1
+                   
                 clevs, mult = gvals(dmin=dmin, dmax=dmax)
                 fmult = 10**-mult
                 tight = False
@@ -9512,10 +9545,13 @@ def generate_titles(f=None):
                 title_dims += mycoord + ': ' + title + ' ' + value + ' '  + units + '\n'
                 
             else:
-                if well_formed:
-                    values = f.construct(mycoord).dtarray
-                else:
-                    values = f.construct(mycoord).array
+                #if well_formed:
+                #    values = f.construct(mycoord).dtarray
+                #else:
+                #    values = f.construct(mycoord).array
+                    
+                values = f.construct(mycoord).dtarray    
+                    
                     
                 if len(values) > 1:
                     value = ''
@@ -9525,16 +9561,19 @@ def generate_titles(f=None):
 
   
         if len(f.cell_methods()) > 0:
-            title_dims += 'cell methods: '
+            title_dims += 'cell_methods: '
             i = 0
             for method in f.cell_methods():
                 axis = f.cell_methods()[method].get_axes()[0]
-                dim = f.constructs.domain_axis_identity(axis)
-                collapse = f.cell_methods()[method].method
-                if i > 0:
-                    title_dims += ', '
-                title_dims += dim + ': ' + collapse
-
+                try:
+                    dim = f.constructs.domain_axis_identity(axis)
+                    collapse = f.cell_methods()[method].method
+                    if i > 0:
+                        title_dims += ', '
+                    title_dims += dim + ': ' + collapse
+                except:
+                    print('warning - no cell_method called ' + axis)
+                    
     return title_dims
 
 
