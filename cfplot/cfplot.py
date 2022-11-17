@@ -237,7 +237,8 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
         colorbar_anchor=None, colorbar_labels=None,
         linestyles=None, zorder=1, level_spacing=None,
         ugrid=False, face_lons=False, face_lats=False, face_connectivity=False,
-        titles=False, mytest=False, transform_first=None, blockfill_fast=None):
+        titles=False, mytest=False, transform_first=None, blockfill_fast=None,
+        nlevs=False):
     """
      | con is the interface to contouring in cf-plot. The minimum use is con(f)
      | where f is a 2 dimensional array. If a cf field is passed then an
@@ -331,7 +332,8 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
      |                         points than it is to transform patches) If this is unset and the number of points
      |                         in the x direction is > 400 then it is set to True.
      | blockfill_fast=None - Use pcolormesh blockfill.  This is possibly less reliable that the usual code but is 
-     |                       faster for higher resolution datasets.
+     |                       faster for higher resolution datasets
+     | nlevs=False - Let Matplotlib work out the levels for the contour plot
 
      :Returns:
       None
@@ -661,6 +663,23 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
     well_formed = False
     if isinstance(f, cf.Field):
         well_formed = check_well_formed(f)
+        
+        
+        
+    #level_opts = {'levels': clevs}
+    if nlevs is not False:
+        clevs = nlevs
+        plotvars.levels_extend = 'neither'
+        if plotvars.cscale_flag == 0:
+            if np.min(field) < 0 and np.max(field) > 0:
+                cscale('scale1', ncols=nlevs)
+            else:
+                cscale('viridis', ncols=nlevs)
+            plotvars.cscale_flag = 0
+        else:
+            cscale(plotvars.cs_user, ncols=nlevs)
+  
+        
 
     ##################
     # Map contour plot
@@ -857,6 +876,12 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
             if transform_first is None and np.ndim(lons) == 1 and np.ndim(lats) == 1:
                 if np.size(lons) >= 400:
                     transform_first = True
+                    
+            # Fast map contours are also needed when clevs is a integer
+            if type(clevs) == int and plotvars.plot_type == 1 and plotvars.proj == 'cyl':
+                transform_first=True
+            
+            
             
             if transform_first:
                 if np.ndim(lons) == 1 and np.ndim(lats) == 1:
@@ -865,15 +890,16 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                     
             
             # Filled colour contours
-            if not ugrid:
-                mymap.contourf(lons, lats, field * fmult, clevs,
+            if not ugrid:               
+                plotvars.image = mymap.contourf(lons, lats, field * fmult, clevs,
                                extend=plotvars.levels_extend,
                                cmap=cmap, norm=plotvars.norm,
                                alpha=alpha, transform=ccrs.PlateCarree(),
                                zorder=zorder, transform_first=transform_first)
+                
             else:
                 if np.size(field_ugrid_real) > 0: 
-                    mymap.tricontourf(lons_ugrid_real, lats_ugrid_real, field_ugrid_real * fmult,
+                    plotvars.image = mymap.tricontourf(lons_ugrid_real, lats_ugrid_real, field_ugrid_real * fmult,
                                       clevs, extend=plotvars.levels_extend,
                                       cmap=cmap, norm=plotvars.norm,
                                       alpha=alpha, transform=ccrs.PlateCarree(),
@@ -934,7 +960,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                                       linewidths=linewidths, linestyles=linestyles, alpha=alpha,
                                       transform=ccrs.PlateCarree(), zorder=zorder)
 
-            if line_labels:
+            if line_labels and type(clevs) == list:
                 nd = ndecs(clevs)
                 fmt = '%d'
                 if nd != 0:
@@ -1241,7 +1267,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                     'max' or plotvars.levels_extend == 'both'):
                 cmap.set_over(plotvars.cs[-1])
 
-            plotvars.plot.contourf(x, y, field * fmult, clevs,
+            plotvars.image = plotvars.plot.contourf(x, y, field * fmult, clevs,
                                    extend=plotvars.levels_extend,
                                    cmap=cmap,
                                    norm=plotvars.norm, alpha=alpha,
@@ -1296,7 +1322,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
             cs = plotvars.plot.contour(
                 x, y, field * fmult, clevs, colors=colors,
                 linewidths=linewidths, linestyles=linestyles, zorder=zorder)
-            if line_labels:
+            if line_labels and type(clevs) == list:
                 nd = ndecs(clevs)
                 fmt = '%d'
                 if nd != 0:
@@ -1511,7 +1537,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                     'max' or plotvars.levels_extend == 'both'):
                 cmap.set_over(plotvars.cs[-1])
 
-            plotvars.plot.contourf(x, y, field * fmult, clevs,
+            plotvars.image = plotvars.plot.contourf(x, y, field * fmult, clevs,
                                    extend=plotvars.levels_extend,
                                    cmap=cmap,
                                    norm=plotvars.norm, alpha=alpha,
@@ -1553,7 +1579,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
         if lines:
             cs = plotvars.plot.contour(x, y, field * fmult, clevs, colors=colors,
                                        linewidths=linewidths, linestyles=linestyles, alpha=alpha)
-            if line_labels:
+            if line_labels and type(clevs) == list:
                 nd = ndecs(clevs)
                 fmt = '%d'
                 if nd != 0:
@@ -1697,7 +1723,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
             cs = plot.contour(xpts, ypts, field * fmult, clevs, colors=colors,
                               linewidths=linewidths, linestyles=linestyles,
                               zorder=zorder, **plotargs)
-            if line_labels:
+            if line_labels and type(clevs) == list:
                 nd = ndecs(clevs)
                 fmt = '%d'
                 if nd != 0:
@@ -1989,7 +2015,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                     'max' or plotvars.levels_extend == 'both'):
                 cmap.set_over(plotvars.cs[-1])
 
-            plotvars.plot.contourf(x, y, field * fmult, clevs,
+            plotvars.image = plotvars.plot.contourf(x, y, field * fmult, clevs,
                                    extend=plotvars.levels_extend,
                                    cmap=cmap,
                                    norm=plotvars.norm, alpha=alpha,
@@ -2005,7 +2031,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
             cs = plotvars.plot.contour(x, y, field * fmult, clevs, colors=colors,
                                        linewidths=linewidths, linestyles=linestyles,
                                        zorder=zorder)
-            if line_labels:
+            if line_labels and type(clevs) == list:
                 nd = ndecs(clevs)
                 fmt = '%d'
                 if nd != 0:
@@ -2590,6 +2616,7 @@ def ndecs(data=None):
     """
 
     maxdecs = 0
+
     for i in range(len(data)):
         number = data[i]
         a = str(number).split('.')
@@ -4228,13 +4255,20 @@ def bfill(f=None, x=None, y=None, clevs=False, lonlat=None, bound=False,
     norm = matplotlib.colors.BoundaryNorm(levels, cmap.N)
 
     if fast:
+        if type(clevs) == int:
+            norm = False
+                      
         if lonlat:
             for offset in [0, 360.0]:
-                plotvars.mymap.pcolormesh(xpts+offset, ypts, field, transform=ccrs.PlateCarree(), cmap=cmap, norm=norm)
+                if type(clevs) == int:
+                    plotvars.image = plotvars.mymap.pcolormesh(xpts+offset, ypts, field, transform=ccrs.PlateCarree(), cmap=cmap)
+                else:
+                    plotvars.image = plotvars.mymap.pcolormesh(xpts+offset, ypts, field, transform=ccrs.PlateCarree(), cmap=cmap, norm=norm)                    
         else:
-            plotvars.plot.pcolormesh(xpts, ypts, field, cmap=cmap, norm=norm)
-        
-        
+            if type(clevs) == int:
+                plotvars.image = plotvars.plot.pcolormesh(xpts, ypts, field, cmap=cmap)
+            else:
+                plotvars.image = plotvars.plot.pcolormesh(xpts, ypts, field, cmap=cmap, norm=norm)        
     
     else:
     
@@ -8006,17 +8040,8 @@ def cbar(labels=None,
 
     if verbose:
         print('con - adding a colour bar')
-
-    if levs is None:
-        if plotvars.levels is not None:
-            levs = np.array(plotvars.levels)
-        else:
-            if labels is None:
-                errstr = "\n\ncbar error - No levels or labels supplied \n\n"
-                raise TypeError(errstr)
-            else:
-                levs = np.arange(len(labels))
-
+        
+        
     if fontsize is None:
         fontsize = plotvars.colorbar_fontsize
     if fontweight is None:
@@ -8041,7 +8066,7 @@ def cbar(labels=None,
             fraction = 0.06
         if plotvars.rows >= 4:
             fraction = 0.04
-
+            
     if shrink is None:
         shrink = 1.0
 
@@ -8049,45 +8074,37 @@ def cbar(labels=None,
         anchor = 0.3
         if plotvars.plot_type > 1:
             anchor = 0.5
+    
+    
+ 
+        
+        
+    # Code for when the user specifies nlevs to the contour command rather than 
+    # letting cf-plot work out some levels
+    if type(levs) == int:
+        if plotvars.plot_type == 0:
+            myplot = plotvars.mymap
+        else:
+            myplot = plotvars.plot
+            
+        from mpl_toolkits.axes_grid1 import make_axes_locatable
+        divider = make_axes_locatable(myplot)
+        if orientation == 'horizontal':
+            if plotvars.plot_type == 1:
+                cax = divider.append_axes("bottom", size="2%", pad=0.3, title=title)
+            else:
+                cax = divider.append_axes("bottom", size="2%", pad=1.0, title=title)
+        else:
+            cax = divider.append_axes("right", size="2%", pad=0.5, title=title)
 
-    if labels is None:
-        labels = levs
 
-    # Work out colour bar labeling
-    lbot = levs
-    if text_up_down:
-        lbot = levs[1:][::2]
-        ltop = levs[::2]
+        plotvars.master_plot.colorbar(plotvars.image, cax=cax, orientation=orientation)                       
+            
+        
+        return
 
-    if text_down_up:
-        lbot = levs[::2]
-        ltop = levs[1:][::2]
 
-    # Get the colour map
-    colmap = cscale_get_map()
-    cmap = matplotlib.colors.ListedColormap(colmap)
-    if extend is None:
-        extend = plotvars.levels_extend
-
-    ncolors = np.size(levs)
-    if extend == 'both' or extend == 'max':
-        ncolors = ncolors - 1
-    plotvars.norm = matplotlib.colors.BoundaryNorm(
-        boundaries=levs, ncolors=ncolors)
-
-    # Change boundaries to floats
-    boundaries = levs.astype(float)
-
-    # Add colorbar extensions if definded by levs.  Using boundaries[0]-1
-    # for the lower and boundaries[-1]+1 is just for the colorbar and
-    # has no meaning for the plot.
-    if (extend == 'min' or extend == 'both'):
-        cmap.set_under(plotvars.cs[0])
-        boundaries = np.insert(boundaries, 0, boundaries[0]-1)
-    if (extend == 'max' or extend == 'both'):
-        cmap.set_over(plotvars.cs[-1])
-        boundaries = np.insert(boundaries, len(boundaries), boundaries[-1]+1)
-
+    # Change plot position based on colorbar location  
     if position is None:
         # Work out whether the plot is a map plot or normal plot
         if (plotvars.plot_type == 1 or plotvars.plot_type == 6):
@@ -8133,7 +8150,68 @@ def cbar(labels=None,
                                                  b + h * (1.0 - shrink) / 2.0,
                                                  thick,
                                                  h * shrink])
-            this_plot.set_position([l, b, w - fraction, h])
+            this_plot.set_position([l, b, w - fraction, h])        
+        
+        
+        
+        
+    if levs is None:
+        if plotvars.levels is not None:
+            levs = np.array(plotvars.levels)
+        else:
+            if labels is None:
+                errstr = "\n\ncbar error - No levels or labels supplied \n\n"
+                raise TypeError(errstr)
+            else:
+                levs = np.arange(len(labels))
+
+
+
+
+
+    if labels is None:
+        labels = levs
+
+    # Work out colour bar labeling
+    lbot = levs
+    if text_up_down:
+        lbot = levs[1:][::2]
+        ltop = levs[::2]
+
+    if text_down_up:
+        lbot = levs[::2]
+        ltop = levs[1:][::2]
+
+    # Get the colour map
+    colmap = cscale_get_map()
+    cmap = matplotlib.colors.ListedColormap(colmap)
+    if extend is None:
+        extend = plotvars.levels_extend
+
+
+    ncolors = np.size(levs)
+
+         
+    if extend == 'both' or extend == 'max':
+        ncolors = ncolors - 1
+        
+    if type(levs) != int:
+        plotvars.norm = matplotlib.colors.BoundaryNorm(boundaries=levs, ncolors=ncolors)
+
+        # Change boundaries to floats
+        boundaries = levs.astype(float)
+
+        # Add colorbar extensions if definded by levs.  Using boundaries[0]-1
+        # for the lower and boundaries[-1]+1 is just for the colorbar and
+        # has no meaning for the plot.
+        if (extend == 'min' or extend == 'both'):
+            cmap.set_under(plotvars.cs[0])
+            boundaries = np.insert(boundaries, 0, boundaries[0]-1)
+        if (extend == 'max' or extend == 'both'):
+            cmap.set_over(plotvars.cs[-1])
+            boundaries = np.insert(boundaries, len(boundaries), boundaries[-1]+1)
+
+
 
         if mid is not None:
             lbot_new = []
@@ -8141,6 +8219,9 @@ def cbar(labels=None,
                 mid_point = (lbot[i+1]-lbot[i])/2.0+lbot[i]
                 lbot_new.append(mid_point)
             lbot = lbot_new
+
+        if type(levs) != list:
+            lbot = None
 
         colorbar = matplotlib.colorbar.ColorbarBase(ax1, cmap=cmap,
                                                     norm=plotvars.norm,
@@ -8285,6 +8366,7 @@ def map_title(title=None, dims=False):
         mylon = lon_0
         mylat = boundinglat+polar_range/15.0
         proj = ccrs.SouthPolarStereo(central_longitude=lon_0)
+        xpt, ypt = proj.transform_point(mylon, mylat, ccrs.PlateCarree())
         if dims:
             mylon = lon_0 + 0
             #mylat = boundinglat-polar_range/15.0

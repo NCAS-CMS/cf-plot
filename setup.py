@@ -19,7 +19,7 @@ package_data = [f for f in find_package_data_files('cfplot/colourmaps')]
 
 setup(
     name = "cf-plot",
-    version = "3.1.26",
+    version = "3.1.28",
     author = "Andy Heaps",
     author_email = "andy.heaps@ncas.ac.uk",
     packages = ["cfplot"],
