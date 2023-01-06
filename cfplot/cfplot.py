@@ -1813,7 +1813,6 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
     # Other plots
     #############
     if ptype == 0:
-
         if verbose:
             print('con - making an other plot')
         if plotvars.user_plot == 0:
@@ -1828,6 +1827,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
         if f is not None:
             if isinstance(f, cf.Field):
                 cf_field = True
+                f = f.squeeze()
 
         # Work out axes if none are supplied
         if any(val is None for val in [
@@ -1916,7 +1916,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                 if ytimeaxis:
                     yaxisticks, yaxislabels, yplotlabel = timeaxis(taxis)
                 
-
+        
         if cf_field:
             coords = list(f.coords())
             mycoords = []
@@ -1924,14 +1924,31 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                 if np.size(f.coord(coord).array) > 1:
                     mycoords.append(coord)
             mycoords.reverse()
+            
             for icoord in np.arange(len(mycoords)):
+            
+                myaxisticks = None
+                myaxislabels = None
+                mylabel = None
+               
                 if f.coord(mycoords[icoord]).X:
-                    xaxisticks, xaxislabels = mapaxis(np.min(f.coord('X').array), np.max(f.coord('X').array), type=1)
-                    xlabel = 'longitude'
+                    myaxisticks, myaxislabels = mapaxis(np.min(f.coord('X').array), np.max(f.coord('X').array), type=1)
+                    mylabel = 'longitude'
                 
                 if f.coord(mycoords[icoord]).Y:
-                    yaxisticks, yaxislabels = mapaxis(np.min(f.coord('Y').array), np.max(f.coord('Y').array), type=2)
-                    ylabel = 'latitude'
+                    myaxisticks, myaxislabels = mapaxis(np.min(f.coord('Y').array), np.max(f.coord('Y').array), type=2)
+                    mylabel = 'latitude'
+                    
+                if myaxisticks is not None:
+                    if icoord == 0:
+                        xaxisticks, xaxislabels, xlabel = myaxisticks, myaxislabels, mylabel
+                    if icoord == 1:
+                        yaxisticks, yaxislabels, ylabel = myaxisticks, myaxislabels, mylabel                   
+                    
+                    
+
+                
+                
                 
         if xaxisticks is None:
             xaxisticks = gvals(dmin=xmin, dmax=xmax, mod=False)[0]
@@ -9642,20 +9659,34 @@ def generate_titles(f=None):
                 title_dims += mycoord + ': '  + title + ' ' + value + '\n'
 
   
-        if len(f.cell_methods()) > 0:
+        if len(f.cell_methods()) > 0:                    
             title_dims += 'cell_methods: '
             i = 0
+
             for method in f.cell_methods():
                 axis = f.cell_methods()[method].get_axes()[0]
                 try:
-                    dim = f.constructs.domain_axis_identity(axis)
-                    collapse = f.cell_methods()[method].method
-                    if i > 0:
-                        title_dims += ', '
-                    title_dims += dim + ': ' + collapse
+                    # Change domainaxis0 etc to an axis
+                    myid = f.constructs.domain_axis_identity(axis)
                 except:
-                    print('warning - no cell_method called ' + axis)
-                    
+                    myid = axis
+        
+                value = ''
+                if f.cell_methods()[method].has_method(): 
+                    value = f.cell_methods()[method].get_method()       
+    
+                qualifiers = f.cell_methods()[method].qualifiers()
+                qualifier_text = ''
+                if len(qualifiers) > 0:
+                    qualifier_text = str(qualifiers)   
+    
+                if i > 0:
+                    title_dims += ', '
+
+                title_dims += myid + ': ' + value + ' ' + qualifier_text
+        
+                i += 1
+                                            
     return title_dims
 
 
