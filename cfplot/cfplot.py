@@ -1654,6 +1654,11 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                  user_gset=user_gset)
             plot = plotvars.plot
 
+        # Set plot limits
+        if plotvars.proj == 'UKCP':
+            plot = plotvars.plot
+            plotargs = {}
+
         if plotvars.proj == 'cyl':
             rotated_pole = f.ref('grid_mapping_name:rotated_latitude_longitude')
             xpole = rotated_pole['grid_north_pole_longitude']
@@ -1775,8 +1780,9 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                        yticks=yticks, yticklabels=yticklabels,
                        axes=axes, xaxis=xaxis, yaxis=yaxis,
                        xlabel=xlabel, ylabel=ylabel)
+                
 
-        if plotvars.proj == 'rotated':
+        if plotvars.proj == 'rotated' or plotvars.proj == 'UKCP':
             # Remove Matplotlib default axis labels
             axes_plot(xticks=[100000000], xticklabels=[''],
                       yticks=[100000000], yticklabels=[''],
@@ -2753,7 +2759,7 @@ def axes_plot(xticks=None, xticklabels=None, yticks=None, yticklabels=None,
     else:
         this_plot = plotvars.plot
 
-    if plotvars.plot_type == 6 and plotvars.proj == 'rotated':
+    if plotvars.plot_type == 6 and (plotvars.proj == 'rotated' or plotvars.proj == 'UKCP'):
         this_plot = plotvars.plot
 
     # get the plot bounds
@@ -8129,8 +8135,8 @@ def cbar(labels=None,
         else:
             this_plot = plotvars.plot
 
-        if plotvars.plot_type == 6 and plotvars.proj == 'rotated':
-            this_plot = plotvars.plot
+        if plotvars.plot_type == 6 and (plotvars.proj == 'rotated' or plotvars.proj == 'UKCP'):
+            this_plot = plotvars.plot     
 
         l, b, w, h = this_plot.get_position().bounds
 
@@ -8153,6 +8159,7 @@ def cbar(labels=None,
                                                      w * shrink,
                                                      thick])
             else:
+
 
                 ax1 = plotvars.master_plot.add_axes([l + w * (1.0 - shrink)/2.0,
                                                      b,
