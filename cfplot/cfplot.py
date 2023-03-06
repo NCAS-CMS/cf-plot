@@ -2263,9 +2263,11 @@ def levs(min=None, max=None, step=None, manual=None, extend='both'):
      | extend='neither', 'both', 'min', or 'max' - colour bar limit extensions
 
      | Use the levs command when a predefined set of levels is required. The
-     | min, max and step parameters can be used to define a set of  levels.
-     | These can take integer or floating point numbers. If just the step is
-     | defined then cf-plot will internally try to define a reasonable set
+     | min, max and step parameters can be used to define a set of levels.
+     | These can take integer or floating point numbers. If the min and max are specified
+     | then a step also needs to be specified.
+     
+     | If just the step is specified then cf-plot will internally try to define a reasonable set
      | of levels.
 
 
@@ -2281,6 +2283,10 @@ def levs(min=None, max=None, step=None, manual=None, extend='both'):
       None
 
     """
+
+    if all(val is not None for val in [min, max]) and step is None:
+        print('\ncfp.levs error: when the min and max are specified a step also needs to be specified\n')
+        return
 
     if all(val is None for val in [min, max, step, manual]):
         plotvars.levels = None
@@ -8727,8 +8733,9 @@ def plot_map_axes(axes=None, xaxis=None, yaxis=None,
         mymap.fill(xpts, ypts, alpha=1.0, color='w', zorder=100)
 
         # Turn off map outside the cicular plot area
-        mymap.outline_patch.set_visible(False)
-
+        #mymap.outline_patch.set_visible(False)
+        mymap.set_frame_on(False)
+        
         # Draw a line around the bounding latitude
         lons = np.arange(361)
         lats = np.zeros(np.size(lons)) + boundinglat
@@ -8838,7 +8845,8 @@ def plot_map_axes(axes=None, xaxis=None, yaxis=None,
         mymap.plot(device_coords[:, 0], device_coords[:, 1], color='k', zorder=101, clip_on=False)
 
         # Turn off drawing of the rectangular box around the plot
-        mymap.outline_patch.set_visible(False)
+        #mymap.outline_patch.set_visible(False)
+        mymap.set_frame_on(False)
 
         if lat_0 < 0:
             lons = np.arange(lonmax - lonmin + 1) + lonmin
