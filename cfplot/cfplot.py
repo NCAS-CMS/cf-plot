@@ -4533,7 +4533,8 @@ def stipple(f=None, x=None, y=None, min=None, max=None,
             # field, xpts = cartopy_util.add_cyclic_point(field, xpts)
             field, xpts = add_cyclic(field, xpts)
 
-        if plotvars.proj == 'cyl':
+        #if plotvars.proj == 'cyl':
+        if plotvars.proj in ['cyl', 'robin', 'merc', 'ortho', 'moll']:        
             # Calculate interpolation points
             xnew, ynew = stipple_points(xmin=np.nanmin(xpts),
                                         xmax=np.nanmax(xpts),
@@ -8151,16 +8152,17 @@ def cbar(labels=None,
         l, b, w, h = this_plot.get_position().bounds
 
         if orientation == 'horizontal':
-            if plotvars.plot_type > 1 or plotvars.plot == 0 or plotvars.proj != 'cyl':
+            if plotvars.plot_type > 1 or plotvars.plot == 0 or plotvars.proj not in ['cyl', 'lcc', 'moll', 'merc', 'ortho', 'robin']:
                 this_plot.set_position([l, b + fraction, w, h - fraction])
 
-            if plotvars.plot_type == 1 and plotvars.proj == 'cyl':
-
+            #if plotvars.plot_type == 1 and plotvars.proj == 'cyl':
+            if plotvars.plot_type == 1 and plotvars.proj in ['cyl', 'lcc', 'moll', 'merc', 'ortho', 'robin']:
                 # Move plot up if aspect ratio is < 1.5
                 lonrange = plotvars.lonmax - plotvars.lonmin
                 latrange = plotvars.latmax - plotvars.latmin
                 
                 if (lonrange / latrange) <= 1.5:
+                    print('moving plot up')
                     this_plot.set_position([l, b + 0.08, w, h - 0.12])
                     l, b, w, h = this_plot.get_position().bounds
 
@@ -8376,17 +8378,21 @@ def map_title(title=None, dims=False):
     latmax = plotvars.latmax
     polar_range = 90-abs(boundinglat)
 
-    if plotvars.proj == 'cyl':
+    myprojs = ['cyl', 'robin', 'moll', 'merc']
+    if plotvars.proj in myprojs:    
         lon_mid = lonmin + (lonmax - lonmin) / 2.0
         mylon = lon_mid
         if dims:
             mylon = lonmin
-        proj = ccrs.PlateCarree(central_longitude=lon_mid)
+        projs = [ccrs.PlateCarree, ccrs.Robinson, ccrs.Mollweide, ccrs.Mercator]
+        myind = myprojs.index(plotvars.proj)
+        #if plotvars.proj == 'cyl':
+        #    proj = ccrs.PlateCarree(central_longitude=lon_mid)
+        proj = projs[myind](central_longitude=lon_mid)
         mylat = latmax
         xpt, ypt = proj.transform_point(mylon, mylat, ccrs.PlateCarree())
-        ypt = ypt + (latmax - latmin) / 40.0
-
-
+        ypt = ypt + (latmax - latmin) / 40.0        
+        
     if plotvars.proj == 'npstere':
         mylon = lon_0 + 180
         mylat = boundinglat-polar_range/15.0
@@ -8476,7 +8482,7 @@ def dim_titles(title=None, title2=None, title3=None):
     |
     |
     """
-
+    
     # Logic for the supplied titles
     # if just title is supplied:
     #     title - contour or line title
