@@ -21,6 +21,7 @@ import shapely.geometry as sgeom
 import shapely
 from matplotlib.collections import PatchCollection
 
+            
 # Check for the minimum cf-python version
 cf_version_min = '3.0.0b2'
 errstr = '\n\n cf-python > ' + cf_version_min
@@ -598,6 +599,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
     if np.nanmin(field) == np.nanmax(field):
         line_labels = False
 
+    
     # Add mult to colorbar_title if used
     if (colorbar_title is None):
         colorbar_title = ''
@@ -942,7 +944,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
             bfill_ugrid(f=field_orig * fmult, face_lons=face_lons_array, 
                        face_lats=face_lats_array, 
                        face_connectivity=face_connectivity_array, clevs=clevs,
-                       alpha=alpha, fast=blockfill_fast, zorder=zorder)
+                       alpha=alpha, zorder=zorder)
 
         # Contour lines and labels
         if lines:
@@ -960,7 +962,9 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                                       linewidths=linewidths, linestyles=linestyles, alpha=alpha,
                                       transform=ccrs.PlateCarree(), zorder=zorder)
 
-            if line_labels and type(clevs) == list:
+
+
+            if line_labels and type(clevs) != int:
                 nd = ndecs(clevs)
                 fmt = '%d'
                 if nd != 0:
@@ -1022,7 +1026,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
 
         # Titles for dimensions
         if titles:
-            dim_titles(title_dims, dims=True)
+            dim_titles(title=title_dims)
 
         # Color bar
         if colorbar:
@@ -1322,7 +1326,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
             cs = plotvars.plot.contour(
                 x, y, field * fmult, clevs, colors=colors,
                 linewidths=linewidths, linestyles=linestyles, zorder=zorder)
-            if line_labels and type(clevs) == list:
+            if line_labels and type(clevs) != int:
                 nd = ndecs(clevs)
                 fmt = '%d'
                 if nd != 0:
@@ -1340,7 +1344,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
 
         # Titles for dimensions
         if titles:
-            dim_titles(title_dims, dims=True)
+            dim_titles(title=title_dims)
         
         # Color bar
         if colorbar:
@@ -1579,7 +1583,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
         if lines:
             cs = plotvars.plot.contour(x, y, field * fmult, clevs, colors=colors,
                                        linewidths=linewidths, linestyles=linestyles, alpha=alpha)
-            if line_labels and type(clevs) == list:
+            if line_labels and type(clevs) != int:
                 nd = ndecs(clevs)
                 fmt = '%d'
                 if nd != 0:
@@ -1596,7 +1600,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                                                zorder=zorder)
         # Titles for dimensions
         if titles:
-            dim_titles(title_dims, dims=True)
+            dim_titles(title=title_dims)
 
         # Color bar
         if colorbar:
@@ -1728,7 +1732,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
             cs = plot.contour(xpts, ypts, field * fmult, clevs, colors=colors,
                               linewidths=linewidths, linestyles=linestyles,
                               zorder=zorder, **plotargs)
-            if line_labels and type(clevs) == list:
+            if line_labels and type(clevs) != int:
                 nd = ndecs(clevs)
                 fmt = '%d'
                 if nd != 0:
@@ -1746,7 +1750,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
 
         # Titles for dimensions
         if titles:
-            dim_titles(title_dims, dims=True)
+            dim_titles(title=title_dims)
 
         # Color bar
         if colorbar:
@@ -2054,7 +2058,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
             cs = plotvars.plot.contour(x, y, field * fmult, clevs, colors=colors,
                                        linewidths=linewidths, linestyles=linestyles,
                                        zorder=zorder)
-            if line_labels and type(clevs) == list:
+            if line_labels and type(clevs) != int:
                 nd = ndecs(clevs)
                 fmt = '%d'
                 if nd != 0:
@@ -2072,7 +2076,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
 
         # Titles for dimensions
         if titles:
-            dim_titles(title_dims, dims=True)
+            dim_titles(title=title_dims)
 
         # Color bar
         if colorbar:
@@ -5047,9 +5051,9 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,
         # Titles for dimensions
         if titles:
             if plotvars.titles_con_called is False:
-                dim_titles(title_dims, title2=title_dims2, dims=True)
+                dim_titles(title=title_dims, title2=title_dims2)
             else:
-                dim_titles(title2=title_dims, title3=title_dims2, dims=True)
+                dim_titles(title2=title_dims, title3=title_dims2)
 
 
     if plotvars.plot_type == 6:
@@ -5110,7 +5114,7 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,
 
             # Titles for dimensions
             if titles:
-                dim_titles(title_dims, titles2=dim_titles2, dims=True)
+                dim_titles(title=title_dims, titles2=dim_titles2)
 
 
 
@@ -5395,7 +5399,7 @@ def vect(u=None, v=None, x=None, y=None, scale=None, stride=None, pts=None,
 
             # Titles for dimensions
             if titles:
-                dim_titles(title_dims, titles2=dim_titles2, dims=True)
+                dim_titles(title=title_dims, titles2=dim_titles2)
 
 
     ##########
@@ -7001,7 +7005,7 @@ def lineplot(f=None, x=None, y=None, fill=True, lines=True, line_labels=True,
     if titles:
         plotvars.plot = graph
         plotvars.plot_type = 0
-        dim_titles(title_dims, dims=True)
+        dim_titles(title=title_dims)
 
 
     ##################
@@ -8164,25 +8168,28 @@ def cbar(labels=None,
                                                      b - fraction * (1.0 - anchor),
                                                      w * shrink,
                                                      thick])
-            else:
-
-
+                                                     
+            if plotvars.plot_type > 1 or plotvars.plot_type == 0:
+                this_plot.set_position([l, b + fraction, w, h - fraction])  
+                 
                 ax1 = plotvars.master_plot.add_axes([l + w * (1.0 - shrink)/2.0,
+                                                     #b - fraction * (1.0 - anchor),
                                                      b,
                                                      w * shrink,
-                                                     thick])
-
-            if plotvars.plot_type > 1 or plotvars.plot_type == 0:
-                this_plot.set_position([l, b + fraction, w, h - fraction])
-
+                                                     thick])                
+                
+                                                                   
         else:
             ax1 = plotvars.master_plot.add_axes([l + w + fraction * (anchor - 1),
                                                  b + h * (1.0 - shrink) / 2.0,
                                                  thick,
                                                  h * shrink])
-            this_plot.set_position([l, b, w - fraction, h])        
-        
-        
+            this_plot.set_position([l, b, w - fraction, h])
+
+    else:
+        # Set axes position on coords supplied by the user
+        ax1 = plotvars.master_plot.add_axes(position)
+     
         
         
     if levs is None:
@@ -8456,19 +8463,34 @@ def map_title(title=None, dims=False):
 
 
 
-def dim_titles(title=None, title2=None, title3=None, dims=False):
+def dim_titles(title=None, title2=None, title3=None):
     """
     | dim_titles is an internal routine to draw a set of dimension titles on a  plot
     |
     | title=None - title to put on the plot
-    | title2=None - additional title to put to the right of the first title
-    | dim=False - draw a set of dimension titles
+    | title2=None - additional title 
+    | title3=None - additional title     
     |
     |
     |
     |
     |
     """
+
+    # Logic for the supplied titles
+    # if just title is supplied:
+    #     title - contour or line title
+    #
+    # if both title and title2 are supplied:
+    #     title u component of title
+    #     title2 v component of the title
+    #
+    # if title2 and title3 are supplied:
+    #     title2 u component of title
+    #     title3 v component of title
+    #
+    # move the plot around if title3 is None
+    
 
     # Get plot position
     if plotvars.plot_type == 1:
@@ -8480,19 +8502,21 @@ def dim_titles(title=None, title2=None, title3=None, dims=False):
 
     valign = 'bottom'
  
-    # Shift down if a cylindrical plot else to the left
+    
+    # Shift down if a cylindrical projection plot else to the left
     if plotvars.plot_type == 1 and plotvars.proj != 'cyl':
         l = l - 0.1
-        myx = 1.2
+        myx = 1.25
         myy = 1.0
         valign = 'top'
+        if title3 is None:
+            myx = 1.05
     elif plotvars.plot_type == 1 and plotvars.proj == 'cyl':
         lonrange = plotvars.lonmax - plotvars.lonmin
         latrange = plotvars.latmax - plotvars.latmin
         if (lonrange / latrange) > 1.5:
             myx = 0.0
             myy = 1.02
-            #h = h - 0.015
             
         if (lonrange / latrange) > 1.2 and (lonrange / latrange) <= 1.5:
             myx = 0.0
@@ -8502,47 +8526,53 @@ def dim_titles(title=None, title2=None, title3=None, dims=False):
         
         if (lonrange / latrange) <= 1.2:
             l = l - 0.1
-            myx = 1.1
+            #if title2 is not None:
+            #    l = l - 0.1
+            myx = 1.05
             myy = 1.0
+            w = w - 0.1
             valign = 'top'
     else:
         h = h - 0.1
         myx = 0.0
         myy = 1.02
+        
 
 
-    this_plot.set_position([l, b, w, h])
 
-    if title3 is not None:
-        this_plot.text(myx + 0.3, myy, title2, va=valign,
-                   ha='left',
-                   fontsize=plotvars.axis_label_fontsize,
-                   fontweight=plotvars.axis_label_fontweight,
-                   transform=this_plot.transAxes)
-
-        this_plot.text(myx + 0.6, myy, title3, va=valign,
-                   ha='left',
-                   fontsize=plotvars.axis_label_fontsize,
-                   fontweight=plotvars.axis_label_fontweight,
-                   transform=this_plot.transAxes)
-
-        return
+    # Change the plot position if title3 is None
+    if title3 is None:
+        this_plot.set_position([l, b, w, h])
 
 
-    this_plot.text(myx, myy, title, va=valign,
-                   ha='left',
-                   fontsize=plotvars.axis_label_fontsize,
-                   fontweight=plotvars.axis_label_fontweight,
-                   transform=this_plot.transAxes)
+    # Set x and y spacing depending on the label location
+    xspacing = 0.3
+    yspacing = 0.0
+    if myx == 1.05 or myx == 1.25:
+        xspacing = 0.0
+        yspacing = 0.2
+
+
+    if title is not None:
+        this_plot.text(myx, myy, title, va=valign,
+                       ha='left',
+                       fontsize=plotvars.axis_label_fontsize,
+                       fontweight=plotvars.axis_label_fontweight,
+                       transform=this_plot.transAxes)
 
     if title2 is not None:
-        this_plot.text(myx + 0.3, myy, title2, va=valign,
+        this_plot.text(myx + xspacing, myy - yspacing, title2, va=valign,
                    ha='left',
                    fontsize=plotvars.axis_label_fontsize,
                    fontweight=plotvars.axis_label_fontweight,
                    transform=this_plot.transAxes)
 
-
+    if title3 is not None:
+        this_plot.text(myx + xspacing * 2, myy - yspacing * 2, title3, va=valign,
+                   ha='left',
+                   fontsize=plotvars.axis_label_fontsize,
+                   fontweight=plotvars.axis_label_fontweight,
+                   transform=this_plot.transAxes)
 
 
 
@@ -9587,12 +9617,11 @@ def bfill_ugrid(f=None, face_lons=None, face_lats=None, face_connectivity=None, 
         col = plotvars.cs[ilev]
         pts = np.where(f.squeeze() >= lev)[0]
 
-
-        if np.min(pts) >= 0:
-            for val in np.arange(np.size(pts)):
-                pt = pts[val]
-
-                cols[pt]=col
+        if len(pts) > 0:
+            if np.min(pts) >= 0:
+                for val in np.arange(np.size(pts)):
+                    pt = pts[val]
+                    cols[pt]=col
     
     plotargs = {'transform': ccrs.PlateCarree()}
 
@@ -9619,8 +9648,14 @@ def bfill_ugrid(f=None, face_lons=None, face_lats=None, face_connectivity=None, 
         if np.max(lats) == 90 or np.min(lats) == -90:
             geom = sgeom.Polygon([(face_lons[i], face_lats[i]) for i in face_connectivity[iface]])
             geom_cyl = ccrs.PlateCarree().project_geometry(geom, ccrs.Geodetic())
-            coords = geom_cyl[0].exterior.coords[:]
+            
+            # Original method for shapely < 2.0
+            #coords = geom_cyl[0].exterior.coords[:]
 
+            # New method for shapely 2.0 +
+            poly_mapped = sgeom.mapping(geom_cyl.geoms[0])
+            coords = list(poly_mapped['coordinates'][0])
+   
         coords_all.append(coords)
 
     plotvars.mymap.add_collection(PolyCollection(coords_all, facecolors=cols, edgecolors=None,
@@ -9780,8 +9815,8 @@ def find_dim_names(field):
     if field.get_property('featureType', False) is not False:
         if field.featureType == 'trajectory':
             remove_aux = False
-                
-                
+
+    
     # Strip out any auxiliary coordinates if the field is not a trajectory field
     if remove_aux:
         for i in np.arange(len(dcoords)):
