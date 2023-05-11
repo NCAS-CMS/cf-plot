@@ -495,6 +495,21 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
         clevs, mult, fmult = calculate_levels(field=field,
                                               level_spacing=spacing,
                                               verbose=verbose)
+                                              
+        # If a cyclindrical map has been set then try to subspace the data and make a new set of levels
+        myfield = None
+        if ptype == 1 and plotvars.user_mapset and isinstance(f, cf.Field):
+            if plotvars.proj == 'cyl':
+                try:
+                    myfield = f.subspace(X=cf.wi(plotvars.lonmin, plotvars.lonmax),
+                                         Y=cf.wi(plotvars.latmin, plotvars.latmax))
+                except:
+                    pass
+
+        if myfield is not None:
+            clevs, mult, fmult = calculate_levels(field=myfield, level_spacing=spacing,\
+                                                  verbose=verbose)                
+                    
     else:
         clevs = plotvars.levels
         mult = 0
@@ -8162,7 +8177,6 @@ def cbar(labels=None,
                 latrange = plotvars.latmax - plotvars.latmin
                 
                 if (lonrange / latrange) <= 1.5:
-                    print('moving plot up')
                     this_plot.set_position([l, b + 0.08, w, h - 0.12])
                     l, b, w, h = this_plot.get_position().bounds
 
@@ -9817,11 +9831,13 @@ def find_dim_names(field):
         
    
     # Strip out any auxiliary coordinates if the field is not a trajectory field
-    remove_aux = True
-    if field.get_property('featureType', False) is not False:
-        if field.featureType == 'trajectory':
-            remove_aux = False
+    #remove_aux = True
+    #if field.get_property('featureType', False) is not False:
+    #    if field.featureType == 'trajectory':
+    #        remove_aux = False
 
+    # New test
+    remove_aux = False
     
     # Strip out any auxiliary coordinates if the field is not a trajectory field
     if remove_aux:
