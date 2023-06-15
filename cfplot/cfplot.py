@@ -1,6 +1,6 @@
 """
 Climate contour/vector plots using cf-python, matplotlib and cartopy.
-Andy Heaps NCAS-CMS April 2021
+Andy Heaps NCAS-CMS May 2023
 """
 import numpy as np
 import subprocess
@@ -237,7 +237,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
         colorbar_fraction=None, colorbar_thick=None,
         colorbar_anchor=None, colorbar_labels=None,
         linestyles=None, zorder=1, level_spacing=None,
-        ugrid=False, face_lons=False, face_lats=False, face_connectivity=False,
+        irregular=False, face_lons=False, face_lats=False, face_connectivity=False,
         titles=False, mytest=False, transform_first=None, blockfill_fast=None,
         nlevs=False):
     """
@@ -323,7 +323,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
      | zorder=1 - order of drawing
      | level_spacing=None - Default of 'linear' level spacing.  Also takes 'log', 'loglike',
      |                      'outlier' and 'inspect'
-     | ugrid=False - flag for contouring ugrid data
+     | irregular=False - flag for contouring irregular data
      | face_lons=None - longitude points for face vertices
      | face_lats=None - latitude points for face verticies
      | face_connectivity=None - connectivity for face verticies
@@ -354,11 +354,11 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
         blockfill=True
          
     # Extract data for faces if a UGRID blockplot
-    blockfill_ugrid = False
+    blockfill_irregular = False
     if face_lons and face_lats and face_connectivity:
-        blockfill_ugrid = True
+        blockfill_irregular = True
         fill = False
-        ugrid = True
+        irregular = True
         if isinstance(f, cf.Field):
             field = f.array
         else:
@@ -390,9 +390,9 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
 
         # Check data is 2D
         ndims = np.squeeze(f.data).ndim
-        ugrid = False
+        irregular = False
         if ndims == 1:
-            ugrid = True      
+            irregular = True      
         if ndims > 2:
             errstr = "\n\ncfp.con error need a 1 or 2 dimensional field to contour\n"
             errstr += "received " + str(np.squeeze(f.data).ndim) + " dimensions\n\n"
@@ -403,7 +403,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
         if verbose:
             print('con - calling cf_data_assign')
 
-        #if not ugrid_blockfill:
+        #if not irregular_blockfill:
         field, x, y, ptype, colorbar_title, xlabel, ylabel, xpole, ypole =\
             cf_data_assign(f, colorbar_title, verbose=verbose)
 
@@ -455,7 +455,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                 raise TypeError(errstr)
 
     # Turn off colorbar if fill is turned off
-    if not fill and not blockfill and not blockfill_ugrid:
+    if not fill and not blockfill and not blockfill_irregular:
         colorbar = False
 
     # Revert to default colour scale if cscale_flag flag is set
@@ -742,8 +742,8 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
 
 
 
-        if not blockfill_ugrid:
-            if not ugrid:
+        if not blockfill_irregular:
+            if not irregular:
                 if lonrange > 350 and np.ndim(y) == 1:
                     # Add cyclic information if missing.
                     if lonrange < 360:
@@ -774,7 +774,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                     if plotvars.lonmin > np.nanmax(x):
                         x = x + 360
             else:
-                # Get the ugrid data within the map coordinates
+                # Get the irregular data within the map coordinates
                 # Matplotlib tricontour cannot plot missing data so we need to split 
                 # the missing data into a separate field to deal with this
 
@@ -782,29 +782,29 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                 pts_nan = np.where(np.isnan(field_modified))
                 field_modified[pts_nan] = -1e30
 
-                field_ugrid, lons_ugrid, lats_ugrid = ugrid_window(field_modified, x, y)
-                #pts_real  = np.where(np.isfinite(field_ugrid))
-                pts_real = np.where(field_ugrid > -1e29)
-                pts_nan = np.where(field_ugrid < -1e29)
+                field_irregular, lons_irregular, lats_irregular = irregular_window(field_modified, x, y)
+                #pts_real  = np.where(np.isfinite(field_irregular))
+                pts_real = np.where(field_irregular > -1e29)
+                pts_nan = np.where(field_irregular < -1e29)
 
 
-                field_ugrid_nan = []
-                lons_ugrid_nan = []
-                lats_ugrid_nan = []
+                field_irregular_nan = []
+                lons_irregular_nan = []
+                lats_irregular_nan = []
                 if np.size(pts_nan) > 0:
-                    field_ugrid_nan = deepcopy(field_ugrid)
-                    lons_ugrid_nan = deepcopy(lons_ugrid)
-                    lats_ugrid_nan = deepcopy(lats_ugrid)
-                    field_ugrid_nan[:] = 0
-                    field_ugrid_nan[pts_nan] = 1
+                    field_irregular_nan = deepcopy(field_irregular)
+                    lons_irregular_nan = deepcopy(lons_irregular)
+                    lats_irregular_nan = deepcopy(lats_irregular)
+                    field_irregular_nan[:] = 0
+                    field_irregular_nan[pts_nan] = 1
 
 
-                field_ugrid_real = deepcopy(field_ugrid[pts_real])
-                lons_ugrid_real = deepcopy(lons_ugrid[pts_real])
-                lats_ugrid_real = deepcopy(lats_ugrid[pts_real])
+                field_irregular_real = deepcopy(field_irregular[pts_real])
+                lons_irregular_real = deepcopy(lons_irregular[pts_real])
+                lats_irregular_real = deepcopy(lats_irregular[pts_real])
 
 
-        if not ugrid:
+        if not irregular:
             # Flip latitudes and field if latitudes are in descending order
             if np.ndim(y) == 1:
                 if y[0] > y[-1]:
@@ -815,13 +815,13 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
         # in polar plots. Subsample the latitudes to remove this problem
 
         if plotvars.proj == 'npstere' and np.ndim(y) == 1:
-            if not blockfill_ugrid:
-                if ugrid:
-                    pts = np.where(lats_ugrid > plotvars.boundinglat - 5)
+            if not blockfill_irregular:
+                if irregular:
+                    pts = np.where(lats_irregular > plotvars.boundinglat - 5)
                     pts = np.array(pts).flatten()
-                    lons_ugrid_real = lons_ugrid_real[pts]
-                    lats_ugrid_real = lats_ugrid_real[pts]
-                    field_ugrid_real = field_ugrid_real[pts]
+                    lons_irregular_real = lons_irregular_real[pts]
+                    lats_irregular_real = lats_irregular_real[pts]
+                    field_irregular_real = field_irregular_real[pts]
                 else:
                     myypos = find_pos_in_array(vals=y, val=plotvars.boundinglat)
                     if myypos != -1:
@@ -829,12 +829,12 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                         field = field[myypos:, :]
 
         if plotvars.proj == 'spstere' and np.ndim(y) == 1:
-            if not blockfill_ugrid:
-                if ugrid:
-                    pts = np.where(lats_ugrid_real < plotvars.boundinglat + 5)
-                    lons_ugrid_real = lons_ugrid_real[pts]
-                    lats_ugrid_real = lats_ugrid_real[pts]
-                    field_ugrid_real = field_ugrid_real[pts]
+            if not blockfill_irregular:
+                if irregular:
+                    pts = np.where(lats_irregular_real < plotvars.boundinglat + 5)
+                    lons_irregular_real = lons_irregular_real[pts]
+                    lats_irregular_real = lats_irregular_real[pts]
+                    field_irregular_real = field_irregular_real[pts]
                 else:
                     myypos = find_pos_in_array(vals=y, val=plotvars.boundinglat, above=True)
                     if myypos != -1:
@@ -907,7 +907,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                     
             
             # Filled colour contours
-            if not ugrid:               
+            if not irregular:               
                 plotvars.image = mymap.contourf(lons, lats, field * fmult, clevs,
                                extend=plotvars.levels_extend,
                                cmap=cmap, norm=plotvars.norm,
@@ -915,8 +915,8 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                                zorder=zorder, transform_first=transform_first)
                 
             else:
-                if np.size(field_ugrid_real) > 0: 
-                    plotvars.image = mymap.tricontourf(lons_ugrid_real, lats_ugrid_real, field_ugrid_real * fmult,
+                if np.size(field_irregular_real) > 0: 
+                    plotvars.image = mymap.tricontourf(lons_irregular_real, lats_irregular_real, field_irregular_real * fmult,
                                       clevs, extend=plotvars.levels_extend,
                                       cmap=cmap, norm=plotvars.norm,
                                       alpha=alpha, transform=ccrs.PlateCarree(),
@@ -952,11 +952,11 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                 bfill(f=field_orig * fmult, x=x_orig, y=y_orig, clevs=clevs,
                       lonlat=True, bound=0, alpha=alpha, fast=blockfill_fast, zorder=zorder)
 
-        # Block fill for ugrid
-        if blockfill_ugrid:
+        # Block fill for irregular
+        if blockfill_irregular:
             if verbose:
-                print('con - adding blockfill for UGRID')
-            bfill_ugrid(f=field_orig * fmult, face_lons=face_lons_array, 
+                print('con - adding blockfill for irregular')
+            bfill_irregular(f=field_orig * fmult, face_lons=face_lons_array, 
                        face_lats=face_lats_array, 
                        face_connectivity=face_connectivity_array, clevs=clevs,
                        alpha=alpha, zorder=zorder)
@@ -966,13 +966,13 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
             if verbose:
                 print('con - adding contour lines and labels')
 
-            if not ugrid:
+            if not irregular:
                 cs = mymap.contour(lons, lats, field * fmult, clevs, colors=colors,
                                    linewidths=linewidths, linestyles=linestyles, alpha=alpha,
                                    transform=ccrs.PlateCarree(), zorder=zorder)
             else:
 
-                cs = mymap.tricontour(lons_ugrid_real, lats_ugrid_real, field_ugrid_real * fmult,
+                cs = mymap.tricontour(lons_irregular_real, lats_irregular_real, field_irregular_real * fmult,
                                       clevs, colors=colors,
                                       linewidths=linewidths, linestyles=linestyles, alpha=alpha,
                                       transform=ccrs.PlateCarree(), zorder=zorder)
@@ -997,11 +997,11 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
 
 
 
-        # Add a ugrid mask if there is one
-        if ugrid and not blockfill_ugrid:
-            if np.size(field_ugrid_nan) > 0:
+        # Add a irregular mask if there is one
+        if irregular and not blockfill_irregular:
+            if np.size(field_irregular_nan) > 0:
                 cmap_white = matplotlib.colors.ListedColormap([1.0, 1.0, 1.0])
-                mymap.tricontourf(lons_ugrid_nan, lats_ugrid_nan, field_ugrid_nan , [0.5, 1.5],
+                mymap.tricontourf(lons_irregular_nan, lats_irregular_nan, field_irregular_nan , [0.5, 1.5],
                                   extend='neither',
                                   cmap=cmap_white, norm=plotvars.norm,
                                   alpha=alpha, transform=ccrs.PlateCarree(),
@@ -4151,7 +4151,6 @@ def bfill(f=None, x=None, y=None, clevs=False, lonlat=None, bound=False,
     
 
 
-
     # Set lonlat if not specified
     lonlat = False
     if plotvars.plot_type == 1:
@@ -4305,17 +4304,32 @@ def bfill(f=None, x=None, y=None, clevs=False, lonlat=None, bound=False,
     if fast:
         if type(clevs) == int:
             norm = False
-                      
+                 
+        rotated = True
+        
         if lonlat:
             for offset in [0, 360.0]:
                 if type(clevs) == int:
+                    print('type1')
                     plotvars.image = plotvars.mymap.pcolormesh(xpts+offset, ypts, field, transform=ccrs.PlateCarree(), cmap=cmap)
                 else:
-                    plotvars.image = plotvars.mymap.pcolormesh(xpts+offset, ypts, field, transform=ccrs.PlateCarree(), cmap=cmap, norm=norm)                    
+                    print('type2')
+                    plotvars.image = plotvars.mymap.pcolormesh(xpts+offset, ypts, field, transform=ccrs.PlateCarree(), cmap=cmap, norm=norm)     
+        elif rotated:
+            print('in rotated')
+            g = cf.read('cfplot_data/rgp.nc')[0]
+            rotated_pole = g.ref('grid_mapping_name:rotated_latitude_longitude')
+            xpole = rotated_pole['grid_north_pole_longitude']
+            ypole = rotated_pole['grid_north_pole_latitude']
+            transform = ccrs.RotatedPole(pole_latitude=ypole, pole_longitude=xpole)
+            for offset in [0, 360.0]:
+                plotvars.image = plotvars.mymap.pcolormesh(xpts+offset, ypts, field, transform=transform, cmap=cmap)   
         else:
             if type(clevs) == int:
+                print('type3')
                 plotvars.image = plotvars.plot.pcolormesh(xpts, ypts, field, cmap=cmap)
             else:
+                print('type4')
                 plotvars.image = plotvars.plot.pcolormesh(xpts, ypts, field, cmap=cmap, norm=norm)        
     
     else:
@@ -9045,35 +9059,35 @@ def add_cyclic(field, lons):
 
 
 
-def ugrid_window(field, lons,lats):
+def irregular_window(field, lons,lats):
 
-    field_ugrid = deepcopy(field)
-    lons_ugrid = deepcopy(lons)
-    lats_ugrid = deepcopy(lats)
+    field_irregular = deepcopy(field)
+    lons_irregular = deepcopy(lons)
+    lats_irregular = deepcopy(lats)
 
 
     # Fix longitudes to be -180 to 180
-    # lons_ugrid = ((lons_ugrid + plotvars.lonmin) % 360) + plotvars.lonmin
+    # lons_irregular = ((lons_irregular + plotvars.lonmin) % 360) + plotvars.lonmin
 
     # Test data to get appropiate longitude offset to perform remapping
     found_lon = False
     for ilon in [-360, 0, 360]:
-        lons_test = lons_ugrid + ilon
+        lons_test = lons_irregular + ilon
         if np.min(lons_test) <= plotvars.lonmin:
             found_lon = True
             lons_offset = ilon
 
     if found_lon:
-        lons_ugrid = lons_ugrid + lons_offset
-        pts = np.where(lons_ugrid < plotvars.lonmin)
-        lons_ugrid[pts] = lons_ugrid[pts] + 360.0
+        lons_irregular = lons_irregular + lons_offset
+        pts = np.where(lons_irregular < plotvars.lonmin)
+        lons_irregular[pts] = lons_irregular[pts] + 360.0
     else:
-        errstr = '/n/n cf-plot error - cannot determine grid offset in add_cyclic_ugrid/n/n'
+        errstr = '/n/n cf-plot error - cannot determine grid offset in add_cyclic_irregular/n/n'
         raise Warning(errstr)
 
-    field_wrap = deepcopy(field_ugrid)
-    lons_wrap = deepcopy(lons_ugrid)
-    lats_wrap = deepcopy(lats_ugrid)
+    field_wrap = deepcopy(field_irregular)
+    lons_wrap = deepcopy(lons_irregular)
+    lats_wrap = deepcopy(lats_irregular)
     delta = 120.0
 
     pts_left = np.where(lons_wrap >= plotvars.lonmin + 360 - delta)
@@ -9098,17 +9112,17 @@ def ugrid_window(field, lons,lats):
     lats_new = lats_new[pts]
 
     # Add the interpolated data to the left
-    field_ugrid = np.concatenate([field_ugrid, field_new])
-    lons_ugrid = np.concatenate([lons_ugrid, lons_new])
-    lats_ugrid = np.concatenate([lats_ugrid, lats_new])
+    field_irregular = np.concatenate([field_irregular, field_new])
+    lons_irregular = np.concatenate([lons_irregular, lons_new])
+    lats_irregular = np.concatenate([lats_irregular, lats_new])
 
     # Add to the right if a fiull globe is being plotted
     # The 359.99 here is needed or Cartopy will map 360 back to 0
 
     if plotvars.lonmax - plotvars.lonmin == 360:
-        field_ugrid = np.concatenate([field_ugrid, field_new])
-        lons_ugrid = np.concatenate([lons_ugrid, lons_new + 359.95])
-        lats_ugrid = np.concatenate([lats_ugrid, lats_new])
+        field_irregular = np.concatenate([field_irregular, field_new])
+        lons_irregular = np.concatenate([lons_irregular, lons_new + 359.95])
+        lats_irregular = np.concatenate([lats_irregular, lats_new])
     else:
         lons_new2 = np.zeros(181) + plotvars.lonmax
         lats_new2 = np.arange(181) - 90
@@ -9121,18 +9135,18 @@ def ugrid_window(field, lons,lats):
         lats_new2 = lats_new2[pts]
 
         # Add the interpolated data to the right
-        field_ugrid = np.concatenate([field_ugrid, field_new2])
-        lons_ugrid = np.concatenate([lons_ugrid, lons_new2])
-        lats_ugrid = np.concatenate([lats_ugrid, lats_new2])
+        field_irregular = np.concatenate([field_irregular, field_new2])
+        lons_irregular = np.concatenate([lons_irregular, lons_new2])
+        lats_irregular = np.concatenate([lats_irregular, lats_new2])
 
     # Finally remove any point off to the right of plotvars.lonmax
-    pts = np.where(lons_ugrid <= plotvars.lonmax)
+    pts = np.where(lons_irregular <= plotvars.lonmax)
     if np.size(pts) > 0:
-        field_ugrid = field_ugrid[pts]
-        lons_ugrid = lons_ugrid[pts]
-        lats_ugrid = lats_ugrid[pts]
+        field_irregular = field_irregular[pts]
+        lons_irregular = lons_irregular[pts]
+        lats_irregular = lats_irregular[pts]
 
-    return field_ugrid, lons_ugrid, lats_ugrid
+    return field_irregular, lons_irregular, lats_irregular
 
 
 
@@ -9591,11 +9605,11 @@ def stream(u=None, v=None, x=None, y=None, density=None, linewidth=None,
         mapset(resolution=resolution_orig)
 
 
-def bfill_ugrid(f=None, face_lons=None, face_lats=None, face_connectivity=None, clevs=None,
+def bfill_irregular(f=None, face_lons=None, face_lats=None, face_connectivity=None, clevs=None,
                 alpha=None, zorder=None):
 
     """
-     | bfill_ugrid - block fill a UGRID field with colour rectangles
+     | bfill_irregular - block fill a irregular field with colour rectangles
      | This is an internal routine and is not generally used by the user.
      |
      | f=None - field
@@ -9734,28 +9748,29 @@ def generate_titles(f=None):
             i = 0
 
             for method in f.cell_methods():
-                axis = f.cell_methods()[method].get_axes()[0]
-                try:
-                    # Change domainaxis0 etc to an axis
-                    myid = f.constructs.domain_axis_identity(axis)
-                except:
-                    myid = axis
+                if len(f.cell_methods()[method].get_axes()) > 0:
+                    axis = f.cell_methods()[method].get_axes()[0]
+                    try:
+                        # Change domainaxis0 etc to an axis
+                        myid = f.constructs.domain_axis_identity(axis)
+                    except:
+                        myid = axis
         
-                value = ''
-                if f.cell_methods()[method].has_method(): 
-                    value = f.cell_methods()[method].get_method()       
+                    value = ''
+                    if f.cell_methods()[method].has_method(): 
+                        value = f.cell_methods()[method].get_method()       
     
-                qualifiers = f.cell_methods()[method].qualifiers()
-                qualifier_text = ''
-                if len(qualifiers) > 0:
-                    qualifier_text = str(qualifiers)   
+                    qualifiers = f.cell_methods()[method].qualifiers()
+                    qualifier_text = ''
+                    if len(qualifiers) > 0:
+                        qualifier_text = str(qualifiers)   
     
-                if i > 0:
-                    title_dims += ', '
+                    if i > 0:
+                        title_dims += ', '
 
-                title_dims += myid + ': ' + value + ' ' + qualifier_text
+                    title_dims += myid + ': ' + value + ' ' + qualifier_text
         
-                i += 1
+                    i += 1
                                             
     return title_dims
 
