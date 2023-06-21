@@ -1,6 +1,6 @@
 """
 Climate contour/vector plots using cf-python, matplotlib and cartopy.
-Andy Heaps NCAS-CMS May 2023
+Andy Heaps NCAS-CMS June 2023
 """
 import numpy as np
 import subprocess
@@ -1740,7 +1740,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                   lonlat=False,
                   bound=0,
                   alpha=alpha, fast=blockfill_fast,
-                  zorder=zorder)
+                  zorder=zorder, transform=transform)
 
         # Contour lines and labels
         if lines:
@@ -4121,7 +4121,7 @@ def cscale_get_map():
 
 
 def bfill(f=None, x=None, y=None, clevs=False, lonlat=None, bound=False,
-          alpha=1.0, single_fill_color=None, white=True, zorder=4, fast=None):
+          alpha=1.0, single_fill_color=None, white=True, zorder=4, fast=None, transform=False):
     """
      | bfill - block fill a field with colour rectangles
      | This is an internal routine and is not generally used by the user.
@@ -4139,6 +4139,7 @@ def bfill(f=None, x=None, y=None, clevs=False, lonlat=None, bound=False,
      |                        - hexadecimal notation - '#d3d3d3' for grey
      | zorder=4 - plotting order
      | fast=None - use fast plotting with pcolormesh which is useful for larger datasets
+     | transform=False - map transform supplied by calling routine
      |
       :Returns:
         None
@@ -4149,7 +4150,6 @@ def bfill(f=None, x=None, y=None, clevs=False, lonlat=None, bound=False,
     """
 
     
-
 
     # Set lonlat if not specified
     lonlat = False
@@ -4301,35 +4301,27 @@ def bfill(f=None, x=None, y=None, clevs=False, lonlat=None, bound=False,
 
     norm = matplotlib.colors.BoundaryNorm(levels, cmap.N)
 
+
+    # Set the transform if not supplied to bfill
+    if transform:
+        lonlat = True
+    else:
+        transform = ccrs.PlateCarree()
+
     if fast:
         if type(clevs) == int:
             norm = False
                  
-        rotated = True
-        
         if lonlat:
             for offset in [0, 360.0]:
                 if type(clevs) == int:
-                    print('type1')
-                    plotvars.image = plotvars.mymap.pcolormesh(xpts+offset, ypts, field, transform=ccrs.PlateCarree(), cmap=cmap)
+                    plotvars.image = plotvars.mymap.pcolormesh(xpts+offset, ypts, field, transform=transform, cmap=cmap)
                 else:
-                    print('type2')
-                    plotvars.image = plotvars.mymap.pcolormesh(xpts+offset, ypts, field, transform=ccrs.PlateCarree(), cmap=cmap, norm=norm)     
-        elif rotated:
-            print('in rotated')
-            g = cf.read('cfplot_data/rgp.nc')[0]
-            rotated_pole = g.ref('grid_mapping_name:rotated_latitude_longitude')
-            xpole = rotated_pole['grid_north_pole_longitude']
-            ypole = rotated_pole['grid_north_pole_latitude']
-            transform = ccrs.RotatedPole(pole_latitude=ypole, pole_longitude=xpole)
-            for offset in [0, 360.0]:
-                plotvars.image = plotvars.mymap.pcolormesh(xpts+offset, ypts, field, transform=transform, cmap=cmap)   
+                    plotvars.image = plotvars.mymap.pcolormesh(xpts+offset, ypts, field, transform=transform, cmap=cmap, norm=norm)     
         else:
             if type(clevs) == int:
-                print('type3')
                 plotvars.image = plotvars.plot.pcolormesh(xpts, ypts, field, cmap=cmap)
             else:
-                print('type4')
                 plotvars.image = plotvars.plot.pcolormesh(xpts, ypts, field, cmap=cmap, norm=norm)        
     
     else:
