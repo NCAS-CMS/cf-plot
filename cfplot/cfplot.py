@@ -20,7 +20,7 @@ from scipy.interpolate import griddata
 import shapely.geometry as sgeom
 import shapely
 from matplotlib.collections import PatchCollection
-
+import matplotlib.patches as mpatches
             
 # Check for the minimum cf-python version
 cf_version_min = '3.0.0b2'
@@ -195,14 +195,14 @@ plotvars = pvars(lonmin=-180, lonmax=180, latmin=-90, latmax=90, proj='cyl',
                  master_title_fontweight='normal', dpi=None,
                  plot_xmin=None, plot_xmax=None, plot_ymin=None,
                  plot_ymax=None, land_color=None, ocean_color=None,
-                 lake_color=None, twinx=False, twiny=False,
+                 lake_color=None, feature_zorder=99, twinx=False, twiny=False,
                  rotated_grid_thickness=2.0, rotated_grid_spacing=10,
                  rotated_deg_spacing=0.75, rotated_continents=True,
                  rotated_grid=True, rotated_labels=True,
                  legend_frame=True, legend_frame_edge_color='k',
                  legend_frame_face_color=None, degsym=global_degsym,
-                 axis_width=None, grid=True, grid_spacing=1,
-                 grid_colour='k', grid_linestyle='--',
+                 axis_width=None, grid_x_spacing=60, grid_y_spacing=30,
+                 grid_colour='k', grid_linestyle='--', grid_zorder=100,
                  grid_thickness=1.0, aspect='equal',
                  graph_xmin=None, graph_xmax=None,
                  graph_ymin=None, graph_ymax=None,
@@ -237,9 +237,9 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
         colorbar_fraction=None, colorbar_thick=None,
         colorbar_anchor=None, colorbar_labels=None,
         linestyles=None, zorder=1, level_spacing=None,
-        irregular=False, face_lons=False, face_lats=False, face_connectivity=False,
+        irregular=None, face_lons=False, face_lats=False, face_connectivity=False,
         titles=False, mytest=False, transform_first=None, blockfill_fast=None,
-        nlevs=False):
+        nlevs=False, orca=None, orca_skip=None, grid=False):
     """
      | con is the interface to contouring in cf-plot. The minimum use is con(f)
      | where f is a 2 dimensional array. If a cf field is passed then an
@@ -323,7 +323,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
      | zorder=1 - order of drawing
      | level_spacing=None - Default of 'linear' level spacing.  Also takes 'log', 'loglike',
      |                      'outlier' and 'inspect'
-     | irregular=False - flag for contouring irregular data
+     | irregular=None - flag for contouring irregular data
      | face_lons=None - longitude points for face vertices
      | face_lats=None - latitude points for face verticies
      | face_connectivity=None - connectivity for face verticies
@@ -335,7 +335,14 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
      | blockfill_fast=None - Use pcolormesh blockfill.  This is possibly less reliable that the usual code but is 
      |                       faster for higher resolution datasets
      | nlevs=False - Let Matplotlib work out the levels for the contour plot
-
+     | orca=None - User specifies this is an orca tripolar grid.  Internally cf-plot tries to detect this by looking
+     |             for a single discontinuity in the logitude 2D array. If found a fix it make to the longitudes so
+     |             that they are no longer discontinuous.
+     | orca_skip=None - Only plot every nth grid point in the 2D longitude and latitude arrays.  This is useful for when 
+     |                  plotting his resolution data over the whole globe which would otherwise be very slow to visualize.
+     | grid=False - Draw a grid on the map using the parameters set by cfp.setvars.  Defaults are grid_x_spacing=60, 
+     |              grid_y_spacing=30, grid_colour='k', grid_linestyle = '--', grid_thickness=1.0
+     |
      :Returns:
       None
 
@@ -379,6 +386,14 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
         else:
             face_connectivity_array = face_connectivity
 
+    # Set blockfill_2d if blockfill and x and y are 2D
+    blockfill_2d = False
+    if blockfill and not isinstance(f, cf.Field):
+        if np.ndim(x) == 2 and np.ndim(y) == 2:
+            blockfill_2d = True
+
+
+
     # Call gpos(1) if not already called
     if plotvars.rows > 1 or plotvars.columns > 1:
         if plotvars.gpos_called is False:
@@ -387,12 +402,8 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
     # Extract required data for contouring
     # If a cf-python field
     if isinstance(f, cf.Field):
-
-        # Check data is 2D
+    
         ndims = np.squeeze(f.data).ndim
-        irregular = False
-        if ndims == 1:
-            irregular = True      
         if ndims > 2:
             errstr = "\n\ncfp.con error need a 1 or 2 dimensional field to contour\n"
             errstr += "received " + str(np.squeeze(f.data).ndim) + " dimensions\n\n"
@@ -403,9 +414,9 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
         if verbose:
             print('con - calling cf_data_assign')
 
-        #if not irregular_blockfill:
         field, x, y, ptype, colorbar_title, xlabel, ylabel, xpole, ypole =\
             cf_data_assign(f, colorbar_title, verbose=verbose)
+            
 
         if user_xlabel is not None:
             xlabel = user_xlabel
@@ -425,6 +436,39 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
         check_data(field, x, y)
         xlabel = ''
         ylabel = ''
+
+
+
+    # Assign irregular and orca keywords unless already set
+    if irregular is None:
+        if np.size(x) == np.size(np.unique(x)):
+            irregular = False
+        else:
+            irregular = True
+            if np.ndim(x) == 2 and np.ndim(y) == 2:
+                if orca is None:
+                    orca = orca_check(x)
+                if orca:
+                
+                    # Apply orca_skip if set
+                    if orca_skip is not None:
+                        print('applying orca_skip value of ', orca_skip)
+                        x = x[::orca_skip, ::orca_skip]
+                        y = y[::orca_skip, ::orca_skip]
+                        field = field[::orca_skip, ::orca_skip]
+                
+                
+                    # orca grids have a discontinuity in the longitude grid
+                    # use the method at https://gist.github.com/pelson/79cf31ef324774c97ae7
+                    # to remove the discontinuity
+
+                    fixed_x = x.copy()
+                    for i, start in enumerate(np.argmax(np.abs(np.diff(x)) > 180, axis=1)):
+                        fixed_x[i, start+1:] += 360
+                    x = fixed_x
+
+    if np.ndim(x) == 2:
+        irregular = False
 
     # Set contour line styles
     matplotlib.rcParams['contour.negative_linestyle'] = negative_linestyle
@@ -682,8 +726,6 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
         well_formed = check_well_formed(f)
         
         
-        
-    #level_opts = {'levels': clevs}
     if nlevs is not False:
         clevs = nlevs
         plotvars.levels_extend = 'neither'
@@ -710,22 +752,30 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
         if plotvars.user_plot == 0:
             gopen(user_plot=0)
 
-        # Set up mapping
-        lonrange = np.nanmax(x) - np.nanmin(x)
-        latrange = np.nanmax(y) - np.nanmin(y)
-        # Reset mapping
+        # Reset the stored mapping
         if plotvars.user_mapset == 0:
             plotvars.lonmin = -180
             plotvars.lonmax = 180
             plotvars.latmin = -90
             plotvars.latmax = 90
 
+        # Set up mapping
+        mylonmin = np.nanmin(x)
+        mylonmax = np.nanmax(x)
+        mylatmin = np.nanmin(y)
+        mylatmax = np.nanmax(y)
+        lonrange = mylonmax - mylonmin
+        latrange = mylatmax - mylatmin
+        
+        if lonrange > 360.0:
+            mylonmax = mylonmin + 360.0
+            lonrange = 360.0
+        
 
-        if (lonrange > 350 and latrange > 170) or plotvars.user_mapset == 1:
+        if (lonrange > 350 and latrange > 160) or plotvars.user_mapset == 1:
             set_map()
         else:
-            mapset(lonmin=np.nanmin(x), lonmax=np.nanmax(x),
-                   latmin=np.nanmin(y), latmax=np.nanmax(y),
+            mapset(lonmin=mylonmin, lonmax=mylonmax, latmin=mylatmin, latmax=mylatmax,
                    user_mapset=0, resolution=resolution_orig)
             set_map()
 
@@ -740,9 +790,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
 
 
 
-
-
-        if not blockfill_irregular:
+        if not blockfill_irregular and not blockfill_2d:
             if not irregular:
                 if lonrange > 350 and np.ndim(y) == 1:
                     # Add cyclic information if missing.
@@ -773,7 +821,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                             x = x - 360
                     if plotvars.lonmin > np.nanmax(x):
                         x = x + 360
-            else:
+            elif not orca:
                 # Get the irregular data within the map coordinates
                 # Matplotlib tricontour cannot plot missing data so we need to split 
                 # the missing data into a separate field to deal with this
@@ -815,7 +863,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
         # in polar plots. Subsample the latitudes to remove this problem
 
         if plotvars.proj == 'npstere' and np.ndim(y) == 1:
-            if not blockfill_irregular:
+            if not blockfill_irregular and not blockfill_2d:
                 if irregular:
                     pts = np.where(lats_irregular > plotvars.boundinglat - 5)
                     pts = np.array(pts).flatten()
@@ -829,7 +877,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                         field = field[myypos:, :]
 
         if plotvars.proj == 'spstere' and np.ndim(y) == 1:
-            if not blockfill_irregular:
+            if not blockfill_irregular and not blockfill_2d:
                 if irregular:
                     pts = np.where(lats_irregular_real < plotvars.boundinglat + 5)
                     lons_irregular_real = lons_irregular_real[pts]
@@ -904,10 +952,9 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                 if np.ndim(lons) == 1 and np.ndim(lats) == 1:
                     lons, lats = np.meshgrid(lons, lats)
                     
-                    
             
             # Filled colour contours
-            if not irregular:               
+            if not irregular or orca is True:               
                 plotvars.image = mymap.contourf(lons, lats, field * fmult, clevs,
                                extend=plotvars.levels_extend,
                                cmap=cmap, norm=plotvars.norm,
@@ -916,6 +963,8 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                 
             else:
                 if np.size(field_irregular_real) > 0: 
+                    print('lons_irregular_real, lats_irregular_real, field_irregular_real are ', np.shape(lons_irregular_real),\
+                           np.shape(lats_irregular_real), np.shape(field_irregular_real))
                     plotvars.image = mymap.tricontourf(lons_irregular_real, lats_irregular_real, field_irregular_real * fmult,
                                       clevs, extend=plotvars.levels_extend,
                                       cmap=cmap, norm=plotvars.norm,
@@ -931,8 +980,16 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                 if f.ref('grid_mapping_name:transverse_mercator', default=False):
                     # Special case for transverse mercator
                     bfill(f=f, clevs=clevs, lonlat=False, alpha=alpha, fast=blockfill_fast,zorder=zorder)
-
+                    
+                elif orca:
+                    #bfill(f=f, clevs=clevs, lonlat=False, alpha=alpha, fast=blockfill_fast,zorder=zorder)
+                    bfill(x=x, y=y, f=field * fmult, clevs=clevs, lonlat=False, alpha=alpha,\
+                          fast=blockfill_fast, zorder=zorder, orca=True)                
+                
+                
                 else:
+
+
 
                     if f.coord('X').has_bounds() and f.coord('Y').has_bounds():
                         xpts = np.squeeze(f.coord('X').bounds.array[:, 0])
@@ -953,7 +1010,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                       lonlat=True, bound=0, alpha=alpha, fast=blockfill_fast, zorder=zorder)
 
         # Block fill for irregular
-        if blockfill_irregular:
+        if blockfill_irregular and not blockfill_2d:
             if verbose:
                 print('con - adding blockfill for irregular')
             bfill_irregular(f=field_orig * fmult, face_lons=face_lons_array, 
@@ -966,12 +1023,11 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
             if verbose:
                 print('con - adding contour lines and labels')
 
-            if not irregular:
+            if not irregular or blockfill_2d or orca:
                 cs = mymap.contour(lons, lats, field * fmult, clevs, colors=colors,
                                    linewidths=linewidths, linestyles=linestyles, alpha=alpha,
                                    transform=ccrs.PlateCarree(), zorder=zorder)
             else:
-
                 cs = mymap.tricontour(lons_irregular_real, lats_irregular_real, field_irregular_real * fmult,
                                       clevs, colors=colors,
                                       linewidths=linewidths, linestyles=linestyles, alpha=alpha,
@@ -998,7 +1054,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
 
 
         # Add a irregular mask if there is one
-        if irregular and not blockfill_irregular:
+        if irregular and not blockfill_irregular and not orca and not blockfill_2d:
             if np.size(field_irregular_nan) > 0:
                 cmap_white = matplotlib.colors.ListedColormap([1.0, 1.0, 1.0])
                 mymap.tricontourf(lons_irregular_nan, lats_irregular_nan, field_irregular_nan , [0.5, 1.5],
@@ -1027,13 +1083,16 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
 
         if ocean_color is not None:
             mymap.add_feature(cfeature.OCEAN, edgecolor='face', facecolor=ocean_color,
-                              zorder=999)
+                              zorder=plotvars.feature_zorder)
         if land_color is not None:
             mymap.add_feature(cfeature.LAND, edgecolor='face', facecolor=land_color,
-                              zorder=999)
+                              zorder=plotvars.feature_zorder)
         if lake_color is not None:
             mymap.add_feature(cfeature.LAKES, edgecolor='face', facecolor=lake_color,
-                              zorder=999)
+                              zorder=plotvars.feature_zorder)
+
+        if grid:
+            map_grid()
 
         # Title
         if title != '':
@@ -2340,7 +2399,7 @@ def levs(min=None, max=None, step=None, manual=None, extend='both'):
                 lstep = step * 1e-10
                 levs = (np.arange(min, max + lstep, step, dtype=np.float64))
                 levs = ((levs * 1e10).astype(np.int64)).astype(np.float64)
-                levs = (levs / 1e10).astype(np.int)
+                levs = (levs / 1e10).astype(np.int64)
                 plotvars.levels = levs
             else:
                 lstep = step * 1e-10
@@ -2485,7 +2544,6 @@ def timeaxis(dtimes=None):
     """
 
     time_units = dtimes.Units
-
     time_ticks = []
     time_labels = []
     axis_label = 'Time'
@@ -2505,8 +2563,8 @@ def timeaxis(dtimes=None):
             yearmin = int(t.year)
             t = cf.Data(cf.dt(plotvars.xmax), units=time_units, calendar=calendar)
             yearmax = int(t.year)
-            tmin = cf.dt(plotvars.xmin, units=time_units, calendar=calendar)
-            tmax = cf.dt(plotvars.xmax, units=time_units, calendar=calendar)
+            tmin = cf.dt(plotvars.xmin, calendar=calendar)
+            tmax = cf.dt(plotvars.xmax, calendar=calendar)
         if isinstance(plotvars.ymin, str):
             t = cf.Data(cf.dt(plotvars.ymin), units=time_units, calendar=calendar)
             yearmin = int(t.year)
@@ -4121,7 +4179,8 @@ def cscale_get_map():
 
 
 def bfill(f=None, x=None, y=None, clevs=False, lonlat=None, bound=False,
-          alpha=1.0, single_fill_color=None, white=True, zorder=4, fast=None, transform=False):
+          alpha=1.0, single_fill_color=None, white=True, zorder=4, fast=None, transform=False,
+          orca=False):
     """
      | bfill - block fill a field with colour rectangles
      | This is an internal routine and is not generally used by the user.
@@ -4140,6 +4199,7 @@ def bfill(f=None, x=None, y=None, clevs=False, lonlat=None, bound=False,
      | zorder=4 - plotting order
      | fast=None - use fast plotting with pcolormesh which is useful for larger datasets
      | transform=False - map transform supplied by calling routine
+     | orca=False - data is orca data
      |
       :Returns:
         None
@@ -4159,106 +4219,28 @@ def bfill(f=None, x=None, y=None, clevs=False, lonlat=None, bound=False,
     # If single_fill_color is defined then turn off whiting out the background.
     if single_fill_color is not None:
         white = False
+        
+    # Set 2D lon lat if data is that format
+    two_d = False
+    if not isinstance(f, cf.Field):
+        if np.ndim(x) == 2 and np.ndim(x) == 2:
+            two_d = True
 
     # Set the default map coordinates for the data to be PlateCarree
     plotargs = {}
     if lonlat:
         plotargs = {'transform': ccrs.PlateCarree()}
 
+
+    # Set the field
     if isinstance(f, cf.Field):
-
-        if f.ref('grid_mapping_name:transverse_mercator', default=False):
-            lonlat = True
-
-            # Case of transverse mercator of which UKCP is an example
-            ref = f.ref('grid_mapping_name:transverse_mercator')
-            false_easting = ref['false_easting']
-            false_northing = ref['false_northing']
-            central_longitude = ref['longitude_of_central_meridian']
-            central_latitude = ref['latitude_of_projection_origin']
-            scale_factor = ref['scale_factor_at_central_meridian']
-
-            transform = ccrs.TransverseMercator(false_easting=false_easting,
-                                                false_northing=false_northing,
-                                                central_longitude=central_longitude,
-                                                central_latitude=central_latitude,
-                                                scale_factor=scale_factor)
-
-            # Extract the axes and data
-            xpts = np.append(f.dim('X').bounds.array[:, 0], f.dim('X').bounds.array[-1, 1])
-            ypts = np.append(f.dim('Y').bounds.array[:, 0], f.dim('Y').bounds.array[-1, 1])
-            field = np.squeeze(f.array)
-            plotargs = {'transform': transform}
-
+        field = f.array
     else:
-        # Assign f to field as this may be modified in lat-lon plots
         field = f
-
-        if bound:
-            xpts = x
-            ypts = y
-        else:
-            # Find x box boundaries
-            xpts = x[0] - (x[1] - x[0]) / 2.0
-            for ix in np.arange(np.size(x) - 1):
-                xpts = np.append(xpts, x[ix] + (x[ix + 1] - x[ix]) / 2.0)
-            xpts = np.append(xpts, x[ix + 1] + (x[ix + 1] - x[ix]) / 2.0)
-
-            # Find y box boundaries
-            ypts = y[0] - (y[1] - y[0]) / 2.0
-            for iy in np.arange(np.size(y) - 1):
-                ypts = np.append(ypts, y[iy] + (y[iy + 1] - y[iy]) / 2.0)
-            ypts = np.append(ypts, y[iy + 1] + (y[iy + 1] - y[iy]) / 2.0)
-
-        # Shift lon grid if needed
-        if lonlat:
-            # Extract upper bound and original rhs of box longitude bounding points
-            upper_bound = ypts[-1]
-
-            # Reduce xpts and ypts by 1 or shifting of grid fails
-            # The last points are the right / upper bounds for the last data box
-            xpts = xpts[0:-1]
-            ypts = ypts[0:-1]
-
-            if plotvars.lonmin < np.nanmin(xpts):
-                xpts = xpts - 360
-            if plotvars.lonmin > np.nanmax(xpts):
-                xpts = xpts + 360
-
-            # Add cyclic information if missing.
-            lonrange = np.nanmax(xpts) - np.nanmin(xpts)
-            if lonrange < 360:
-                # field, xpts = cartopy_util.add_cyclic_point(field, xpts)
-                field, xpts = add_cyclic(field, xpts)
-
-            right_bound = xpts[-1] + (xpts[-1] - xpts[-2])
-
-            # Add end x and y end points
-            xpts = np.append(xpts, right_bound)
-            ypts = np.append(ypts, upper_bound)
-
-    levels = np.array(deepcopy(clevs)).astype('float')
-    
-
-    # Polar stereographic
-    # Set points past plotting limb to be plotvars.boundinglat
-    # Also set any lats past the pole to be the pole
-    if plotvars.proj == 'npstere':
-        pts = np.where(ypts < plotvars.boundinglat)
-        if np.size(pts) > 0:
-            ypts[pts] = plotvars.boundinglat
-        pts = np.where(ypts > 90.0)
-        if np.size(pts) > 0:
-            ypts[pts] = 90.0
-
-    if plotvars.proj == 'spstere':
-        pts = np.where(ypts > plotvars.boundinglat)
-        if np.size(pts) > 0:
-            ypts[pts] = plotvars.boundinglat
-        pts = np.where(ypts < -90.0)
-        if np.size(pts) > 0:
-            ypts[pts] = -90.0
-
+        
+        
+    levels = np.array(deepcopy(clevs)).astype('float')        
+        
     # Generate a Matplotlib colour map
     if single_fill_color is None:
         cols = plotvars.cs
@@ -4290,7 +4272,7 @@ def bfill(f=None, x=None, y=None, clevs=False, lonlat=None, bound=False,
     colarr = np.zeros([np.shape(field)[0], np.shape(field)[1]])-1
     for i in np.arange(np.size(levels)-1):
         lev = levels[i]
-        pts = np.where(np.logical_and(field > lev, field <= levels[i+1]))
+        pts = np.where(np.logical_and(field >= lev, field < levels[i+1]))
         colarr[pts] = int(i)
 
     # Change points that are masked back to -1
@@ -4300,6 +4282,151 @@ def bfill(f=None, x=None, y=None, clevs=False, lonlat=None, bound=False,
             colarr[pts] = -1
 
     norm = matplotlib.colors.BoundaryNorm(levels, cmap.N)
+        
+        
+        
+        
+    #print('1st check for rotated coords', f.ref('grid_mapping_name:transverse_mercator', default=False))
+    if isinstance(f, cf.Field):
+        
+        
+        print('2nd check for rotated coords', f.ref('grid_mapping_name:transverse_mercator', default=False))
+        if f.ref('grid_mapping_name:transverse_mercator', default=False):
+            lonlat = True
+             
+            print('we have rotated coords')
+            
+            # Case of transverse mercator of which UKCP is an example
+            ref = f.ref('grid_mapping_name:transverse_mercator')
+            false_easting = ref['false_easting']
+            false_northing = ref['false_northing']
+            central_longitude = ref['longitude_of_central_meridian']
+            central_latitude = ref['latitude_of_projection_origin']
+            scale_factor = ref['scale_factor_at_central_meridian']
+
+            transform = ccrs.TransverseMercator(false_easting=false_easting,
+                                                false_northing=false_northing,
+                                                central_longitude=central_longitude,
+                                                central_latitude=central_latitude,
+                                                scale_factor=scale_factor)
+
+            # Extract the axes and data
+            xpts = np.append(f.dim('X').bounds.array[:, 0], f.dim('X').bounds.array[-1, 1])
+            ypts = np.append(f.dim('Y').bounds.array[:, 0], f.dim('Y').bounds.array[-1, 1])
+            field = np.squeeze(f.array)
+            plotargs = {'transform': transform}
+
+    else:
+    
+        if orca is False:
+        
+        
+            # Assign f to field as this may be modified in lat-lon plots
+            field = f
+
+            if two_d is False:
+                if bound:
+                    xpts = x
+                    ypts = y
+                else:
+                    # Find x box boundaries
+                    xpts = x[0] - (x[1] - x[0]) / 2.0
+                    for ix in np.arange(np.size(x) - 1):
+                        xpts = np.append(xpts, x[ix] + (x[ix + 1] - x[ix]) / 2.0)
+                    xpts = np.append(xpts, x[ix + 1] + (x[ix + 1] - x[ix]) / 2.0)
+
+                    # Find y box boundaries
+                    ypts = y[0] - (y[1] - y[0]) / 2.0
+                    for iy in np.arange(np.size(y) - 1):
+                        ypts = np.append(ypts, y[iy] + (y[iy + 1] - y[iy]) / 2.0)
+                    ypts = np.append(ypts, y[iy + 1] + (y[iy + 1] - y[iy]) / 2.0)
+    
+                # Shift lon grid if needed
+                if lonlat:
+                    # Extract upper bound and original rhs of box longitude bounding points
+                    upper_bound = ypts[-1]
+
+                    # Reduce xpts and ypts by 1 or shifting of grid fails
+                    # The last points are the right / upper bounds for the last data box
+                    xpts = xpts[0:-1]
+                    ypts = ypts[0:-1]
+
+                    if plotvars.lonmin < np.nanmin(xpts):
+                        xpts = xpts - 360
+                    if plotvars.lonmin > np.nanmax(xpts):
+                        xpts = xpts + 360
+
+                    # Add cyclic information if missing.
+                    lonrange = np.nanmax(xpts) - np.nanmin(xpts)
+                    if lonrange < 360:
+                        # field, xpts = cartopy_util.add_cyclic_point(field, xpts)
+                        field, xpts = add_cyclic(field, xpts)
+
+                    right_bound = xpts[-1] + (xpts[-1] - xpts[-2])
+
+                    # Add end x and y end points
+                    xpts = np.append(xpts, right_bound)
+                    ypts = np.append(ypts, upper_bound)
+            else:
+                # 2D lons and lats code
+                nx = np.shape(x)[1]
+                ny = np.shape(x)[0]
+
+                for ix in np.arange(nx - 1):
+                    for iy in np.arange(ny - 1):
+    
+                        # Calculate the local size difference and set the square points
+                        if ix < nx -2:
+                            xdiff = (x[iy, ix+1] - x[iy, ix]) / 2
+                        else:
+                            xdiff = (x[iy, ix] - x[iy, ix-1]) / 2
+                            
+                        if iy < ny - 2:
+                            ydiff = (y[iy+1, ix] - y[iy, ix]) / 2
+                        else:
+                            ydiff = (y[iy, ix] - y[iy-1, ix]) / 2
+                            
+                        xpts = [x[iy,ix]-xdiff, x[iy,ix]+xdiff, x[iy,ix]+xdiff, x[iy,ix]-xdiff, x[iy,ix]-xdiff]
+                        ypts = [y[iy,ix]-ydiff, y[iy,ix]-ydiff, y[iy,ix]+ydiff, y[iy,ix]+ydiff, y[iy,ix]-ydiff]
+        
+
+        
+                        #try:
+                        #    colour_index = np.max(np.where(val > levs_arr))
+                        #except:
+                        #    colour_index = 0
+        
+                        # Plot the square
+                        plotvars.mymap.add_patch(mpatches.Polygon(\
+                                                 [[xpts[0], ypts[0]], [xpts[1],ypts[1]], [xpts[2], ypts[2]],\
+                                                 [xpts[3],ypts[3]], [xpts[4], ypts[4]]],\
+                                                 facecolor=plotvars.cs[int(colarr[iy,ix])], zorder=zorder,\
+                                                 transform=ccrs.PlateCarree()))       
+                                                     
+                return
+               
+                
+   
+            
+    # Polar stereographic
+    # Set points past plotting limb to be plotvars.boundinglat
+    # Also set any lats past the pole to be the pole
+    if plotvars.proj == 'npstere' and not orca:
+        pts = np.where(ypts < plotvars.boundinglat)
+        if np.size(pts) > 0:
+            ypts[pts] = plotvars.boundinglat
+        pts = np.where(ypts > 90.0)
+        if np.size(pts) > 0:
+            ypts[pts] = 90.0
+
+    if plotvars.proj == 'spstere' and not orca:
+        pts = np.where(ypts > plotvars.boundinglat)
+        if np.size(pts) > 0:
+            ypts[pts] = plotvars.boundinglat
+        pts = np.where(ypts < -90.0)
+        if np.size(pts) > 0:
+            ypts[pts] = -90.0
+
 
 
     # Set the transform if not supplied to bfill
@@ -4308,21 +4435,39 @@ def bfill(f=None, x=None, y=None, clevs=False, lonlat=None, bound=False,
     else:
         transform = ccrs.PlateCarree()
 
+
     if fast:
         if type(clevs) == int:
             norm = False
                  
-        if lonlat:
-            for offset in [0, 360.0]:
-                if type(clevs) == int:
-                    plotvars.image = plotvars.mymap.pcolormesh(xpts+offset, ypts, field, transform=transform, cmap=cmap)
-                else:
-                    plotvars.image = plotvars.mymap.pcolormesh(xpts+offset, ypts, field, transform=transform, cmap=cmap, norm=norm)     
-        else:
-            if type(clevs) == int:
-                plotvars.image = plotvars.plot.pcolormesh(xpts, ypts, field, cmap=cmap)
+         
+         
+         
+         
+         
+        if orca:
+             # Plot using pcolormesh if an orca grid 
+             print('orca grid - dimensions are ', np.shape(x), np.shape(y))
+             field = f
+             fixed_x = x.copy()
+             for i, start in enumerate(np.argmax(np.abs(np.diff(x)) > 180, axis=1)):
+                 fixed_x[i, start+1:] += 360
+                   
+             plotvars.image = plotvars.mymap.pcolormesh(fixed_x, y, field, cmap=cmap, transform=transform)
+             print('after orca pcolormesh')
+            
+        else:         
+            if lonlat:
+                for offset in [0, 360.0]:
+                    if type(clevs) == int:
+                        plotvars.image = plotvars.mymap.pcolormesh(xpts+offset, ypts, field, transform=transform, cmap=cmap)
+                    else:
+                        plotvars.image = plotvars.mymap.pcolormesh(xpts+offset, ypts, field, transform=transform, cmap=cmap, norm=norm)     
             else:
-                plotvars.image = plotvars.plot.pcolormesh(xpts, ypts, field, cmap=cmap, norm=norm)        
+                if type(clevs) == int:
+                    plotvars.image = plotvars.plot.pcolormesh(xpts, ypts, field, cmap=cmap)
+                else:
+                    plotvars.image = plotvars.plot.pcolormesh(xpts, ypts, field, cmap=cmap, norm=norm)        
     
     else:
     
@@ -6003,14 +6148,14 @@ def setvars(file=None, title_fontsize=None, text_fontsize=None,
             master_title=None, master_title_location=None,
             master_title_fontsize=None, master_title_fontweight=None,
             dpi=None, land_color=None, ocean_color=None,
-            lake_color=None,
+            lake_color=None, feature_zorder=None,
             rotated_grid_spacing=None, rotated_deg_spacing=None,
             rotated_continents=None, rotated_grid=None,
             rotated_labels=None, rotated_grid_thickness=None,
             legend_frame=None,
             legend_frame_edge_color=None, legend_frame_face_color=None,
             degsym=None, axis_width=None, grid=None,
-            grid_spacing=None,
+            grid_x_spacing=None, grid_y_spacing=None, grid_zorder=None,
             grid_colour=None, grid_linestyle=None, grid_thickness=None,
             tight=None, level_spacing=None):
     """
@@ -6051,6 +6196,7 @@ def setvars(file=None, title_fontsize=None, text_fontsize=None,
      | land_color=None - land colour
      | ocean_color=None - ocean colour
      | lake_color=None - lake colour
+     | feature_zorder=None - plotting zorder for above three features
      | rotated_grid_spacing=10 - rotated grid spacing in degrees
      | rotated_deg_spacing=0.75 - rotated grid spacing between graticule dots
      | rotated_deg_tkickness=1.0 - rotated grid thickness for longitude and latitude lines
@@ -6063,9 +6209,11 @@ def setvars(file=None, title_fontsize=None, text_fontsize=None,
      | degsym=True - add degree symbol to longitude and latitude axis labels
      | axis_width=None - width of line for the axes
      | grid=True - draw grid
-     | grid_spacing=1 - grid spacing in degrees
+     | grid_x_spacing=60 - grid longitude spacing in degrees
+     | grid_x_spacing=30 - grid latitude spacing in degrees
      | grid_colour='k' - grid colour
      | grid_linestyle='--' - grid line style
+     | grid_zorder=100 - plotting order for the grid lines
      | grid_thickness=1.0 - grid thickness
      | tight=False - remove whitespace around the plot
      | level_spacing=None - default contour level spacing - takes 'linear', 'log', 'loglike', 
@@ -6091,12 +6239,12 @@ def setvars(file=None, title_fontsize=None, text_fontsize=None,
             legend_text_size, legend_text_weight, cs_uniform,
             master_title, master_title_location,
             master_title_fontsize, master_title_fontweight, dpi,
-            land_color, ocean_color, lake_color, rotated_grid_spacing,
+            land_color, ocean_color, lake_color, feature_zorder, rotated_grid_spacing,
             rotated_deg_spacing, rotated_continents, rotated_grid,
             rotated_grid_thickness,
             rotated_labels, colorbar_fontsize, colorbar_fontweight,
             legend_frame, legend_frame_edge_color, legend_frame_face_color,
-            degsym, axis_width, grid, grid_spacing,
+            degsym, axis_width, grid, grid_x_spacing, grid_y_spacing, grid_zorder,
             grid_colour, grid_linestyle, grid_thickness, tight, level_spacing]
     if all(val is None for val in vals):
         plotvars.file = None
@@ -6132,6 +6280,7 @@ def setvars(file=None, title_fontsize=None, text_fontsize=None,
         plotvars.land_color = None
         plotvars.ocean_color = None
         plotvars.lake_color = None
+        plotvars.feature_zorder = 100
         plotvars.rotated_grid_spacing = 10
         plotvars.rotated_deg_spacing = 0.75
         plotvars.rotated_grid_thickness = 1.0
@@ -6144,10 +6293,12 @@ def setvars(file=None, title_fontsize=None, text_fontsize=None,
         plotvars.degsym = False
         plotvars.axis_width = None
         plotvars.grid = True
-        plotvars.grid_spacing = 1
+        plotvars.grid_x_spacing = 60
+        plotvars.grid_y_spacing = 30
         plotvars.grid_colour = 'k'
         plotvars.grid_linestyle = '--'
         plotvars.grid_thickness = 1.0
+        plotvars.grid_zorder = 100
         matplotlib.pyplot.ioff()
         plotvars.tight = False
         plotvars.level_spacing = None
@@ -6216,6 +6367,8 @@ def setvars(file=None, title_fontsize=None, text_fontsize=None,
         plotvars.ocean_color = ocean_color
     if lake_color is not None:
         plotvars.lake_color = lake_color
+    if feature_zorder is not None:
+        plotvars.feature_zorder = 999
     if rotated_grid_spacing is not None:
         plotvars.rotated_grid_spacing = rotated_grid_spacing
     if rotated_deg_spacing is not None:
@@ -6240,14 +6393,18 @@ def setvars(file=None, title_fontsize=None, text_fontsize=None,
         plotvars.axis_width = axis_width
     if grid is not None:
         plotvars.grid = grid
-    if grid_spacing is not None:
-        plotvars.grid_spacing = grid_spacing
+    if grid_x_spacing is not None:
+        plotvars.grid_x_spacing = grid_x_spacing
+    if grid_y_spacing is not None:
+        plotvars.grid_y_spacing = grid_y_spacing        
     if grid_colour is not None:
         plotvars.grid_colour = grid_colour
     if grid_linestyle is not None:
         plotvars.grid_linestyle = grid_linestyle
     if grid_thickness is not None:
         plotvars.grid_thickness = grid_thickness
+    if grid_zorder is not None:
+        plotvars.grid_zorder = grid_zorder
     if tight is not None:
         plotvars.tight = tight
     if level_spacing is not None:
@@ -7981,13 +8138,13 @@ def traj(f=None, title=None, ptype=0, linestyle='-', linewidth=1.0, linecolor='b
 
     if ocean_color is not None:
         mymap.add_feature(cfeature.OCEAN, edgecolor='face', facecolor=ocean_color,
-                          zorder=100)
+                          zorder=plotvars.feature_zorder)
     if land_color is not None:
         mymap.add_feature(cfeature.LAND, edgecolor='face', facecolor=land_color,
-                          zorder=100)
+                          zorder=plotvars.feature_zorder)
     if lake_color is not None:
         mymap.add_feature(cfeature.LAKES, edgecolor='face', facecolor=lake_color,
-                          zorder=100)
+                          zorder=plotvars.feature_zorder)
 
     # Title
     if title is not None:
@@ -9007,21 +9164,25 @@ def plot_map_axes(axes=None, xaxis=None, yaxis=None,
 
     # UKCP grid
     if plotvars.proj == 'UKCP' and plotvars.grid:
-        lonmin = -11
-        lonmax = 3
-        latmin = 49
-        latmax = 61
-        spacing = plotvars.grid_spacing
-        if xticks is None:
-            lons = np.arange(30 / spacing + 1) * spacing
-            lons = np.append((lons*-1)[::-1], lons[1:])
-        else:
-            lons = xticks
-        if yticks is None:
-            lats = np.arange(90.0 / spacing + 1) * spacing
-        else:
-            lats = yticks
-
+        #lonmin = -11
+        #lonmax = 3
+        #latmin = 49
+        #latmax = 61
+        #spacing = plotvars.grid_spacing
+        #if xticks is None:
+        #    lons = np.arange(30 / spacing + 1) * spacing
+        #    lons = np.append((lons*-1)[::-1], lons[1:])
+        #else:
+        #    lons = xticks
+        #if yticks is None:
+        #    lats = np.arange(90.0 / spacing + 1) * spacing
+        #else:
+        #    lats = yticks
+            
+        lons = np.arange((360/plotvars.grid_x_spacing) + 1) * plotvars.grid_x_spacing
+        lons = np.concatenate([lons - 360, lons])
+        lats = np.arange((180/plotvars.grid_y_spacing) + 1) * plotvars.grid_y_spacing - 90    
+    
         if plotvars.grid:
             plotvars.mymap.gridlines(color=plotvars.grid_colour,
                                      linewidth=plotvars.grid_thickness,
@@ -9048,7 +9209,6 @@ def add_cyclic(field, lons):
         field, lons = cartopy_util.add_cyclic_point(field, lons)
 
     return field, lons
-
 
 
 def irregular_window(field, lons,lats):
@@ -9091,7 +9251,7 @@ def irregular_window(field, lons,lats):
     lons_wrap = np.concatenate([lons_wrap, lons_left])
     lats_wrap = np.concatenate([lats_wrap, lats_left])
 
-    # Make a line of interpolated data on left hand side of plot and insert this into the data 
+    # Make a line of interpolated data on left hand side of plot and insert this into the data
     # on both the left and the right before contouring
     lons_new = np.zeros(181) + plotvars.lonmin
     lats_new = np.arange(181) - 90
@@ -9126,6 +9286,7 @@ def irregular_window(field, lons,lats):
         lons_new2 = lons_new2[pts]
         lats_new2 = lats_new2[pts]
 
+
         # Add the interpolated data to the right
         field_irregular = np.concatenate([field_irregular, field_new2])
         lons_irregular = np.concatenate([lons_irregular, lons_new2])
@@ -9139,7 +9300,6 @@ def irregular_window(field, lons,lats):
         lats_irregular = lats_irregular[pts]
 
     return field_irregular, lons_irregular, lats_irregular
-
 
 
 def max_ndecs_data(data):
@@ -9942,9 +10102,67 @@ def find_z(f):
 
 
 
+def orca_check(x, verbose=False):
+    ''' Check input data to see if it is an orca ocean grid
+        We look for a single discontinuity in longitude where the data changes by 
+        greater that 120 degrees.'''
+    
+    lons = deepcopy(x)
+ 
+    # Only check for longitude range > 350 degrees
+    if np.max(lons) - np.min(lons) < 350:
+        return False
+ 
+    nvpts = np.shape(lons)[0]
+        
+    lons_lower = lons[int(nvpts/4), :]
+    discont_lower_idx = np.where(abs(np.diff(lons_lower)) > 120)
+    discont_lower = lons_lower[discont_lower_idx]
 
+    lons_mid = lons[int(nvpts/2), :]
+    discont_mid_idx = np.where(abs(np.diff(lons_mid)) > 120)
+    discont_mid = lons_mid[discont_mid_idx]    
+    
+    lons_upper = lons[int(nvpts*3/4), :]
+    discont_upper_idx = np.where(abs(np.diff(lons_upper)) > 120)
+    discont_mid = lons_mid[discont_mid_idx]        
+    
+    # Check for one discontinuity   
+    retval = False 
+    if np.size(discont_lower_idx) == 1 and np.size(discont_mid_idx) == 1 and np.size(discont_upper_idx) == 1:
+        if verbose:
+            print('orca_check - one discontinutity')
+            print(discont_lower_idx, discont_mid_idx, discont_upper_idx)
+        v1 = float(discont_lower_idx[0])
+        v2 = float(discont_mid_idx[0])     
+        v3 = float(discont_upper_idx[0])        
 
+        spread = np.max(np.abs(np.diff([v1, v2, v3])))
+        
+        if verbose:
+            print('orca_check spread is ', np.max(np.abs(np.diff([v1, v2, v3]))))
+        
+        # Check for discontinuity spead of less than 20 places
+        if spread <= 20:
+            retval = True
+            
+    
+    return retval
+    
 
+def map_grid():
+    ''' Plot a grid on a map '''
+        
+    lons = np.arange((360/plotvars.grid_x_spacing) + 1) * plotvars.grid_x_spacing
+    lons = np.concatenate([lons - 360, lons])
+    lats = np.arange((180/plotvars.grid_y_spacing) + 1) * plotvars.grid_y_spacing - 90    
 
-
+    plotvars.mymap.gridlines(color=plotvars.grid_colour,
+                             linewidth=plotvars.grid_thickness,
+                             linestyle=plotvars.grid_linestyle,
+                             xlocs=lons, ylocs=lats, zorder=plotvars.grid_zorder)
+                             
+                             
+                             
+                             
 
