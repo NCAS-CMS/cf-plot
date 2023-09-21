@@ -414,8 +414,11 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
         if verbose:
             print('con - calling cf_data_assign')
             
+            
         # Subset the data if a user map is set
         # This is use to speed up the plotting
+        # myfield is used for calculating the contour levels
+        # myfield_extended is used to make the contour plot
         if plotvars.user_mapset:            
             if plotvars.proj == 'npstere':
                 f = f.subspace(Y = cf.wi(plotvars.boundinglat, 90.0))
@@ -423,11 +426,51 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
             if plotvars.proj == 'spstere':
                 f = f.subspace(Y = cf.wi(-90.0, plotvars.boundinglat))
                 
-            if plotvars.lonmin != -180 or plotvars.lonmax != 180 or \
-               plotvars.latmin != -90 or plotvars.latmax != 90:
-                f = f.subspace(X = cf.wi(plotvars.lonmin, plotvars.lonmax), Y = cf.wi(plotvars.latmin, plotvars.latmax))
-        
+            #if plotvars.lonmin != -180 or plotvars.lonmax != 180 or \
+            #   plotvars.latmin != -90 or plotvars.latmax != 90:
 
+                #if plotvars.user_mapset:
+                #    if plotvars.proj == 'cyl':
+                #        myfield = f
+                #        try:
+                #            myfield.cyclic('X')
+                #        except:
+                #            pass
+                            
+                #        # Field within the boundaries to calculate contours if needed
+                #        lonmin = plotvars.lonmin
+                #        lonmax = plotvars.lonmax
+                #        latmin = plotvars.latmin
+                #        latmax = plotvars.latmax
+
+                #        myfield = None
+                #        try:                    
+                #            myfield = f.subspace(X=cf.wi(lonmin, lonmax), Y=cf.wi(latmin, latmax))
+                #        except:
+                #            pass
+                            
+                #        # Extended field to cover beyond the map boundaries    
+                #        lonmin = plotvars.lonmin - 5
+                #        lonmax = plotvars.lonmax + 5
+                #        latmin = plotvars.latmin - 5
+                #        latmax = plotvars.latmax + 5
+                #        if latmin < -90:
+                #            latmin = -90
+                #        if latmax > 90:
+                #            latmax = 90                        
+                        
+                #        myfield_extended = None
+                #        try:                    
+                #            myfield_extended = f.subspace(X=cf.wi(lonmin, lonmax), Y=cf.wi(latmin, latmax))
+                #        except:
+                #            pass                            
+                            
+                
+                #        if myfield_extended is not None:
+                #            f = myfield_extended               
+               
+        
+        # Extract the data
         field, x, y, ptype, colorbar_title, xlabel, ylabel, xpole, ypole =\
             cf_data_assign(f, colorbar_title, verbose=verbose)
             
@@ -550,23 +593,40 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
         spacing = level_spacing
 
     if plotvars.levels is None:
+    
+       
+    
+        if isinstance(f, cf.Field):
+            field, x, y, ptype, colorbar_title, xlabel, ylabel, xpole, ypole =\
+                cf_data_assign(f, colorbar_title, verbose=verbose)
         clevs, mult, fmult = calculate_levels(field=field,
                                               level_spacing=spacing,
                                               verbose=verbose)
                                               
-        # If a cyclindrical map has been set then try to subspace the data and make a new set of levels
-        myfield = None
-        if ptype == 1 and plotvars.user_mapset and isinstance(f, cf.Field):
-            if plotvars.proj == 'cyl':
-                try:
-                    myfield = f.subspace(X=cf.wi(plotvars.lonmin, plotvars.lonmax),
-                                         Y=cf.wi(plotvars.latmin, plotvars.latmax))
-                except:
-                    pass
-
-        if myfield is not None:
-            clevs, mult, fmult = calculate_levels(field=myfield, level_spacing=spacing,\
-                                                  verbose=verbose)                
+        #print('clevs are ', clevs)
+                                              
+        ## If a cyclindrical map has been set then try to subspace the data and make a new set of levels
+        #myfield = None
+        #if ptype == 1 and plotvars.user_mapset and isinstance(f, cf.Field):
+        #    if plotvars.proj == 'cyl':
+        #        myfield = f
+        #        try:
+        #            myfield.cyclic('X')
+        #        except:
+        #            pass
+        #   
+        #        try:
+        #            myfield = f.subspace(X=cf.wi(plotvars.lonmin, plotvars.lonmax),
+        #                                 Y=cf.wi(plotvars.latmin, plotvars.latmax))
+        #        except:
+        #            pass
+        #        
+        #        print(myfield.coord('X').dump())
+        #        
+        #if myfield is not None:
+        #    
+        #    clevs, mult, fmult = calculate_levels(field=myfield, level_spacing=spacing,\
+        #                                          verbose=verbose)                
                     
     else:
         clevs = plotvars.levels
