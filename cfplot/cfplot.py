@@ -1,6 +1,6 @@
 """
 Climate contour/vector plots using cf-python, matplotlib and cartopy.
-Andy Heaps NCAS-CMS June 2023
+Andy Heaps NCAS-CMS November 2023
 """
 import numpy as np
 import subprocess
@@ -347,7 +347,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
       None
 
     """
-
+    
     # Turn off divide warning in contour routine which is a numpy issue
     old_settings = np.seterr(all='ignore')
     np.seterr(divide='ignore')
@@ -359,40 +359,30 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
     # Set blockfill to True if blockfill_fast is not None
     if blockfill_fast is not None:
         blockfill=True
-         
-    # Extract data for faces if a UGRID blockplot
-    blockfill_irregular = False
-    if face_lons and face_lats and face_connectivity:
-        blockfill_irregular = True
-        fill = False
-        irregular = True
-        if isinstance(f, cf.Field):
-            field = f.array
-        else:
-            field = f
-        field_orig = deepcopy(field)
-        if isinstance(face_lons, cf.Field):
-            face_lons_array = face_lons.array
-        else:
-            face_lons_array = face_lons
 
-        if isinstance(face_lats, cf.Field):
-            face_lats_array = face_lats.array
-        else:
-            face_lats_array = face_lats
+            
+    # Check if the field is a CF ugrid field with cell faces
+    blockfill_ugrid = False    
+    if isinstance(f, cf.Field) and blockfill:
+        if f.domain_topologies():
+            if f.domain_topology('cell:face', default=None) is not None:
+                face_lons_array = f.aux('X').bounds.array
+                face_lats_array = f.aux('Y').bounds.array         
+                face_connectivity_array = f.domain_topology('cell:face').array
+                blockfill_ugrid = True
+                fill = False
+                lines = False
+                irregular = True
+            else:
+                errstr = '\n\nError - field does not contain the UGRID face information to plot a blockfill plot\n\n\n'
+                raise TypeError(errstr)
 
-        if isinstance(face_connectivity, cf.Field):
-            face_connectivity_array = face_connectivity.array
-        else:
-            face_connectivity_array = face_connectivity
 
     # Set blockfill_2d if blockfill and x and y are 2D
     blockfill_2d = False
     if blockfill and not isinstance(f, cf.Field):
         if np.ndim(x) == 2 and np.ndim(y) == 2:
             blockfill_2d = True
-
-
 
     # Call gpos(1) if not already called
     if plotvars.rows > 1 or plotvars.columns > 1:
@@ -414,7 +404,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
         if verbose:
             print('con - calling cf_data_assign')
             
-            
+        
         # Subset the data if a user map is set
         # This is use to speed up the plotting
         # myfield is used for calculating the contour levels
@@ -425,56 +415,14 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                 
             if plotvars.proj == 'spstere':
                 f = f.subspace(Y = cf.wi(-90.0, plotvars.boundinglat))
-                
-            #if plotvars.lonmin != -180 or plotvars.lonmax != 180 or \
-            #   plotvars.latmin != -90 or plotvars.latmax != 90:
-
-                #if plotvars.user_mapset:
-                #    if plotvars.proj == 'cyl':
-                #        myfield = f
-                #        try:
-                #            myfield.cyclic('X')
-                #        except:
-                #            pass
-                            
-                #        # Field within the boundaries to calculate contours if needed
-                #        lonmin = plotvars.lonmin
-                #        lonmax = plotvars.lonmax
-                #        latmin = plotvars.latmin
-                #        latmax = plotvars.latmax
-
-                #        myfield = None
-                #        try:                    
-                #            myfield = f.subspace(X=cf.wi(lonmin, lonmax), Y=cf.wi(latmin, latmax))
-                #        except:
-                #            pass
-                            
-                #        # Extended field to cover beyond the map boundaries    
-                #        lonmin = plotvars.lonmin - 5
-                #        lonmax = plotvars.lonmax + 5
-                #        latmin = plotvars.latmin - 5
-                #        latmax = plotvars.latmax + 5
-                #        if latmin < -90:
-                #            latmin = -90
-                #        if latmax > 90:
-                #            latmax = 90                        
-                        
-                #        myfield_extended = None
-                #        try:                    
-                #            myfield_extended = f.subspace(X=cf.wi(lonmin, lonmax), Y=cf.wi(latmin, latmax))
-                #        except:
-                #            pass                            
-                            
-                
-                #        if myfield_extended is not None:
-                #            f = myfield_extended               
+                          
                
         
         # Extract the data
         field, x, y, ptype, colorbar_title, xlabel, ylabel, xpole, ypole =\
             cf_data_assign(f, colorbar_title, verbose=verbose)
             
-
+        
         if user_xlabel is not None:
             xlabel = user_xlabel
         if user_ylabel is not None:
@@ -530,6 +478,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
     # Set contour line styles
     matplotlib.rcParams['contour.negative_linestyle'] = negative_linestyle
 
+
     # Set contour lines off on block plots
     if blockfill:
         fill = False
@@ -556,7 +505,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                 raise TypeError(errstr)
 
     # Turn off colorbar if fill is turned off
-    if not fill and not blockfill and not blockfill_irregular:
+    if not fill and not blockfill and not blockfill_ugrid:
         colorbar = False
 
     # Revert to default colour scale if cscale_flag flag is set
@@ -594,8 +543,6 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
 
     if plotvars.levels is None:
     
-       
-    
         if isinstance(f, cf.Field):
             field, x, y, ptype, colorbar_title, xlabel, ylabel, xpole, ypole =\
                 cf_data_assign(f, colorbar_title, verbose=verbose)
@@ -603,31 +550,6 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                                               level_spacing=spacing,
                                               verbose=verbose)
                                               
-        #print('clevs are ', clevs)
-                                              
-        ## If a cyclindrical map has been set then try to subspace the data and make a new set of levels
-        #myfield = None
-        #if ptype == 1 and plotvars.user_mapset and isinstance(f, cf.Field):
-        #    if plotvars.proj == 'cyl':
-        #        myfield = f
-        #        try:
-        #            myfield.cyclic('X')
-        #        except:
-        #            pass
-        #   
-        #        try:
-        #            myfield = f.subspace(X=cf.wi(plotvars.lonmin, plotvars.lonmax),
-        #                                 Y=cf.wi(plotvars.latmin, plotvars.latmax))
-        #        except:
-        #            pass
-        #        
-        #        print(myfield.coord('X').dump())
-        #        
-        #if myfield is not None:
-        #    
-        #    clevs, mult, fmult = calculate_levels(field=myfield, level_spacing=spacing,\
-        #                                          verbose=verbose)                
-                    
     else:
         clevs = plotvars.levels
         mult = 0
@@ -812,7 +734,6 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
         else:
             cscale(plotvars.cs_user, ncols=nlevs)
   
-        
 
     ##################
     # Map contour plot
@@ -851,9 +772,8 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
         else:
             mapset(lonmin=mylonmin, lonmax=mylonmax, latmin=mylatmin, latmax=mylatmax,
                    user_mapset=0, resolution=resolution_orig)
+
             set_map()
-
-
 
 
         mymap = plotvars.mymap
@@ -863,8 +783,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
         
 
 
-
-        if not blockfill_irregular and not blockfill_2d:
+        if not blockfill_ugrid and not blockfill_2d:
             if not irregular:
                 if lonrange > 350 and np.ndim(y) == 1:
                     # Add cyclic information if missing.
@@ -937,7 +856,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
         # in polar plots. Subsample the latitudes to remove this problem
 
         if plotvars.proj == 'npstere' and np.ndim(y) == 1:
-            if not blockfill_irregular and not blockfill_2d:
+            if not blockfill_ugrid and not blockfill_2d:
                 if irregular:
                     pts = np.where(lats_irregular > plotvars.boundinglat - 5)
                     pts = np.array(pts).flatten()
@@ -951,7 +870,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                         field = field[myypos:, :]
 
         if plotvars.proj == 'spstere' and np.ndim(y) == 1:
-            if not blockfill_irregular and not blockfill_2d:
+            if not blockfill_ugrid and not blockfill_2d:
                 if irregular:
                     pts = np.where(lats_irregular_real < plotvars.boundinglat + 5)
                     lons_irregular_real = lons_irregular_real[pts]
@@ -1044,7 +963,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                                       zorder=zorder)
 
         # Block fill
-        if blockfill:
+        if blockfill and not blockfill_ugrid:
             if verbose:
                 print('con - adding blockfill')
                 
@@ -1089,10 +1008,10 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
                       lonlat=True, bound=0, alpha=alpha, fast=blockfill_fast, zorder=zorder)
 
         # Block fill for irregular
-        if blockfill_irregular and not blockfill_2d:
+        if blockfill_ugrid and not blockfill_2d:
             if verbose:
                 print('con - adding blockfill for irregular')
-            bfill_irregular(f=field_orig * fmult, face_lons=face_lons_array, 
+            bfill_ugrid(f=field_orig * fmult, face_lons=face_lons_array, 
                        face_lats=face_lats_array, 
                        face_connectivity=face_connectivity_array, clevs=clevs,
                        alpha=alpha, zorder=zorder)
@@ -1133,7 +1052,7 @@ def con(f=None, x=None, y=None, fill=global_fill, lines=global_lines, line_label
 
 
         # Add a irregular mask if there is one
-        if irregular and not blockfill_irregular and not orca and not blockfill_2d:
+        if irregular and not blockfill_ugrid and not orca and not blockfill_2d:
             if np.size(field_irregular_nan) > 0:
                 cmap_white = matplotlib.colors.ListedColormap([1.0, 1.0, 1.0])
                 mymap.tricontourf(lons_irregular_nan, lats_irregular_nan, field_irregular_nan , [0.5, 1.5],
@@ -3664,28 +3583,28 @@ def cf_data_assign(f=None, colorbar_title=None, verbose=None, rotated_vect=False
         c = f.coord(mycoord)
         if c.X:
             if verbose:
-                print(vs + 'lons -', mydim)
+                print('lons -', mydim)
             lons = np.squeeze(f.construct(mycoord).array)
             if np.size(lons) > 1:
                 has_lons = True
             
         if c.Y:
             if verbose:
-                print(vs + 'lats -', mydim)
+                print('lats -', mydim)
             lats = np.squeeze(f.construct(mycoord).array)
             if np.size(lats) > 1:
                 has_lats = True
             
         if c.Z:
             if verbose:
-                print(vs + 'height -', mydim)
+                print('height -', mydim)
             height = np.squeeze(f.construct(mycoord).array)
             if np.size(height) > 1:
                 has_height = True
             
         if c.T:
             if verbose:
-                print(vs + 'time -', mydim)
+                print('time -', mydim)
             time = np.squeeze(f.construct(mycoord).array)
             if np.size(time) > 1:
                 has_time = True
@@ -6054,7 +5973,7 @@ def set_map():
      |
     """
 
-
+    
     # Return if mymap is already set
     if plotvars.mymap is not None:
         return
@@ -6076,6 +5995,7 @@ def set_map():
 
         if lonmax - lonmin == 360.0:
             lonmax = lonmax + 0.01
+
 
     if plotvars.proj == 'merc':
         min_latitude = -80.0
@@ -6171,7 +6091,6 @@ def set_map():
         extent = True
 
 
-
     # Add a plot containing the projection
     if plotvars.plot_xmin:
         delta_x = plotvars.plot_xmax - plotvars.plot_xmin
@@ -6181,6 +6100,7 @@ def set_map():
                                               delta_x, delta_y],
                                               projection=proj)
     else:
+
         mymap = plotvars.master_plot.add_subplot(plotvars.rows,
                                                  plotvars.columns,
                                                  plotvars.pos,
@@ -7654,7 +7574,7 @@ def regression_tests():
     """
     | Test for cf-plot regressions
     | Run through some standard levs, gvals, lon and lat labelling
-    | Make all the gallery plots and use Imagemaick to display them
+    | Make all the gallery plots and use Imagemagick to display them
     | alongside a reference plot
     |
     |
@@ -10211,11 +10131,11 @@ def stream(u=None, v=None, x=None, y=None, density=None, linewidth=None,
         mapset(resolution=resolution_orig)
 
 
-def bfill_irregular(f=None, face_lons=None, face_lats=None, face_connectivity=None, clevs=None,
+def bfill_ugrid(f=None, face_lons=None, face_lats=None, face_connectivity=None, clevs=None,
                 alpha=None, zorder=None):
 
     """
-     | bfill_irregular - block fill a irregular field with colour rectangles
+     | bfill_ugrid - block fill a irregular field with colour rectangles
      | This is an internal routine and is not generally used by the user.
      |
      | f=None - field
@@ -10266,38 +10186,44 @@ def bfill_irregular(f=None, face_lons=None, face_lats=None, face_connectivity=No
     plotargs = {'transform': ccrs.PlateCarree()}
 
     coords_all = []
+     
+    nfaces = np.shape(face_connectivity)[0]   
 
-    for iface in np.arange(len(face_connectivity)):
-        lons = np.array([face_lons[i] for i in face_connectivity[iface]])
-        lats = np.array([face_lats[i] for i in face_connectivity[iface]])
-
-        coords = [(lons[i], lats[i]) for i in np.arange(len(lons))]
-
+    coords_all = []
+    for iface in np.arange(nfaces):
+        lons = face_lons[iface, :]
+        lats = face_lats[iface, :]
+        
+        # Wrapping in longitude
         if (np.max(lons) - np.min(lons)) > 100: 
             if np.max(lons) > 180:
-                for i in np.arange(len(lons)):
-                    lons[i] = (lons[i] + 180) % 360 - 180
-
+                for j in np.arange(len(lons)):
+                    lons[j] = (lons[j] + 180) % 360 - 180
             else:
-                for i in np.arange(len(lons)):
-                    lons[i] = lons[i] % 360
+                for j in np.arange(len(lons)):
+                    lons[j] = lons[j] % 360
 
-            coords = [(lons[i], lats[i]) for i in np.arange(len(lons))]
-
+        nverts = len(lons)                    
+                    
         # Add extra verticies if any of the points are at the north or south pole
         if np.max(lats) == 90 or np.min(lats) == -90:
-            geom = sgeom.Polygon([(face_lons[i], face_lats[i]) for i in face_connectivity[iface]])
+
+            geom = sgeom.Polygon([(lons[k], lats[k]) for k in np.arange(nverts)])            
             geom_cyl = ccrs.PlateCarree().project_geometry(geom, ccrs.Geodetic())
             
             # Original method for shapely < 2.0
-            #coords = geom_cyl[0].exterior.coords[:]
+            # coords = geom_cyl[0].exterior.coords[:]
 
             # New method for shapely 2.0 +
             poly_mapped = sgeom.mapping(geom_cyl.geoms[0])
+            
             coords = list(poly_mapped['coordinates'][0])
-   
+        else:    
+            coords = [(lons[k], lats[k]) for k in np.arange(nverts)]
+            
         coords_all.append(coords)
-
+       
+    
     plotvars.mymap.add_collection(PolyCollection(coords_all, facecolors=cols, edgecolors=None,
                                   alpha=alpha, zorder=zorder, **plotargs))
 
