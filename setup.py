@@ -22,6 +22,8 @@ setup(
     version = "3.3.0",
     author = "Andy Heaps",
     author_email = "andy.heaps@ncas.ac.uk",
+    maintainer = "Sadie Bartholomew",
+    maintainer_email = "sadie.bartholomew@ncas.ac.uk",
     packages = ["cfplot"],
     package_dir = {"cfplot":"cfplot"},
     package_data = {"cfplot": package_data},
