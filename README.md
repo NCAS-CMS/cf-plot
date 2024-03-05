@@ -4,13 +4,18 @@
 
 ### Overview
 
-cf-plot allows you to produce and customise publication-quality contour, vector, line and more plots
-with the power of Python, [matplotlib](https://matplotlib.org/),
+**cf-plot allows you to produce and customise publication-quality contour,
+vector, line and more plots with the power of Python,
+[matplotlib](https://matplotlib.org/),
 [Cartopy](https://scitools.org.uk/cartopy/docs/latest/) and
-[cf-python](https://ncas-cms.github.io/cf-python/), in as few lines of code as possible.
+[cf-python](https://ncas-cms.github.io/cf-python/), in as few lines of code
+as possible.**
 
-It is designed to be a useful tool across the various domains in and around environmental and
-earth science, including but not limited to climate and meteorological research.
+It is designed to be a useful visualisation tool for environmental, earth
+and aligned science, for example to facilitate climate and meteorological
+research. cf-plot is developed and maintained by the
+[NCAS-CMS](https://cms.ncas.ac.uk/index.html) group, part of
+[NCAS](https://ncas.ac.uk/).
 
 
 ### Brief Demonstration
@@ -28,17 +33,19 @@ cfp.con(f.subspace(time=<chosen time value>))  # creates a contour plot of the f
 
 ### Examples Gallery
 
-A gallery of outputs made with cf-plot, showcasing a range of plotting possibilities with links to relevant
-documentation pages and to example code, can be found
-[on this dedicated page within the documentation](http://ajheaps.github.io/cf-plot/gallery.html), as illustrated
-in this (static) image:
+A gallery of outputs made with cf-plot, showcasing a range of plotting
+possibilities with links to relevant documentation pages and to example code,
+can be found
+[on this dedicated page within the documentation](http://ajheaps.github.io/cf-plot/gallery.html),
+as illustrated in this (static) image:
 
 ![cf-plot example gallery of plots](docs/media/cf_gallery_image.png)
 
 
 ### Documentation
 
-See [the cf-plot homepage](http://ajheaps.github.io/cf-plot) (`http://ajheaps.github.io/cf-plot`).
+See [the cf-plot homepage](http://ajheaps.github.io/cf-plot)
+(`http://ajheaps.github.io/cf-plot`) for the full online documentation.
 
 
 ### Installation
@@ -72,7 +79,8 @@ and align with future ambitions for the library.
 Contributing guidelines will be added to the repository shortly.
 
 
-### Queries: Issues, Questions, Feature Requests, etc.
+### Help: Issues, Questions, Feature Requests, etc.
 
-See the [queries guidance page](http://ajheaps.github.io/cf-plot/issues.html)
+For any queries, see the
+[guidance page](http://ajheaps.github.io/cf-plot/issues.html)
 (`http://ajheaps.github.io/cf-plot/issues.html`).
