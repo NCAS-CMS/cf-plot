@@ -30,7 +30,7 @@ cfp.con(f.subspace(time=<chosen time value>))  # creates a contour plot of the f
 
 A gallery of outputs made with cf-plot, showcasing a range of plotting possibilities with links to relevant
 documentation pages and to example code, can be found
-[here, on a dedicated page within the documentation](http://ajheaps.github.io/cf-plot/gallery.html), as illustrated
+[on this dedicated page within the documentation](http://ajheaps.github.io/cf-plot/gallery.html), as illustrated
 in this (static) image:
 
 ![cf-plot example gallery of plots](docs/media/cf_gallery_image.png)
@@ -62,3 +62,17 @@ More detail about installation is provided on the
 [installation page](http://ajheaps.github.io/cf-plot/download.html)
 (`http://ajheaps.github.io/cf-plot/download.html`)
 of the documentation.
+
+### Contributing
+
+Everyone is welcome to contribute to cf-plot, however the NCAS-CMS team reserve
+the right to only accept changes which they consider to improve the codebase
+and align with future ambitions for the library.
+
+Contributing guidelines will be added to the repository shortly.
+
+
+### Queries: Issues, Questions, Feature Requests, etc.
+
+See the [queries guidance page](http://ajheaps.github.io/cf-plot/issues.html)
+(`http://ajheaps.github.io/cf-plot/issues.html`).
