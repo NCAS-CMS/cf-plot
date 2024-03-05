@@ -2,6 +2,8 @@
 
 ## Code-light plotting for earth science and aligned research
 
+### Overview
+
 cf-plot allows you to produce and customise publication-quality contour, vector, line and more plots
 with the power of Python, [matplotlib](https://matplotlib.org/),
 [Cartopy](https://scitools.org.uk/cartopy/docs/latest/) and
@@ -9,6 +11,7 @@ with the power of Python, [matplotlib](https://matplotlib.org/),
 
 It is designed to be a useful tool across the various domains in and around environmental and
 earth science, including but not limited to climate and meteorological research.
+
 
 ### Brief Demonstration
 
@@ -35,4 +38,27 @@ in this (static) image:
 
 ### Documentation
 
-Found under [the cf-plot homepage](http://ajheaps.github.io/cf-plot) (`http://ajheaps.github.io/cf-plot`).
+See [the cf-plot homepage](http://ajheaps.github.io/cf-plot) (`http://ajheaps.github.io/cf-plot`).
+
+
+### Installation
+
+To install cf-plot with its required dependencies, you can use `pip`:
+
+```bash
+pip install cf-python
+pip install cf-plot
+```
+
+or you can use `conda` (or similar package managers such
+as `mamba`) as follows (or equivalent):
+
+```bash
+conda install -c ncas -c conda-forge cf-python cf-plot udunits2
+conda install -c conda-forge mpich esmpy
+```
+
+More detail about installation is provided on the
+[installation page](http://ajheaps.github.io/cf-plot/download.html)
+(`http://ajheaps.github.io/cf-plot/download.html`)
+of the documentation.
