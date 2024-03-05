@@ -8,12 +8,12 @@
 
 ### Version `3.3.0`, released `2024-01-15`
 
-* Ugrid support added
+* UGRID support added
 
 
 ### Version `3.2`, released ``
 
-* Rolling bugfix version
+* Rolling bug fix version
 
 
 ### Version `3.1`, released ``
@@ -103,22 +103,23 @@
 
 ### Version `0.9`, released ``
 
-* vect - vector plotting
+* `vect` for vector plotting
 
 
 ### Version `0.8`, released ``
 
-* stipple - significance plots
+* `stipple` for significance plots
 
 
 ### Version `0.7`, released ``
 
-* cscale - colour scales
+* `cscale` for colour scales
 
 
 ### Version `0.6`, released ``
 
-* gopen, gclose, gpos opening and closing of output files/plot positioning
+* `gopen`, `gclose`, `gpos` opening and closing of output files/plot
+  positioning
 
 
 ### Version `0.5`, released ``
@@ -128,7 +129,7 @@
 
 ### Version `0.4`, released ``
 
-* gset, axes - setting plot limits and plotting axes
+* `gset`, `axes` for setting plot limits and plotting axes
 
 
 ### Version `0.3`, released `2012-12-10`
