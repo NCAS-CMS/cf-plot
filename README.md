@@ -4,6 +4,8 @@
 
 ### Overview
 
+![cf-plot example gallery of plots](docs/media/cf_gallery_image.png)
+
 **cf-plot allows you to produce and customise publication-quality contour,
 vector, line and more plots with the power of Python,
 [matplotlib](https://matplotlib.org/),
@@ -20,8 +22,9 @@ research. cf-plot is developed and maintained by the
 
 ### Brief Demonstration
 
-In as little as four lines of Python including, imports and file reading, using `cf-plot` you can
-for example produce a contour plot showing a 2D subspace of a netCDF dataset:
+In as little as four lines of Python including imports and file reading,
+using `cf-plot` you can for example produce a contour plot showing a 2D
+subspace of a netCDF dataset:
 
 ```python
 import cf
@@ -37,9 +40,7 @@ A gallery of outputs made with cf-plot, showcasing a range of plotting
 possibilities with links to relevant documentation pages and to example code,
 can be found
 [on this dedicated page within the documentation](http://ajheaps.github.io/cf-plot/gallery.html),
-as illustrated in this (static) image:
-
-![cf-plot example gallery of plots](docs/media/cf_gallery_image.png)
+as illustrated in the (static) image at the top of this document.
 
 
 ### Documentation
@@ -62,7 +63,6 @@ as `mamba`) as follows (or equivalent):
 
 ```bash
 conda install -c ncas -c conda-forge cf-python cf-plot udunits2
-conda install -c conda-forge mpich esmpy
 ```
 
 More detail about installation is provided on the
@@ -72,7 +72,8 @@ of the documentation.
 
 ### Contributing
 
-Everyone is welcome to contribute to cf-plot in the form the form of bug reports, documentation, code, design proposals, and more.
+Everyone is welcome to contribute to cf-plot in the form
+of bug reports, documentation, code, design proposals, and more.
 
 Contributing guidelines will be added to the repository shortly.
 
