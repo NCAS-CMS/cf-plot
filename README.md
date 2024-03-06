@@ -72,9 +72,7 @@ of the documentation.
 
 ### Contributing
 
-Everyone is welcome to contribute to cf-plot, however the NCAS-CMS team reserve
-the right to only accept changes which they consider to improve the codebase
-and align with future ambitions for the library.
+Everyone is welcome to contribute to cf-plot in the form the form of bug reports, documentation, code, design proposals, and more.
 
 Contributing guidelines will be added to the repository shortly.
 
