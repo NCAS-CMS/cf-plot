@@ -12,7 +12,7 @@ vector, line and more plots with the power of Python,
 as possible.**
 
 It is designed to be a useful visualisation tool for environmental, earth
-and aligned science, for example to facilitate climate and meteorological
+and aligned sciences, for example to facilitate climate and meteorological
 research. cf-plot is developed and maintained by the
 [NCAS-CMS](https://cms.ncas.ac.uk/index.html) group, part of
 [NCAS](https://ncas.ac.uk/).
