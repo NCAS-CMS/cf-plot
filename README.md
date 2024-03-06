@@ -20,7 +20,7 @@ research. cf-plot is developed and maintained by the
 
 ### Brief Demonstration
 
-In as little as four lines of Python including imports, using `cf-plot` you can
+In as little as four lines of Python including, imports and file reading, using `cf-plot` you can
 for example produce a contour plot showing a 2D subspace of a netCDF dataset:
 
 ```python
