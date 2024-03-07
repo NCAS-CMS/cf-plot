@@ -69,8 +69,7 @@ Using pip:
 
 ::
 
-   pip install cf-python
-   pip install cf-plot
+   pip install cf-python cf-plot
 
 If you are upgrading the version of cf-python or cf-plot to the latest ones then add the --upgrade after the install above. A specific version can be installed using pip install cf-plot==3.0.20 for example.
 

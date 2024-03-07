@@ -54,8 +54,7 @@ See [the cf-plot homepage](http://ajheaps.github.io/cf-plot)
 To install cf-plot with its required dependencies, you can use `pip`:
 
 ```bash
-pip install cf-python
-pip install cf-plot
+pip install cf-python cf-plot
 ```
 
 or you can use `conda` (or similar package managers such
