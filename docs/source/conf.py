@@ -17,7 +17,7 @@ import sys, os
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #sys.path.insert(0, os.path.abspath('.'))
-sys.path.insert(0, '/home/andy/cfplot.src/cfplot')
+sys.path.insert(0, "../../cfplot")
 
 # -- General configuration -----------------------------------------------------
 
@@ -56,7 +56,7 @@ copyright = u'2024, Sadie Bartholomew'
 # built documents.
 #
 # The short X.Y version.
-version = '1.0'
+version = '3.3.0'
 # The full version, including alpha/beta/rc tags.
 release = '3.3.0'
 
