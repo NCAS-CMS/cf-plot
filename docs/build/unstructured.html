@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Unstructured grids &#8212; cf-plot 3.3.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/classic.css?v=97decc96" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=eafc0fe6" />
+    
+    <script src="_static/documentation_options.js?v=3eb8911e"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="nav-item nav-item-0"><a href="index.html">cf-plot 3.3.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Unstructured grids</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="unstructured-grids">
+<span id="unstructured"></span><h1>Unstructured grids<a class="headerlink" href="#unstructured-grids" title="Link to this heading">¶</a></h1>
+<p>Unstructured grids have data points in non-regular locations. Examples of these are the LFRic model grid, the ORCA ocean grid and weather station data.</p>
+<p>The <a class="reference external" href="https://ugrid-conventions.github.io/ugrid-conventions">UGRID</a> data storage convention for netCDF isn't yet part of the CF metadata conventions but cf-python and cf-plot will be updated once it is.  This page shows how to plot data that is both in UGRID compliant netCDF and numpy arrays of unstructured data.</p>
+<a class="reference internal image-reference" href="_images/us01.png"><img alt="_images/us01.png" src="_images/us01.png" style="width: 514.28px; height: 308.36px;" /></a>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
+<span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
+<span class="n">f</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/lfric_initial.nc&#39;</span><span class="p">)</span>
+
+<span class="n">pot</span><span class="o">=</span><span class="n">f</span><span class="p">[</span><span class="mi">33</span><span class="p">][</span><span class="mi">4</span><span class="p">,:]</span>
+<span class="n">lons</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="mi">12</span><span class="p">]</span>
+<span class="n">lats</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="mi">13</span><span class="p">]</span>
+<span class="n">faces</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="mi">11</span><span class="p">]</span>
+
+<span class="n">cfp</span><span class="o">.</span><span class="n">levs</span><span class="p">(</span><span class="mi">240</span><span class="p">,</span> <span class="mi">310</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+
+<span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="o">=</span><span class="n">pot</span><span class="p">,</span> <span class="n">face_lons</span><span class="o">=</span><span class="n">lons</span><span class="p">,</span> <span class="n">face_lats</span><span class="o">=</span><span class="n">lats</span><span class="p">,</span> <span class="n">face_connectivity</span><span class="o">=</span><span class="n">faces</span><span class="p">,</span> <span class="n">lines</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Here we identify the fields in the data that have the longitudes and latitudes for the corner points for the field and pass them to cfp.con.  Once UGRID is in the CF metadata conventions the face plotting commands will be simplified as the face connectivity, associated longitudes and latitudes will all be described within the data field.  The plotted data is a test field of potential temperature and isn't realistic in regards to the actual values.</p>
+<a class="reference internal image-reference" href="_images/us02.png"><img alt="_images/us02.png" src="_images/us02.png" style="width: 370.24px; height: 328.64px;" /></a>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
+<span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
+<span class="n">f</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/lfric_initial.nc&#39;</span><span class="p">)</span>
+
+<span class="n">pot</span><span class="o">=</span><span class="n">f</span><span class="p">[</span><span class="mi">33</span><span class="p">][</span><span class="mi">4</span><span class="p">,:]</span>
+<span class="n">lons</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="mi">12</span><span class="p">]</span>
+<span class="n">lats</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="mi">13</span><span class="p">]</span>
+<span class="n">faces</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="mi">11</span><span class="p">]</span>
+
+<span class="n">cfp</span><span class="o">.</span><span class="n">levs</span><span class="p">(</span><span class="mi">240</span><span class="p">,</span> <span class="mi">310</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">mapset</span><span class="p">(</span><span class="n">proj</span><span class="o">=</span><span class="s1">&#39;npstere&#39;</span><span class="p">)</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="o">=</span><span class="n">pot</span><span class="p">,</span> <span class="n">face_lons</span><span class="o">=</span><span class="n">lons</span><span class="p">,</span> <span class="n">face_lats</span><span class="o">=</span><span class="n">lats</span><span class="p">,</span> <span class="n">face_connectivity</span><span class="o">=</span><span class="n">faces</span><span class="p">,</span> <span class="n">lines</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Here the projection is changed to show the north pole.</p>
+<a class="reference internal image-reference" href="_images/us03.png"><img alt="_images/us03.png" src="_images/us03.png" style="width: 514.28px; height: 308.36px;" /></a>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
+<span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
+<span class="n">f</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/lfric_initial.nc&#39;</span><span class="p">)[</span><span class="mi">33</span><span class="p">]</span>
+<span class="n">g</span><span class="o">=</span><span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span>
+
+<span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">lines</span><span class="o">=</span><span class="kc">False</span> <span class="p">)</span>
+</pre></div>
+</div>
+<p>The data in the field has auxiliary longitudes and latitudes that can be contoured as normal.  Internally in cf-plot this is made using the Matplotlib tricontourf command as the data points are spatially irregular.</p>
+<section id="orca2-grid">
+<h2>Orca2 grid<a class="headerlink" href="#orca2-grid" title="Link to this heading">¶</a></h2>
+<a class="reference internal image-reference" href="_images/us04.png"><img alt="_images/us04.png" src="_images/us04.png" style="width: 514.28px; height: 278.2px;" /></a>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
+<span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">netCDF4</span> <span class="kn">import</span> <span class="n">Dataset</span> <span class="k">as</span> <span class="n">ncfile</span>
+
+<span class="c1">#Get an Orca grid and flatten the arrays</span>
+<span class="n">nc</span> <span class="o">=</span> <span class="n">ncfile</span><span class="p">(</span><span class="s1">&#39;cfplot_data/orca2.nc&#39;</span><span class="p">)</span>
+<span class="n">lons</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;longitude&#39;</span><span class="p">])</span>
+<span class="n">lats</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;latitude&#39;</span><span class="p">])</span>
+<span class="n">temp</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;sst&#39;</span><span class="p">])</span>
+<span class="n">lons</span><span class="o">=</span><span class="n">lons</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+<span class="n">lats</span><span class="o">=</span><span class="n">lats</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+<span class="n">temp</span><span class="o">=</span><span class="n">temp</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+<span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">lons</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">lats</span><span class="p">,</span> <span class="n">f</span><span class="o">=</span><span class="n">temp</span><span class="p">,</span> <span class="n">ptype</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The ORCA2 grid is an ocean grid with missing values over the land points.  The data in this file is from before the UGRID convention was started and has no face connectivity or corner coordinates.  In this case we can only plot a normal contour plot.</p>
+</section>
+<section id="station-data">
+<h2>Station data<a class="headerlink" href="#station-data" title="Link to this heading">¶</a></h2>
+<p>Here we read in temperature data in a text file from meteorological stations around the British Isles and make a contour plot.</p>
+<a class="reference internal image-reference" href="_images/us05.png"><img alt="_images/us05.png" src="_images/us05.png" style="width: 420.16px; height: 375.96000000000004px;" /></a>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
+<span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="kn">import</span> <span class="n">griddata</span>
+
+<span class="c1"># Arrays for data</span>
+<span class="n">lons</span><span class="o">=</span><span class="p">[]</span>
+<span class="n">lats</span><span class="o">=</span><span class="p">[]</span>
+<span class="n">pressure</span><span class="o">=</span><span class="p">[]</span>
+<span class="n">temp</span><span class="o">=</span><span class="p">[]</span>
+
+<span class="c1"># Read data and make the contour plot</span>
+<span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;cfplot_data/synop_data.txt&#39;</span><span class="p">)</span>
+<span class="n">lines</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+   <span class="n">mysplit</span><span class="o">=</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+   <span class="n">lons</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lons</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">mysplit</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+   <span class="n">lats</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lats</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">mysplit</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
+   <span class="n">pressure</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pressure</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">mysplit</span><span class="p">[</span><span class="mi">3</span><span class="p">]))</span>
+   <span class="n">temp</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">temp</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">mysplit</span><span class="p">[</span><span class="mi">4</span><span class="p">]))</span>
+
+<span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">lons</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">lats</span><span class="p">,</span> <span class="n">f</span><span class="o">=</span><span class="n">temp</span><span class="p">,</span> <span class="n">ptype</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">colorbar_orientation</span><span class="o">=</span><span class="s1">&#39;vertical&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="station-data-check-of-data-values">
+<h2>Station data - check of data values<a class="headerlink" href="#station-data-check-of-data-values" title="Link to this heading">¶</a></h2>
+<p>To see if this plot is correct we can add some extra code to that above to plot the station locations and values at that point.  The decimal point is roughly where the data point is located.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cartopy.crs</span> <span class="k">as</span> <span class="nn">ccrs</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">gopen</span><span class="p">()</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">lons</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">lats</span><span class="p">,</span> <span class="n">f</span><span class="o">=</span><span class="n">temp</span><span class="p">,</span> <span class="n">ptype</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">colorbar_orientation</span><span class="o">=</span><span class="s1">&#39;vertical&#39;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)):</span>
+   <span class="n">cfp</span><span class="o">.</span><span class="n">plotvars</span><span class="o">.</span><span class="n">mymap</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">lons</span><span class="p">[</span><span class="n">i</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">lats</span><span class="p">[</span><span class="n">i</span><span class="p">]),</span> <span class="nb">str</span><span class="p">(</span><span class="n">temp</span><span class="p">[</span><span class="n">i</span><span class="p">]),</span> \
+                           <span class="n">horizontalalignment</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span><span class="n">verticalalignment</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> \
+                           <span class="n">transform</span><span class="o">=</span><span class="n">ccrs</span><span class="o">.</span><span class="n">PlateCarree</span><span class="p">())</span>
+
+<span class="n">cfp</span><span class="o">.</span><span class="n">gclose</span><span class="p">()</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="_images/us06.png"><img alt="_images/us06.png" src="_images/us06.png" style="width: 420.16px; height: 375.96000000000004px;" /></a>
+<div class="line-block">
+<div class="line"><br /></div>
+<div class="line"><br /></div>
+</div>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+<h3><a href="index.html">Homepage</a><p></h3>
+<h5><a href="gallery.html">Gallery</a><p></h5>
+<h5><a href="user_guide.html">User Guide</a><p></h5>
+<h5><a href="training.html">Training material</a><p></h5>
+<h5><a href="routines.html">Routines</a><p></h5>
+<h5><a href="internal_routines.html">Routines - internal</a><p></h5>
+<h5><a href="advanced.html">Advanced Use</a><p></h5>
+<h5><a href="versions.html">Versions</a><p></h5>
+<h5><a href="issues.html">Issues</a><p></h5>
+<h5><a href="download.html">Download/Install</a><p></h5>
+<h5><a href="license.html">License</a><p></h5>
+<h5><a href="older_documentation.html">Older documentation</a><p></h5>
+<h5><a href="search.html">Search</a><p></h5>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="nav-item nav-item-0"><a href="index.html">cf-plot 3.3.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Unstructured grids</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2024, Sadie Bartholomew.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    </div>
+  </body>
+</html>

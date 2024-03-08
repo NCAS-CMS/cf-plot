@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>version 3.0 changes &#8212; cf-plot 3.3.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/classic.css?v=97decc96" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=eafc0fe6" />
+    
+    <script src="_static/documentation_options.js?v=3eb8911e"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="nav-item nav-item-0"><a href="index.html">cf-plot 3.3.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">version 3.0 changes</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="version-3-0-changes">
+<span id="version-3-0"></span><h1>version 3.0 changes<a class="headerlink" href="#version-3-0-changes" title="Link to this heading">¶</a></h1>
+<p>Change code to use Python 3 and cf-python 3.</p>
+<section id="change-code-to-use-python-3-and-cf-python-3">
+<h2>0. Change code to use Python 3 and cf-python 3<a class="headerlink" href="#change-code-to-use-python-3-and-cf-python-3" title="Link to this heading">¶</a></h2>
+<p>cf-plot code was changed to use Python 3 and cf-python 3.  Support for Python 2.7 and cf-python2.x was dropped.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
+</pre></div>
+</div>
+</section>
+<section id="port-to-mac-osx">
+<h2>1. Port to Mac OSX<a class="headerlink" href="#port-to-mac-osx" title="Link to this heading">¶</a></h2>
+<p>The cf-python and cf-plot code base was ported to Mac OSX.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
+</pre></div>
+</div>
+</section>
+<section id="separate-out-the-colour-bar-routine">
+<h2>2. Separate out the colour bar routine<a class="headerlink" href="#separate-out-the-colour-bar-routine" title="Link to this heading">¶</a></h2>
+<p>In the original cf-plot code base the Matplotlib colorbar routine was called individually in many places.  This has now been separated out into the cfp.cbar routine which is callable from anywhere in the cf-plot code or in user code.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
+</pre></div>
+</div>
+</section>
+<section id="cf-var-name-missing-initial-definition-of-ncvar">
+<h2>3. cf_var_name - missing initial definition of ncvar<a class="headerlink" href="#cf-var-name-missing-initial-definition-of-ncvar" title="Link to this heading">¶</a></h2>
+<p>A missing initial definition of ncvar in the cf_var_name routine was fixed.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
+</pre></div>
+</div>
+</section>
+<section id="grid-drawing-options-changed">
+<h2>4. Grid drawing options changed<a class="headerlink" href="#grid-drawing-options-changed" title="Link to this heading">¶</a></h2>
+<p>The grid_lons and grid_lats options used in cfp.setvars have been removed.  The grid drawing options for
+UKCP grids are now controlled by xticks, yticks and xaxis, yaxis as in other plots.</p>
+<p>The polar stereographic grid now takes the line colour, line width and line style from grid_colour, grid_linestyle and grid_thickness
+that are set in cfp.setvars.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Changed</span>
+</pre></div>
+</div>
+</section>
+<section id="con-blockfill-plots-bug-in-blockfill-code">
+<h2>5. con - blockfill plots - bug in blockfill code<a class="headerlink" href="#con-blockfill-plots-bug-in-blockfill-code" title="Link to this heading">¶</a></h2>
+<p>A bug in the blockfill code logic meant that some data couldn't be plotted in blockfill mode.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
+</pre></div>
+</div>
+</section>
+<section id="con-automatic-levels-sometimes-have-too-many-decimal-places">
+<h2>6. con - automatic levels sometimes have too many decimal places<a class="headerlink" href="#con-automatic-levels-sometimes-have-too-many-decimal-places" title="Link to this heading">¶</a></h2>
+<p>The automatic contour level generation in con sometimes has too many decimal places.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
+</pre></div>
+</div>
+</section>
+<section id="setup-py-missing-dependencies">
+<h2>7. setup.py missing dependencies<a class="headerlink" href="#setup-py-missing-dependencies" title="Link to this heading">¶</a></h2>
+<p>Missing dependencies for cf-python, scipy and cartopy were added to setup.py</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
+</pre></div>
+</div>
+</section>
+<section id="plot-viewing-with-the-matplotlib-interface">
+<h2>8. Plot viewing with the Matplotlib interface<a class="headerlink" href="#plot-viewing-with-the-matplotlib-interface" title="Link to this heading">¶</a></h2>
+<p>Matplotlib can now be configured to allow non-blocking of the command prompt when a plot is
+active.  The cf-plot code has been changed allow the default plot viewer to be the Matplotlib
+interface.  Users can still use the previous Imagemagick display command by typing</p>
+<p>cfp.setvars(viewer='matplotlib')</p>
+<p>or add the below line to ~/.cfplotrc</p>
+<p>viewer matplotlib</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Changed</span>
+</pre></div>
+</div>
+</section>
+<section id="mapset-aspect-ratio-in-cylindrical-projection-plots">
+<h2>9. mapset - aspect ratio in cylindrical projection plots<a class="headerlink" href="#mapset-aspect-ratio-in-cylindrical-projection-plots" title="Link to this heading">¶</a></h2>
+<p>The default setting for cylindrical plots is for one degree of longitude to be the same size
+as one degree of latitude.  This can now be changed with the aspect option to mapset:</p>
+<div class="line-block">
+<div class="line">aspect = 'equal' - the default, 1 degree longitude is the same size as one degree of latitude</div>
+<div class="line">aspect = 'auto'  - map fills the plot area</div>
+<div class="line">aspect = number  - a circle will be stretched such that the height is number times the width.</div>
+<div class="line-block">
+<div class="line">aspect = 1 is the same as aspect='equal'.</div>
+</div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Added</span>
+</pre></div>
+</div>
+</section>
+<section id="con-hovmuller-plot-with-short-time-axis">
+<h2>10. con - Hovmuller plot with short time axis<a class="headerlink" href="#con-hovmuller-plot-with-short-time-axis" title="Link to this heading">¶</a></h2>
+<p>An issue with a short time axis on a Hovmuller plot was found and fixed.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
+</pre></div>
+</div>
+</section>
+<section id="con-multiple-plot-spacing-incorrect">
+<h2>11. con - multiple plot spacing incorrect<a class="headerlink" href="#con-multiple-plot-spacing-incorrect" title="Link to this heading">¶</a></h2>
+<p>Fixed a variety of issues when using cfp.con and mutiple plots using the rows and columns
+spacing options to cfp.gopen.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
+</pre></div>
+</div>
+</section>
+<section id="con-and-vect-adding-cyclic-data-issue">
+<h2>12. con and vect - adding cyclic data issue<a class="headerlink" href="#con-and-vect-adding-cyclic-data-issue" title="Link to this heading">¶</a></h2>
+<p>When adding an extra cyclic point in longitude and the data the cartopy_util.add_cyclic_point
+routine sometimes fails when the data isn't quite regularly spaced.  Generally this happends
+when the numpy value for the data has a lot of decimal points.  A numeric fix for this
+incorrect spacing was put in place.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
+</pre></div>
+</div>
+</section>
+<section id="con-and-lineplot-long-floating-point-numbers">
+<h2>13. con and lineplot - long floating point numbers<a class="headerlink" href="#con-and-lineplot-long-floating-point-numbers" title="Link to this heading">¶</a></h2>
+<p>In cfp.con and cfp.lineplot large floating point numbers sometimes occurred on the axes and in the contour
+labels.  A new internal routine called cfp.fix_floats addresses these issues.  For example a numpy arange array
+from 0 to 5 in steps of 0.1 sometimes produced an axis of
+0, 0.1, 0.2, 0.3, 0.3999999999999999, 0.5
+which produced a badly fored axis.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
+</pre></div>
+</div>
+</section>
+<section id="con-blockfill-plot-with-a-time-mean-can-sometimes-produce-unexpected-results">
+<h2>14. con - blockfill plot with a time mean can sometimes produce unexpected results<a class="headerlink" href="#con-blockfill-plot-with-a-time-mean-can-sometimes-produce-unexpected-results" title="Link to this heading">¶</a></h2>
+<p>When plotting a blockfill contour plot of data with a time mean the plot can sometimes produce unexpected results.
+For example the following data has monthly data points but bounds of ten years for each point.</p>
+<div class="line-block">
+<div class="line"><strong>f.coord('T').dtarray</strong></div>
+<div class="line">array([cftime.Datetime360Day(1983-08-16 00:00:00),</div>
+<div class="line-block">
+<div class="line">cftime.Datetime360Day(1983-09-16 00:00:00),</div>
+<div class="line">cftime.Datetime360Day(1983-10-16 00:00:00)], dtype=object)</div>
+</div>
+</div>
+<div class="line-block">
+<div class="line"><strong>f.coord('T').bounds.dtarray</strong></div>
+<div class="line">array([[cftime.Datetime360Day(1979-02-01 00:00:00),</div>
+<div class="line-block">
+<div class="line-block">
+<div class="line">cftime.Datetime360Day(1988-03-01 00:00:00)],</div>
+</div>
+<div class="line">[cftime.Datetime360Day(1979-03-01 00:00:00),</div>
+<div class="line-block">
+<div class="line">cftime.Datetime360Day(1988-04-01 00:00:00)],</div>
+</div>
+<div class="line">[cftime.Datetime360Day(1979-04-01 00:00:00),</div>
+<div class="line-block">
+<div class="line">cftime.Datetime360Day(1988-05-01 00:00:00)]], dtype=object)</div>
+</div>
+</div>
+</div>
+<p>To reset the bounds for this data to be relevant for blockfill plotting use</p>
+<div class="line-block">
+<div class="line"><strong>T=f.coord('T')</strong></div>
+<div class="line"><strong>T.del_bounds()</strong></div>
+<div class="line"><strong>new_bounds=T.create_bounds()</strong></div>
+<div class="line"><strong>T.set_bounds(new_bounds)</strong></div>
+</div>
+<p>The new time data bounds are now monthly which is what is expected:</p>
+<div class="line-block">
+<div class="line"><strong>f.coord('T').bounds.dtarray</strong></div>
+<div class="line">array([[cftime.Datetime360Day(1983-08-01 00:00:00),</div>
+<div class="line-block">
+<div class="line-block">
+<div class="line">cftime.Datetime360Day(1983-09-01 00:00:00)],</div>
+</div>
+<div class="line">[cftime.Datetime360Day(1983-09-01 00:00:00),</div>
+<div class="line-block">
+<div class="line">cftime.Datetime360Day(1983-10-01 00:00:00)],</div>
+</div>
+<div class="line">[cftime.Datetime360Day(1983-10-01 00:00:00),</div>
+<div class="line-block">
+<div class="line">cftime.Datetime360Day(1983-11-01 00:00:00)]], dtype=object)</div>
+</div>
+</div>
+</div>
+<dl class="simple">
+<dt>::</dt><dd><p>Information added to user guide</p>
+</dd>
+</dl>
+</section>
+<section id="con-vect-and-lineplot-input-data-checking">
+<h2>15. con, vect and lineplot - input data checking<a class="headerlink" href="#con-vect-and-lineplot-input-data-checking" title="Link to this heading">¶</a></h2>
+<p>Basic data size and shape checking is now done for the inputs of CF data to con, vect and lineplot.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
+</pre></div>
+</div>
+</section>
+<section id="lineplot-multiple-lines-on-a-single-graph-can-have-incorrect-axis-limits">
+<h2>16. lineplot - multiple lines on a single graph can have incorrect axis limits<a class="headerlink" href="#lineplot-multiple-lines-on-a-single-graph-can-have-incorrect-axis-limits" title="Link to this heading">¶</a></h2>
+<p>When making muliple lines on a single graph it can have incorrect axis limits as by
+default the axis limits and labelling were chosen from the last made line.  This was changed so
+that the the min and max of X and Y for the lines in accumulated and applied to the graph.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
+</pre></div>
+</div>
+</section>
+<section id="mapset-lambert-conformal-projection-lcc-now-works-in-the-southern-hemisphere">
+<h2>17. mapset - Lambert Conformal projection - lcc now works in the southern hemisphere<a class="headerlink" href="#mapset-lambert-conformal-projection-lcc-now-works-in-the-southern-hemisphere" title="Link to this heading">¶</a></h2>
+<p>Selecting the Lambert Conformal 'lcc' projection now works in the southern hemisphere.</p>
+<p><strong>cfp.mapset(proj='lcc', lonmin=-50, lonmax=50, latmin=-80, latmax=-10)</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
+</pre></div>
+</div>
+</section>
+<section id="setup-py-changes">
+<h2>18. setup.py changes<a class="headerlink" href="#setup-py-changes" title="Link to this heading">¶</a></h2>
+<p>Some minor changes to the requirements were made to the setup.py file</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
+</pre></div>
+</div>
+</section>
+<section id="init-py-change">
+<h2>19. __init__.py change<a class="headerlink" href="#init-py-change" title="Link to this heading">¶</a></h2>
+<p>Put in missing quote in __date__ string.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
+</pre></div>
+</div>
+</section>
+<section id="lineplot-check-for-axis-missing">
+<h2>20. lineplot - check for axis missing<a class="headerlink" href="#lineplot-check-for-axis-missing" title="Link to this heading">¶</a></h2>
+<p>In lineplot there was no check to see if the Z or T axis existed bufore trying to extract information from them.  A check is now made so that this doesn;t give an error when making a lineplot using data without these axes.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
+</pre></div>
+</div>
+</section>
+<section id="cf-plot-install-notes-changed">
+<h2>21. cf-plot install notes changed<a class="headerlink" href="#cf-plot-install-notes-changed" title="Link to this heading">¶</a></h2>
+<p>The cf-plot install notes have been changed to include information on how to use pip to upgrade an existing version of cf-plot.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
+</pre></div>
+</div>
+</section>
+<section id="gvals-routine-rewritten-internal-contour-and-axis-label-generator">
+<h2>22. gvals routine rewritten - internal contour and axis label generator<a class="headerlink" href="#gvals-routine-rewritten-internal-contour-and-axis-label-generator" title="Link to this heading">¶</a></h2>
+<p>The gvals internal routine has been rewritten to be shorter and more logical.  This routine is used in the automatic selection of contour and axis labels.
+The new routine should produce better formatted and spaced labels.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
+</pre></div>
+</div>
+</section>
+<section id="cfp-con-plot-type-0-rewrite">
+<h2>23. cfp.con - plot type=0 rewrite<a class="headerlink" href="#cfp-con-plot-type-0-rewrite" title="Link to this heading">¶</a></h2>
+<p>The cfp.con section for plot_type=0 has been rewritten.  plot_type=0 is where only one or less
+if X, Y, Z, T are being plotted.  i.e. time vs station index.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Changed</span>
+</pre></div>
+</div>
+</section>
+<section id="boolean-data">
+<h2>24. Boolean data<a class="headerlink" href="#boolean-data" title="Link to this heading">¶</a></h2>
+<p>CF fields that are passed for plotting are changed to 0 or 1 values.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
+</pre></div>
+</div>
+</section>
+<section id="cfp-lineplot-default-line-colours-now-taken-from-matplotlib">
+<h2>25. cfp.lineplot - default line colours now taken from Matplotlib<a class="headerlink" href="#cfp-lineplot-default-line-colours-now-taken-from-matplotlib" title="Link to this heading">¶</a></h2>
+<p>The default cfp.lineplot colours are taken from Matplotlib unless specified by the user with
+the color keyword.  The previous default was for black which made lineplots more difficult to
+interpret.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Changed</span>
+</pre></div>
+</div>
+</section>
+<section id="cfp-stream-streamplots-added">
+<h2>26. cfp.stream - streamplots added<a class="headerlink" href="#cfp-stream-streamplots-added" title="Link to this heading">¶</a></h2>
+<p>Streamplots are now available in cf-plot.  Examples are in the user guide under vectors and also in the vector section of example plots.</p>
+<div class="line-block">
+<div class="line">stream - plot a streamplot</div>
+<div class="line"><br /></div>
+<div class="line">u=None - u wind</div>
+<div class="line">v=None - v wind</div>
+<div class="line">x=None - x locations of u and v</div>
+<div class="line">y=None - y locations of u and v</div>
+<div class="line">density=None - controls the closeness of streamlines. When density = 1,</div>
+<div class="line-block">
+<div class="line">the domain is divided into a 30x30 grid</div>
+</div>
+<div class="line">linewidth=None - the width of the stream lines. With a 2D array the line width</div>
+<div class="line-block">
+<div class="line">can be varied across the grid. The array must have the same shape as u and v</div>
+</div>
+<div class="line">color=None - the streamline color</div>
+<div class="line">arrowsize=None - scaling factor for the arrow size</div>
+<div class="line">arrowstyle=None - arrow style specification</div>
+<div class="line">minlength=None - minimum length of streamline in axes coordinates</div>
+<div class="line">maxlength=None - maximum length of streamline in axes coordinates</div>
+</div>
+</section>
+<section id="cfp-levs-step-option-bugfix">
+<h2>27. cfp.levs - step option bugfix<a class="headerlink" href="#cfp-levs-step-option-bugfix" title="Link to this heading">¶</a></h2>
+<p>cfp.levs(step=20) sets the step to 20 for contour level generation.  This was inadvertenty cleared
+inbetween plots and also generated a step of a float of 20.0 rather than the integer 20.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
+</pre></div>
+</div>
+</section>
+<section id="code-change-to-adhere-to-pep8">
+<h2>28. Code change to adhere to PEP8<a class="headerlink" href="#code-change-to-adhere-to-pep8" title="Link to this heading">¶</a></h2>
+<p>The cf-plot code base was changed to adhere to PEP8 with a 100 column line length.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Changed</span>
+</pre></div>
+</div>
+</section>
+<section id="changed-default-zorder-from-none-to-1">
+<h2>29. Changed default zorder from None to 1<a class="headerlink" href="#changed-default-zorder-from-none-to-1" title="Link to this heading">¶</a></h2>
+<p>The default zorder of None caused issues with the latest versions of Matplotlib so this was changed to 1.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Changed</span>
+</pre></div>
+</div>
+</section>
+<section id="savefig-option-of-papertype-removed">
+<h2>30. savefig option of papertype removed<a class="headerlink" href="#savefig-option-of-papertype-removed" title="Link to this heading">¶</a></h2>
+<p>The savefig option of papertype was removed as this is being dropped from later versions of matplotlib.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Changed</span>
+</pre></div>
+</div>
+</section>
+<section id="con-polar-plots-colorbar-size-changed">
+<h2>31. con - polar plots colorbar size changed<a class="headerlink" href="#con-polar-plots-colorbar-size-changed" title="Link to this heading">¶</a></h2>
+<p>The default size of colorbar_shrink for contour plots was changed from 1.0 to 0.8 to match the size of the plot.  Setting it to 1 made it larger than the plot.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Changed</span>
+</pre></div>
+</div>
+</section>
+<section id="setvars-remove-white-space-around-plots">
+<h2>32. setvars - remove white space around plots<a class="headerlink" href="#setvars-remove-white-space-around-plots" title="Link to this heading">¶</a></h2>
+<p>To remove white space from around plots you can use the ImageMagick convert command convert -trim fig1.png fig1_trimmed.png or use
+the setvars command:  <strong>cfp.setvars(tight=True)</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Changed</span>
+</pre></div>
+</div>
+</section>
+<section id="lineplot-passing-two-cf-fields-for-plotting-doesn-t-plot-the-second-line">
+<h2>33. lineplot - passing two CF fields for plotting doesn't plot the second line<a class="headerlink" href="#lineplot-passing-two-cf-fields-for-plotting-doesn-t-plot-the-second-line" title="Link to this heading">¶</a></h2>
+<p>Passing two CF fields for plotting to lineplot only plotted the first line.  This was intentional behaviour and now doing this causes an
+error.  The way to plot two lines is to open a graphics plot with cfp.gopen(), make two separate calls to cfp.lineplot and then close the graphics plot with cfp.gclose().  This is consistent with making multiple contour plots or a contour plot with overlaid vectors or stipples.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Changed</span>
+</pre></div>
+</div>
+</section>
+<section id="lineplot-change-automatic-y-axis-values-for-a-constant-value-line-plot">
+<h2>34. lineplot - change automatic y axis values for a constant value line plot<a class="headerlink" href="#lineplot-change-automatic-y-axis-values-for-a-constant-value-line-plot" title="Link to this heading">¶</a></h2>
+<p>When using lineplot with a constant value graph the automatic y-axis limits were set from -0.001 to +0.001 of the constant value.  This has been changed to -1.0 to 1.0 of the constant value.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Changed</span>
+</pre></div>
+</div>
+</section>
+<section id="traj-spurious-data-points-plotted">
+<h2>35. traj - spurious data points plotted<a class="headerlink" href="#traj-spurious-data-points-plotted" title="Link to this heading">¶</a></h2>
+<p>When using masked trajectory data and the latest version of numpy spurious data points were sometimes plotted.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
+</pre></div>
+</div>
+</section>
+<section id="con-and-setvars-changing-contour-level-selection-from-linear-to-log-loglike-or-outlier">
+<h2>36. con and setvars - changing contour level selection from linear to log, loglike or outlier<a class="headerlink" href="#con-and-setvars-changing-contour-level-selection-from-linear-to-log-loglike-or-outlier" title="Link to this heading">¶</a></h2>
+<p>A new routine <strong>cfp.calculate_levels</strong> has been added to the cf-plot code to allow different
+schemes for contour level selection.  The default in cf-plot is that when the user hasn't made a
+specific level selection the contour levels will be spaced linearly between the minimum and maximum
+of the input data.</p>
+<div class="line-block">
+<div class="line">An additional option to <strong>cfp.con</strong> is <strong>calculate_levels</strong> which takes:</div>
+<div class="line">'linear' - a linear set of levels between the minimum and maximum of the field</div>
+<div class="line">'log' - log levels - -1e6, -1e5 ,-1e4 etc</div>
+<div class="line">'loglike' - log like levels -5.e-05, -2.e-05, -1.e-05, -5.e-06, -2.e-06, -1.e-06 etc</div>
+<div class="line">'outlier' - removes outlier data before generating a linear set of levels.  The outlier must have less than</div>
+<div class="line-block">
+<div class="line">1% of the data values.</div>
+</div>
+<div class="line">'inspect' - inspect and choose the most appropriate of the above values</div>
+</div>
+<p><strong>cfp.setvars</strong> also has a new <strong>calculate_levels</strong> option which is persistent between <strong>cfp.con</strong> calls.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
+</pre></div>
+</div>
+</section>
+<section id="fix-incorrect-version-number-in-setup-py">
+<h2>37. Fix incorrect version number in setup.py<a class="headerlink" href="#fix-incorrect-version-number-in-setup-py" title="Link to this heading">¶</a></h2>
+<p>An incorrect version number was set in setup.py.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
+</pre></div>
+</div>
+</section>
+<section id="con-no-contour-levels-data-throws-an-error-in-matplotlib-line-labelling">
+<h2>38. con - No contour levels data throws an error in Matplotlib line labelling<a class="headerlink" href="#con-no-contour-levels-data-throws-an-error-in-matplotlib-line-labelling" title="Link to this heading">¶</a></h2>
+<p>The default behaviour of Matplotlib has changed such that if the data is all the same the contour labelling scheme in Matplotlib throws an error.  This is in Matplotlib 3.3.2 and may well have been in previous versions. cf-plot was changed so that in thie case of min(data) == max(data) the contour labels are turned off so a plot can be made.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
+</pre></div>
+</div>
+</section>
+<section id="con-2d-data-fails-to-plot-in-polar-stereographic-projection">
+<h2>39. con - 2D data fails to plot in polar stereographic projection<a class="headerlink" href="#con-2d-data-fails-to-plot-in-polar-stereographic-projection" title="Link to this heading">¶</a></h2>
+<p>Data associated with 2D longitude and 2D latitude arrays fails to plot in the polar stereographic projection.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+<h3><a href="index.html">Homepage</a><p></h3>
+<h5><a href="gallery.html">Gallery</a><p></h5>
+<h5><a href="user_guide.html">User Guide</a><p></h5>
+<h5><a href="training.html">Training material</a><p></h5>
+<h5><a href="routines.html">Routines</a><p></h5>
+<h5><a href="internal_routines.html">Routines - internal</a><p></h5>
+<h5><a href="advanced.html">Advanced Use</a><p></h5>
+<h5><a href="versions.html">Versions</a><p></h5>
+<h5><a href="issues.html">Issues</a><p></h5>
+<h5><a href="download.html">Download/Install</a><p></h5>
+<h5><a href="license.html">License</a><p></h5>
+<h5><a href="older_documentation.html">Older documentation</a><p></h5>
+<h5><a href="search.html">Search</a><p></h5>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="nav-item nav-item-0"><a href="index.html">cf-plot 3.3.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">version 3.0 changes</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2024, Sadie Bartholomew.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>version 3.1 changes &#8212; cf-plot 3.3.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/classic.css?v=97decc96" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=eafc0fe6" />
+    
+    <script src="_static/documentation_options.js?v=3eb8911e"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="nav-item nav-item-0"><a href="index.html">cf-plot 3.3.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">version 3.1 changes</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="version-3-1-changes">
+<span id="version-3-1"></span><h1>version 3.1 changes<a class="headerlink" href="#version-3-1-changes" title="Link to this heading">¶</a></h1>
+<section id="add-initial-support-for-ugrid-data">
+<h2>0. Add initial support for UGRID data<a class="headerlink" href="#add-initial-support-for-ugrid-data" title="Link to this heading">¶</a></h2>
+<p>Initial support for UGRID data was added.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
+</pre></div>
+</div>
+</section>
+<section id="add-titles-option-to-cfp-con">
+<h2>1. Add titles option to cfp.con<a class="headerlink" href="#add-titles-option-to-cfp-con" title="Link to this heading">¶</a></h2>
+<p>A titles option was added to cfp.con.  Setting this to True prints off a set of dimension
+titles at the top of the plot.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
+</pre></div>
+</div>
+</section>
+<section id="time-axis-calendar-is-now-set-to-standard-if-none-is-present">
+<h2>2. Time axis - calendar is now set to standard if none is present<a class="headerlink" href="#time-axis-calendar-is-now-set-to-standard-if-none-is-present" title="Link to this heading">¶</a></h2>
+<p>If a time axis has no calendar then this is now set to standard if none is present.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
+</pre></div>
+</div>
+</section>
+<section id="various-changes-to-update-to-cf-python-3-9-0">
+<h2>6. Various changes to update to cf-python 3.9.0<a class="headerlink" href="#various-changes-to-update-to-cf-python-3-9-0" title="Link to this heading">¶</a></h2>
+<p>Various changes to setup.py and cf-plot were made to be compatible with cf-python 3.9.0.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
+</pre></div>
+</div>
+</section>
+<section id="cfp-lines-cfp-vect-added-titles-option">
+<h2>7. cfp.lines, cfp.vect - added titles option<a class="headerlink" href="#cfp-lines-cfp-vect-added-titles-option" title="Link to this heading">¶</a></h2>
+<p>The titles option to display the field dimension and cell methods selections were added to cfp.lines and cfp.vect.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
+</pre></div>
+</div>
+</section>
+<section id="cfp-mapset-lambertcylindrical-added">
+<h2>8. cfp.mapset - LambertCylindrical added<a class="headerlink" href="#cfp-mapset-lambertcylindrical-added" title="Link to this heading">¶</a></h2>
+<p>The LambertCylindrical projection was added to cfp.mapset.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
+</pre></div>
+</div>
+</section>
+<section id="mapping-change-internally">
+<h2>9. Mapping change internally<a class="headerlink" href="#mapping-change-internally" title="Link to this heading">¶</a></h2>
+<p>A mapping change was made internally to change from f.ref('rotated_latitude_longitude') to
+f.ref('grid_mapping_name:rotated_latitude_longitude'). This was due to a feature introduced in
+cf-python 3.8.0.  The longer form always works and so this has been adopted.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
+</pre></div>
+</div>
+</section>
+<section id="cfp-gpos-1-causes-stray-box-lines">
+<h2>10. cfp.gpos(1) causes stray box lines<a class="headerlink" href="#cfp-gpos-1-causes-stray-box-lines" title="Link to this heading">¶</a></h2>
+<p>When making multiple plots on a page calling cfp.gpos(1) causes stray box lines to be added to the first plot.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
+</pre></div>
+</div>
+</section>
+<section id="cfp-con-blockfill-bugfix">
+<h2>11. cfp.con - blockfill bugfix<a class="headerlink" href="#cfp-con-blockfill-bugfix" title="Link to this heading">¶</a></h2>
+<p>If a blockfill contour plot is requested and the X coordinate has bounds and the Y coordinate does not have bounds then
+an error occurs.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
+</pre></div>
+</div>
+</section>
+<section id="cfp-bfill-default-plotting-order-changed">
+<h2>12. cfp.bfill - default plotting order changed<a class="headerlink" href="#cfp-bfill-default-plotting-order-changed" title="Link to this heading">¶</a></h2>
+<p>The default plotting order for cfp.bill has been changed from None to 4.  If any issues arise because of this please report
+them to me - <a class="reference external" href="mailto:andy&#46;heaps&#37;&#52;&#48;ncas&#46;ac&#46;uk">andy<span>&#46;</span>heaps<span>&#64;</span>ncas<span>&#46;</span>ac<span>&#46;</span>uk</a>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Changed</span>
+</pre></div>
+</div>
+</section>
+<section id="cfp-vect-added-transparency-setting">
+<h2>13. cfp.vect - added transparency setting<a class="headerlink" href="#cfp-vect-added-transparency-setting" title="Link to this heading">¶</a></h2>
+<p>An alpha transparency setting was added to cfp.vect.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
+</pre></div>
+</div>
+</section>
+<section id="cfp-mapset-overlay-map-plots-stopped-working">
+<h2>14. cfp.mapset - overlay map plots stopped working<a class="headerlink" href="#cfp-mapset-overlay-map-plots-stopped-working" title="Link to this heading">¶</a></h2>
+<p>More recent versions of Cartopy stopped overlay map plots from working.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
+</pre></div>
+</div>
+</section>
+<section id="cfp-cf-data-assign-internal-routine-updated">
+<h2>15. cfp.cf_data_assign - internal routine updated<a class="headerlink" href="#cfp-cf-data-assign-internal-routine-updated" title="Link to this heading">¶</a></h2>
+<p>The internal data assignment routine cfp.cf_data_assign was updated to use the cf-python
+filter_by_axis method in f.coordinate.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Updated</span>
+</pre></div>
+</div>
+</section>
+<section id="cfp-vect-high-latitude-vector-code-modified">
+<h2>16. cfp.vect - high latitude vector code modified<a class="headerlink" href="#cfp-vect-high-latitude-vector-code-modified" title="Link to this heading">¶</a></h2>
+<p>Cartopy has an issue with higher latitude vectors as described at <a class="reference external" href="https://github.com/SciTools/cartopy/issues/1179">https://github.com/SciTools/cartopy/issues/1179</a>.</p>
+<p>The following code sets all the u and v components to be 10m/s so it would be expected that the vectors will be at
+45 degrees to the longitude lines.  Prior to the modification this wasn't the case.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
+<span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
+
+<span class="n">f</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/ggap.nc&#39;</span><span class="p">)</span>
+<span class="n">u</span><span class="o">=</span><span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">pressure</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
+<span class="n">v</span><span class="o">=</span><span class="n">f</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">pressure</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
+
+<span class="n">u</span><span class="o">.</span><span class="n">data</span><span class="p">[:]</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">v</span><span class="o">.</span><span class="n">data</span><span class="p">[:]</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">mapset</span><span class="p">(</span><span class="n">proj</span><span class="o">=</span><span class="s1">&#39;npstere&#39;</span><span class="p">)</span>
+
+<span class="n">cfp</span><span class="o">.</span><span class="n">vect</span><span class="p">(</span><span class="n">u</span><span class="o">=</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="o">=</span><span class="n">v</span><span class="p">,</span> <span class="n">key_length</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">pts</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This was fixed internally in cf-plot version 3.1.16 but may need a reversion to the original code if Cartopy gets a patch for this feature.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
+</pre></div>
+</div>
+</section>
+<section id="cfp-mapset-contour-issue-when-using-cartopy-0-20-0-and-possibly-later">
+<h2>17. cfp.mapset - contour issue when using cartopy 0.20.0 and possibly later<a class="headerlink" href="#cfp-mapset-contour-issue-when-using-cartopy-0-20-0-and-possibly-later" title="Link to this heading">¶</a></h2>
+<p>Cartopy version 0.20.0 and possibly later cause a contour over maps issue in cf-plot.  A version check in cf-plot is now in place to circumvent this.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Cartopy</span> <span class="n">version</span> <span class="n">check</span> <span class="ow">in</span> <span class="n">place</span>
+</pre></div>
+</div>
+</section>
+<section id="cfp-con-changes-to-ptype-0-code">
+<h2>18. cfp.con - changes to ptype=0 code<a class="headerlink" href="#cfp-con-changes-to-ptype-0-code" title="Link to this heading">¶</a></h2>
+<p>Additional code was added to cfp.con to cope with data which has one axis of longitude, latitude, pressure, time
+and another that isn't recogised as one of these.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Changed</span>
+</pre></div>
+</div>
+</section>
+<section id="cfp-con-improved-z-axis-detection">
+<h2>19. cfp.con - improved Z axis detection<a class="headerlink" href="#cfp-con-improved-z-axis-detection" title="Link to this heading">¶</a></h2>
+<p>The cf-plot find_dim_names routine was modified to use the cf-python get_data_axes method leading to more reliable Z axis detection when multiple Z axes
+are defined in the field.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Changed</span>
+</pre></div>
+</div>
+</section>
+<section id="cfp-con-transform-first-higher-resolution-map-data-contour-plots">
+<h2>20. cfp.con - transform_first - higher resolution map data contour plots<a class="headerlink" href="#cfp-con-transform-first-higher-resolution-map-data-contour-plots" title="Link to this heading">¶</a></h2>
+<p>When making map contour plots &gt; 400 points in longitude cartopy slows down markedly due to having to transform lots of patches.  The transform_first
+keyword to cfp.con transforms the points rather than patches and leads to a considerable speed improvement.  For example a 1440 longitudes map plot took
+30 minutes with the normal method and this decreased to 0.7 seconds when transform_first=True was set. If this keyword is set for lower resolution data
+then the plot limits in longitude sometimes have missing data.</p>
+<p>When there are more that 400 longitude points the option is set automatically but it can always be turned off with transform_first=False.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
+</pre></div>
+</div>
+</section>
+<section id="cfp-con-blockfill-fast-faster-blockfill-plotting">
+<h2>21. cfp.con - blockfill_fast - faster blockfill plotting<a class="headerlink" href="#cfp-con-blockfill-fast-faster-blockfill-plotting" title="Link to this heading">¶</a></h2>
+<p>Higher resolution data causes blockfill plotting to slow down markedly due to the number of cells plotted.  The blockfill_fast option was added to cfp.con which
+uses the Matplotlib pcolormesh routine to produce a much faster plot.  The original blockfill plotting is more accurate though and careful comparison of plots made both methods show
+small differences particularly at higher latitudes.  One blockfill plot went from 174 seconds to 4.3 seconds using the new option.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
+</pre></div>
+</div>
+</section>
+<section id="cfp-find-dim-names-bug">
+<h2>22. cfp.find_dim_names bug<a class="headerlink" href="#cfp-find-dim-names-bug" title="Link to this heading">¶</a></h2>
+<p>If numpy arrays are passed for plotting some recently added code in cfp.find_dim_names tried to find the dimension names in the field.  The code was modified to not do this for this class of data.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
+</pre></div>
+</div>
+</section>
+<section id="central-data-local-added-for-cartopy">
+<h2>23. Central data local added for cartopy<a class="headerlink" href="#central-data-local-added-for-cartopy" title="Link to this heading">¶</a></h2>
+<p>If the user has a central location for cartopy data it can be specified with the pre_existing_data_dir environment variable.  This location is checked for the relevant map data before ~/.local/share/cartopy.  If it is in neither then an attempt will be made to download the data.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Added</span>
+</pre></div>
+</div>
+</section>
+<section id="cfp-gvals-final-catch-missing-for-no-values">
+<h2>24. cfp.gvals - final catch missing for no values<a class="headerlink" href="#cfp-gvals-final-catch-missing-for-no-values" title="Link to this heading">¶</a></h2>
+<p>A final catch for no defined values was missing</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Added</span>
+</pre></div>
+</div>
+</section>
+<section id="cfp-con-cartopy-add-cyclic-point-check-for-regular-longitudes">
+<h2>25. cfp.con - cartopy.add_cyclic_point - check for regular longitudes<a class="headerlink" href="#cfp-con-cartopy-add-cyclic-point-check-for-regular-longitudes" title="Link to this heading">¶</a></h2>
+<p>An error occurs in cartopy.add_cyclic_point if the longitudes aren't regular.  Added code to only call cartopy.add_cyclic_point if the longitudes are regular.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
+</pre></div>
+</div>
+</section>
+<section id="plot-titles-change-cell-methods-to-cell-methods">
+<h2>26. plot titles - change cell methods to cell_methods<a class="headerlink" href="#plot-titles-change-cell-methods-to-cell-methods" title="Link to this heading">¶</a></h2>
+<p>In the plot titles section cell methds was corrected to cell_methods.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
+</pre></div>
+</div>
+</section>
+<section id="map-title-fixed-bug-in-title-for-the-southern-polar-stereographic-projection">
+<h2>27. map_title - fixed bug in title for the southern polar stereographic projection<a class="headerlink" href="#map-title-fixed-bug-in-title-for-the-southern-polar-stereographic-projection" title="Link to this heading">¶</a></h2>
+<p>A bug in the title code for the southern polar stereographic projection has been fixed.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
+</pre></div>
+</div>
+</section>
+<section id="cfp-con-added-nlevs-option">
+<h2>28. cfp.con - added nlevs option<a class="headerlink" href="#cfp-con-added-nlevs-option" title="Link to this heading">¶</a></h2>
+<p>The nlevs option to cfp.con was added which specifies the number of levels for to use for contour and fast
+blockfill methods.  For example cfp.con(f, nlevs=200, lines=False) will draw 200 filled contours and turn the line
+contours off.  This is useful when looking at data which is very close together where the traditional contour
+levels don't show the detail in the field.  The colour map for a divergent field such as zonal wind, 'scale1',
+is not necessarily centred on zero with this option so more care with interpretation is needed.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Added</span>
+</pre></div>
+</div>
+</section>
+<section id="cfp-con-type-0-plots-bugfix">
+<h2>29. cfp.con - type 0 plots bugfix<a class="headerlink" href="#cfp-con-type-0-plots-bugfix" title="Link to this heading">¶</a></h2>
+<p>cfp.con was changed to fix some bugs with the identification and plotting of axes.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
+</pre></div>
+</div>
+</section>
+<section id="cfp-generate-titles-update-code-to-include-cell-method-qualifiers">
+<h2>30. cfp.generate_titles - update code to include cell_method qualifiers<a class="headerlink" href="#cfp-generate-titles-update-code-to-include-cell-method-qualifiers" title="Link to this heading">¶</a></h2>
+<p>cfp.generate_titles was updated to include the text for any cell_method qualifiers.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
+</pre></div>
+</div>
+</section>
+<section id="cfp-con-axis-labelling-issues-with-rotated-pole-coordinates">
+<h2>31. cfp.con - axis labelling issues with rotated pole coordinates<a class="headerlink" href="#cfp-con-axis-labelling-issues-with-rotated-pole-coordinates" title="Link to this heading">¶</a></h2>
+<p>cfp.con produced extraneous axis labels for rotated pole coordinates.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
+</pre></div>
+</div>
+</section>
+<section id="cfp-plot-map-axes-mods-for-cartopy-0-20-0">
+<h2>32. cfp.plot_map_axes - mods for cartopy &gt; 0.20.0<a class="headerlink" href="#cfp-plot-map-axes-mods-for-cartopy-0-20-0" title="Link to this heading">¶</a></h2>
+<p>The use of outline_patch.set_visible(False) to remove a surrounding box for polar stereographic and lcc plots has been change to
+set_frame_on(False) as the previous method has been depreciated from cartopy 0.20.0.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Changed</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+<h3><a href="index.html">Homepage</a><p></h3>
+<h5><a href="gallery.html">Gallery</a><p></h5>
+<h5><a href="user_guide.html">User Guide</a><p></h5>
+<h5><a href="training.html">Training material</a><p></h5>
+<h5><a href="routines.html">Routines</a><p></h5>
+<h5><a href="internal_routines.html">Routines - internal</a><p></h5>
+<h5><a href="advanced.html">Advanced Use</a><p></h5>
+<h5><a href="versions.html">Versions</a><p></h5>
+<h5><a href="issues.html">Issues</a><p></h5>
+<h5><a href="download.html">Download/Install</a><p></h5>
+<h5><a href="license.html">License</a><p></h5>
+<h5><a href="older_documentation.html">Older documentation</a><p></h5>
+<h5><a href="search.html">Search</a><p></h5>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="nav-item nav-item-0"><a href="index.html">cf-plot 3.3.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">version 3.1 changes</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2024, Sadie Bartholomew.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    </div>
+  </body>
+</html>

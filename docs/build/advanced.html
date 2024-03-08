@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Advanced Use &#8212; cf-plot 3.3.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/classic.css?v=97decc96" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=eafc0fe6" />
+    
+    <script src="_static/documentation_options.js?v=3eb8911e"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="nav-item nav-item-0"><a href="index.html">cf-plot 3.3.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Advanced Use</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="advanced-use">
+<span id="advanced"></span><h1>Advanced Use<a class="headerlink" href="#advanced-use" title="Link to this heading">¶</a></h1>
+<p>Here are some hints and tips on the advanced use of cf-plot.</p>
+<section id="adding-user-defined-lines-and-text-to-plots">
+<h2>Adding user defined lines and text to plots<a class="headerlink" href="#adding-user-defined-lines-and-text-to-plots" title="Link to this heading">¶</a></h2>
+<p>In cf-plot the plot is stored in a plot object with the name cfp.plotvars.plot.  If you are making a map plot the the map object is cfp.plotvars.mymap and this is the object you should operate on.  The page containing the plots is named cfp.plotvars.plot_master.</p>
+<p>To see all the methods for the plot object type</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cfp</span><span class="o">.</span><span class="n">gopen</span><span class="p">()</span>
+<span class="nb">dir</span><span class="p">(</span><span class="n">cfp</span><span class="o">.</span><span class="n">plotvars</span><span class="o">.</span><span class="n">plot</span><span class="p">)</span>
+<span class="ow">or</span>
+<span class="nb">dir</span><span class="p">(</span><span class="n">cfp</span><span class="o">.</span><span class="n">plotvars</span><span class="o">.</span><span class="n">mymap</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In this example we make a blank map plot, change the longitude labels and add a box and some text.   For map plots we operate on the cfp.plotvars.mymap object and need to specify transform=ccrs.PlateCarree() to make sure that the plotting is made in regular longitude and latitude coordinates.  If the plot is not a map plot then the transform=ccrs.PlateCarree() isn't needed.</p>
+<a class="reference internal image-reference" href="_images/advanced1.png"><img alt="_images/advanced1.png" src="_images/advanced1.png" style="width: 523.64px; height: 258.96000000000004px;" /></a>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
+<span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
+<span class="kn">import</span> <span class="nn">cartopy.crs</span> <span class="k">as</span> <span class="nn">ccrs</span>
+<span class="kn">import</span> <span class="nn">matplotlib.patches</span> <span class="k">as</span> <span class="nn">mpatches</span>
+
+<span class="n">f</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/tas_A1.nc&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="n">cfp</span><span class="o">.</span><span class="n">gopen</span><span class="p">()</span>
+
+<span class="n">xticks</span><span class="o">=</span><span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">45.0</span><span class="p">]</span>
+<span class="n">xticklabels</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;xlabel1&#39;</span><span class="p">,</span> <span class="s1">&#39;xlabel2&#39;</span><span class="p">]</span>
+<span class="n">yticks</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mf">30.0</span><span class="p">,</span> <span class="mf">70.0</span><span class="p">]</span>
+<span class="n">yticklabels</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;ylabel1&#39;</span><span class="p">,</span> <span class="s1">&#39;ylabel2&#39;</span><span class="p">]</span>
+
+<span class="c1"># Specify some contour levels outside the range of the data</span>
+<span class="c1"># and make a blank contour plot</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">levs</span><span class="p">(</span><span class="o">-</span><span class="mi">1000</span><span class="p">,</span> <span class="o">-</span><span class="mi">900</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">15</span><span class="p">),</span> <span class="n">fill</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">colorbar</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">xticks</span><span class="o">=</span><span class="n">xticks</span><span class="p">,</span> <span class="n">xticklabels</span><span class="o">=</span><span class="n">xticklabels</span><span class="p">,</span>
+    <span class="n">yticks</span><span class="o">=</span><span class="n">yticks</span><span class="p">,</span> <span class="n">yticklabels</span><span class="o">=</span><span class="n">yticklabels</span><span class="p">)</span>
+
+<span class="c1"># A box</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">plotvars</span><span class="o">.</span><span class="n">mymap</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="o">-</span><span class="mi">150</span><span class="p">,</span> <span class="o">-</span><span class="mi">150</span><span class="p">,</span> <span class="o">-</span><span class="mi">90</span><span class="p">,</span> <span class="o">-</span><span class="mi">90</span><span class="p">,</span> <span class="o">-</span><span class="mi">150</span><span class="p">],</span>
+                        <span class="p">[</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="o">-</span><span class="mi">5</span><span class="p">],</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span>
+                        <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">ccrs</span><span class="o">.</span><span class="n">PlateCarree</span><span class="p">())</span>
+
+<span class="c1"># A symbol</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">plotvars</span><span class="o">.</span><span class="n">mymap</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="o">-</span><span class="mi">30</span><span class="p">,</span><span class="o">-</span><span class="mi">60</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">ccrs</span><span class="o">.</span><span class="n">PlateCarree</span><span class="p">())</span>
+
+<span class="c1"># Text</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">plotvars</span><span class="o">.</span><span class="n">mymap</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="o">-</span><span class="mi">120</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="s1">&#39;Nino3 region&#39;</span><span class="p">,</span> <span class="n">horizontalalignment</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">ccrs</span><span class="o">.</span><span class="n">PlateCarree</span><span class="p">())</span>
+
+
+<span class="c1"># Equation</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">plotvars</span><span class="o">.</span><span class="n">mymap</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="o">-</span><span class="mi">40</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;$\sum_{i=0}^\infty x_i$&#39;</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">ccrs</span><span class="o">.</span><span class="n">PlateCarree</span><span class="p">())</span>
+
+<span class="c1"># Filled polygon</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">plotvars</span><span class="o">.</span><span class="n">mymap</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">mpatches</span><span class="o">.</span><span class="n">Polygon</span><span class="p">([[</span><span class="mi">90</span><span class="p">,</span> <span class="o">-</span><span class="mi">60</span><span class="p">],</span> <span class="p">[</span><span class="mi">100</span><span class="p">,</span><span class="o">-</span><span class="mi">20</span><span class="p">],</span> <span class="p">[</span><span class="mi">110</span><span class="p">,</span> <span class="o">-</span><span class="mi">60</span><span class="p">]],</span>
+                             <span class="n">facecolor</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span>
+                             <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+                             <span class="n">transform</span><span class="o">=</span><span class="n">ccrs</span><span class="o">.</span><span class="n">PlateCarree</span><span class="p">()))</span>
+
+<span class="n">cfp</span><span class="o">.</span><span class="n">gclose</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Adding country borders etc can be done using the normal Cartopy operations on the cfp.plotvars.mymap object.  Look on the Cartopy web page for examples of these.</p>
+</section>
+<section id="plotting-shape-files">
+<h2>Plotting shape files<a class="headerlink" href="#plotting-shape-files" title="Link to this heading">¶</a></h2>
+<p>In this example we make a blank map plot and plot the UK rivers from a shapefile.  The shapefile used came from DIVA-GIS at <a class="reference external" href="http://www.diva-gis.org/gdata">http://www.diva-gis.org/gdata</a>.  The pyshp Python package is needed for this program.</p>
+<a class="reference internal image-reference" href="_images/advanced_shapefile.png"><img alt="_images/advanced_shapefile.png" src="_images/advanced_shapefile.png" style="width: 487.24px; height: 379.08000000000004px;" /></a>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
+<span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">shapefile</span>
+<span class="kn">import</span> <span class="nn">cartopy.crs</span> <span class="k">as</span> <span class="nn">ccrs</span>
+
+<span class="n">f</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/ggap.nc&#39;</span><span class="p">)[</span><span class="mi">3</span><span class="p">]</span> <span class="c1"># data for contour map</span>
+
+<span class="n">sf</span> <span class="o">=</span> <span class="n">shapefile</span><span class="o">.</span><span class="n">Reader</span><span class="p">(</span><span class="s1">&#39;GBR_water_lines_dcw.shp&#39;</span><span class="p">)</span> <span class="c1"># UK rivers</span>
+
+<span class="n">cfp</span><span class="o">.</span><span class="n">gopen</span><span class="p">()</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">levs</span><span class="p">(</span><span class="o">-</span><span class="mi">1000</span><span class="p">,</span> <span class="o">-</span><span class="mi">900</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">mapset</span><span class="p">(</span><span class="o">-</span><span class="mi">11</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">49</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="s1">&#39;10m&#39;</span><span class="p">)</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">pressure</span><span class="o">=</span><span class="mi">1000</span><span class="p">),</span> <span class="n">fill</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sf</span><span class="o">.</span><span class="n">shapes</span><span class="p">())):</span>
+
+    <span class="n">points</span> <span class="o">=</span> <span class="n">sf</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">points</span>
+    <span class="n">lons</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="p">),</span><span class="mi">1</span><span class="p">))</span>
+    <span class="n">lats</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="p">),</span><span class="mi">1</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">ip</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="p">)):</span>
+        <span class="n">lons</span><span class="p">[</span><span class="n">ip</span><span class="p">]</span> <span class="o">=</span> <span class="n">points</span><span class="p">[</span><span class="n">ip</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">lats</span><span class="p">[</span><span class="n">ip</span><span class="p">]</span> <span class="o">=</span> <span class="n">points</span><span class="p">[</span><span class="n">ip</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">cfp</span><span class="o">.</span><span class="n">plotvars</span><span class="o">.</span><span class="n">mymap</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">lons</span><span class="p">,</span> <span class="n">lats</span> <span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+                            <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">ccrs</span><span class="o">.</span><span class="n">PlateCarree</span><span class="p">())</span>
+
+
+<span class="n">cfp</span><span class="o">.</span><span class="n">gclose</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="making-a-transect-plot">
+<h2>Making a transect plot<a class="headerlink" href="#making-a-transect-plot" title="Link to this heading">¶</a></h2>
+<p>In this example we make a contour plot and plot a transect.  We use the cfp.regrid bilinear interpolation
+routine to interpolate the data.  Interpolation points for this routine must be <strong>within</strong> the data limits
+of the original data.  Care is needed to ensure that the field coordinates go from a low value to a high value.  This is usually not an issue with longitude but occasionally with latitude (as in this case) the coordinate goes from the north pole to the south pole.  A simple flip of the latitude and data is need here.</p>
+<a class="reference internal image-reference" href="_images/advanced_transect.png"><img alt="_images/advanced_transect.png" src="_images/advanced_transect.png" style="width: 340.08px; height: 405.08000000000004px;" /></a>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
+<span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">cartopy.crs</span> <span class="k">as</span> <span class="nn">ccrs</span>
+<span class="n">f</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/ggap.nc&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">g</span><span class="o">=</span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">pressure</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span> <span class="c1"># g is a 2D eastward wind field at 500mb</span>
+
+
+<span class="c1"># Extract out the lons, lats and data</span>
+<span class="n">lons</span><span class="o">=</span><span class="n">g</span><span class="o">.</span><span class="n">coord</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">array</span>
+<span class="n">lats</span><span class="o">=</span><span class="n">g</span><span class="o">.</span><span class="n">coord</span><span class="p">(</span><span class="s1">&#39;Y&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">array</span>
+<span class="n">data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+
+
+<span class="c1"># Flip the lats upside down so they start at -89.14152 and go to 89.14152</span>
+<span class="c1"># Flip the data as well to match the new latitudes</span>
+<span class="n">lats</span> <span class="o">=</span> <span class="n">lats</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flipud</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+
+<span class="c1"># Generate a set of lons and lats to interpolate to</span>
+<span class="c1"># Here we are making a set of points at 1 degree east and from -87 to 87</span>
+<span class="c1"># The interpolation points need to be inside the lons and lats of the original data</span>
+<span class="n">lons_interp</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">179</span><span class="p">)</span>
+<span class="n">lats_interp</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">179</span><span class="p">)</span><span class="o">*</span><span class="mf">0.5</span><span class="o">-</span><span class="mi">89</span>
+
+
+<span class="c1"># Interpolate the data to the new grid</span>
+<span class="n">data_interp</span><span class="o">=</span><span class="n">cfp</span><span class="o">.</span><span class="n">regrid</span><span class="p">(</span><span class="n">f</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">lons</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">lats</span><span class="p">,</span> <span class="n">xnew</span><span class="o">=</span><span class="n">lons_interp</span><span class="p">,</span> <span class="n">ynew</span><span class="o">=</span><span class="n">lats_interp</span><span class="p">)</span>
+
+
+<span class="c1"># Finally let&#39;s visually compare our transect data with the original contour field</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">gopen</span><span class="p">(</span><span class="n">user_position</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">mapset</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="o">-</span><span class="mi">90</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">gpos</span><span class="p">(</span><span class="n">xmin</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span><span class="n">xmax</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span> <span class="n">ymin</span><span class="o">=</span><span class="mf">0.55</span><span class="p">,</span> <span class="n">ymax</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">lines</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">plotvars</span><span class="o">.</span><span class="n">mymap</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">lons_interp</span><span class="p">,</span> <span class="n">lats_interp</span> <span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
+                        <span class="n">color</span><span class="o">=</span><span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">ccrs</span><span class="o">.</span><span class="n">PlateCarree</span><span class="p">())</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">gpos</span><span class="p">(</span><span class="n">xmin</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span><span class="n">xmax</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span> <span class="n">ymin</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">ymax</span><span class="o">=</span><span class="mf">0.4</span><span class="p">)</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">lineplot</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="n">data_interp</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">lons_interp</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Interpolated transect&#39;</span><span class="p">,</span>
+             <span class="n">xticks</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span><span class="o">*</span><span class="mi">30</span><span class="p">,</span> <span class="n">xticklabels</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="s1">&#39;30E&#39;</span><span class="p">,</span> <span class="s1">&#39;60E&#39;</span><span class="p">,</span> <span class="s1">&#39;90E&#39;</span><span class="p">,</span> <span class="s1">&#39;120E&#39;</span><span class="p">,</span> <span class="s1">&#39;150E&#39;</span><span class="p">,</span> <span class="s1">&#39;180E&#39;</span><span class="p">],</span>
+             <span class="n">yticks</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="o">*</span><span class="mi">2</span><span class="o">-</span><span class="mi">8</span><span class="p">,</span>
+             <span class="n">xlabel</span><span class="o">=</span><span class="s1">&#39;longitude&#39;</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="s1">&#39;eastward wind (ms-1)&#39;</span><span class="p">)</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">gclose</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="manually-changing-colours-in-a-colour-scale">
+<h2>Manually changing colours in a colour scale<a class="headerlink" href="#manually-changing-colours-in-a-colour-scale" title="Link to this heading">¶</a></h2>
+<p>The simplest way to do this without writing any code is to modify the internal colour scale before plotting.  The colours most people work with are stored as red green blue intensities on a scale of 0 to 255, with 0 being no intesity and 255 full intensity.</p>
+<p>White will be represented as 255 255 255 and black as 0 0 0.</p>
+<p>The internal colour scale is stored in cfp.plotvars.cs as hexadecimal code.  To convert from decimal to hexadecimal use hex i.e.
+hex(255)[2:]
+'ff'</p>
+<p>The [2:] is to get rid of the preceding 0x in the hex output.</p>
+<p>For example, to make one of the colours in the viridis colour scale grey use:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
+<span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
+<span class="n">f</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/tas_A1.nc&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">cscale</span><span class="p">(</span><span class="s1">&#39;viridis&#39;</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">17</span><span class="p">)</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">plotvars</span><span class="o">.</span><span class="n">cs</span><span class="p">[</span><span class="mi">14</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;#a6a6a6&#39;</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">15</span><span class="p">))</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="_images/advanced2.png"><img alt="_images/advanced2.png" src="_images/advanced2.png" style="width: 514.28px; height: 313.56px;" /></a>
+</section>
+<section id="colouring-land-and-lakes">
+<h2>Colouring land and lakes<a class="headerlink" href="#colouring-land-and-lakes" title="Link to this heading">¶</a></h2>
+<p>This is done by changing the land_color, ocean_color and lake_color variables in cfp.setvars.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
+<span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
+<span class="n">f</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/tas_A1.nc&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">setvars</span><span class="p">(</span><span class="n">land_color</span><span class="o">=</span><span class="s1">&#39;grey&#39;</span><span class="p">,</span> <span class="n">lake_color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">)</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">15</span><span class="p">))</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="_images/advanced3.png"><img alt="_images/advanced3.png" src="_images/advanced3.png" style="width: 514.28px; height: 313.56px;" /></a>
+</section>
+<section id="plotting-missing-data">
+<h2>Plotting missing data<a class="headerlink" href="#plotting-missing-data" title="Link to this heading">¶</a></h2>
+<p>Masked data isn't plotted.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
+<span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+
+<span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/tas_A1.nc&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+
+
+<span class="c1"># Mask off data less that 290 K</span>
+<span class="n">h</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">g</span><span class="o">&lt;</span><span class="mi">290</span><span class="p">,</span> <span class="n">cf</span><span class="o">.</span><span class="n">masked</span><span class="p">)</span>
+
+
+<span class="c1"># Normal plot with masked data</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">blockfill</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Plot with masked data&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="_images/advanced4.png"><img alt="_images/advanced4.png" src="_images/advanced4.png" style="width: 514.28px; height: 326.04px;" /></a>
+<p>Masked data is plotted as blockfill in grey.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Turn off the hardmask and set masked points to 999</span>
+<span class="n">h</span><span class="o">.</span><span class="n">hardmask</span><span class="o">=</span><span class="kc">False</span>
+<span class="n">i</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">h</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="mi">999</span><span class="p">)</span>
+
+
+<span class="c1"># Open a plot with gopen as we will be plotting over a contour plot</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">gopen</span><span class="p">()</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">blockfill</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Masked data plotted in grey&#39;</span><span class="p">)</span>
+
+
+<span class="c1"># Call internal block filling routine</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">bfill</span><span class="p">(</span><span class="n">f</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">array</span><span class="p">),</span> <span class="n">x</span><span class="o">=</span><span class="n">i</span><span class="o">.</span><span class="n">coord</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">i</span><span class="o">.</span><span class="n">coord</span><span class="p">(</span><span class="s1">&#39;Y&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">array</span><span class="p">,</span>
+          <span class="n">clevs</span><span class="o">=</span><span class="p">[</span><span class="mi">990</span><span class="p">,</span> <span class="mi">1000</span><span class="p">],</span> <span class="n">lonlat</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">single_fill_color</span><span class="o">=</span><span class="s1">&#39;#d3d3d3&#39;</span><span class="p">)</span>
+
+
+<span class="n">cfp</span><span class="o">.</span><span class="n">gclose</span><span class="p">()</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="_images/advanced5.png"><img alt="_images/advanced5.png" src="_images/advanced5.png" style="width: 514.28px; height: 326.04px;" /></a>
+</section>
+<section id="blockfill-with-individual-colours">
+<h2>Blockfill with individual colours<a class="headerlink" href="#blockfill-with-individual-colours" title="Link to this heading">¶</a></h2>
+<div class="line-block">
+<div class="line">If a plot needs to be built up as a series of blockfill plots then this is</div>
+<div class="line">possible using the cf-plot internal blockfill routine.  A colour contour plot is</div>
+<div class="line">made and overlaid with two blockfill regions:</div>
+<div class="line"><br /></div>
+<div class="line">-50 to 0 = green</div>
+<div class="line">20 to 40  = red</div>
+</div>
+<p>A final call to <strong>cfp.con</strong> is made to overlay contour lines.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
+<span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="n">f</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/ggap.nc&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">g</span><span class="o">=</span><span class="n">f</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span><span class="s1">&#39;longitude&#39;</span><span class="p">)</span>
+<span class="n">x</span><span class="o">=</span><span class="n">g</span><span class="o">.</span><span class="n">coord</span><span class="p">(</span><span class="s1">&#39;Y&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">array</span>
+<span class="n">y</span><span class="o">=</span><span class="n">g</span><span class="o">.</span><span class="n">coord</span><span class="p">(</span><span class="s1">&#39;Z&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">array</span>
+<span class="n">data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+
+
+<span class="n">cfp</span><span class="o">.</span><span class="n">gopen</span><span class="p">()</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">ylog</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">lines</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># Call internal block filling routine</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">bfill</span><span class="p">(</span><span class="n">f</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">clevs</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">50</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">single_fill_color</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">)</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">bfill</span><span class="p">(</span><span class="n">f</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">clevs</span><span class="o">=</span><span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">40</span><span class="p">],</span> <span class="n">single_fill_color</span><span class="o">=</span><span class="s1">&#39;purple&#39;</span><span class="p">)</span>
+
+<span class="c1"># Add contour lines over the top with zorder=5</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">ylog</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">lines</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">gclose</span><span class="p">()</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="_images/advanced6.png"><img alt="_images/advanced6.png" src="_images/advanced6.png" style="width: 530.9200000000001px; height: 343.72px;" /></a>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+<h3><a href="index.html">Homepage</a><p></h3>
+<h5><a href="gallery.html">Gallery</a><p></h5>
+<h5><a href="user_guide.html">User Guide</a><p></h5>
+<h5><a href="training.html">Training material</a><p></h5>
+<h5><a href="routines.html">Routines</a><p></h5>
+<h5><a href="internal_routines.html">Routines - internal</a><p></h5>
+<h5><a href="advanced.html">Advanced Use</a><p></h5>
+<h5><a href="versions.html">Versions</a><p></h5>
+<h5><a href="issues.html">Issues</a><p></h5>
+<h5><a href="download.html">Download/Install</a><p></h5>
+<h5><a href="license.html">License</a><p></h5>
+<h5><a href="older_documentation.html">Older documentation</a><p></h5>
+<h5><a href="search.html">Search</a><p></h5>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="nav-item nav-item-0"><a href="index.html">cf-plot 3.3.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Advanced Use</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2024, Sadie Bartholomew.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    </div>
+  </body>
+</html>

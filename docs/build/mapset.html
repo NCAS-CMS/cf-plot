@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>mapset &#8212; cf-plot 3.3.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/classic.css?v=97decc96" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=eafc0fe6" />
+    
+    <script src="_static/documentation_options.js?v=3eb8911e"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="nav-item nav-item-0"><a href="index.html">cf-plot 3.3.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">mapset</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="mapset">
+<span id="id1"></span><h1>mapset<a class="headerlink" href="#mapset" title="Link to this heading">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="cfplot.mapset">
+<span class="sig-prename descclassname"><span class="pre">cfplot.</span></span><span class="sig-name descname"><span class="pre">mapset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lonmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lonmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">latmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">latmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">proj</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cyl'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundinglat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon_0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat_0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">40</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'110m'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_mapset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aspect</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cfplot.html#mapset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfplot.mapset" title="Link to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">mapset sets the mapping parameters.</div>
+<div class="line"><br /></div>
+<div class="line">lonmin=lonmin - minimum longitude</div>
+<div class="line">lonmax=lonmax - maximum longitude</div>
+<div class="line">latmin=latmin - minimum latitude</div>
+<div class="line">latmax=latmax - maximum latitude</div>
+<div class="line">proj=proj - 'cyl' for cylindrical projection. 'npstere' or 'spstere'</div>
+<div class="line-block">
+<div class="line">for northern hemisphere or southern hemisphere polar stereographic.</div>
+<div class="line">ortho, merc, moll, robin and lcc are abreviations for orthographic,</div>
+<div class="line">mercator, mollweide, robinson and lambert conformal projections</div>
+<div class="line">'rotated' for contour plots on the native rotated grid.</div>
+<div class="line"><br /></div>
+</div>
+<div class="line">boundinglat=boundinglat - edge of the viewable latitudes in a</div>
+<div class="line-block">
+<div class="line">stereographic plot</div>
+</div>
+<div class="line">lon_0=0 - longitude centre of desired map domain in polar</div>
+<div class="line-block">
+<div class="line">stereographic and orthogrphic plots</div>
+</div>
+<div class="line">lat_0=40 - latitude centre of desired map domain in orthogrphic plots</div>
+<div class="line">resolution='110m' - the map resolution - can be one of '110m',</div>
+<div class="line">'50m' or '10m'.  '50m' means 1:50,000,000 and not 50 metre.</div>
+<div class="line">user_mapset=user_mapset - variable to indicate whether a user call</div>
+<div class="line-block">
+<div class="line">to mapset has been made.</div>
+<div class="line"><br /></div>
+</div>
+<div class="line">The default map plotting projection is the cyclindrical equidistant</div>
+<div class="line">projection from -180 to 180 in longitude and -90 to 90 in latitude.</div>
+<div class="line">To change the map view in this projection to over the United Kingdom,</div>
+<div class="line">for example, you would use</div>
+<div class="line">mapset(lonmin=-6, lonmax=3, latmin=50, latmax=60)</div>
+<div class="line">or</div>
+<div class="line">mapset(-6, 3, 50, 60)</div>
+<div class="line"><br /></div>
+<div class="line">The limits are -360 to 720 in longitude so to look at the equatorial</div>
+<div class="line">Pacific you could use</div>
+<div class="line">mapset(lonmin=90, lonmax=300, latmin=-30, latmax=30)</div>
+<div class="line">or</div>
+<div class="line">mapset(lonmin=-270, lonmax=-60, latmin=-30, latmax=30)</div>
+<div class="line"><br /></div>
+<div class="line">The default setting for the cylindrical projection is for 1 degree of</div>
+<div class="line">longitude to have the same size as one degree of latitude.  When plotting</div>
+<div class="line">a smaller map setting aspect='auto' turns this off and the map fills the</div>
+<div class="line">plot area. Setting aspect to a number a circle will be stretched such that</div>
+<div class="line">the height is num times the width. aspect=1 is the same as aspect='equal'.</div>
+<div class="line"><br /></div>
+<div class="line">The proj parameter accepts 'npstere' and 'spstere' for northern</div>
+<div class="line">hemisphere or southern hemisphere polar stereographic projections.</div>
+<div class="line">In addition to these the boundinglat parameter sets the edge of the</div>
+<div class="line">viewable latitudes and lon_0 sets the centre of desired map domain.</div>
+<div class="line"><br /></div>
+<div class="line"><br /></div>
+<div class="line"><br /></div>
+<div class="line">Map settings are persistent until a new call to mapset is made. To</div>
+<div class="line">reset to the default map settings use mapset().</div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+<h3><a href="index.html">Homepage</a><p></h3>
+<h5><a href="gallery.html">Gallery</a><p></h5>
+<h5><a href="user_guide.html">User Guide</a><p></h5>
+<h5><a href="training.html">Training material</a><p></h5>
+<h5><a href="routines.html">Routines</a><p></h5>
+<h5><a href="internal_routines.html">Routines - internal</a><p></h5>
+<h5><a href="advanced.html">Advanced Use</a><p></h5>
+<h5><a href="versions.html">Versions</a><p></h5>
+<h5><a href="issues.html">Issues</a><p></h5>
+<h5><a href="download.html">Download/Install</a><p></h5>
+<h5><a href="license.html">License</a><p></h5>
+<h5><a href="older_documentation.html">Older documentation</a><p></h5>
+<h5><a href="search.html">Search</a><p></h5>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="nav-item nav-item-0"><a href="index.html">cf-plot 3.3.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">mapset</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2024, Sadie Bartholomew.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    </div>
+  </body>
+</html>

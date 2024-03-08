@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>version 2.4 changes &#8212; cf-plot 3.3.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/classic.css?v=97decc96" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=eafc0fe6" />
+    
+    <script src="_static/documentation_options.js?v=3eb8911e"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="nav-item nav-item-0"><a href="index.html">cf-plot 3.3.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">version 2.4 changes</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="version-2-4-changes">
+<span id="version-2-4"></span><h1>version 2.4 changes<a class="headerlink" href="#version-2-4-changes" title="Link to this heading">¶</a></h1>
+<p>Trajectory plotting</p>
+<section id="added-support-for-trajectories">
+<h2>0. Added support for trajectories<a class="headerlink" href="#added-support-for-trajectories" title="Link to this heading">¶</a></h2>
+<p>Support added for plotting trajectories in contiguous ragged array format.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
+</pre></div>
+</div>
+</section>
+<section id="zorder-option-added-to-plotting-commands">
+<h2>1. zorder option added to plotting commands<a class="headerlink" href="#zorder-option-added-to-plotting-commands" title="Link to this heading">¶</a></h2>
+<p>The plotting order parameter, zorder, has been added to con, vect, stipple and lineplot.  Using
+zorder with a larger number puts the plotted item on top of an item with a lower zorder number.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
+</pre></div>
+</div>
+</section>
+<section id="fix-blockfill-on-pressure-plots">
+<h2>2. Fix blockfill on pressure plots<a class="headerlink" href="#fix-blockfill-on-pressure-plots" title="Link to this heading">¶</a></h2>
+<p>A bug in pressure blockplots was fixed.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
+</pre></div>
+</div>
+</section>
+<section id="add-a-gallery-item-for-wrf-plots">
+<h2>3. Add a gallery item for WRF plots<a class="headerlink" href="#add-a-gallery-item-for-wrf-plots" title="Link to this heading">¶</a></h2>
+<p>A gallery item was added for Weather Research and Forecasting (WRF) Model plots.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
+</pre></div>
+</div>
+</section>
+<section id="test-release">
+<h2>4. Test release<a class="headerlink" href="#test-release" title="Link to this heading">¶</a></h2>
+<p>A test release to fix a bug in the markup in the README.txt file for cf-plot</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
+</pre></div>
+</div>
+</section>
+<section id="traj-fix-missing-trajectories">
+<h2>5. traj - fix missing trajectories<a class="headerlink" href="#traj-fix-missing-trajectories" title="Link to this heading">¶</a></h2>
+<p>An incorrect loop index was used leading to not all teh trajectories being plotted.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
+</pre></div>
+</div>
+</section>
+<section id="vect-magmin-keyword-added">
+<h2>6. vect - magmin keyword added<a class="headerlink" href="#vect-magmin-keyword-added" title="Link to this heading">¶</a></h2>
+<p>The magmin keyword was added to vect.  Any vectors with a magnitude less than this aren't plotted.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
+</pre></div>
+</div>
+</section>
+<section id="con-model-level-data-not-properly-labelled">
+<h2>7. con - model level data not properly labelled<a class="headerlink" href="#con-model-level-data-not-properly-labelled" title="Link to this heading">¶</a></h2>
+<p>Contour plots of latitude or longitude vs model level number weren't proper labelled on the y-axis.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
+</pre></div>
+</div>
+</section>
+<section id="con-polar-plot-labels">
+<h2>8. con - polar plot labels<a class="headerlink" href="#con-polar-plot-labels" title="Link to this heading">¶</a></h2>
+<p>If a polar plot is made and the axis_label_fontsize is set to zero then the longitide labels are no longer
+plotted.  Previously they were plotted but still appeared on the plot wven though they had zero size.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
+</pre></div>
+</div>
+</section>
+<section id="con-rotated-pole-data-change">
+<h2>9. con - Rotated pole data change<a class="headerlink" href="#con-rotated-pole-data-change" title="Link to this heading">¶</a></h2>
+<p>Contour plots using rotated pole data - if the longitudes and latitudes for each point are supplied as 2D arrays
+in auxiliary coordinates then these are now used for making a contour plot.  Previously the rotated pole coordinate
+system was used to generate the longitudes and latitudes for the contour plot.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Changed</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+<h3><a href="index.html">Homepage</a><p></h3>
+<h5><a href="gallery.html">Gallery</a><p></h5>
+<h5><a href="user_guide.html">User Guide</a><p></h5>
+<h5><a href="training.html">Training material</a><p></h5>
+<h5><a href="routines.html">Routines</a><p></h5>
+<h5><a href="internal_routines.html">Routines - internal</a><p></h5>
+<h5><a href="advanced.html">Advanced Use</a><p></h5>
+<h5><a href="versions.html">Versions</a><p></h5>
+<h5><a href="issues.html">Issues</a><p></h5>
+<h5><a href="download.html">Download/Install</a><p></h5>
+<h5><a href="license.html">License</a><p></h5>
+<h5><a href="older_documentation.html">Older documentation</a><p></h5>
+<h5><a href="search.html">Search</a><p></h5>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="nav-item nav-item-0"><a href="index.html">cf-plot 3.3.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">version 2.4 changes</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2024, Sadie Bartholomew.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>version 1.7 changes &#8212; cf-plot 3.3.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/classic.css?v=97decc96" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=eafc0fe6" />
+    
+    <script src="_static/documentation_options.js?v=3eb8911e"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="nav-item nav-item-0"><a href="index.html">cf-plot 3.3.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">version 1.7 changes</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="version-1-7-changes">
+<span id="version-1-7"></span><h1>version 1.7 changes<a class="headerlink" href="#version-1-7-changes" title="Link to this heading">¶</a></h1>
+<p>Rolling update of features.</p>
+<section id="irregular-grid-plotting">
+<h2>1. Irregular grid plotting<a class="headerlink" href="#irregular-grid-plotting" title="Link to this heading">¶</a></h2>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Introduced</span>
+</pre></div>
+</div>
+</div></blockquote>
+</section>
+<section id="zonal-vector-plots">
+<h2>2. Zonal vector plots<a class="headerlink" href="#zonal-vector-plots" title="Link to this heading">¶</a></h2>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Introduced</span>
+</pre></div>
+</div>
+</div></blockquote>
+</section>
+<section id="bug-in-cf-data-assign-for-user-defined-plots">
+<h2>3. Bug in cf_data_assign for user defined plots<a class="headerlink" href="#bug-in-cf-data-assign-for-user-defined-plots" title="Link to this heading">¶</a></h2>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
+</pre></div>
+</div>
+</div></blockquote>
+</section>
+<section id="bug-in-vect-for-multiple-plots">
+<h2>4. Bug in vect for multiple plots<a class="headerlink" href="#bug-in-vect-for-multiple-plots" title="Link to this heading">¶</a></h2>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
+</pre></div>
+</div>
+</div></blockquote>
+</section>
+<section id="code-change-for-cf-python-major-release">
+<h2>5. Code change for cf-python major release<a class="headerlink" href="#code-change-for-cf-python-major-release" title="Link to this heading">¶</a></h2>
+<p>Change .transform for .ref to work with new naming scheme in cf-python 1.0.0</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Implemented</span>
+</pre></div>
+</div>
+</div></blockquote>
+</section>
+<section id="minor-bug-fix-in-manual-contour-level-specification">
+<h2>6. Minor bug fix in manual contour level specification<a class="headerlink" href="#minor-bug-fix-in-manual-contour-level-specification" title="Link to this heading">¶</a></h2>
+<p>In the bfill routine levs=clevs.astype(float) was changed to levs=np.array(clevs).astype(float)</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
+</pre></div>
+</div>
+</div></blockquote>
+</section>
+<section id="no-change">
+<h2>7. No change<a class="headerlink" href="#no-change" title="Link to this heading">¶</a></h2>
+<p>An error was made in changing to version 1.7.7 and was reverted in 1.7.8.</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
+</pre></div>
+</div>
+</div></blockquote>
+</section>
+<section id="check-cf-python-is-able-to-be-imported-and-is-greater-or-equal-to-version-1-0-1">
+<h2>8. Check cf-python is able to be imported and is greater or equal to version 1.0.1<a class="headerlink" href="#check-cf-python-is-able-to-be-imported-and-is-greater-or-equal-to-version-1-0-1" title="Link to this heading">¶</a></h2>
+<p>Change import section at start of cf-plot code so that version 1.0.1 or greater of cf is present.</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
+</pre></div>
+</div>
+</div></blockquote>
+</section>
+<section id="add-reverse-keyword-to-cscale-routine">
+<h2>9. Add reverse keyword to cscale routine<a class="headerlink" href="#add-reverse-keyword-to-cscale-routine" title="Link to this heading">¶</a></h2>
+<p>Added the reverse keyword to the cscale routine to rever the colour scale</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
+</pre></div>
+</div>
+</div></blockquote>
+</section>
+<section id="add-new-perceptually-uniform-sequential-colour-scales">
+<h2>10. Add new perceptually uniform sequential colour scales<a class="headerlink" href="#add-new-perceptually-uniform-sequential-colour-scales" title="Link to this heading">¶</a></h2>
+<p>Added viridis, magma, inferno, plasma, parula and gray uniform sequential colour scales.  These scales
+are colour blind friendly and also perceptually uniform.</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
+</pre></div>
+</div>
+</div></blockquote>
+</section>
+<section id="make-viridis-the-default-sequential-colour-scale">
+<h2>11. Make viridis the default sequential colour scale<a class="headerlink" href="#make-viridis-the-default-sequential-colour-scale" title="Link to this heading">¶</a></h2>
+<p>Make viridis the default sequential colour scale.</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
+</pre></div>
+</div>
+</div></blockquote>
+</section>
+<section id="bug-in-mapset-coastline-resolution-cannot-be-changed">
+<h2>12. Bug in mapset - coastline resolution cannot be changed<a class="headerlink" href="#bug-in-mapset-coastline-resolution-cannot-be-changed" title="Link to this heading">¶</a></h2>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
+</pre></div>
+</div>
+</div></blockquote>
+</section>
+<section id="con-update-allow-default-expansion-of-colour-scales-to-fit-the-contour-levels">
+<h2>13. con update - allow default expansion of colour scales to fit the contour levels<a class="headerlink" href="#con-update-allow-default-expansion-of-colour-scales-to-fit-the-contour-levels" title="Link to this heading">¶</a></h2>
+<p>When setting a different colour scale cf-plot now automatically matches colour table to
+the contour levels.</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
+</pre></div>
+</div>
+</div></blockquote>
+</section>
+<section id="con-update-numpy-warning-when-having-a-zero-contour">
+<h2>14. con update - numpy warning when having a zero contour<a class="headerlink" href="#con-update-numpy-warning-when-having-a-zero-contour" title="Link to this heading">¶</a></h2>
+<p>Having a zero contour in the levels caused a numpy warning when doing a contour map.  The
+numpy warning level was reduced in the con routine so this warning isn't shown.  This may
+be removed in a future version of cf-plot as it looks like the numpy warning isn't there in
+later versions of numpy.</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
+</pre></div>
+</div>
+</div></blockquote>
+</section>
+<section id="update-cf-plot-documentation-to-reflect-new-colour-maps">
+<h2>15. Update cf-plot documentation to reflect new colour maps<a class="headerlink" href="#update-cf-plot-documentation-to-reflect-new-colour-maps" title="Link to this heading">¶</a></h2>
+<p>The cf-plot documentation was chaged to reflect the adoption of viridis as the new sequential
+data colour map.  Other examples were also changed to show the new magma, inferno, plasma,
+parula and gray colour scales.</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
+</pre></div>
+</div>
+</div></blockquote>
+</section>
+<section id="missing-field-name-on-pp-data">
+<h2>16. Missing field name on PP data<a class="headerlink" href="#missing-field-name-on-pp-data" title="Link to this heading">¶</a></h2>
+<p>With PP data that has no standard_name, long_name or short_name the field name is blank.  The field naming scheme was changed to use the cf-python method field.name('No Name') setting the field name to 'No Name' as a catch all.</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
+</pre></div>
+</div>
+</div></blockquote>
+</section>
+<section id="vector-key-location">
+<h2>17.  Vector key location<a class="headerlink" href="#vector-key-location" title="Link to this heading">¶</a></h2>
+<p>vect now takes key_location=[xloc, yloc] to change the position of the vector key.  The xloc, yloc are in normalized coordinates with the default being [0.9, -0.06]</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
+</pre></div>
+</div>
+</div></blockquote>
+</section>
+<section id="single-colorbar-for-multiple-plots">
+<h2>18. Single colorbar for multiple plots<a class="headerlink" href="#single-colorbar-for-multiple-plots" title="Link to this heading">¶</a></h2>
+<p>con now takes colorbar_position= [xmin, ymin, x_extent, y_extent] option.  These values are in normalised coordinates. For use when a common colorbar is required for a set of plots. A typical set of values would be [0.1, 0.05, 0.8, 0.02]</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
+</pre></div>
+</div>
+</div></blockquote>
+</section>
+<section id="plot-size-and-offsets-introduced">
+<h2>19. Plot size and offsets introduced<a class="headerlink" href="#plot-size-and-offsets-introduced" title="Link to this heading">¶</a></h2>
+<p>gopen now takes additional parameters to alter the figure size and margins:</p>
+<p>figsize=[11.7, 8.3]  - figure size in inches
+left=0.12 - left margin in normalised coordinates
+right=0.92 - right margin in normalised coordinates
+top=0.92 - top margin in normalised coordinates
+bottom=0.08 - bottom margin in normalised coordinates</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
+</pre></div>
+</div>
+</section>
+<section id="mods-to-init-py-and-setup-py">
+<h2>20. - 26. Mods to __init__.py and setup.py<a class="headerlink" href="#mods-to-init-py-and-setup-py" title="Link to this heading">¶</a></h2>
+<p>Mods to setup files to point to correct documentation website and to properly reference colourmaps directory.</p>
+</section>
+<section id="ep-flux-vectors">
+<h2>27. EP flux vectors<a class="headerlink" href="#ep-flux-vectors" title="Link to this heading">¶</a></h2>
+<p>vect to be modified to take addition values so that EP flux vector etc plots are possible.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span> <span class="o">-</span> <span class="n">see</span> <span class="n">example</span> <span class="mi">15</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+<h3><a href="index.html">Homepage</a><p></h3>
+<h5><a href="gallery.html">Gallery</a><p></h5>
+<h5><a href="user_guide.html">User Guide</a><p></h5>
+<h5><a href="training.html">Training material</a><p></h5>
+<h5><a href="routines.html">Routines</a><p></h5>
+<h5><a href="internal_routines.html">Routines - internal</a><p></h5>
+<h5><a href="advanced.html">Advanced Use</a><p></h5>
+<h5><a href="versions.html">Versions</a><p></h5>
+<h5><a href="issues.html">Issues</a><p></h5>
+<h5><a href="download.html">Download/Install</a><p></h5>
+<h5><a href="license.html">License</a><p></h5>
+<h5><a href="older_documentation.html">Older documentation</a><p></h5>
+<h5><a href="search.html">Search</a><p></h5>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="nav-item nav-item-0"><a href="index.html">cf-plot 3.3.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">version 1.7 changes</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2024, Sadie Bartholomew.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    </div>
+  </body>
+</html>

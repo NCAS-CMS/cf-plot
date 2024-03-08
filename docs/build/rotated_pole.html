@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Rotated pole plots &#8212; cf-plot 3.3.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/classic.css?v=97decc96" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=eafc0fe6" />
+    
+    <script src="_static/documentation_options.js?v=3eb8911e"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="nav-item nav-item-0"><a href="index.html">cf-plot 3.3.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Rotated pole plots</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="rotated-pole-plots">
+<span id="rotated-pole"></span><h1>Rotated pole plots<a class="headerlink" href="#rotated-pole-plots" title="Link to this heading">¶</a></h1>
+<section id="example-21-rotated-pole-data-plot">
+<h2>Example 21 - rotated pole data plot<a class="headerlink" href="#example-21-rotated-pole-data-plot" title="Link to this heading">¶</a></h2>
+<a class="reference internal image-reference" href="_images/fig21.png"><img alt="_images/fig21.png" src="_images/fig21.png" style="width: 487.24px; height: 210.6px;" /></a>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
+<span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
+<span class="n">f</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/rgp.nc&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">cscale</span><span class="p">(</span><span class="s1">&#39;plasma&#39;</span><span class="p">)</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="example-22-rotated-pole-data-on-the-native-grid">
+<h2>Example 22 - rotated pole data on the native grid<a class="headerlink" href="#example-22-rotated-pole-data-on-the-native-grid" title="Link to this heading">¶</a></h2>
+<p>This plot shows some rotated pole data on the native grid. Notice the way that the longitude lines are warped away from the centre of the plot.  Data over the equatorial regions show little of this warping.</p>
+<a class="reference internal image-reference" href="_images/fig22.png"><img alt="_images/fig22.png" src="_images/fig22.png" style="width: 517.4px; height: 399.88px;" /></a>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
+<span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
+<span class="n">f</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/rgp.nc&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">cscale</span><span class="p">(</span><span class="s1">&#39;plasma&#39;</span><span class="p">)</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">mapset</span><span class="p">(</span><span class="n">proj</span><span class="o">=</span><span class="s1">&#39;rotated&#39;</span><span class="p">)</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="example-23-overlaying-vectors-over-a-rotated-pole-data-plot">
+<h2>Example 23 - Overlaying vectors over a rotated pole data plot<a class="headerlink" href="#example-23-overlaying-vectors-over-a-rotated-pole-data-plot" title="Link to this heading">¶</a></h2>
+<p>In this plot a cylindrical projection plot of rotated pole data is overlayed with wind vectors.</p>
+<div class="line-block">
+<div class="line">Care is needed when making vector plots as the vectors can be of two forms:</div>
+<div class="line">a) eastward wind and westward wind are relative to longitude and latitude axes</div>
+<div class="line">b) x-wind and y-wind are relative to the rotated pole axes</div>
+</div>
+<p>Here we have eastward and westward wind so these can be plotted as normal over a cylindrical projection.  For
+the case of data in case b) above, the x-wind and y-wind will need to be appropriately rotated onto a cylindrical grid.</p>
+<a class="reference internal image-reference" href="_images/fig23.png"><img alt="_images/fig23.png" src="_images/fig23.png" style="width: 493.48px; height: 318.76px;" /></a>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
+<span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
+
+<span class="n">f</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/20160601-05T0000Z_INCOMPASS_km4p4_uv_RH_500.nc&#39;</span><span class="p">)</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">mapset</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">35</span><span class="p">)</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">levs</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="n">extend</span><span class="o">=</span><span class="s1">&#39;neither&#39;</span><span class="p">)</span>
+
+<span class="n">cfp</span><span class="o">.</span><span class="n">gopen</span><span class="p">()</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">lines</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">vect</span><span class="p">(</span><span class="n">u</span><span class="o">=</span><span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">v</span><span class="o">=</span><span class="n">f</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">stride</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">key_length</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">gclose</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+<div class="line"><br /></div>
+</div>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+<h3><a href="index.html">Homepage</a><p></h3>
+<h5><a href="gallery.html">Gallery</a><p></h5>
+<h5><a href="user_guide.html">User Guide</a><p></h5>
+<h5><a href="training.html">Training material</a><p></h5>
+<h5><a href="routines.html">Routines</a><p></h5>
+<h5><a href="internal_routines.html">Routines - internal</a><p></h5>
+<h5><a href="advanced.html">Advanced Use</a><p></h5>
+<h5><a href="versions.html">Versions</a><p></h5>
+<h5><a href="issues.html">Issues</a><p></h5>
+<h5><a href="download.html">Download/Install</a><p></h5>
+<h5><a href="license.html">License</a><p></h5>
+<h5><a href="older_documentation.html">Older documentation</a><p></h5>
+<h5><a href="search.html">Search</a><p></h5>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="nav-item nav-item-0"><a href="index.html">cf-plot 3.3.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Rotated pole plots</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2024, Sadie Bartholomew.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    </div>
+  </body>
+</html>

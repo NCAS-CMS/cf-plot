@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>version 1.5 changes &#8212; cf-plot 3.3.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/classic.css?v=97decc96" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=eafc0fe6" />
+    
+    <script src="_static/documentation_options.js?v=3eb8911e"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="nav-item nav-item-0"><a href="index.html">cf-plot 3.3.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">version 1.5 changes</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="version-1-5-changes">
+<span id="version-1-5"></span><h1>version 1.5 changes<a class="headerlink" href="#version-1-5-changes" title="Link to this heading">¶</a></h1>
+<p>This is a rolling bug/feature fix version.</p>
+<section id="fix-colour-bar-mislabelling">
+<h2>1. Fix colour bar mislabelling<a class="headerlink" href="#fix-colour-bar-mislabelling" title="Link to this heading">¶</a></h2>
+<p>The colorbar can sometimes be mislabelled when using unusual manual labels.</p>
+<p>cfp.levs(manual=[-1, 1, 10000, 20000, 30000, 40000, 50000, 60000])
+will give the correct contour lines and labels but incorrect colorbar labels.  The color bar labels will
+be 0, 2, 10001, 20001, 30001, 40001, 50001, 60001 and a +1 will appear next to the color bar label.</p>
+<p>It looks like this is an intentional behaviour of the code for colorbar and is correct but not what is required. The cf-plot code was changed to substitute the correct colorbar labels for the ones that colorbar thinks it should use.</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
+</pre></div>
+</div>
+</div></blockquote>
+</section>
+<section id="incorrect-plot-limits-for-multiple-plots">
+<h2>2. Incorrect plot limits for multiple plots<a class="headerlink" href="#incorrect-plot-limits-for-multiple-plots" title="Link to this heading">¶</a></h2>
+<p>A longitude-latitude plot followed by a latitude-pressure plot on the same page gives incorrect plot limits for the second plot.</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
+</pre></div>
+</div>
+</div></blockquote>
+</section>
+<section id="bug-in-longitude-wrapping">
+<h2>3. Bug in longitude wrapping<a class="headerlink" href="#bug-in-longitude-wrapping" title="Link to this heading">¶</a></h2>
+<p>Non global data in longitude-latitude causes a crash in the longitude wrapping section</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
+</pre></div>
+</div>
+</div></blockquote>
+</section>
+<section id="non-global-longitude-latitude-data-is-plotted-on-a-global-grid">
+<h2>4. Non-global longitude/latitude data is plotted on a global grid<a class="headerlink" href="#non-global-longitude-latitude-data-is-plotted-on-a-global-grid" title="Link to this heading">¶</a></h2>
+<p>The default cylindirical projection limits of -180 to 180 in longitude and -90 to 90 in latitude are used for all map plots.  This needs changing to be the limits of the data in these cases.</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
+</pre></div>
+</div>
+</div></blockquote>
+</section>
+<section id="automatic-colour-scales-bug">
+<h2>5. Automatic colour scales bug<a class="headerlink" href="#automatic-colour-scales-bug" title="Link to this heading">¶</a></h2>
+<p>Automatic colour scales are broken.  Remove call to cscale() in gpos.</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
+</pre></div>
+</div>
+</div></blockquote>
+</section>
+<section id="colorbar-labels-overwrite-each-other">
+<h2>6. Colorbar labels overwrite each other<a class="headerlink" href="#colorbar-labels-overwrite-each-other" title="Link to this heading">¶</a></h2>
+<p>Colour bar labels overwite each other when large number of contour levels are used or when more plot columns are used.   Include code to take account of these based on the total number of characters in the contour labels and the number of
+columns.  If the user hasn't supplied a value for colorbar_label_skip to the con routine then the calculated value is
+used.  The labels used will start at the lowest for a continuous data set and from zero for a diverging one.</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
+</pre></div>
+</div>
+</div></blockquote>
+</section>
+<section id="latitude-vs-log-pressure-plot-axes-cause-an-abort">
+<h2>7. Latitude vs log pressure plot axes cause an abort<a class="headerlink" href="#latitude-vs-log-pressure-plot-axes-cause-an-abort" title="Link to this heading">¶</a></h2>
+<p>Latitude vs log pressure plot axes cause an abort due to zero being used for the top of the atmosphere.  Line of code inadvertently deleted but this is now back in place.</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
+</pre></div>
+</div>
+</div></blockquote>
+</section>
+<section id="a-cf-field-list-with-one-field-is-rejected-by-cf-plot-before-plotting">
+<h2>8. A CF field list with one field is rejected by cf-plot before plotting<a class="headerlink" href="#a-cf-field-list-with-one-field-is-rejected-by-cf-plot-before-plotting" title="Link to this heading">¶</a></h2>
+<p>Code changed to check and pass the field for plotting.</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
+</pre></div>
+</div>
+</div></blockquote>
+</section>
+<section id="added-longitude-height-plots">
+<h2>9. Added longitude height plots<a class="headerlink" href="#added-longitude-height-plots" title="Link to this heading">¶</a></h2>
+<p>Longitude-height plots were missing from cf_data_assign and from the contouring routine.
+These have now been added.</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
+</pre></div>
+</div>
+</div></blockquote>
+</section>
+<section id="documentation-change">
+<h2>10. Documentation change<a class="headerlink" href="#documentation-change" title="Link to this heading">¶</a></h2>
+<p>The web and user guide documentation has chaged so that the examples reference data in cfplot_data.  This is so the gallery examples work as written and to prevent multiple copies of the example data being on local disks.</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
+</pre></div>
+</div>
+</div></blockquote>
+</section>
+<section id="reset-command">
+<h2>11. Reset command<a class="headerlink" href="#reset-command" title="Link to this heading">¶</a></h2>
+<p>A reset command was added to the code to reset all the graphics options in one step.  Use cfp.reset().</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Added</span> <span class="n">to</span> <span class="n">code</span>
+</pre></div>
+</div>
+</div></blockquote>
+</section>
+<section id="internal-work-on-axes-command">
+<h2>12: Internal work on axes command<a class="headerlink" href="#internal-work-on-axes-command" title="Link to this heading">¶</a></h2>
+<p>A lot of internal work was done on the axes command to make it write the passed data into the plotvars array.
+The data from here then superceeds any automatically generated axis labels.</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Added</span> <span class="n">to</span> <span class="n">code</span>
+</pre></div>
+</div>
+</div></blockquote>
+</section>
+<section id="setvars-command-added">
+<h2>13. Setvars command added<a class="headerlink" href="#setvars-command-added" title="Link to this heading">¶</a></h2>
+<p>A new command called setvars was added to the code.  This is used to set various common plotting options.
+Options are:</p>
+<blockquote>
+<div><blockquote>
+<div><div class="line-block">
+<div class="line">file=None - output file name</div>
+<div class="line">text_fontsize=None - text fontsize, default=11</div>
+<div class="line">title_fontsize=None - title fontsize, default=15</div>
+<div class="line">axis_label_fontsize=None - default=11</div>
+<div class="line">text_fontweight='normal' - text fontweight</div>
+<div class="line">title_fontweight='normal' - title fontweight</div>
+<div class="line">axis_label_fontweight='normal' - axis fontweight</div>
+<div class="line">fontweight='normal' - all above fontweights</div>
+<div class="line">continent_thickness=None - default=1.5</div>
+<div class="line">continent_color=None - default='k' (black)</div>
+</div>
+</div></blockquote>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Added</span> <span class="n">to</span> <span class="n">code</span>
+</pre></div>
+</div>
+</div></blockquote>
+</section>
+<section id="reduced-longitude-grid-not-plotted-correctly">
+<h2>14. Reduced longitude grid not plotted correctly<a class="headerlink" href="#reduced-longitude-grid-not-plotted-correctly" title="Link to this heading">¶</a></h2>
+<p>A reduced longitude grid isn't plotted correctly due to a bug in
+the calculation of the lonrange variable.</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
+</pre></div>
+</div>
+</div></blockquote>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+<h3><a href="index.html">Homepage</a><p></h3>
+<h5><a href="gallery.html">Gallery</a><p></h5>
+<h5><a href="user_guide.html">User Guide</a><p></h5>
+<h5><a href="training.html">Training material</a><p></h5>
+<h5><a href="routines.html">Routines</a><p></h5>
+<h5><a href="internal_routines.html">Routines - internal</a><p></h5>
+<h5><a href="advanced.html">Advanced Use</a><p></h5>
+<h5><a href="versions.html">Versions</a><p></h5>
+<h5><a href="issues.html">Issues</a><p></h5>
+<h5><a href="download.html">Download/Install</a><p></h5>
+<h5><a href="license.html">License</a><p></h5>
+<h5><a href="older_documentation.html">Older documentation</a><p></h5>
+<h5><a href="search.html">Search</a><p></h5>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="nav-item nav-item-0"><a href="index.html">cf-plot 3.3.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">version 1.5 changes</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2024, Sadie Bartholomew.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    </div>
+  </body>
+</html>

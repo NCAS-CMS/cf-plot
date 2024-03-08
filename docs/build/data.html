@@ -1,0 +1,208 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Passing data to cf-plot &#8212; cf-plot 3.0.5 documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="nav-item nav-item-0"><a href="index.html">cf-plot 3.0.5 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="passing-data-to-cf-plot">
+<h1>Passing data to cf-plot<a class="headerlink" href="#passing-data-to-cf-plot" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="using-cf-python-cf-compliant-data">
+<h2>Using cf-python - cf compliant data<a class="headerlink" href="#using-cf-python-cf-compliant-data" title="Permalink to this headline">¶</a></h2>
+<p>Data is generally passed to cf-plot via cf-python as a 2-dimensional field.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
+<span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
+<span class="n">f</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/ggap.nc&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>f is now an list of 4 fields.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="o">&lt;</span><span class="n">CF</span> <span class="n">Field</span><span class="p">:</span> <span class="n">air_temperature</span><span class="p">(</span><span class="n">time</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">pressure</span><span class="p">(</span><span class="mi">23</span><span class="p">),</span> <span class="n">latitude</span><span class="p">(</span><span class="mi">160</span><span class="p">),</span> <span class="n">longitude</span><span class="p">(</span><span class="mi">320</span><span class="p">))</span> <span class="n">K</span><span class="o">&gt;</span><span class="p">,</span>
+ <span class="o">&lt;</span><span class="n">CF</span> <span class="n">Field</span><span class="p">:</span> <span class="n">eastward_wind</span><span class="p">(</span><span class="n">time</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">pressure</span><span class="p">(</span><span class="mi">23</span><span class="p">),</span> <span class="n">latitude</span><span class="p">(</span><span class="mi">160</span><span class="p">),</span> <span class="n">longitude</span><span class="p">(</span><span class="mi">320</span><span class="p">))</span> <span class="n">m</span> <span class="n">s</span><span class="o">**-</span><span class="mi">1</span><span class="o">&gt;</span><span class="p">,</span>
+ <span class="o">&lt;</span><span class="n">CF</span> <span class="n">Field</span><span class="p">:</span> <span class="n">geopotential</span><span class="p">(</span><span class="n">time</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">pressure</span><span class="p">(</span><span class="mi">23</span><span class="p">),</span> <span class="n">latitude</span><span class="p">(</span><span class="mi">160</span><span class="p">),</span> <span class="n">longitude</span><span class="p">(</span><span class="mi">320</span><span class="p">))</span> <span class="n">m</span><span class="o">**</span><span class="mi">2</span> <span class="n">s</span><span class="o">**-</span><span class="mi">2</span><span class="o">&gt;</span><span class="p">,</span>
+ <span class="o">&lt;</span><span class="n">CF</span> <span class="n">Field</span><span class="p">:</span> <span class="n">northward_wind</span><span class="p">(</span><span class="n">time</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">pressure</span><span class="p">(</span><span class="mi">23</span><span class="p">),</span> <span class="n">latitude</span><span class="p">(</span><span class="mi">160</span><span class="p">),</span> <span class="n">longitude</span><span class="p">(</span><span class="mi">320</span><span class="p">))</span> <span class="n">m</span> <span class="n">s</span><span class="o">**-</span><span class="mi">1</span><span class="o">&gt;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>To contour data a 2 dimensional field is needed. In the case below we select the 500mb temperature with the cf subspace method.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">pressure</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
+<span class="o">&lt;</span><span class="n">CF</span> <span class="n">Field</span><span class="p">:</span> <span class="n">air_temperature</span><span class="p">(</span><span class="n">time</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">pressure</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">latitude</span><span class="p">(</span><span class="mi">160</span><span class="p">),</span> <span class="n">longitude</span><span class="p">(</span><span class="mi">320</span><span class="p">))</span> <span class="n">K</span><span class="o">&gt;</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">pressure</span><span class="o">=</span><span class="mi">500</span><span class="p">))</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="_images/data_fig1.png"><img alt="_images/data_fig1.png" src="_images/data_fig1.png" style="width: 494.5px; height: 301.0px;" /></a>
+<p>To mean the field use the cf collapse function:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span> <span class="s1">&#39;mean&#39;</span><span class="p">,</span><span class="s1">&#39;longitude&#39;</span><span class="p">)</span>
+<span class="o">&lt;</span><span class="n">CF</span> <span class="n">Field</span><span class="p">:</span> <span class="n">air_temperature</span><span class="p">(</span><span class="n">time</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">pressure</span><span class="p">(</span><span class="mi">23</span><span class="p">),</span> <span class="n">latitude</span><span class="p">(</span><span class="mi">160</span><span class="p">),</span> <span class="n">longitude</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span> <span class="n">K</span><span class="o">&gt;</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span> <span class="s1">&#39;mean&#39;</span><span class="p">,</span><span class="s1">&#39;longitude&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="_images/data_fig2.png"><img alt="_images/data_fig2.png" src="_images/data_fig2.png" style="width: 510.5px; height: 328.5px;" /></a>
+</div>
+<div class="section" id="using-cf-plot-with-non-cf-compliant-data">
+<h2>Using cf-plot with non-cf compliant data<a class="headerlink" href="#using-cf-plot-with-non-cf-compliant-data" title="Permalink to this headline">¶</a></h2>
+<p>Although newer model and reanalyis products are generally cf compliant there is a considerable amount of data being used that is of varying degrees of cf compliance.</p>
+<div class="section" id="example-1">
+<h3>Example 1<a class="headerlink" href="#example-1" title="Permalink to this headline">¶</a></h3>
+<p>In this locally processed ERA40 reanalysis field there is a distinct lack of standard names.  Even the long names are somewhat terse - p for pressure for example.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">f</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/ggap.nc&#39;</span><span class="p">)[</span><span class="mi">2</span><span class="p">]</span>
+<span class="n">f</span>
+<span class="o">&lt;</span><span class="n">CF</span> <span class="n">Field</span><span class="p">:</span> <span class="n">geopotential</span><span class="p">(</span><span class="n">time</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">pressure</span><span class="p">(</span><span class="mi">23</span><span class="p">),</span> <span class="n">latitude</span><span class="p">(</span><span class="mi">160</span><span class="p">),</span> <span class="n">longitude</span><span class="p">(</span><span class="mi">320</span><span class="p">))</span> <span class="n">m</span><span class="o">**</span><span class="mi">2</span> <span class="n">s</span><span class="o">**-</span><span class="mi">2</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>We can still slice and plot the data by inspecting the dimensions of the field:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">f</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+<span class="p">{</span><span class="s1">&#39;dim2&#39;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">CF</span> <span class="n">DimensionCoordinate</span><span class="p">:</span> <span class="n">latitude</span><span class="p">(</span><span class="mi">160</span><span class="p">)</span> <span class="n">degrees_north</span><span class="o">&gt;</span><span class="p">,</span>
+ <span class="s1">&#39;dim3&#39;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">CF</span> <span class="n">DimensionCoordinate</span><span class="p">:</span> <span class="n">longitude</span><span class="p">(</span><span class="mi">320</span><span class="p">)</span> <span class="n">degrees_east</span><span class="o">&gt;</span><span class="p">,</span>
+ <span class="s1">&#39;dim0&#39;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">CF</span> <span class="n">DimensionCoordinate</span><span class="p">:</span> <span class="n">time</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="n">days</span> <span class="n">since</span> <span class="mi">1964</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">21</span> <span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="o">&gt;</span><span class="p">,</span>
+ <span class="s1">&#39;dim1&#39;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">CF</span> <span class="n">DimensionCoordinate</span><span class="p">:</span> <span class="n">pressure</span><span class="p">(</span><span class="mi">23</span><span class="p">)</span> <span class="n">mbar</span><span class="o">&gt;</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>We see that dim1 is the pressure coordinate and can select the 700mb level and contour that.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">f</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="s1">&#39;dim1&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">array</span>
+<span class="n">array</span><span class="p">([</span> <span class="mf">1000.</span><span class="p">,</span>   <span class="mf">925.</span><span class="p">,</span>   <span class="mf">850.</span><span class="p">,</span>   <span class="mf">775.</span><span class="p">,</span>   <span class="mf">700.</span><span class="p">,</span>   <span class="mf">600.</span><span class="p">,</span>   <span class="mf">500.</span><span class="p">,</span>   <span class="mf">400.</span><span class="p">,</span>
+        <span class="mf">300.</span><span class="p">,</span>   <span class="mf">250.</span><span class="p">,</span>   <span class="mf">200.</span><span class="p">,</span>   <span class="mf">150.</span><span class="p">,</span>   <span class="mf">100.</span><span class="p">,</span>    <span class="mf">70.</span><span class="p">,</span>    <span class="mf">50.</span><span class="p">,</span>    <span class="mf">30.</span><span class="p">,</span>
+        <span class="mf">20.</span><span class="p">,</span>    <span class="mf">10.</span><span class="p">,</span>     <span class="mf">7.</span><span class="p">,</span>     <span class="mf">5.</span><span class="p">,</span>     <span class="mf">3.</span><span class="p">,</span>     <span class="mf">2.</span><span class="p">,</span>     <span class="mf">1.</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">float32</span><span class="p">)</span>
+
+
+<span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">dim1</span><span class="o">=</span><span class="mi">700</span><span class="p">)</span>
+<span class="o">&lt;</span><span class="n">CF</span> <span class="n">Field</span><span class="p">:</span> <span class="n">geopotential</span><span class="p">(</span><span class="n">time</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">pressure</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">latitude</span><span class="p">(</span><span class="mi">160</span><span class="p">),</span> <span class="n">longitude</span><span class="p">(</span><span class="mi">320</span><span class="p">))</span> <span class="n">m</span><span class="o">**</span><span class="mi">2</span> <span class="n">s</span><span class="o">**-</span><span class="mi">2</span><span class="o">&gt;</span>
+
+
+<span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">dim1</span><span class="o">=</span><span class="mi">700</span><span class="p">))</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="_images/data_fig3.png"><img alt="_images/data_fig3.png" src="_images/data_fig3.png" style="width: 494.5px; height: 302.0px;" /></a>
+</div>
+<div class="section" id="example-2">
+<h3>Example 2<a class="headerlink" href="#example-2" title="Permalink to this headline">¶</a></h3>
+<p>In this dataset there are neither standard or long names.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">f</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/gdata.nc&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="o">&lt;</span><span class="n">CF</span> <span class="n">Field</span><span class="p">:</span> <span class="n">ncvar</span><span class="p">:</span><span class="n">temp</span><span class="p">(</span><span class="n">ncvar</span><span class="p">:</span><span class="n">p</span><span class="p">(</span><span class="mi">22</span><span class="p">),</span> <span class="n">ncvar</span><span class="p">:</span><span class="n">lat</span><span class="p">(</span><span class="mi">73</span><span class="p">),</span> <span class="n">ncvar</span><span class="p">:</span><span class="n">lon</span><span class="p">(</span><span class="mi">145</span><span class="p">))</span> <span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>We can still slice and plot the data as below.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">f</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+<span class="p">{</span><span class="s1">&#39;dim2&#39;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">CF</span> <span class="n">DimensionCoordinate</span><span class="p">:</span> <span class="n">ncvar</span><span class="p">:</span><span class="n">lon</span><span class="p">(</span><span class="mi">145</span><span class="p">)</span><span class="o">&gt;</span><span class="p">,</span>
+<span class="s1">&#39;dim0&#39;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">CF</span> <span class="n">DimensionCoordinate</span><span class="p">:</span> <span class="n">ncvar</span><span class="p">:</span><span class="n">p</span><span class="p">(</span><span class="mi">22</span><span class="p">)</span><span class="o">&gt;</span><span class="p">,</span>
+<span class="s1">&#39;dim1&#39;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">CF</span> <span class="n">DimensionCoordinate</span><span class="p">:</span> <span class="n">ncvar</span><span class="p">:</span><span class="n">lat</span><span class="p">(</span><span class="mi">73</span><span class="p">)</span><span class="o">&gt;</span><span class="p">}</span>
+
+<span class="n">f</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="s1">&#39;dim0&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">array</span>
+<span class="n">array</span><span class="p">([</span>  <span class="mf">1.00000000e+03</span><span class="p">,</span>   <span class="mf">7.00000000e+02</span><span class="p">,</span>   <span class="mf">5.00000000e+02</span><span class="p">,</span>
+      <span class="mf">3.20000000e+02</span><span class="p">,</span>   <span class="mf">2.15000000e+02</span><span class="p">,</span>   <span class="mf">1.50000000e+02</span><span class="p">,</span>
+      <span class="mf">1.00000000e+02</span><span class="p">,</span>   <span class="mf">7.00000000e+01</span><span class="p">,</span>   <span class="mf">5.00000000e+01</span><span class="p">,</span>
+      <span class="mf">3.20000000e+01</span><span class="p">,</span>   <span class="mf">2.00000000e+01</span><span class="p">,</span>   <span class="mf">1.50000000e+01</span><span class="p">,</span>
+      <span class="mf">1.00000000e+01</span><span class="p">,</span>   <span class="mf">7.00000000e+00</span><span class="p">,</span>   <span class="mf">5.00000000e+00</span><span class="p">,</span>
+      <span class="mf">3.20000005e+00</span><span class="p">,</span>   <span class="mf">2.00000000e+00</span><span class="p">,</span>   <span class="mf">1.50000000e+00</span><span class="p">,</span>
+      <span class="mf">1.00000000e+00</span><span class="p">,</span>   <span class="mf">6.99999988e-01</span><span class="p">,</span>   <span class="mf">5.00000000e-01</span><span class="p">,</span>
+      <span class="mf">3.00000012e-01</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">float32</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>So to plot the 1000mb temperature we would use:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">dim0</span><span class="o">=</span><span class="mi">1000</span><span class="p">))</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="_images/data_fig4.png"><img alt="_images/data_fig4.png" src="_images/data_fig4.png" style="width: 494.5px; height: 299.5px;" /></a>
+<div class="line-block">
+<div class="line"><br /></div>
+<div class="line"><br /></div>
+<div class="line"><br /></div>
+</div>
+</div>
+</div>
+<div class="section" id="passing-data-via-arrays">
+<h2>Passing data via arrays<a class="headerlink" href="#passing-data-via-arrays" title="Permalink to this headline">¶</a></h2>
+<p>cf-plot can also make contour and vector plots by passing data arrays.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
+<span class="kn">from</span> <span class="nn">netCDF4</span> <span class="k">import</span> <span class="n">Dataset</span> <span class="k">as</span> <span class="n">ncfile</span>
+<span class="n">nc</span> <span class="o">=</span> <span class="n">ncfile</span><span class="p">(</span><span class="s1">&#39;cfplot_data/tas_A1.nc&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">lons</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">][:]</span>
+<span class="n">lats</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">][:]</span>
+<span class="n">temp</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;tas&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">,:,:]</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="o">=</span><span class="n">temp</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">lons</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">lats</span><span class="p">)</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="_images/data_fig5.png"><img alt="_images/data_fig5.png" src="_images/data_fig5.png" style="width: 498.5px; height: 314.5px;" /></a>
+<p>The contouring routine doesn't know that the data passed is a map plot. This can be explicitly set with the ptype flag to con.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="o">=</span><span class="n">temp</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">lons</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">lats</span><span class="p">,</span> <span class="n">ptype</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="_images/data_fig6.png"><img alt="_images/data_fig6.png" src="_images/data_fig6.png" style="width: 494.5px; height: 287.0px;" /></a>
+<p>Other types of plot are:</p>
+<div class="line-block">
+<div class="line">ptype=2  - latitude - pressure/height plot</div>
+<div class="line">ptype=3  - longitude - pressure/height plot</div>
+<div class="line">ptype=4  - longitude - time plot</div>
+<div class="line">ptype=5  - latitude - time plot</div>
+<div class="line">ptype=6  - rotated pole plot</div>
+<div class="line">ptype=7  - time - pressure/height plot</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+<h3><a href="http://ajheaps.github.io/cf-plot/#">Homepage</a><p></h3>
+<h5><a href="http://ajheaps.github.io/cf-plot/gallery.html">Gallery</a><p></h5>
+<h5><a href="http://ajheaps.github.io/cf-plot/user_guide.html">User Guide</a><p></h5>
+<h5><a href="http://ajheaps.github.io/cf-plot/training.html">Training material</a><p></h5>
+<h5><a href="http://ajheaps.github.io/cf-plot/data.html">Data input</a><p></h5>
+<h5><a href="http://ajheaps.github.io/cf-plot/routines.html">Routines</a><p></h5>
+<h5><a href="http://ajheaps.github.io/cf-plot/internal_routines.html">Routines - internal</a><p></h5>
+<h5><a href="http://ajheaps.github.io/cf-plot/advanced.html">Advanced Use</a><p></h5>
+<h5><a href="http://ajheaps.github.io/cf-plot/versions.html">Versions</a><p></h5>
+<h5><a href="http://ajheaps.github.io/cf-plot/issues.html">Issues</a><p></h5>
+<h5><a href="http://ajheaps.github.io/cf-plot/download.html">Download/Install</a><p></h5>
+<h5><a href="http://ajheaps.github.io/cf-plot/license.html">License</a><p></h5>
+<h5><a href="http://ajheaps.github.io/cf-plot/older_documentation.html">Older documentation</a><p></h5>
+<h5><a href="http://ajheaps.github.io/cf-plot/search.html">Search</a><p></h5>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="nav-item nav-item-0"><a href="index.html">cf-plot 3.0.5 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Andy Heaps.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.1.2.
+    </div>
+  </body>
+</html>

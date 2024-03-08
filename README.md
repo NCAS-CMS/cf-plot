@@ -4,7 +4,7 @@
 
 ### Overview
 
-![cf-plot example gallery of plots](docs/media/cf_gallery_image.png "Examples Gallery of plots made with the cf-plot library")
+![cf-plot example gallery of plots](docs/source/images/cf_gallery_image.png "Examples Gallery of plots made with the cf-plot library")
 
 **cf-plot allows you to produce and customise publication-quality contour,
 vector, line and more plots with the power of Python,
@@ -54,8 +54,7 @@ See [the cf-plot homepage](http://ajheaps.github.io/cf-plot)
 To install cf-plot with its required dependencies, you can use `pip`:
 
 ```bash
-pip install cf-python
-pip install cf-plot
+pip install cf-python cf-plot
 ```
 
 or you can use `conda` (or similar package managers such
