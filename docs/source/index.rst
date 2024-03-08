@@ -34,7 +34,7 @@ Examples Gallery
 A gallery of outputs made with cf-plot, showcasing a range of plotting possibilities with links to relevant documentation pages and to example code, can be found on this dedicated page within the documentation, as illustrated in the (static) image at the top of this document.
 Documentation
 
-See the cf-plot homepage (http://ajheaps.github.io/cf-plot) for the full online documentation.
+See the cf-plot homepage (https://ncas-cms.github.io/cf-plot/build/index.html) for the full online documentation.
 
 ############
 Installation
@@ -52,7 +52,7 @@ or you can use conda (or similar package managers such as mamba) as follows (or 
 
    conda install -c ncas -c conda-forge cf-python cf-plot udunits2
 
-More detail about installation is provided on the installation page (http://ajheaps.github.io/cf-plot/download.html) of the documentation.
+More detail about installation is provided on the installation page (https://ncas-cms.github.io/cf-plot/build/download.html) of the documentation.
 
 ############
 Contributing
@@ -66,4 +66,4 @@ Contributing guidelines will be added to the repository shortly.
 Help: Issues, Questions, Feature Requests, etc.
 ###############################################
 
-For any queries, see the guidance page (http://ajheaps.github.io/cf-plot/issues.html).
+For any queries, see the guidance page (https://ncas-cms.github.io/cf-plot/build/issues.html).
