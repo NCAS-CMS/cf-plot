@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>pcon &#8212; cf-plot 3.3.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/classic.css?v=97decc96" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=eafc0fe6" />
+    
+    <script src="_static/documentation_options.js?v=3eb8911e"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="nav-item nav-item-0"><a href="index.html">cf-plot 3.3.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">pcon</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="pcon">
+<h1>pcon<a class="headerlink" href="#pcon" title="Link to this heading">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="cfplot.pcon">
+<span class="sig-prename descclassname"><span class="pre">cfplot.</span></span><span class="sig-name descname"><span class="pre">pcon</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mb</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">km</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">7.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cfplot.html#pcon"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfplot.pcon" title="Link to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">pcon is a function for converting pressure to height in kilometers and</div>
+<div class="line">vice-versa. This function uses the equation P=P0exp(-z/H) to translate</div>
+<div class="line">between pressure and height. In pcon the surface pressure P0 is set to</div>
+<div class="line">1000.0mb and the scale height H is set to 7.0. The value of H can vary</div>
+<div class="line">from 6.0 in the polar regions to 8.5 in the tropics as well as</div>
+<div class="line">seasonally. The value of P0 could also be said to be 1013.25mb rather</div>
+<div class="line">than 1000.0mb.</div>
+</div>
+<div class="line-block">
+<div class="line">As this relationship is approximate:</div>
+<div class="line">(i) Only use this for making the axis labels on y axis pressure plots</div>
+<div class="line">(ii) Put the converted axis on the right hand side to indicate that</div>
+<div class="line-block">
+<div class="line">this isn't the primary unit of measure</div>
+</div>
+</div>
+<div class="line-block">
+<div class="line">print cfp.pcon(mb=[1000, 300, 100, 30, 10, 3, 1, 0.3])</div>
+<div class="line">[0. 8.42780963 16.11809565 24.54590528 32.2361913</div>
+<div class="line-block">
+<div class="line">40.66400093 48.35428695, 56.78209658]</div>
+</div>
+</div>
+<div class="line-block">
+<div class="line">mb=None - input pressure</div>
+<div class="line">km=None - input height</div>
+<div class="line">h=7.0 - default value for h</div>
+<div class="line">p0=1000 - default value for p0</div>
+</div>
+<dl class="field-list">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">pressure(mb) if height(km) input,</div>
+<div class="line">height(km) if pressure(mb) input</div>
+</div>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+<h3><a href="index.html">Homepage</a><p></h3>
+<h5><a href="gallery.html">Gallery</a><p></h5>
+<h5><a href="user_guide.html">User Guide</a><p></h5>
+<h5><a href="training.html">Training material</a><p></h5>
+<h5><a href="routines.html">Routines</a><p></h5>
+<h5><a href="internal_routines.html">Routines - internal</a><p></h5>
+<h5><a href="advanced.html">Advanced Use</a><p></h5>
+<h5><a href="versions.html">Versions</a><p></h5>
+<h5><a href="issues.html">Issues</a><p></h5>
+<h5><a href="download.html">Download/Install</a><p></h5>
+<h5><a href="license.html">License</a><p></h5>
+<h5><a href="older_documentation.html">Older documentation</a><p></h5>
+<h5><a href="search.html">Search</a><p></h5>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="nav-item nav-item-0"><a href="index.html">cf-plot 3.3.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">pcon</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2024, Sadie Bartholomew.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    </div>
+  </body>
+</html>

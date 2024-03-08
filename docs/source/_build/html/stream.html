@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>stream &#8212; cf-plot 3.3.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/classic.css?v=97decc96" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=eafc0fe6" />
+    
+    <script src="_static/documentation_options.js?v=3eb8911e"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="nav-item nav-item-0"><a href="index.html">cf-plot 3.3.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">stream</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="stream">
+<h1>stream<a class="headerlink" href="#stream" title="Link to this heading">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="cfplot.stream">
+<span class="sig-prename descclassname"><span class="pre">cfplot.</span></span><span class="sig-name descname"><span class="pre">stream</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">u</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">density</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">linewidth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arrowsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arrowstyle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minlength</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxlength</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xaxis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yaxis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xticks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xticklabels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yticks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yticklabels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zorder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cfplot.html#stream"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfplot.stream" title="Link to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">stream - plot a streamplot which is used to show fluid flow and 2D field gradients</div>
+<div class="line"><br /></div>
+<div class="line">u=None - u wind</div>
+<div class="line">v=None - v wind</div>
+<div class="line">x=None - x locations of u and v</div>
+<div class="line">y=None - y locations of u and v</div>
+<div class="line">density=None - controls the closeness of streamlines. When density = 1,</div>
+<div class="line-block">
+<div class="line">the domain is divided into a 30x30 grid</div>
+</div>
+<div class="line">linewidth=None - the width of the stream lines. With a 2D array the line width</div>
+<div class="line-block">
+<div class="line">can be varied across the grid. The array must have the same shape</div>
+<div class="line">as u and v</div>
+</div>
+<div class="line">color=None - the streamline color</div>
+<div class="line">arrowsize=None - scaling factor for the arrow size</div>
+<div class="line">arrowstyle=None - arrow style specification</div>
+<div class="line">minlength=None - minimum length of streamline in axes coordinates</div>
+<div class="line">maxlength=None - maximum length of streamline in axes coordinates</div>
+<div class="line">axes=True - plot x and y axes</div>
+<div class="line">xaxis=True - plot xaxis</div>
+<div class="line">yaxis=True - plot y axis</div>
+<div class="line">xticks=None - xtick positions</div>
+<div class="line">xticklabels=None - xtick labels</div>
+<div class="line">yticks=None - y tick positions</div>
+<div class="line">yticklabels=None - ytick labels</div>
+<div class="line">xlabel=None - label for x axis</div>
+<div class="line">ylabel=None - label for y axis</div>
+<div class="line">title=None - title for plot</div>
+<div class="line">zorder=None - plotting order</div>
+<div class="line"><br /></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+<div class="line-block">
+<div class="line"><br /></div>
+<div class="line"><br /></div>
+<div class="line"><br /></div>
+</div>
+</dd></dl>
+
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+<h3><a href="index.html">Homepage</a><p></h3>
+<h5><a href="gallery.html">Gallery</a><p></h5>
+<h5><a href="user_guide.html">User Guide</a><p></h5>
+<h5><a href="training.html">Training material</a><p></h5>
+<h5><a href="routines.html">Routines</a><p></h5>
+<h5><a href="internal_routines.html">Routines - internal</a><p></h5>
+<h5><a href="advanced.html">Advanced Use</a><p></h5>
+<h5><a href="versions.html">Versions</a><p></h5>
+<h5><a href="issues.html">Issues</a><p></h5>
+<h5><a href="download.html">Download/Install</a><p></h5>
+<h5><a href="license.html">License</a><p></h5>
+<h5><a href="older_documentation.html">Older documentation</a><p></h5>
+<h5><a href="search.html">Search</a><p></h5>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="nav-item nav-item-0"><a href="index.html">cf-plot 3.3.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">stream</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2024, Sadie Bartholomew.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    </div>
+  </body>
+</html>

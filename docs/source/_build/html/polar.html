@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Polar stereographic projection &#8212; cf-plot 3.3.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/classic.css?v=97decc96" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=eafc0fe6" />
+    
+    <script src="_static/documentation_options.js?v=3eb8911e"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="nav-item nav-item-0"><a href="index.html">cf-plot 3.3.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Polar stereographic projection</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="polar-stereographic-projection">
+<span id="polar"></span><h1>Polar stereographic projection<a class="headerlink" href="#polar-stereographic-projection" title="Link to this heading">¶</a></h1>
+<section id="example-4-north-pole">
+<h2>Example 4 - north pole<a class="headerlink" href="#example-4-north-pole" title="Link to this heading">¶</a></h2>
+<a class="reference internal image-reference" href="_images/fig4.png"><img alt="_images/fig4.png" src="_images/fig4.png" style="width: 372.24px; height: 327.8px;" /></a>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
+<span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
+<span class="n">f</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/ggap.nc&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">mapset</span><span class="p">(</span><span class="n">proj</span><span class="o">=</span><span class="s1">&#39;npstere&#39;</span><span class="p">)</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">pressure</span><span class="o">=</span><span class="mi">500</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+<div class="line"><br /></div>
+<div class="line"><br /></div>
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="example-5-south-pole-with-30-degrees-south-being-the-latitude-plot-limit">
+<h2>Example 5 - south pole with 30 degrees south being the latitude plot limit<a class="headerlink" href="#example-5-south-pole-with-30-degrees-south-being-the-latitude-plot-limit" title="Link to this heading">¶</a></h2>
+<a class="reference internal image-reference" href="_images/fig5.png"><img alt="_images/fig5.png" src="_images/fig5.png" style="width: 371.36px; height: 325.16px;" /></a>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
+<span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
+<span class="n">f</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/ggap.nc&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">mapset</span><span class="p">(</span><span class="n">proj</span><span class="o">=</span><span class="s1">&#39;spstere&#39;</span><span class="p">,</span> <span class="n">boundinglat</span><span class="o">=-</span><span class="mi">30</span><span class="p">,</span> <span class="n">lon_0</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">pressure</span><span class="o">=</span><span class="mi">500</span><span class="p">))</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+<h3><a href="index.html">Homepage</a><p></h3>
+<h5><a href="gallery.html">Gallery</a><p></h5>
+<h5><a href="user_guide.html">User Guide</a><p></h5>
+<h5><a href="training.html">Training material</a><p></h5>
+<h5><a href="routines.html">Routines</a><p></h5>
+<h5><a href="internal_routines.html">Routines - internal</a><p></h5>
+<h5><a href="advanced.html">Advanced Use</a><p></h5>
+<h5><a href="versions.html">Versions</a><p></h5>
+<h5><a href="issues.html">Issues</a><p></h5>
+<h5><a href="download.html">Download/Install</a><p></h5>
+<h5><a href="license.html">License</a><p></h5>
+<h5><a href="older_documentation.html">Older documentation</a><p></h5>
+<h5><a href="search.html">Search</a><p></h5>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="nav-item nav-item-0"><a href="index.html">cf-plot 3.3.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Polar stereographic projection</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2024, Sadie Bartholomew.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    </div>
+  </body>
+</html>

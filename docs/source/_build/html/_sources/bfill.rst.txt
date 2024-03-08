@@ -1,0 +1,4 @@
+bfill
+*****
+
+.. autofunction:: cfplot.bfill

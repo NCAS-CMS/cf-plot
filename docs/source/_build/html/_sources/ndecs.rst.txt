@@ -1,0 +1,4 @@
+ndecs
+*****
+
+.. autofunction:: cfplot.ndecs

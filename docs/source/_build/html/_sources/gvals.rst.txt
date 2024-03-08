@@ -1,0 +1,4 @@
+gvals
+*****
+
+.. autofunction:: cfplot.gvals

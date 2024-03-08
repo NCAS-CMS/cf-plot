@@ -1,0 +1,4 @@
+vloc
+****
+
+.. autofunction:: cfplot.vloc

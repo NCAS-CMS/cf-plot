@@ -1,0 +1,4 @@
+cfplot_colorbar
+***************
+
+.. autofunction:: cfplot.cfplot_colorbar

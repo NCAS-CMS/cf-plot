@@ -1,0 +1,97 @@
+Vectors
+*******
+
+Example 13 - vector plot
+------------------------
+
+.. image::  images/fig13.png
+   :scale: 44% 
+
+::
+
+   import cf, cfplot as cfp
+   f=cf.read('/opt/graphics/cfplot_data/ggap.nc')
+   u=f[1].subspace(pressure=500)
+   v=f[3].subspace(pressure=500)
+   cfp.vect(u=u, v=v, key_length=10, scale=100, stride=5)
+
+
+
+
+Example 14 - vector plot with colour contour map 
+------------------------------------------------
+
+.. image::  images/fig14.png
+   :scale: 44% 
+
+::
+
+   import cf, cfplot as cfp
+   f=cf.read('/opt/graphics/cfplot_data/ggap.nc')
+   u=f[1].subspace(pressure=500)
+   v=f[3].subspace(pressure=500)
+   t=f[0].subspace(pressure=500)
+
+   cfp.gopen()
+   cfp.mapset(lonmin=10, lonmax=120, latmin=-30, latmax=30)
+   cfp.levs(min=254, max=270, step=1)
+   cfp.con(t)
+   cfp.vect(u=u, v=v, key_length=10, scale=50, stride=2)
+   cfp.gclose()
+
+
+| 
+
+In this plot we overlay a vector plot on a contoured temperature field.
+
+
+
+Example 15 - polar vector plot
+------------------------------
+
+.. image::  images/fig15.png
+   :scale: 44% 
+
+
+::
+
+    import cf, cfplot as cfp
+
+    u=cf.read('/opt/graphics/cfplot_data/ggap.nc')[1]
+    v=cf.read('/opt/graphics/cfplot_data/ggap.nc')[3]
+    u=u.subspace(Z=500)
+    v=v.subspace(Z=500)
+
+    cfp.mapset(proj='npstere')
+    cfp.vect(u=u, v=v, key_length=10, scale=100, pts=40, title='Polar plot with regular point distribution')
+
+
+
+
+Example 16 - zonal vector plot
+------------------------------
+
+.. image::  images/fig16.png
+   :scale: 44% 
+
+::
+
+    import cf, cfplot as cfp
+
+    c=cf.read_field('/opt/graphics/cfplot_data/vaAMIPlcd_DJF.nc')
+    c=c.subspace(Y=cf.wi(-60,60))
+    c=c.subspace(X=cf.wi(80,160))  
+    c=c.collapse('T: mean X: mean')
+
+    g=cf.read_field('/opt/graphics/cfplot_data/wapAMIPlcd_DJF.nc')    
+    g=g.subspace(Y=cf.wi(-60,60))
+    g=g.subspace(X=cf.wi(80,160))
+    g=g.collapse('T: mean X: mean')
+
+    cfp.vect(u=c, v=-g, key_length=[5, 0.05], scale=[20,0.2], title='DJF', key_location=[0.95, -0.05])
+
+
+Here we make a zonal mean vector plot with different vector keys and scaling factors for the X and Y directions.
+
+
+

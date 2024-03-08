@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>version 3.2 changes &#8212; cf-plot 3.3.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/classic.css?v=97decc96" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=eafc0fe6" />
+    
+    <script src="_static/documentation_options.js?v=3eb8911e"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="nav-item nav-item-0"><a href="index.html">cf-plot 3.3.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">version 3.2 changes</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="version-3-2-changes">
+<span id="version-3-2"></span><h1>version 3.2 changes<a class="headerlink" href="#version-3-2-changes" title="Link to this heading">¶</a></h1>
+<section id="initial-rolling-bugfix-release">
+<h2>0. Initial rolling bugfix release<a class="headerlink" href="#initial-rolling-bugfix-release" title="Link to this heading">¶</a></h2>
+<blockquote>
+<div><p>Initial rolling bugfix release</p>
+</div></blockquote>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
+</pre></div>
+</div>
+</section>
+<section id="cfp-bfill-ugrid-code-not-checking-for-no-points-returned-from-np-where">
+<h2>1. cfp.bfill_ugrid - code not checking for no points returned from np.where<a class="headerlink" href="#cfp-bfill-ugrid-code-not-checking-for-no-points-returned-from-np-where" title="Link to this heading">¶</a></h2>
+<p>Code didn't check for no points returned from a where statement causing a crash in certain circumstances.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
+</pre></div>
+</div>
+</section>
+<section id="cfp-bfill-ugrid-update-for-shapely-2-0">
+<h2>2. cfp.bfill_ugrid - update for shapely 2.0<a class="headerlink" href="#cfp-bfill-ugrid-update-for-shapely-2-0" title="Link to this heading">¶</a></h2>
+<p>Update shapely polygon coordinate extraction so code will work with shapely 2.0 +:
+# Original method for shapely &lt; 2.0
+#coords = geom_cyl[0].exterior.coords[:]</p>
+<p># New method for shapely 2.0 +
+poly_mapped = sgeom.mapping(geom_cyl.geoms[0])
+coords = list(poly_mapped['coordinates'][0])</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
+</pre></div>
+</div>
+</section>
+<section id="cfp-con-line-labels-not-honoured">
+<h2>3. cfp.con - line_labels not honoured<a class="headerlink" href="#cfp-con-line-labels-not-honoured" title="Link to this heading">¶</a></h2>
+<p>cfp.con : line_labels were not honoured.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
+</pre></div>
+</div>
+</section>
+<section id="cfp-levs-need-all-of-min-max-and-step-to-define-a-set-of-contour-levels">
+<h2>4. cfp.levs - need all of min, max and step to define a set of contour levels<a class="headerlink" href="#cfp-levs-need-all-of-min-max-and-step-to-define-a-set-of-contour-levels" title="Link to this heading">¶</a></h2>
+<p>cfp.levs - need all of min, max and step to define a set of contour levels</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
+</pre></div>
+</div>
+</section>
+<section id="cfp-cbar-error-when-position-is-specified">
+<h2>5.  cfp.cbar : error when position is specified<a class="headerlink" href="#cfp-cbar-error-when-position-is-specified" title="Link to this heading">¶</a></h2>
+<p>cfp.cbar : error when position is specified</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
+</pre></div>
+</div>
+</section>
+<section id="cfp-dim-titles-titles-and-plot-positioning-issues-fixed">
+<h2>6. cfp.dim_titles - titles and plot positioning issues fixed<a class="headerlink" href="#cfp-dim-titles-titles-and-plot-positioning-issues-fixed" title="Link to this heading">¶</a></h2>
+<p>cfp.dim_titles - titles and plot positioning issues were fixed.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
+</pre></div>
+</div>
+</section>
+<section id="cfp-stipple-not-working-for-robinson-projection">
+<h2>7. cfp.stipple - not working for Robinson projection<a class="headerlink" href="#cfp-stipple-not-working-for-robinson-projection" title="Link to this heading">¶</a></h2>
+<p>cfp.stipple wasn't working for the Robinson projection.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
+</pre></div>
+</div>
+</section>
+<section id="cfp-titles-auxiliary-axes-sometimes-caused-an-issue">
+<h2>8. cfp.titles - auxiliary axes sometimes caused an issue<a class="headerlink" href="#cfp-titles-auxiliary-axes-sometimes-caused-an-issue" title="Link to this heading">¶</a></h2>
+<p>cfp-titles - auxiliary axes sometimes caused an issue.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
+</pre></div>
+</div>
+</section>
+<section id="cfp-mapset-when-a-cyl-mapset-is-done-the-colour-scale-should-be-relevant-for-the-area-selected">
+<h2>9. cfp.mapset - when a cyl mapset is done the colour scale should be relevant for the area selected<a class="headerlink" href="#cfp-mapset-when-a-cyl-mapset-is-done-the-colour-scale-should-be-relevant-for-the-area-selected" title="Link to this heading">¶</a></h2>
+<p>cfp.mapset - when a cyl mapset is done the colour scale should be relevant for the area selected.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Changed</span>
+</pre></div>
+</div>
+</section>
+<section id="id1">
+<h2>10. cfp.levs - need all of min, max and step to define a set of contour levels<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
+<p>A new check was put into cfp.levs requiring all of min, max and step to define a set of contour levels.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Changed</span>
+</pre></div>
+</div>
+</section>
+<section id="cfp-titles-plot-labelling-too-far-to-the-right-for-contour-and-vector-plots">
+<h2>11. cfp.titles - plot labelling too far to the right for contour and vector plots<a class="headerlink" href="#cfp-titles-plot-labelling-too-far-to-the-right-for-contour-and-vector-plots" title="Link to this heading">¶</a></h2>
+<p>cfp.titles - plot labelling too far to the right for contour and vector plots</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
+</pre></div>
+</div>
+</section>
+<section id="cfp-mapset-robinson-projection-changes">
+<h2>12. cfp.mapset - robinson projection changes<a class="headerlink" href="#cfp-mapset-robinson-projection-changes" title="Link to this heading">¶</a></h2>
+<p>Robinson projection changes:</p>
+<p>add titles code, add stipples, colorbar fails, colorbar in incorrect place</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Changed</span>
+</pre></div>
+</div>
+</section>
+<section id="cfp-generate-titles-error-if-cell-method-has-no-associated-axis">
+<h2>13. cfp.generate_titles - error if cell_method has no associated axis<a class="headerlink" href="#cfp-generate-titles-error-if-cell-method-has-no-associated-axis" title="Link to this heading">¶</a></h2>
+<p>An error occured if a cell_method had no associated axis.  A check was put in place to detect this.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Changed</span>
+</pre></div>
+</div>
+</section>
+<section id="cfp-con-ugrid-keyword-changed-to-irregular">
+<h2>14. cfp.con - ugrid keyword changed to irregular<a class="headerlink" href="#cfp-con-ugrid-keyword-changed-to-irregular" title="Link to this heading">¶</a></h2>
+<p>In cfp.con the ugrid keyword was changed to irregular as this is more appropriate.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Changed</span>
+</pre></div>
+</div>
+</section>
+<section id="cfp-bfill-map-transform-now-passed-through-to-blockfill-fast-code">
+<h2>15. cfp.bfill - map transform now passed through to blockfill_fast code<a class="headerlink" href="#cfp-bfill-map-transform-now-passed-through-to-blockfill-fast-code" title="Link to this heading">¶</a></h2>
+<p>In cfp.bfill the map transform wasn;t passed through to the blockfill_fast code and this has now been corrected.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
+</pre></div>
+</div>
+</section>
+<section id="cfp-con-new-test-for-spatially-irregular-data-points">
+<h2>16. cfp.con - new test for spatially irregular data points<a class="headerlink" href="#cfp-con-new-test-for-spatially-irregular-data-points" title="Link to this heading">¶</a></h2>
+<p>A new test was introduced to cfp.con to check whether the data points are spatially irregular.  This is done with the
+x points comparing the size of x to the size of the unique x points.  User specified values of True or False override
+the new internal test.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Changed</span>
+</pre></div>
+</div>
+</section>
+<section id="cfp-levs-np-int-depreciated-change">
+<h2>17. cfp.levs - np.int depreciated change<a class="headerlink" href="#cfp-levs-np-int-depreciated-change" title="Link to this heading">¶</a></h2>
+<p>np.int has been depreciated in newer versions of numpy and was just an alias for int.  In cfp.levs the np.int was changed to np.int64 to match the surrounding code.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Changed</span>
+</pre></div>
+</div>
+</section>
+<section id="cfp-bfill-change-of-level-inclusion">
+<h2>18. cfp.bfill - change of level inclusion<a class="headerlink" href="#cfp-bfill-change-of-level-inclusion" title="Link to this heading">¶</a></h2>
+<p>cfp.bfill has been changed in the blockfill=True section.  The code now matches blockfill=fast in that the fill is between matching the first level and below the second level.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Changed</span>
+</pre></div>
+</div>
+</section>
+<section id="cfp-lineplot-error-in-calculating-user-time-limits-for-the-x-axis">
+<h2>19. cfp.lineplot - error in calculating user time limits for the x-axis<a class="headerlink" href="#cfp-lineplot-error-in-calculating-user-time-limits-for-the-x-axis" title="Link to this heading">¶</a></h2>
+<p>cfp.lineplot - an error in calculating user time limits for the x-axis has been fixed.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
+</pre></div>
+</div>
+</section>
+<section id="cfp-setvars-grid-true-didn-t-work-on-a-cylindrical-map">
+<h2>20. cfp.setvars - grid=True didn't work on a cylindrical map<a class="headerlink" href="#cfp-setvars-grid-true-didn-t-work-on-a-cylindrical-map" title="Link to this heading">¶</a></h2>
+<p>cfp.setvars - grid=True doesn't work on a cylindrical projection map.  The grid keyword was moved into the cfp.con code as this was more appropriate.  The grid_zorder parameter controls the plotting order of the grid and has a default value of 100.  A calling sequence to draw dashed grey lines of thickness every 10 degrees in longitude and latitude would be:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
+<span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
+<span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/tas_A1.nc&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">setvars</span><span class="p">(</span><span class="n">grid_x_spacing</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">grid_y_spacing</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">grid_colour</span><span class="o">=</span><span class="s1">&#39;grey&#39;</span><span class="p">,</span> <span class="n">grid_thickness</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">grid_linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span> <span class="p">)</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">15</span><span class="p">),</span> <span class="n">lines</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">grid</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
+</pre></div>
+</div>
+</section>
+<section id="cfp-setvars-feature-zorder-parameter-added">
+<h2>21. cfp.setvars - feature_zorder parameter added<a class="headerlink" href="#cfp-setvars-feature-zorder-parameter-added" title="Link to this heading">¶</a></h2>
+<p>In cfp.setvars the feature_zorder parameter was added.  This controls the plotting order of the features and has a default value of 99.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Changed</span>
+</pre></div>
+</div>
+</section>
+<section id="cfp-con-blockfill-and-blockfill-fast-for-2d-data-added">
+<h2>22. cfp.con - blockfill and blockfill_fast for 2D data added<a class="headerlink" href="#cfp-con-blockfill-and-blockfill-fast-for-2d-data-added" title="Link to this heading">¶</a></h2>
+<p>cfp.con - blockfill and blockfill_fast for 2D data added.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Added</span>
+</pre></div>
+</div>
+</section>
+<section id="cfp-con-code-to-subspace-field-to-user-defined-map-removed">
+<h2>23. cfp.con - code to subspace field to user defined map removed<a class="headerlink" href="#cfp-con-code-to-subspace-field-to-user-defined-map-removed" title="Link to this heading">¶</a></h2>
+<p>cfp-con - code to subspace field to user defined map removed as this was causing issues with blank plots.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Removed</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+<h3><a href="index.html">Homepage</a><p></h3>
+<h5><a href="gallery.html">Gallery</a><p></h5>
+<h5><a href="user_guide.html">User Guide</a><p></h5>
+<h5><a href="training.html">Training material</a><p></h5>
+<h5><a href="routines.html">Routines</a><p></h5>
+<h5><a href="internal_routines.html">Routines - internal</a><p></h5>
+<h5><a href="advanced.html">Advanced Use</a><p></h5>
+<h5><a href="versions.html">Versions</a><p></h5>
+<h5><a href="issues.html">Issues</a><p></h5>
+<h5><a href="download.html">Download/Install</a><p></h5>
+<h5><a href="license.html">License</a><p></h5>
+<h5><a href="older_documentation.html">Older documentation</a><p></h5>
+<h5><a href="search.html">Search</a><p></h5>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="nav-item nav-item-0"><a href="index.html">cf-plot 3.3.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">version 3.2 changes</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2024, Sadie Bartholomew.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    </div>
+  </body>
+</html>
