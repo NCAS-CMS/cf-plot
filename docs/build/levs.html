@@ -35,46 +35,6 @@
             
   <section id="levs">
 <span id="id1"></span><h1>levs<a class="headerlink" href="#levs" title="Link to this heading">¶</a></h1>
-<dl class="py function">
-<dt class="sig sig-object py" id="cfplot.levs">
-<span class="sig-prename descclassname"><span class="pre">cfplot.</span></span><span class="sig-name descname"><span class="pre">levs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">manual</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'both'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cfplot.html#levs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfplot.levs" title="Link to this definition">¶</a></dt>
-<dd><div class="line-block">
-<div class="line">The levs command manually sets the contour levels.</div>
-</div>
-<div class="line-block">
-<div class="line">min=min - minimum level</div>
-<div class="line">max=max - maximum level</div>
-<div class="line">step=step - step between levels</div>
-<div class="line">manual= manual - set levels manually</div>
-<div class="line">extend='neither', 'both', 'min', or 'max' - colour bar limit extensions</div>
-</div>
-<div class="line-block">
-<div class="line">Use the levs command when a predefined set of levels is required. The</div>
-<div class="line">min, max and step parameters can be used to define a set of levels.</div>
-<div class="line">These can take integer or floating point numbers. If the min and max are specified</div>
-<div class="line">then a step also needs to be specified.</div>
-</div>
-<div class="line-block">
-<div class="line">If just the step is specified then cf-plot will internally try to define a reasonable set</div>
-<div class="line">of levels.</div>
-</div>
-<div class="line-block">
-<div class="line">If colour filled contours are plotted then the default is to extend</div>
-<div class="line">the minimum and maximum contours coloured for out of range values</div>
-<div class="line">- extend='both'.</div>
-</div>
-<div class="line-block">
-<div class="line">Once a user call is made to levs the levels are persistent.</div>
-<div class="line">i.e. the next plot will use the same set of levels.</div>
-<div class="line">Use levs() to reset to undefined levels.</div>
-</div>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>None</p>
-</dd>
-</dl>
-</dd></dl>
-
 </section>
 
 

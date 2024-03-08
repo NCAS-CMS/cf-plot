@@ -68,7 +68,8 @@
 <span class="n">conda</span> <span class="n">install</span> <span class="o">-</span><span class="n">c</span> <span class="n">conda</span><span class="o">-</span><span class="n">forge</span> <span class="n">mpich</span> <span class="n">esmpy</span>
 </pre></div>
 </div>
-<p>The first line installs cf-python and cf-plot.  The second installs esmpy, together with the netcdf-fortran and mpich requirements, which cf-python uses for regriding data.  Note that Matplotlib 3 was used in the development of cf-plot and it is advised to upgrade to this version if you are not using it already.  Using Matplotlib 2 can give different plot spacings and results such as missing contour plots.</p>
+<p>The first line installs cf-python and cf-plot.
+The second line is optional and installs esmpy, together with the netcdf-fortran and mpich requirements, which cf-python uses for regridding data.  Note that Matplotlib 3 was used in the development of cf-plot and it is advised to upgrade to this version if you are not using it already.  Using Matplotlib 2 can give different plot spacings and results such as missing contour plots.</p>
 </section>
 <section id="windows">
 <h3>Windows<a class="headerlink" href="#windows" title="Link to this heading">¶</a></h3>
@@ -82,8 +83,7 @@
 <section id="other-install-methods-for-linux-and-mac-osx">
 <h3>Other install methods for Linux and Mac OSX<a class="headerlink" href="#other-install-methods-for-linux-and-mac-osx" title="Link to this heading">¶</a></h3>
 <p>Using pip:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">cf</span><span class="o">-</span><span class="n">python</span>
-<span class="n">pip</span> <span class="n">install</span> <span class="n">cf</span><span class="o">-</span><span class="n">plot</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">cf</span><span class="o">-</span><span class="n">python</span> <span class="n">cf</span><span class="o">-</span><span class="n">plot</span>
 </pre></div>
 </div>
 <p>If you are upgrading the version of cf-python or cf-plot to the latest ones then add the --upgrade after the install above. A specific version can be installed using pip install cf-plot==3.0.20 for example.</p>
