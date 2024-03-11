@@ -36,7 +36,7 @@ setup(
     url = "http://ajheaps.github.io/cf-plot",
     license = "LICENSE.txt",
     description = "Climate contour, vector and line plots in Python",
-    long_description = open("README.txt").read(),
+    long_description = open("README.md").read(),
     long_description_content_type = "text/markdown"
 )
 

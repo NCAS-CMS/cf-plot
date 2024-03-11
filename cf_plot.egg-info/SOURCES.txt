@@ -1,6 +1,6 @@
+LICENSE.txt
 MANIFEST.in
 README.md
-README.txt
 setup.py
 cf_plot.egg-info/PKG-INFO
 cf_plot.egg-info/SOURCES.txt

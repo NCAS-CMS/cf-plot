@@ -43,7 +43,8 @@ To install cf-plot on your own Linux PC or Mac download and install miniconda. O
    conda install -c conda-forge mpich esmpy
 
 
-The first line installs cf-python and cf-plot.  The second installs esmpy, together with the netcdf-fortran and mpich requirements, which cf-python uses for regriding data.  Note that Matplotlib 3 was used in the development of cf-plot and it is advised to upgrade to this version if you are not using it already.  Using Matplotlib 2 can give different plot spacings and results such as missing contour plots.
+The first line installs cf-python and cf-plot.
+The second line is optional and installs esmpy, together with the netcdf-fortran and mpich requirements, which cf-python uses for regridding data.  Note that Matplotlib 3 was used in the development of cf-plot and it is advised to upgrade to this version if you are not using it already.  Using Matplotlib 2 can give different plot spacings and results such as missing contour plots.
 
 
 
@@ -68,8 +69,7 @@ Using pip:
 
 ::
 
-   pip install cf-python
-   pip install cf-plot
+   pip install cf-python cf-plot
 
 If you are upgrading the version of cf-python or cf-plot to the latest ones then add the --upgrade after the install above. A specific version can be installed using pip install cf-plot==3.0.20 for example.
 
