@@ -1,4 +1,5 @@
 .. _graphs:
+
 Graphs
 ******
 

@@ -1,4 +1,5 @@
 .. _rotated_pole:
+
 Rotated pole plots
 ******************
 

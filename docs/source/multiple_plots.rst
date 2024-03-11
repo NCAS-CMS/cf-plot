@@ -1,4 +1,5 @@
 .. _multiple_plots:
+
 Multiple plots
 **************
 

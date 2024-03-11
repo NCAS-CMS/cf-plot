@@ -1,4 +1,5 @@
 .. _colour_scales:
+
 Colour scales
 *************
 

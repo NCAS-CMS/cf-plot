@@ -1,4 +1,5 @@
 .. _cylindrical:
+
 Cylindrical projection
 **********************
 

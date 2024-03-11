@@ -1,4 +1,5 @@
 .. _projections:
+
 Projections in cf-plot
 **********************
 
