@@ -50,8 +50,7 @@ to revert to the previous behaviour.
 .. image::  images/scale1_original.png
    :scale: 52%
 
-
-
+.. comment break to prevent indent below stopping image from rendering
 
  ::
 
@@ -95,7 +94,7 @@ Lambert conformal projections can now be cropped as in the following code:
 .. image::  images/cm.png
    :scale: 52% 
 
-
+.. comment break to prevent indent below stopping image from rendering
 
  ::
 
@@ -161,6 +160,7 @@ A new colour scale was added - brown to blue - BrBG.
 .. image::  images/colourscales/BrBG.png
    :scale: 52% 
 
+.. comment break to prevent indent below stopping image from rendering
 
  ::
 
