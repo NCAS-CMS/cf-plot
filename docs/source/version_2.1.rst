@@ -157,7 +157,7 @@ A new colour scale was added - brown to blue - BrBG.
 
 
 
-.. image::  images/colourscales/BrBG.png
+.. image::  images/colour_scales/BrBG.png
    :scale: 52% 
 
 .. comment break to prevent indent below stopping image from rendering
