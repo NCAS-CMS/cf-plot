@@ -4,7 +4,7 @@ Hovmuller plots
 ***************
 
 Example 10 - latitude-time
--------------------------
+--------------------------
 
 .. image::  images/fig10.png
    :scale: 52% 
