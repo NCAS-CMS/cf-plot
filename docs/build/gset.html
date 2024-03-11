@@ -35,6 +35,50 @@
             
   <section id="gset">
 <span id="id1"></span><h1>gset<a class="headerlink" href="#gset" title="Link to this heading">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="cfplot.gset">
+<span class="sig-prename descclassname"><span class="pre">cfplot.</span></span><span class="sig-name descname"><span class="pre">gset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ymin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ymax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlog</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylog</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_gset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">twinx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">twiny</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cfplot.html#gset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfplot.gset" title="Link to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Set plot limits for all non longitude-latitide plots.</div>
+<div class="line">xmin, xmax, ymin, ymax are all needed to set the plot limits.</div>
+<div class="line">Set xlog/ylog to True or 1 to get a log axis.</div>
+<div class="line"><br /></div>
+<div class="line">xmin=None - x minimum</div>
+<div class="line">xmax=None - x maximum</div>
+<div class="line">ymin=None - y minimum</div>
+<div class="line">ymax=None - y maximum</div>
+<div class="line">xlog=False - log x</div>
+<div class="line">ylog=False - log y</div>
+<div class="line">twinx=None - set to True to make a twin y axis plot</div>
+<div class="line">twiny=None - set to True to make a twin x axis plot</div>
+<div class="line"><br /></div>
+<div class="line">Once a user call is made to gset the plot limits are persistent.</div>
+<div class="line">i.e. the next plot will use the same set of plot limits.</div>
+<div class="line">Use gset() to reset to undefined plot limits i.e. the full range</div>
+<div class="line">of the data.</div>
+<div class="line"><br /></div>
+<div class="line">To set date axes use date strings i.e.</div>
+<div class="line">cfp.gset(xmin = '1970-1-1', xmax = '1999-12-31', ymin = 285,</div>
+<div class="line-block">
+<div class="line">ymax = 295)</div>
+<div class="line"><br /></div>
+</div>
+<div class="line">Note the correct date format is 'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM:SS'</div>
+<div class="line">anything else will give unexpected results.</div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+<div class="line-block">
+<div class="line"><br /></div>
+<div class="line"><br /></div>
+<div class="line"><br /></div>
+<div class="line"><br /></div>
+</div>
+</dd></dl>
+
 </section>
 
 

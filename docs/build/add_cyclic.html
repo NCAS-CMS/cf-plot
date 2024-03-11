@@ -35,6 +35,19 @@
             
   <section id="add-cyclic">
 <h1>add_cyclic<a class="headerlink" href="#add-cyclic" title="Link to this heading">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="cfplot.add_cyclic">
+<span class="sig-prename descclassname"><span class="pre">cfplot.</span></span><span class="sig-name descname"><span class="pre">add_cyclic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lons</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cfplot.html#add_cyclic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfplot.add_cyclic" title="Link to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">add_cyclic is a wrapper for cartopy_util.add_cyclic_point(field, lons)</div>
+<div class="line">This is needed for the case of when the longitudes are not evenly spaced</div>
+<div class="line">due to numpy rounding which causes an error from the cartopy wrapping routine.</div>
+<div class="line">In this case the longitudes are promoted to 64 bit and then rounded</div>
+<div class="line">to an appropriate number of decimal places before passing to the cartopy</div>
+<div class="line">add_cyclic routine.</div>
+</div>
+</dd></dl>
+
 </section>
 
 

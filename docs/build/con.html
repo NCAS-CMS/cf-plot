@@ -35,6 +35,162 @@
             
   <section id="con">
 <span id="id1"></span><h1>con<a class="headerlink" href="#con" title="Link to this heading">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="cfplot.con">
+<span class="sig-prename descclassname"><span class="pre">cfplot.</span></span><span class="sig-name descname"><span class="pre">con</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lines</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">line_labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colorbar_title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colorbar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colorbar_label_skip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ptype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">negative_linestyle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'solid'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blockfill</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zero_thick</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colorbar_shrink</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colorbar_orientation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colorbar_position</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlog</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylog</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xaxis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yaxis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xticks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xticklabels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yticks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yticklabels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'k'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">swap_axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">linewidths</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colorbar_text_up_down</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colorbar_fontsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colorbar_fontweight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colorbar_text_down_up</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colorbar_drawedges</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colorbar_fraction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colorbar_thick</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colorbar_anchor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colorbar_labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">linestyles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zorder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level_spacing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">irregular</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">face_lons</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">face_lats</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">face_connectivity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">titles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mytest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transform_first</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blockfill_fast</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nlevs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orca</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orca_skip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cfplot.html#con"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfplot.con" title="Link to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">con is the interface to contouring in cf-plot. The minimum use is con(f)</div>
+<div class="line">where f is a 2 dimensional array. If a cf field is passed then an</div>
+<div class="line">appropriate plot will be produced i.e. a longitude-latitude or</div>
+<div class="line">latitude-height plot for example. If a 2d numeric array is passed then</div>
+<div class="line">the optional arrays x and y can be used to describe the x and y data</div>
+<div class="line">point locations.</div>
+<div class="line"><br /></div>
+<div class="line">f - array to contour</div>
+<div class="line">x - x locations of data in f (optional)</div>
+<div class="line">y - y locations of data in f (optional)</div>
+<div class="line">fill=True - colour fill contours</div>
+<div class="line">lines=True - draw contour lines and labels</div>
+<div class="line">line_labels=True - label contour lines</div>
+<div class="line">title=title - title for the plot</div>
+<div class="line">ptype=0 - plot type - not needed for cf fields.</div>
+<div class="line-block">
+<div class="line">0 = no specific plot type,</div>
+<div class="line">1 = longitude-latitude,</div>
+<div class="line">2 = latitude - height,</div>
+<div class="line">3 = longitude - height,</div>
+<div class="line">4 = latitude - time,</div>
+<div class="line">5 = longitude - time</div>
+<div class="line">6 = rotated pole</div>
+</div>
+<div class="line">negative_linestyle='solid' - set to one of 'solid', 'dashed'</div>
+<div class="line">zero_thick=False - add a thick zero contour line. Set to 3 for example.</div>
+<div class="line">blockfill=False - set to True for a blockfill plot</div>
+<div class="line">colorbar_title=colbar_title - title for the colour bar</div>
+<div class="line">colorbar=True - add a colour bar if a filled contour plot</div>
+<div class="line">colorbar_label_skip=None - skip colour bar labels. Set to 2 to skip</div>
+<div class="line-block">
+<div class="line">every other label.</div>
+</div>
+<div class="line">colorbar_orientation=None - options are 'horizontal' and 'vertical'</div>
+<div class="line-block">
+<div class="line">The default for most plots is horizontal but</div>
+<div class="line">for polar stereographic plots this is vertical.</div>
+</div>
+<div class="line">colorbar_shrink=None - value to shrink the colorbar by.  If the colorbar</div>
+<div class="line-block">
+<div class="line">exceeds the plot area then values of 1.0, 0.55</div>
+<div class="line">or 0.5m may help it better fit the plot area.</div>
+</div>
+<div class="line">colorbar_position=None - position of colorbar</div>
+<div class="line-block">
+<div class="line">[xmin, ymin, x_extent,y_extent] in normalised</div>
+<div class="line">coordinates. Use when a common colorbar</div>
+<div class="line">is required for a set of plots. A typical set</div>
+<div class="line">of values would be [0.1, 0.05, 0.8, 0.02]</div>
+</div>
+<div class="line">colorbar_fontsize=None - text size for colorbar labels and title</div>
+<div class="line">colorbar_fontweight=None - font weight for colorbar labels and title</div>
+<div class="line">colorbar_text_up_down=False - if True horizontal colour bar labels alternate</div>
+<div class="line-block">
+<div class="line">above (start) and below the colour bar</div>
+</div>
+<div class="line">colorbar_text_down_up=False - if True horizontal colour bar labels alternate</div>
+<div class="line-block">
+<div class="line">below (start) and above the colour bar</div>
+</div>
+<div class="line">colorbar_drawedges=True - draw internal divisions in the colorbar</div>
+<div class="line">colorbar_fraction=None - space for the colorbar - default = 0.21, in normalised</div>
+<div class="line-block">
+<div class="line">coordinates</div>
+</div>
+<div class="line">colorbar_thick=None - thickness of the colorbar - default = 0.015, in normalised</div>
+<div class="line-block">
+<div class="line">coordinates</div>
+</div>
+<div class="line">colorbar_anchor=None - default=0.5 - anchor point of colorbar within the fraction space.</div>
+<div class="line-block">
+<div class="line">0.0 = close to plot, 1.0 = further away</div>
+</div>
+<div class="line">colorbar_labels=None - labels to use for colorbar.  The default is to use the contour</div>
+<div class="line-block">
+<div class="line">levels as labels</div>
+</div>
+<div class="line">colorbar_text_up_down=False - on a horizontal colorbar alternate the</div>
+<div class="line-block">
+<div class="line">labels top and bottom starting in the up position</div>
+</div>
+<div class="line">colorbar_text_down_up=False - on a horizontal colorbar alternate the</div>
+<div class="line-block">
+<div class="line">labels bottom and top starting in the bottom position</div>
+</div>
+<div class="line">colorbar_drawedges=True - draw internal delimeter lines in the colorbar</div>
+<div class="line">colors='k' - contour line colors - takes one or many values.</div>
+<div class="line">xlog=False - logarithmic x axis</div>
+<div class="line">ylog=False - logarithmic y axis</div>
+<div class="line">axes=True - plot x and y axes</div>
+<div class="line">xaxis=True - plot xaxis</div>
+<div class="line">yaxis=True - plot y axis</div>
+<div class="line">xticks=None - xtick positions</div>
+<div class="line">xticklabels=None - xtick labels</div>
+<div class="line">yticks=None - y tick positions</div>
+<div class="line">yticklabels=None - ytick labels</div>
+<div class="line">xlabel=None - label for x axis</div>
+<div class="line">ylabel=None - label for y axis</div>
+<div class="line">swap_axes=False - swap plotted axes - only valid for X, Y, Z vs T plots</div>
+<div class="line">verbose=None - change to 1 to get a verbose listing of what con</div>
+<div class="line-block">
+<div class="line">is doing</div>
+</div>
+<div class="line">linewidths=None - contour linewidths.  Either a single number for all</div>
+<div class="line-block">
+<div class="line">lines or array of widths</div>
+</div>
+<div class="line">linestyles=None - takes 'solid', 'dashed', 'dashdot' or 'dotted'</div>
+<div class="line">alpha=1.0 - transparency setting.  The default is no transparency.</div>
+<div class="line">zorder=1 - order of drawing</div>
+<div class="line">level_spacing=None - Default of 'linear' level spacing.  Also takes 'log', 'loglike',</div>
+<div class="line-block">
+<div class="line">'outlier' and 'inspect'</div>
+</div>
+<div class="line">irregular=None - flag for contouring irregular data</div>
+<div class="line">face_lons=None - longitude points for face vertices</div>
+<div class="line">face_lats=None - latitude points for face verticies</div>
+<div class="line">face_connectivity=None - connectivity for face verticies</div>
+<div class="line">titles=False - set to True to have a dimensions title</div>
+<div class="line">transform_first=None - Cartopy should transform the points before calling the contouring algorithm, </div>
+<div class="line-block">
+<div class="line">which can have a significant impact on speed (it is much faster to transform</div>
+<div class="line">points than it is to transform patches) If this is unset and the number of points</div>
+<div class="line">in the x direction is &gt; 400 then it is set to True.</div>
+</div>
+<div class="line">blockfill_fast=None - Use pcolormesh blockfill.  This is possibly less reliable that the usual code but is </div>
+<div class="line-block">
+<div class="line">faster for higher resolution datasets</div>
+</div>
+<div class="line">nlevs=False - Let Matplotlib work out the levels for the contour plot</div>
+<div class="line">orca=None - User specifies this is an orca tripolar grid.  Internally cf-plot tries to detect this by looking</div>
+<div class="line-block">
+<div class="line">for a single discontinuity in the logitude 2D array. If found a fix it make to the longitudes so</div>
+<div class="line">that they are no longer discontinuous.</div>
+</div>
+<div class="line">orca_skip=None - Only plot every nth grid point in the 2D longitude and latitude arrays.  This is useful for when </div>
+<div class="line-block">
+<div class="line">plotting his resolution data over the whole globe which would otherwise be very slow to visualize.</div>
+</div>
+<div class="line">grid=False - Draw a grid on the map using the parameters set by cfp.setvars.  Defaults are grid_x_spacing=60, </div>
+<div class="line-block">
+<div class="line">grid_y_spacing=30, grid_colour='k', grid_linestyle = '--', grid_thickness=1.0</div>
+<div class="line"><br /></div>
+</div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
 

@@ -35,6 +35,100 @@
             
   <section id="vect">
 <span id="id1"></span><h1>vect<a class="headerlink" href="#vect" title="Link to this heading">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="cfplot.vect">
+<span class="sig-prename descclassname"><span class="pre">cfplot.</span></span><span class="sig-name descname"><span class="pre">vect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">u</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stride</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ptype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">magmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.02</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">headwidth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">headlength</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">headaxislength</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pivot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'middle'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key_location</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0.95,</span> <span class="pre">-0.06]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key_show</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xaxis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yaxis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xticks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xticklabels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yticks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yticklabels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylog</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'k'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zorder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">titles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cfplot.html#vect"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfplot.vect" title="Link to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">vect - plot vectors</div>
+<div class="line"><br /></div>
+<div class="line">u=None - u wind</div>
+<div class="line">v=None - v wind</div>
+<div class="line">x=None - x locations of u and v</div>
+<div class="line">y=None - y locations of u and v</div>
+<div class="line">scale=None - data units per arrow length unit.  A smaller values gives</div>
+<div class="line-block">
+<div class="line">a larger vector. Generally takes one value but in the case</div>
+<div class="line">of two supplied values the second vector scaling applies to</div>
+<div class="line">the v field.</div>
+</div>
+<div class="line">stride=None - plot vector every stride points. Can take two values one</div>
+<div class="line-block">
+<div class="line">for x and one for y.</div>
+</div>
+<div class="line">pts=None - use bilinear interpolation to interpolate vectors onto a new</div>
+<div class="line-block">
+<div class="line">grid - takes one or two values.</div>
+<div class="line">If one value is passed then this is used for both the x and</div>
+<div class="line">y axes.</div>
+</div>
+<div class="line">magmin=None - don't plot any vects with less than this magnitude.</div>
+<div class="line">key_length=None - length of the key.  Generally takes one value but in</div>
+<div class="line-block">
+<div class="line">the case of two supplied values the second vector</div>
+<div class="line">scaling applies to the v field.</div>
+</div>
+<div class="line">key_label=None - label for the key. Generally takes one value but in the</div>
+<div class="line-block">
+<div class="line">case of two supplied values the second vector scaling</div>
+<div class="line">applies to the v field.</div>
+</div>
+<div class="line">key_location=[0.9, -0.06] - location of the vector key relative to the</div>
+<div class="line-block">
+<div class="line">plot in normalised coordinates.</div>
+</div>
+<div class="line">key_show=True - draw the key.  Set to False if not required.</div>
+<div class="line">ptype=0 - plot type - not needed for cf fields.</div>
+<div class="line-block">
+<div class="line">0 = no specific plot type,</div>
+<div class="line">1 = longitude-latitude,</div>
+<div class="line">2 = latitude - height,</div>
+<div class="line">3 = longitude - height,</div>
+<div class="line">4 = latitude - time,</div>
+<div class="line">5 = longitude - time</div>
+<div class="line">6 = rotated pole</div>
+<div class="line"><br /></div>
+</div>
+<div class="line">title=None - plot title</div>
+<div class="line">width=0.005 - shaft width in arrow units; default is 0.005 times the</div>
+<div class="line-block">
+<div class="line">width of the plot</div>
+</div>
+<div class="line">headwidth=3 - head width as multiple of shaft width, default is 3</div>
+<div class="line">headlength=5 - head length as multiple of shaft width, default is 5</div>
+<div class="line">headaxislength=4.5 - head length at shaft intersection, default is 4.5</div>
+<div class="line">pivot='middle' - the part of the arrow that is at the grid point; the</div>
+<div class="line-block">
+<div class="line">arrow rotates about this point
+takes 'tail', 'middle', 'tip'</div>
+</div>
+<div class="line">axes=True - plot x and y axes</div>
+<div class="line">xaxis=True - plot xaxis</div>
+<div class="line">yaxis=True - plot y axis</div>
+<div class="line">xticks=None - xtick positions</div>
+<div class="line">xticklabels=None - xtick labels</div>
+<div class="line">yticks=None - y tick positions</div>
+<div class="line">yticklabels=None - ytick labels</div>
+<div class="line">xlabel=None - label for x axis</div>
+<div class="line">ylabel=None - label for y axis</div>
+<div class="line">ylog=False - log y axis</div>
+<div class="line">color='k' - colour for the vectors - default is black.</div>
+<div class="line">zorder=3 - plotting order</div>
+<div class="line">titles=None - generate dimension and cell_methods titles for plot</div>
+<div class="line">alpha=1.0 - transparency setting.  The default is no transparency.</div>
+<div class="line"><br /></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+<div class="line-block">
+<div class="line"><br /></div>
+<div class="line"><br /></div>
+<div class="line"><br /></div>
+</div>
+</dd></dl>
+
 </section>
 
 
