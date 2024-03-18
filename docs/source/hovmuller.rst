@@ -1,3 +1,5 @@
+:orphan:
+
 .. _hovmuller:
 
 Hovmuller plots

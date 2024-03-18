@@ -1,3 +1,5 @@
+:orphan:
+
 .. _version_1.8:
 
 version 1.8 changes

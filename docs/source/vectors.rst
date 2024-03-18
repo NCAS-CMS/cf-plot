@@ -1,3 +1,5 @@
+:orphan:
+
 .. _vector:
 
 Vector and stream plots

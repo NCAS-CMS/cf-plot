@@ -1,3 +1,5 @@
+:orphan:
+
 cf-plot gallery
 ===============
 
