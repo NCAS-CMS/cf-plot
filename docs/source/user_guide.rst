@@ -484,7 +484,7 @@ Plot spacing options are located in **cfp.gopen**
 | hspace=None - height reserved for white space between subplots - default=0.2
 |
 |
-|and color bar spacings in **cfp.cbar**.
+| and color bar spacings in **cfp.cbar**.
 |
 | orientation - orientation 'horizontal' or 'vertical'
 | position - user specified colorbar position in normalised

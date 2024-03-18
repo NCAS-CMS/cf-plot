@@ -31,7 +31,8 @@ Example 22 - rotated pole data on the native grid
 This plot shows some rotated pole data on the native grid. Notice the way that the longitude lines are warped away from the centre of the plot.  Data over the equatorial regions show little of this warping.
 
 .. image::  images/fig22.png
-   :scale: 52% 
+   :scale: 52%
+
 ::
 
    import cf
