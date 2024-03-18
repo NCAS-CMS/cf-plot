@@ -1,6 +1,6 @@
 :orphan:
 
-.. _stipple:
+.. _stippleplots:
 
 Stipple plots
 *************

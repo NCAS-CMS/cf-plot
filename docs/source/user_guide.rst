@@ -13,9 +13,9 @@ cf-plot user guide
 |    contours_ - making contour plots
 |    vectors_ - plotting vectors
 |    multiple_  plots on a page and plot positioning
-|    trajectories_ - plotting trajectories
+|    trajectoriesUG_ - plotting trajectories
 |    significance_ - plots
-|    graphs_ - making graphs
+|    graphsUG_ - making graphs
 |    colour_ scales - using and changing colour scales
 |    
 |    appendixA_ - introduction to cf-python
@@ -580,7 +580,7 @@ colour bars on the plot with different colour scales and contour levels.
     cfp.gclose()
 
 
-.. _trajectories:
+.. _trajectoriesUG:
 
 ^^^^^^^^^^^^
 Trajectories
@@ -658,7 +658,7 @@ A stipple plot is usually used to show areas of significance such as 95% or grea
 |
 
 
-.. _graphs:
+.. _graphsUG:
 
 
 ^^^^^^^^^^^

@@ -37,7 +37,7 @@ cf-plot gallery
    :target: colour_scales.html
 
 :ref:`Vector plots <vector>` |
-:ref:`Stipple plots <stipple>` |
+:ref:`Stipple plots <stippleplots>` |
 :ref:`Multiple plots on a page<multiple_plots>` |
 :ref:`Colour scales <colour_scales>`
 
