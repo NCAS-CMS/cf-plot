@@ -1145,7 +1145,7 @@ scale44 .. image:: images/colour_scales/scale44.png
 Colour bars
 ^^^^^^^^^^^
 
-Colour bars are often associated with filled colour contour plots and the options for the colour bar are described in the :ref:`cbar<cbar>` .  If the colour bar options are changed within the call to **cfp.con** then prepend colorbar_ to the appropriate colour bar option.  cf-plot has used the American spelling for colorbar for compatability with the spelling and usage within the Matplotlib Python package.
+Colour bars are often associated with filled colour contour plots and the options for the colour bar are described in the :ref:`cbar<cbar>` .  If the colour bar options are changed within the call to **cfp.con** then prepend ``colorbar`` to the appropriate colour bar option.  cf-plot has used the American spelling for colorbar for compatability with the spelling and usage within the Matplotlib Python package.
 
 
 
