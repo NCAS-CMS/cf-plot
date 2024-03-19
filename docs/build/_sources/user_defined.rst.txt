@@ -1,3 +1,5 @@
+:orphan:
+
 .. _user_defined:
 
 User defined axes
