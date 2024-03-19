@@ -1,4 +1,7 @@
+:orphan:
+
 .. _advanced:
+
 Advanced Use
 ************
 

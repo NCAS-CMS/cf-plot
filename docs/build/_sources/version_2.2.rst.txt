@@ -1,4 +1,7 @@
+:orphan:
+
 .. _version_2.2:
+
 version 2.2 changes
 *******************
 

@@ -1,4 +1,7 @@
-.. _stipple:
+:orphan:
+
+.. _stippleplots:
+
 Stipple plots
 *************
 

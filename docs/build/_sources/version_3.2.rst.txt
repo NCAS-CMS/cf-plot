@@ -1,4 +1,7 @@
+:orphan:
+
 .. _version_3.2:
+
 version 3.2 changes
 *******************
 
@@ -179,7 +182,7 @@ An error occured if a cell_method had no associated axis.  A check was put in pl
 
 
 14. cfp.con - ugrid keyword changed to irregular
-===============================================
+================================================
 
 In cfp.con the ugrid keyword was changed to irregular as this is more appropriate.
 

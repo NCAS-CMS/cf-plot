@@ -1,4 +1,7 @@
+:orphan:
+
 .. _unstructured:
+
 Unstructured grids
 ******************
 

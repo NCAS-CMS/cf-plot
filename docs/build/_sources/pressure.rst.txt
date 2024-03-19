@@ -1,4 +1,7 @@
+:orphan:
+
 .. _pressure:
+
 Latitude / longitude - pressure
 *******************************
 

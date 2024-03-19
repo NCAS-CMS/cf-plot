@@ -1,4 +1,7 @@
+:orphan:
+
 .. _trajectories:
+
 Trajectories
 ************
 
@@ -136,9 +139,5 @@ Example 42a - intensity legend with lines
    cfp.traj(g, legend_lines=True,  linewidth=2, colorbar_title='Relative Vorticity (Hz) * 1e5')
 
 
-|
 Selecting legend_lines=True plots lines only and colours them according to the sum of the start and end point divided by two. This can be a useful option when there are lots of trajectories.
-
-|
-|
 

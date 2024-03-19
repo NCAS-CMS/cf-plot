@@ -1,4 +1,7 @@
+:orphan:
+
 .. _download:
+
 Download/Install
 ****************
 

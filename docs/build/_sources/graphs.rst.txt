@@ -1,4 +1,7 @@
+:orphan:
+
 .. _graphs:
+
 Graphs
 ******
 

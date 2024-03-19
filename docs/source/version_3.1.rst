@@ -1,4 +1,7 @@
+:orphan:
+
 .. _version_3.1:
+
 version 3.1 changes
 *******************
 
@@ -89,7 +92,7 @@ cf-python 3.8.0.  The longer form always works and so this has been adopted.
 
 
 10. cfp.gpos(1) causes stray box lines
-=====================================
+======================================
 
 
 When making multiple plots on a page calling cfp.gpos(1) causes stray box lines to be added to the first plot.
@@ -215,7 +218,7 @@ and another that isn't recogised as one of these.
  
  
 19. cfp.con - improved Z axis detection
-======================================
+=======================================
  
 The cf-plot find_dim_names routine was modified to use the cf-python get_data_axes method leading to more reliable Z axis detection when multiple Z axes
 are defined in the field.

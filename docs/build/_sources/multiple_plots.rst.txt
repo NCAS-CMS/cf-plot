@@ -1,4 +1,7 @@
+:orphan:
+
 .. _multiple_plots:
+
 Multiple plots
 **************
 

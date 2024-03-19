@@ -1,4 +1,7 @@
+:orphan:
+
 .. _training:
+
 Training material
 *****************
 

@@ -1,4 +1,7 @@
+:orphan:
+
 .. _colour_scales:
+
 Colour scales
 *************
 

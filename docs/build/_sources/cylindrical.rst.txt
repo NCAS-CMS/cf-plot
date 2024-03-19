@@ -1,4 +1,7 @@
+:orphan:
+
 .. _cylindrical:
+
 Cylindrical projection
 **********************
 

@@ -1,3 +1,5 @@
+:orphan:
+
 ******************
 cf-plot user guide
 ******************
@@ -11,9 +13,9 @@ cf-plot user guide
 |    contours_ - making contour plots
 |    vectors_ - plotting vectors
 |    multiple_  plots on a page and plot positioning
-|    trajectories_ - plotting trajectories
+|    trajectoriesUG_ - plotting trajectories
 |    significance_ - plots
-|    graphs_ - making graphs
+|    graphsUG_ - making graphs
 |    colour_ scales - using and changing colour scales
 |    
 |    appendixA_ - introduction to cf-python
@@ -482,7 +484,7 @@ Plot spacing options are located in **cfp.gopen**
 | hspace=None - height reserved for white space between subplots - default=0.2
 |
 |
-|and color bar spacings in **cfp.cbar**.
+| and color bar spacings in **cfp.cbar**.
 |
 | orientation - orientation 'horizontal' or 'vertical'
 | position - user specified colorbar position in normalised
@@ -578,7 +580,7 @@ colour bars on the plot with different colour scales and contour levels.
     cfp.gclose()
 
 
-.. _trajectories:
+.. _trajectoriesUG:
 
 ^^^^^^^^^^^^
 Trajectories
@@ -656,7 +658,7 @@ A stipple plot is usually used to show areas of significance such as 95% or grea
 |
 
 
-.. _graphs:
+.. _graphsUG:
 
 
 ^^^^^^^^^^^
@@ -1143,7 +1145,7 @@ scale44 .. image:: images/colour_scales/scale44.png
 Colour bars
 ^^^^^^^^^^^
 
-Colour bars are often associated with filled colour contour plots and the options for the colour bar are described in the :ref:`cbar<cbar>` .  If the colour bar options are changed within the call to **cfp.con** then prepend colorbar_ to the appropriate colour bar option.  cf-plot has used the American spelling for colorbar for compatability with the spelling and usage within the Matplotlib Python package.
+Colour bars are often associated with filled colour contour plots and the options for the colour bar are described in the :ref:`cbar<cbar>` .  If the colour bar options are changed within the call to **cfp.con** then prepend ``colorbar`` to the appropriate colour bar option.  cf-plot has used the American spelling for colorbar for compatability with the spelling and usage within the Matplotlib Python package.
 
 
 
