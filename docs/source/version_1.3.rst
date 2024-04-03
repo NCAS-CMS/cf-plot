@@ -13,7 +13,7 @@ More information is needed on the changes made between versions.  This is useful
 ::
 
    Changes made for new releases in the versions page from 1.3 forward have their own web page
-   referenced from the versions page. 
+   referenced from the versions page.
 
 
 
@@ -33,10 +33,10 @@ Work out which of the source __init__.py are used for version information and de
 ==============================
 
 ::
- 
+
    In cf-python the isbounded method was renamed to hasbounds.  Changed code to use the new method.
 
- 
+
 
 4. gvals bug
 ============
@@ -50,7 +50,7 @@ gives
 
 The result shouldn't have a value below 32400 and should start at 32400.
 
-:: 
+::
 
    Modified gvals routine to not change the step if mod is set to 0.
 
@@ -59,9 +59,9 @@ The result shouldn't have a value below 32400 and should start at 32400.
 5. Example 7 x-axis is labelled as degrees_north
 ================================================
 
-The various CF latitude names should be caught and the returned as 'latitude' 
+The various CF latitude names should be caught and the returned as 'latitude'
 
-:: 
+::
 
    Fixed.
 
@@ -70,8 +70,8 @@ The various CF latitude names should be caught and the returned as 'latitude'
 6. Plot limits bug
 ==================
 
-When plots is made with no user call to gset a zonal mean plot followed by a map plot 
-gives previous plot limits.  A call of gset() is needed before the call to gclose 
+When plots is made with no user call to gset a zonal mean plot followed by a map plot
+gives previous plot limits.  A call of gset() is needed before the call to gclose
 in con and vect routines.
 
 ::
@@ -95,7 +95,7 @@ This prevents the cfplot.py program from being used as a stand-alone program.
 8. Revamp colour scales page to use consistent set of images
 ============================================================
 
-The colour scales page had a set of scale images from a variety of sources.  
+The colour scales page had a set of scale images from a variety of sources.
 
 ::
 
@@ -116,7 +116,7 @@ The colour scales page had a set of scale images from a variety of sources.
 10. Add in code to get verbose messages
 =======================================
 
-It is useful for debugging to see what cf-plot is doing as it progresses with making a 
+It is useful for debugging to see what cf-plot is doing as it progresses with making a
 plot.  Calling the con routine with verbose=1 gives some basic messages about the progress.
 Of greater interest might be the output of the call from con to cf_data_assign.
 The cf_data_assign function verbose option lets the user know which parts of CF are being used to
@@ -147,7 +147,7 @@ Check cf-plot works in batch mode and modify if not.
 
 ::
 
-   A display check is now made in the cf-plot code and if none is present then the Agg backing 
+   A display check is now made in the cf-plot code and if none is present then the Agg backing
    store is used.
 
    The following configuration works on the Reading Met department Linux system.  Need to check why
@@ -172,7 +172,7 @@ Check cf-plot works in batch mode and modify if not.
 ===============================================================
 
 ::
-  
+
    Fixed - need to have the cf-plot reference in the line
    .. autofunction:: cf-plot.process_color_scales
 
@@ -185,7 +185,7 @@ Check cf-plot works in batch mode and modify if not.
    Done
 
 
-15. Data input documentation section needs revising 
+15. Data input documentation section needs revising
 ===================================================
 
 The cf_data_assign code rewrite has made the data input documentation out of date.
@@ -211,9 +211,3 @@ Rearrange the order of the gallery plots to make the major plot types more promi
 ::
 
    Fixed
-
-
-
-
-
-

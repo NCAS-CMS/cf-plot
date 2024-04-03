@@ -12,7 +12,7 @@ The `UGRID <https://ugrid-conventions.github.io/ugrid-conventions>`_ data storag
 
 
 .. image::  images/us01.png
-   :scale: 52% 
+   :scale: 52%
 
 ::
 
@@ -35,7 +35,7 @@ Here we identify the fields in the data that have the longitudes and latitudes f
 
 
 .. image::  images/us02.png
-   :scale: 52% 
+   :scale: 52%
 
 ::
 
@@ -57,7 +57,7 @@ Here the projection is changed to show the north pole.
 
 
 .. image::  images/us03.png
-   :scale: 52% 
+   :scale: 52%
 
 ::
 
@@ -75,7 +75,7 @@ Orca2 grid
 ----------
 
 .. image::  images/us04.png
-   :scale: 52% 
+   :scale: 52%
 
 ::
 
@@ -107,9 +107,9 @@ Station data
 
 Here we read in temperature data in a text file from meteorological stations around the British Isles and make a contour plot.
 
- 
+
 .. image::  images/us05.png
-   :scale: 52% 
+   :scale: 52%
 
 ::
 
@@ -136,8 +136,8 @@ Here we read in temperature data in a text file from meteorological stations aro
 
    cfp.con(x=lons, y=lats, f=temp, ptype=1, colorbar_orientation='vertical')
 
-| 
-| 
+|
+|
 
 
 Station data - check of data values
@@ -160,14 +160,8 @@ To see if this plot is correct we can add some extra code to that above to plot 
 
 
 .. image::  images/us06.png
-   :scale: 52% 
+   :scale: 52%
 
 
-| 
-| 
-
-
-
-
-
-
+|
+|

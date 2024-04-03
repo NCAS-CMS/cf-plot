@@ -26,7 +26,7 @@ To see all the methods for the plot object type
 In this example we make a blank map plot, change the longitude labels and add a box and some text.   For map plots we operate on the cfp.plotvars.mymap object and need to specify transform=ccrs.PlateCarree() to make sure that the plotting is made in regular longitude and latitude coordinates.  If the plot is not a map plot then the transform=ccrs.PlateCarree() isn't needed.
 
 .. image::  images/advanced1.png
-   :scale: 52% 
+   :scale: 52%
 
 
 ::
@@ -45,7 +45,7 @@ In this example we make a blank map plot, change the longitude labels and add a 
     yticks=[-30.0, 70.0]
     yticklabels=['ylabel1', 'ylabel2']
 
-    # Specify some contour levels outside the range of the data    
+    # Specify some contour levels outside the range of the data
     # and make a blank contour plot
     cfp.levs(-1000, -900, 100)
     cfp.con(f.subspace(time=15), fill=False, colorbar=None,
@@ -54,7 +54,7 @@ In this example we make a blank map plot, change the longitude labels and add a 
 
     # A box
     cfp.plotvars.mymap.plot([-150, -150, -90, -90, -150],
-                            [-5, 5, 5, -5, -5], linewidth=3.0, 
+                            [-5, 5, 5, -5, -5], linewidth=3.0,
                             color='blue', transform=ccrs.PlateCarree())
 
     # A symbol
@@ -78,7 +78,7 @@ In this example we make a blank map plot, change the longitude labels and add a 
 
 Adding country borders etc can be done using the normal Cartopy operations on the cfp.plotvars.mymap object.  Look on the Cartopy web page for examples of these.
 
- 
+
 
 Plotting shape files
 --------------------
@@ -87,7 +87,7 @@ In this example we make a blank map plot and plot the UK rivers from a shapefile
 
 
 .. image::  images/advanced_shapefile.png
-   :scale: 52% 
+   :scale: 52%
 
 
 
@@ -116,7 +116,7 @@ In this example we make a blank map plot and plot the UK rivers from a shapefile
         for ip in range(len(points)):
             lons[ip] = points[ip][0]
             lats[ip] = points[ip][1]
-        
+
         cfp.plotvars.mymap.plot(lons, lats , linewidth=1.0,
                                 color='blue', transform=ccrs.PlateCarree())
 
@@ -130,12 +130,12 @@ In this example we make a blank map plot and plot the UK rivers from a shapefile
 Making a transect plot
 ----------------------
 
-In this example we make a contour plot and plot a transect.  We use the cfp.regrid bilinear interpolation 
-routine to interpolate the data.  Interpolation points for this routine must be **within** the data limits 
+In this example we make a contour plot and plot a transect.  We use the cfp.regrid bilinear interpolation
+routine to interpolate the data.  Interpolation points for this routine must be **within** the data limits
 of the original data.  Care is needed to ensure that the field coordinates go from a low value to a high value.  This is usually not an issue with longitude but occasionally with latitude (as in this case) the coordinate goes from the north pole to the south pole.  A simple flip of the latitude and data is need here.
 
 .. image::  images/advanced_transect.png
-   :scale: 52% 
+   :scale: 52%
 
 
 ::
@@ -220,7 +220,7 @@ For example, to make one of the colours in the viridis colour scale grey use:
 
 
 .. image::  images/advanced2.png
-   :scale: 52% 
+   :scale: 52%
 
 
 Colouring land and lakes
@@ -238,7 +238,7 @@ This is done by changing the land_color, ocean_color and lake_color variables in
 
 
 .. image::  images/advanced3.png
-   :scale: 52% 
+   :scale: 52%
 
 
 
@@ -269,7 +269,7 @@ Masked data isn't plotted.
 
 
 .. image::  images/advanced4.png
-   :scale: 52% 
+   :scale: 52%
 
 Masked data is plotted as blockfill in grey.
 
@@ -285,17 +285,17 @@ Masked data is plotted as blockfill in grey.
     cfp.con(h, blockfill=True, title='Masked data plotted in grey')
 
 
-    # Call internal block filling routine 
+    # Call internal block filling routine
     cfp.bfill(f=np.squeeze(i.array), x=i.coord('X').array, y=i.coord('Y').array,
               clevs=[990, 1000], lonlat=True, single_fill_color='#d3d3d3')
 
-            
+
     cfp.gclose()
 
 
 
 .. image::  images/advanced5.png
-   :scale: 52% 
+   :scale: 52%
 
 Blockfill with individual colours
 ---------------------------------
@@ -303,7 +303,7 @@ Blockfill with individual colours
 |    If a plot needs to be built up as a series of blockfill plots then this is
 |    possible using the cf-plot internal blockfill routine.  A colour contour plot is
 |    made and overlaid with two blockfill regions:
-|    
+|
 |    -50 to 0 = green
 |    20 to 40  = red
 
@@ -336,7 +336,4 @@ A final call to **cfp.con** is made to overlay contour lines.
 
 
 .. image::  images/advanced6.png
-   :scale: 52% 
-
-
-
+   :scale: 52%

@@ -24,7 +24,7 @@ Support added for plotting trajectories in contiguous ragged array format.
 1. zorder option added to plotting commands
 ===========================================
 
-The plotting order parameter, zorder, has been added to con, vect, stipple and lineplot.  Using 
+The plotting order parameter, zorder, has been added to con, vect, stipple and lineplot.  Using
 zorder with a larger number puts the plotted item on top of an item with a lower zorder number.
 
 
@@ -110,7 +110,7 @@ Contour plots of latitude or longitude vs model level number weren't proper labe
 8. con - polar plot labels
 ==========================
 
-If a polar plot is made and the axis_label_fontsize is set to zero then the longitide labels are no longer 
+If a polar plot is made and the axis_label_fontsize is set to zero then the longitide labels are no longer
 plotted.  Previously they were plotted but still appeared on the plot wven though they had zero size.
 
 
@@ -122,22 +122,11 @@ plotted.  Previously they were plotted but still appeared on the plot wven thoug
 9. con - Rotated pole data change
 =================================
 
-Contour plots using rotated pole data - if the longitudes and latitudes for each point are supplied as 2D arrays 
-in auxiliary coordinates then these are now used for making a contour plot.  Previously the rotated pole coordinate 
+Contour plots using rotated pole data - if the longitudes and latitudes for each point are supplied as 2D arrays
+in auxiliary coordinates then these are now used for making a contour plot.  Previously the rotated pole coordinate
 system was used to generate the longitudes and latitudes for the contour plot.
 
 
 ::
 
     Changed
-
-
-
-
-
-
-
-
-
-
-

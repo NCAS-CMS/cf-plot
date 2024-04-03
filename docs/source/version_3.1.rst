@@ -21,7 +21,7 @@ Initial support for UGRID data was added.
 1. Add titles option to cfp.con
 ===============================
 
-A titles option was added to cfp.con.  Setting this to True prints off a set of dimension 
+A titles option was added to cfp.con.  Setting this to True prints off a set of dimension
 titles at the top of the plot.
 
 
@@ -46,7 +46,7 @@ If a time axis has no calendar then this is now set to standard if none is prese
 6. Various changes to update to cf-python 3.9.0
 ===============================================
 
-Various changes to setup.py and cf-plot were made to be compatible with cf-python 3.9.0. 
+Various changes to setup.py and cf-plot were made to be compatible with cf-python 3.9.0.
 
 
 ::
@@ -55,7 +55,7 @@ Various changes to setup.py and cf-plot were made to be compatible with cf-pytho
 
 
 
-7. cfp.lines, cfp.vect - added titles option 
+7. cfp.lines, cfp.vect - added titles option
 ============================================
 
 The titles option to display the field dimension and cell methods selections were added to cfp.lines and cfp.vect.
@@ -81,8 +81,8 @@ The LambertCylindrical projection was added to cfp.mapset.
 9. Mapping change internally
 ============================
 
-A mapping change was made internally to change from f.ref('rotated_latitude_longitude') to 
-f.ref('grid_mapping_name:rotated_latitude_longitude'). This was due to a feature introduced in 
+A mapping change was made internally to change from f.ref('rotated_latitude_longitude') to
+f.ref('grid_mapping_name:rotated_latitude_longitude'). This was due to a feature introduced in
 cf-python 3.8.0.  The longer form always works and so this has been adopted.
 
 ::
@@ -106,7 +106,7 @@ When making multiple plots on a page calling cfp.gpos(1) causes stray box lines 
 11. cfp.con - blockfill bugfix
 ==============================
 
-If a blockfill contour plot is requested and the X coordinate has bounds and the Y coordinate does not have bounds then 
+If a blockfill contour plot is requested and the X coordinate has bounds and the Y coordinate does not have bounds then
 an error occurs.
 
 ::
@@ -118,7 +118,7 @@ an error occurs.
 12. cfp.bfill - default plotting order changed
 ==============================================
 
-The default plotting order for cfp.bill has been changed from None to 4.  If any issues arise because of this please report 
+The default plotting order for cfp.bill has been changed from None to 4.  If any issues arise because of this please report
 them to me - andy.heaps@ncas.ac.uk.
 
 ::
@@ -141,7 +141,7 @@ An alpha transparency setting was added to cfp.vect.
 14. cfp.mapset - overlay map plots stopped working
 ==================================================
 
-More recent versions of Cartopy stopped overlay map plots from working. 
+More recent versions of Cartopy stopped overlay map plots from working.
 
 
 ::
@@ -152,7 +152,7 @@ More recent versions of Cartopy stopped overlay map plots from working.
 15. cfp.cf_data_assign - internal routine updated
 =================================================
 
-The internal data assignment routine cfp.cf_data_assign was updated to use the cf-python 
+The internal data assignment routine cfp.cf_data_assign was updated to use the cf-python
 filter_by_axis method in f.coordinate.
 
 
@@ -168,8 +168,8 @@ filter_by_axis method in f.coordinate.
 Cartopy has an issue with higher latitude vectors as described at https://github.com/SciTools/cartopy/issues/1179.
 
 
-The following code sets all the u and v components to be 10m/s so it would be expected that the vectors will be at 
-45 degrees to the longitude lines.  Prior to the modification this wasn't the case. 
+The following code sets all the u and v components to be 10m/s so it would be expected that the vectors will be at
+45 degrees to the longitude lines.  Prior to the modification this wasn't the case.
 
 ::
 
@@ -204,22 +204,22 @@ Cartopy version 0.20.0 and possibly later cause a contour over maps issue in cf-
 ::
 
     Cartopy version check in place
- 
- 
+
+
 18. cfp.con - changes to ptype=0 code
 =====================================
- 
-Additional code was added to cfp.con to cope with data which has one axis of longitude, latitude, pressure, time 
+
+Additional code was added to cfp.con to cope with data which has one axis of longitude, latitude, pressure, time
 and another that isn't recogised as one of these.
- 
+
 ::
 
    Changed
- 
- 
+
+
 19. cfp.con - improved Z axis detection
 =======================================
- 
+
 The cf-plot find_dim_names routine was modified to use the cf-python get_data_axes method leading to more reliable Z axis detection when multiple Z axes
 are defined in the field.
 
@@ -227,8 +227,8 @@ are defined in the field.
 ::
 
    Changed
- 
- 
+
+
 20. cfp.con - transform_first - higher resolution map data contour plots
 ========================================================================
 
@@ -243,32 +243,32 @@ When there are more that 400 longitude points the option is set automatically bu
 ::
 
     Done
-    
+
 
 21. cfp.con - blockfill_fast - faster blockfill plotting
 ========================================================
 
-Higher resolution data causes blockfill plotting to slow down markedly due to the number of cells plotted.  The blockfill_fast option was added to cfp.con which 
-uses the Matplotlib pcolormesh routine to produce a much faster plot.  The original blockfill plotting is more accurate though and careful comparison of plots made both methods show 
+Higher resolution data causes blockfill plotting to slow down markedly due to the number of cells plotted.  The blockfill_fast option was added to cfp.con which
+uses the Matplotlib pcolormesh routine to produce a much faster plot.  The original blockfill plotting is more accurate though and careful comparison of plots made both methods show
 small differences particularly at higher latitudes.  One blockfill plot went from 174 seconds to 4.3 seconds using the new option.
 
 
 ::
 
     Done
- 
- 
+
+
 22. cfp.find_dim_names bug
 ==========================
- 
+
 If numpy arrays are passed for plotting some recently added code in cfp.find_dim_names tried to find the dimension names in the field.  The code was modified to not do this for this class of data.
 
- 
+
 ::
 
     Fixed
-    
-    
+
+
 23. Central data local added for cartopy
 ========================================
 
@@ -278,7 +278,7 @@ If the user has a central location for cartopy data it can be specified with the
 ::
 
     Added
-    
+
 
 24. cfp.gvals - final catch missing for no values
 =================================================
@@ -300,8 +300,8 @@ An error occurs in cartopy.add_cyclic_point if the longitudes aren't regular.  A
 ::
 
     Fixed
-    
-    
+
+
 26. plot titles - change cell methods to cell_methods
 =====================================================
 
@@ -327,10 +327,10 @@ A bug in the title code for the southern polar stereographic projection has been
 28. cfp.con - added nlevs option
 ================================
 
-The nlevs option to cfp.con was added which specifies the number of levels for to use for contour and fast 
-blockfill methods.  For example cfp.con(f, nlevs=200, lines=False) will draw 200 filled contours and turn the line 
-contours off.  This is useful when looking at data which is very close together where the traditional contour 
-levels don't show the detail in the field.  The colour map for a divergent field such as zonal wind, 'scale1', 
+The nlevs option to cfp.con was added which specifies the number of levels for to use for contour and fast
+blockfill methods.  For example cfp.con(f, nlevs=200, lines=False) will draw 200 filled contours and turn the line
+contours off.  This is useful when looking at data which is very close together where the traditional contour
+levels don't show the detail in the field.  The colour map for a divergent field such as zonal wind, 'scale1',
 is not necessarily centred on zero with this option so more care with interpretation is needed.
 
 
@@ -343,55 +343,43 @@ is not necessarily centred on zero with this option so more care with interpreta
 =================================
 
 cfp.con was changed to fix some bugs with the identification and plotting of axes.
- 
+
 
 ::
 
     Fixed
 
- 
+
 30. cfp.generate_titles - update code to include cell_method qualifiers
 =======================================================================
- 
+
 cfp.generate_titles was updated to include the text for any cell_method qualifiers.
- 
- 
+
+
 ::
 
     Fixed
- 
- 
+
+
 31. cfp.con - axis labelling issues with rotated pole coordinates
 =================================================================
- 
+
 cfp.con produced extraneous axis labels for rotated pole coordinates.
- 
- 
+
+
 ::
 
- 
+
    Fixed
- 
- 
+
+
 32. cfp.plot_map_axes - mods for cartopy > 0.20.0
 =================================================
 
-The use of outline_patch.set_visible(False) to remove a surrounding box for polar stereographic and lcc plots has been change to 
+The use of outline_patch.set_visible(False) to remove a surrounding box for polar stereographic and lcc plots has been change to
 set_frame_on(False) as the previous method has been depreciated from cartopy 0.20.0.
 
 
 ::
 
    Changed
-   
-   
-   
-
- 
- 
- 
- 
- 
- 
- 
- 

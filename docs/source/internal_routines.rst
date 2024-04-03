@@ -16,7 +16,7 @@ Internal routines
    check_data.rst
    compare_arrays.rst
    compare_images.rst
-   cscale_get_map.rst     
+   cscale_get_map.rst
    find_pos_in_array.rst
    fix_floats.rst
    gvals.rst
@@ -36,7 +36,6 @@ Internal routines
    vloc.rst
 
 
-| 
 |
 |
 |
@@ -47,7 +46,4 @@ Internal routines
 |
 |
 |
-
-
-
-
+|
