@@ -25,8 +25,10 @@ import matplotlib.patches as mpatches
 
 # Check for the minimum cf-python version
 cf_version_min = "3.0.0b2"
-errstr = "\n\n cf-python > " + cf_version_min
-errstr += "\n needs to be installed to use cf-plot \n\n"
+errstr = (
+    f"\n\n cf-python > {cf_version_min}"
+    "\n needs to be installed to use cf-plot \n\n"
+)
 try:
     import cf
 
@@ -719,7 +721,10 @@ def con(
                 lines = False
                 irregular = True
             else:
-                errstr = "\n\nError - field does not contain the UGRID face information to plot a blockfill plot\n\n\n"
+                errstr = (
+                    "\n\nError - field does not contain the UGRID face "
+                    "information to plot a blockfill plot\n\n\n"
+                )
                 raise TypeError(errstr)
 
     # Set blockfill_2d if blockfill and x and y are 2D
@@ -739,11 +744,12 @@ def con(
 
         ndims = np.squeeze(f.data).ndim
         if ndims > 2:
-            errstr = "\n\ncfp.con error need a 1 or 2 dimensional field to contour\n"
-            errstr += (
-                "received " + str(np.squeeze(f.data).ndim) + " dimensions\n\n"
+            errstr = (
+                "\n\ncfp.con error need a 1 or 2 dimensional field to "
+                "contour\n"
+                f"received {str(np.squeeze(f.data).ndim)} dimensions\n\n"
+                f"{f}"
             )
-            errstr += str(f)
             raise TypeError(errstr)
 
         # Extract data
@@ -839,12 +845,12 @@ def con(
             if plotvars.levels_extend == "both":
                 nintervals += 2
             if ncols != nintervals:
-                errstr = "\n\ncfp.con - blockfill error \n"
-                errstr += (
+                errstr = (
+                    "\n\ncfp.con - blockfill error \n"
                     "need to match number of colours and contour intervals\n"
+                    "Don't forget to take account of the colorbar "
+                    "extensions\n\n"
                 )
-                errstr += "Don't forget to take account of the colorbar "
-                errstr += "extensions\n\n"
                 raise TypeError(errstr)
 
     # Turn off colorbar if fill is turned off
@@ -1639,20 +1645,15 @@ def con(
             if hasattr(f.construct(myz), "positive"):
                 positive = f.construct(myz).positive
             else:
-                errstr = "\ncf-plot - data error \n"
-                errstr += "data needs a vertical coordinate direction"
-                errstr += " as required in CF data conventions"
-                errstr += (
+                errstr = (
+                    "\ncf-plot - data error \n"
+                    "data needs a vertical coordinate direction"
+                    " as required in CF data conventions"
                     "\nMaking a contour plot assuming positive is down\n\n"
-                )
-                errstr += (
                     "If this is incorrect the data needs to be modified to \n"
-                )
-                errstr += (
                     "include a correct value for the direction attribute\n"
+                    "such as in f.coord('Z').positive='down'\n\n"
                 )
-                errstr += "such as in f.coord('Z').positive='down'"
-                errstr += "\n\n"
                 print(errstr)
                 positive = "down"
         else:
@@ -1825,8 +1826,10 @@ def con(
                         xticklabels = time_labels
 
                 else:
-                    errstr = "\nNot a CF field\nPlease use ptype=0 and "
-                    errstr = errstr + "specify axis labels manually\n"
+                    errstr = (
+                        "\nNot a CF field\nPlease use ptype=0 and "
+                        "specify axis labels manually\n"
+                    )
                     raise Warning(errstr)
 
         # Set plot limits
@@ -2099,9 +2102,11 @@ def con(
             else:
                 check_Units_reftime = False
             if False in [check_units, check_calendar, check_Units_reftime]:
-                print("\nThe required CF time information to make the plot")
-                print("is not available please fix the following before")
-                print("trying to plot again")
+                print(
+                    "\nThe required CF time information to make the plot "
+                    "is not available please fix the following before "
+                    "trying to plot again"
+                )
                 if check_units is False:
                     print("Time axis missing: units")
                 if check_calendar is False:
@@ -2130,11 +2135,13 @@ def con(
 
         # Extract axis labels
         if len(f.constructs("T")) > 1:
-            errstr = "\n\nTime axis error - only one time axis allowed\n "
-            errstr += "Please list time axes with print(f.constructs())\n"
-            errstr += "and remove the ones not needed for a hovmuller plot \n"
-            errstr += "with f.del_construct('unwanted_time_axis')\n"
-            errstr += "before trying to plot again\n\n\n\n"
+            errstr = (
+                "\n\nTime axis error - only one time axis allowed\n "
+                "Please list time axes with print(f.constructs())\n"
+                "and remove the ones not needed for a hovmuller plot \n"
+                "with f.del_construct('unwanted_time_axis')\n"
+                "before trying to plot again\n\n\n\n"
+            )
             raise TypeError(errstr)
 
         time_ticks, time_labels, ylabel = timeaxis(f.construct("T"))
@@ -3190,7 +3197,8 @@ def levs(min=None, max=None, step=None, manual=None, extend="both"):
 
     if all(val is not None for val in [min, max]) and step is None:
         print(
-            "\ncfp.levs error: when the min and max are specified a step also needs to be specified\n"
+            "\ncfp.levs error: when the min and max are specified "
+            "a step also needs to be specified\n"
         )
         return
 
@@ -3448,7 +3456,7 @@ def timeaxis(dtimes=None):
                 np.min(
                     (
                         cf.Data(
-                            cf.dt(str(int(year)) + "-01-01 00:00:00"),
+                            cf.dt(f"{int(year)}-01-01 00:00:00"),
                             units=time_units,
                             calendar=calendar,
                         ).array
@@ -3480,7 +3488,7 @@ def timeaxis(dtimes=None):
         for year in np.arange(yearmax - yearmin + 1) + yearmin:
             for month in np.arange(12):
                 mytime = cf.dt(
-                    str(year) + "-" + str(month + 1) + "-01 00:00:00",
+                    f"{year}-{month + 1}-01 00:00:00",
                     calendar=calendar,
                 )
                 if mytime >= tmin and mytime <= tmax:
@@ -3494,7 +3502,7 @@ def timeaxis(dtimes=None):
         for year in np.arange(yearmax - yearmin + 1) + yearmin:
             for month in mvals:
                 mytime = cf.dt(
-                    str(year) + "-" + str(month + 1) + "-01 00:00:00",
+                    f"{year}-{month + 1}-01 00:00:00",
                     calendar=calendar,
                 )
                 if mytime >= tmin and mytime <= tmax:
@@ -3564,15 +3572,9 @@ def timeaxis(dtimes=None):
             )
             if mytime >= tmin and mytime <= tmax:
                 time_ticks.append(np.min(mytime.array))
-                label = (
-                    str(mytime.year)
-                    + "-"
-                    + str(mytime.month)
-                    + "-"
-                    + str(mytime.day)
-                )
+                label = f"{mytime.year}-{mytime.month}-{mytime.day}"
                 if hour_counter / 24 != int(hour_counter / 24):
-                    label += " " + str(mytime.hour) + ":00:00"
+                    label += f" {mytime.hour}:00:00"
                 time_labels.append(label)
             else:
                 not_found = not_found + 1
@@ -3905,9 +3907,11 @@ def gset(
             bcount = bcount + 1
 
     if bcount != 0 and bcount != 4:
-        errstr = "gset error\n"
-        errstr += "xmin, xmax, ymin, ymax all need to be passed to gset\n"
-        errstr += "to set the plot limits\n"
+        errstr = (
+            "gset error\n"
+            "xmin, xmax, ymin, ymax all need to be passed to gset\n"
+            "to set the plot limits\n"
+        )
         raise Warning(errstr)
 
     plotvars.xmin = xmin
@@ -4029,10 +4033,12 @@ def gopen(
 
     if orientation != "landscape":
         if orientation != "portrait":
-            errstr = "gopen error\n"
-            errstr += "orientation incorrectly set\n"
-            errstr += "input value was " + orientation + "\n"
-            errstr += "Valid options are portrait or landscape\n"
+            errstr = (
+                "gopen error\n"
+                "orientation incorrectly set\n"
+                f"input value was {orientation}\n"
+                "Valid options are portrait or landscape\n"
+            )
             raise Warning(errstr)
 
     # Set master plot size
@@ -4202,10 +4208,11 @@ def gpos(pos=1, xmin=None, xmax=None, ymin=None, ymax=None):
 
     # Check inputs are okay
     if pos < 1 or pos > plotvars.rows * plotvars.columns:
-        errstr = "pos error - pos out of range:\n range = 1 - "
-        errstr = errstr + str(plotvars.rows * plotvars.columns)
-        errstr = errstr + "\n input pos was " + str(pos)
-        errstr = errstr + "\n"
+        errstr = (
+            "pos error - pos out of range:\n range = 1 - "
+            f"{plotvars.rows * plotvars.columns}"
+            f"\n input pos was {pos}\n"
+        )
         raise Warning(errstr)
 
     user_pos = False
@@ -4549,26 +4556,10 @@ def cf_data_assign(
                 sn = getattr(f.construct(mydim), "standard_name", False)
                 ln = getattr(f.construct(mydim), "long_name", False)
                 if sn:
-                    errstr = (
-                        errstr
-                        + str(mydim)
-                        + ","
-                        + str(sn)
-                        + ","
-                        + str(f.construct(mydim).size)
-                        + "\n"
-                    )
+                    errstr += f"{mydim},{sn},{f.construct(mydim).size}\n"
                 else:
                     if ln:
-                        errstr = (
-                            errstr
-                            + str(mydim)
-                            + ","
-                            + str(ln)
-                            + ","
-                            + str(f.construct(mydim).size)
-                            + "\n"
-                        )
+                        errstr += f"{mydim},{ln},{f.construct(mydim).size}\n"
             raise Warning(errstr)
 
     # Set up data arrays and variables
@@ -4628,7 +4619,10 @@ def cf_data_assign(
 
     # Change Boolean data to integer
     if str(f.dtype) == "bool":
-        warnstr = "\n\n\n Warning - boolean data found - converting to integers\n\n\n"
+        warnstr = (
+            "\n\n\n Warning - boolean data found - converting to "
+            "integers\n\n\n"
+        )
         print(warnstr)
         g = deepcopy(f)
         g.dtype = int
@@ -4652,14 +4646,14 @@ def cf_data_assign(
         if xunits == "degrees_north":
             xunits = "degrees"
         if xunits != "":
-            xlabel = xname + " (" + xunits + ")"
+            xlabel = f"{xname} ({xunits})"
         else:
             xlabel = xname
 
         yname = cf_var_name(field=f, dim=myz)
         yunits = str(getattr(f.construct(myz), "Units", ""))
         if yunits != "":
-            ylabel = yname + " (" + yunits + ")"
+            ylabel = f"{yname} ({yunits})"
         else:
             ylabel = yname
 
@@ -4673,14 +4667,14 @@ def cf_data_assign(
         if xunits == "degrees_east":
             xunits = "degrees"
         if xunits != "":
-            xlabel = xname + " (" + xunits + ")"
+            xlabel = f"{xname} ({xunits})"
         else:
             xlabel = xname
 
         yname = cf_var_name(field=f, dim=myz)
         yunits = str(getattr(f.construct(myz), "Units", ""))
         if yunits != "":
-            ylabel = yname + " (" + yunits + ")"
+            ylabel = f"{yname} ({yunits})"
         else:
             ylabel = yname
 
@@ -4694,14 +4688,14 @@ def cf_data_assign(
         if xunits == "degrees_east":
             xunits = "degrees"
         if xunits != "":
-            xlabel = xname + " (" + xunits + ")"
+            xlabel = f"{xname} ({xunits})"
         else:
             xlabel = xname
 
         yname = cf_var_name(field=f, dim="T")
         yunits = str(getattr(f.construct("T"), "Units", ""))
         if yunits != "":
-            ylabel = yname + " (" + yunits + ")"
+            ylabel = f"{yname} ({yunits})"
         else:
             ylabel = yname
 
@@ -4715,14 +4709,14 @@ def cf_data_assign(
         if xunits == "degrees_north":
             xunits = "degrees"
         if xunits != "":
-            xlabel = xname + " (" + xunits + ")"
+            xlabel = f"{xname} ({xunits})"
         else:
             xlabel = xname
 
         yname = cf_var_name(field=f, dim="T")
         yunits = str(getattr(f.construct("T"), "Units", ""))
         if yunits != "":
-            ylabel = yname + " (" + yunits + ")"
+            ylabel = f"{yname} ({yunits})"
         else:
             ylabel = yname
 
@@ -4735,14 +4729,14 @@ def cf_data_assign(
         xname = cf_var_name(field=f, dim="T")
         xunits = str(getattr(f.construct("T"), "Units", ""))
         if xunits != "":
-            xlabel = xname + " (" + xunits + ")"
+            xlabel = f"{xname} ({xunits})"
         else:
             xlabel = xname
 
         yname = cf_var_name(field=f, dim="Z")
         yunits = str(getattr(f.construct("Z"), "Units", ""))
         if yunits != "":
-            ylabel = yname + " (" + yunits + ")"
+            ylabel = f"{yname} ({yunits})"
         else:
             ylabel = yname
 
@@ -4858,19 +4852,21 @@ def cf_data_assign(
                         mycoord = "dimensioncoordinate" + str(d[-1])
                         yunits = str(getattr(f.coord(mycoord), "Units", ""))
                         if yunits != "":
-                            yunits = "(" + yunits + ")"
+                            yunits = f"({yunits})"
                         ylabel = cf_var_name(field=f, dim=mycoord) + yunits
                     elif count == 2:
                         x = c
                         mycoord = "dimensioncoordinate" + str(d[-1])
                         xunits = str(getattr(f.coord(mycoord), "units", ""))
                         if xunits != "":
-                            xunits = "(" + xunits + ")"
+                            xunits = f"({xunits})"
                         xlabel = cf_var_name(field=f, dim=mycoord) + xunits
                     count += 1
             except ValueError:
-                errstr = "\n\ncf_data_assign - cannot find data to return\n\n"
-                errstr += str(f.constructs.domain_axis_identity(d)) + "\n\n"
+                errstr = (
+                    "\n\ncf_data_assign - cannot find data to return\n\n"
+                    f"{f.constructs.domain_axis_identity(d))}\n\n"
+                )
                 raise Warning(errstr)
 
     # Assign colorbar_title
@@ -4890,10 +4886,10 @@ def cf_data_assign(
 
         if hasattr(f, "Units"):
             if str(f.Units) == "":
-                colorbar_title = colorbar_title + ""
+                colorbar_title = colorbar_title
             else:
                 colorbar_title = (
-                    colorbar_title + "(" + supscr(str(f.Units)) + ")"
+                    f"{colorbar_title}({supscr(str(f.Units))})"
                 )
 
     # Return data
@@ -4918,11 +4914,12 @@ def check_data(field=None, x=None, y=None):
 
     # Input error trapping
     args = True
-    errstr = "\n"
     if np.size(field) == 1:
         if field is None:
-            errstr = errstr + "con error - a field for contouring must be "
-            errstr += "passed with the f= flag\n"
+            errstr = (
+                "\ncon error - a field for contouring must be "
+                "passed with the f= flag\n"
+            )
             args = False
     if np.size(x) == 1:
         if x is None:
@@ -4968,14 +4965,14 @@ def check_data(field=None, x=None, y=None):
             args = False
 
     if args is False:
-        errstr = errstr + "Input arguments incorrectly shaped:\n"
-        errstr = errstr + "x has shape:" + str(np.shape(x)) + "\n"
-        errstr = errstr + "y has shape:" + str(np.shape(y)) + "\n"
-        errstr = errstr + "field has shape" + str(np.shape(field)) + "\n\n"
-        errstr = errstr + "Expected x=xpts, y=ypts, field=(ypts,xpts)\n"
-        errstr = errstr + "x=npts, y=npts, field=npts\n"
         errstr = (
-            errstr + "or x=[ypts, xpts], y=[ypts, xpts], field=[ypts, xpts]\n"
+            "\nInput arguments incorrectly shaped:\n"
+            f"x has shape:{str(np.shape(x))}\n"
+            f"y has shape:{str(np.shape(y))}\n"
+            f"field has shape{str(np.shape(field))}\n\n"
+            "Expected x=xpts, y=ypts, field=(ypts,xpts)\n"
+            "x=npts, y=npts, field=npts\n"
+            "or x=[ypts, xpts], y=[ypts, xpts], field=[ypts, xpts]\n"
         )
         raise Warning(errstr)
 
