@@ -7878,6 +7878,7 @@ def process_color_scales():
     for i in np.arange(1, 45):
         idl_guide.append("scale" + str(i))
 
+    # TODO SLB improve string formatting below and consolidate
     for category in [
         "uniform",
         "ncl_meteoswiss",
@@ -7891,8 +7892,10 @@ def process_color_scales():
             scales = uniform
             div = "================== ====="
             chars = 10
-            title = "Perceptually uniform colour maps for use with continuous "
-            title += "data"
+            title = (
+                "Perceptually uniform colour maps for use with continuous "
+                "data"
+            )
             print(title)
             print("----------------------------------------------")
             print("")
@@ -7934,11 +7937,15 @@ def process_color_scales():
             scales = ncl_color_blindness
             div = "================ ====="
             chars = 17
-            title = "NCAR Command Language - Enhanced to help with colour"
-            title += "blindness"
+            title = (
+                "NCAR Command Language - Enhanced to help with colour "
+                "blindness"
+            )
             print(title)
-            title = "-----------------------------------------------------"
-            title += "---------"
+            title = (
+                "-----------------------------------------------------"
+                "---------"
+            )
             print(title)
             print("")
             print(div)
@@ -7979,8 +7986,11 @@ def process_color_scales():
             )
             cb1.set_ticks([0.0, 1.0])
             cb1.set_ticklabels(["", ""])
-            file = "/home/andy/cf-docs/cfplot_sphinx/images/"
-            file += "colour_scales/" + scale + ".png"
+            # TODO SLB, update path below to non-specific one
+            file = (
+                "/home/andy/cf-docs/cfplot_sphinx/images/"
+                f"colour_scales/{scale}.png"
+            )
             plot.savefig(file)
             plot.close()
 
@@ -7990,7 +8000,7 @@ def process_color_scales():
             name_pad = scale
             while len(name_pad) < chars:
                 name_pad = name_pad + " "
-            fn = name_pad + ".. image:: images/colour_scales/" + scale + ".png"
+            fn = f"{name_pad}.. image:: images/colour_scales/{scale}.png"
             print(fn)
 
         print(div)
@@ -8264,6 +8274,7 @@ def setvars(
 
     if file is not None:
         plotvars.file = file
+    # TODO SLB consolidate this long list of conditional setting!
     if title_fontsize is not None:
         plotvars.title_fontsize = title_fontsize
     if axis_label_fontsize is not None:
@@ -8394,9 +8405,11 @@ def vloc(xvec=None, yvec=None, lons=None, lats=None):
 
     # Check input parameters
     if any(val is None for val in [xvec, yvec, lons, lats]):
-        errstr = "\nvloc error\n"
-        errstr += "xvec, yvec, lons, lats all need to be passed to vloc to\n"
-        errstr += "generate a set of location points\n"
+        errstr = (
+            "\nvloc error\n"
+            "xvec, yvec, lons, lats all need to be passed to vloc to\n"
+            "generate a set of location points\n"
+        )
         raise Warning(errstr)
 
     xarr = np.zeros(np.size(lons))
@@ -8786,9 +8799,11 @@ def lineplot(
 
     # Catch depreciated keywords
     if xname is not None or yname is not None:
-        print("\nlineplot error")
-        print("xname and yname are now depreciated keywords")
-        print("Please use xlabel and ylabel\n")
+        print(
+            "\nlineplot error"
+            "xname and yname are now deprecated keywords"
+            "Please use xlabel and ylabel\n"
+        )
         return
 
     ##################
@@ -8814,20 +8829,20 @@ def lineplot(
             # Check data is 1D
             ndims = np.squeeze(f.data).ndim
             if ndims != 1:
-                errstr = "\n\ncfp.lineplot error need a 1 dimensonal field to make a line\n"
-                errstr += (
-                    "received "
-                    + str(np.squeeze(f.data).ndim)
-                    + " dimensions\n\n"
+                errstr = (
+                    "\n\ncfp.lineplot error need a 1 dimensonal field to make a line\n"
+                    f"received {np.squeeze(f.data).ndim} dimensions\n\n"
                 )
                 raise TypeError(errstr)
 
             if x is not None:
                 if isinstance(x, cf.Field):
-                    errstr = "\n\ncfp.lineplot error - two or more cf-fields passed for plotting.\n"
-                    errstr += "To plot two cf-fields open a graphics plot with cfp.gopen(), \n"
-                    errstr += "plot the two fields separately with cfp.lineplot and then close\n"
-                    errstr += "the graphics plot with cfp.gclose()\n\n"
+                    errstr = (
+                        "\n\ncfp.lineplot error - two or more cf-fields passed for plotting.\n"
+                        "To plot two cf-fields open a graphics plot with cfp.gopen(), \n"
+                        "plot the two fields separately with cfp.lineplot and then close\n"
+                        "the graphics plot with cfp.gclose()\n\n"
+                    )
                     raise TypeError(errstr)
 
         elif isinstance(f, cf.FieldList):
@@ -8852,8 +8867,8 @@ def lineplot(
 
                 # x label
                 xlabel_units = str(getattr(f.construct(mydim), "Units", ""))
-                plot_xlabel = cf_var_name(field=f, dim=mydim) + " ("
-                plot_xlabel += xlabel_units + ")"
+                plot_xlabel = (
+                    f"{cf_var_name(field=f, dim=mydim)} ({xlabel_units})"
                 y = np.squeeze(f.array)
 
                 # y label
@@ -8873,35 +8888,23 @@ def lineplot(
                     ylabel_units = str(f.Units)
                 else:
                     ylabel_units = ""
-                plot_ylabel += " (" + ylabel_units + ")"
+                plot_ylabel += f" ({ylabel_units})"
 
         if has_count != 1:
-            errstr = "\n lineplot error - passed field is not suitable "
-            errstr += "for plotting as a line\n"
+            errstr = (
+                "\n lineplot error - passed field is not suitable "
+                "for plotting as a line\n"
+            )
             for mydim in list(f.dimension_coordinates()):
                 sn = getattr(f.construct(mydim), "standard_name", False)
                 ln = getattr(f.construct(mydim), "long_name", False)
                 if sn:
-                    errstr = (
-                        errstr
-                        + str(mydim)
-                        + ","
-                        + str(sn)
-                        + ","
-                        + str(f.construct(mydim).size)
-                        + "\n"
-                    )
+                    errstr += f"{mydim},{sn},{f.construct(mydim).size}\n"
                 else:
+                    # TODO SLB: replace simple 'else, if' statements such as
+                    # this one, with many other examples in codebase, w/ 'elif'
                     if ln:
-                        errstr = (
-                            errstr
-                            + str(mydim)
-                            + ","
-                            + str(ln)
-                            + ","
-                            + str(f.construct(mydim).size)
-                            + "\n"
-                        )
+                        errstr += f"{mydim},{ln},{f.construct(mydim).size}\n"
             raise Warning(errstr)
     else:
         if verbose:
@@ -8910,10 +8913,12 @@ def lineplot(
         if x is None or y is None:
             errstr = "lineplot error- must define both x and y"
         if f is not None:
-            errstr += "lineplot error- must define just x and y to make "
-            errstr += "a lineplot"
+            errstr += (
+                "lineplot error- must define just x and y to make "
+                "a lineplot"
+            )
         if errstr != "":
-            raise Warning("\n" + errstr + "\n")
+            raise Warning(f"\n{errstr}\n")
 
     # Z on y-axis
     ztype = None
@@ -9090,7 +9095,7 @@ def lineplot(
         if xticklabels is None:
             xticklabels = []
             for val in xticks:
-                xticklabels.append("{}".format(val))
+                xticklabels.append(f"{val}")
 
     if yticks is None:
         if abs(maxy - miny) > 1:
@@ -9114,12 +9119,12 @@ def lineplot(
     if xlabel is not None:
         plot_xlabel = xlabel
         if xunits is not None:
-            plot_xlabel += "(" + xunits + ")"
+            plot_xlabel += f"({xunits})"
 
     if ylabel is not None:
         plot_ylabel = ylabel
         if yunits is not None:
-            plot_ylabel += "(" + yunits + ")"
+            plot_ylabel += f"({yunits})"
 
     if swap_xy:
         if verbose:
@@ -9297,14 +9302,14 @@ def regression_tests():
     |
     """
 
-    print("==================")
-    print("Regression testing")
-    print("==================")
-    print("")
-
-    print("------------------")
-    print("Testing for levels")
-    print("------------------")
+    print(
+        "==================\n"
+        "Regression testing\n"
+        "==================\n\n"
+        "------------------\n"
+        "Testing for levels\n"
+        "------------------\n"
+    )
     ref_answer = [
         -35,
         -30,
@@ -9370,10 +9375,11 @@ def regression_tests():
         ref=ref_answer, levs_test=True, min=-7000, max=-300, step=500
     )
 
-    print("")
-    print("-----------------")
-    print("Testing for gvals")
-    print("-----------------")
+    print(
+        "\n-----------------\n"
+        "Testing for gvals\n"
+        "-----------------\n"
+    )
     ref_answer = [
         281,
         282,
@@ -9517,10 +9523,11 @@ def regression_tests():
     )
     compare_arrays(ref=ref_answer, min=0, max=30, type=2, mapaxis_test=True)
 
-    print("")
-    print("-----------------")
-    print("Testing for plots")
-    print("-----------------")
+    print(
+        "\n-----------------\n"
+        "Testing for plots\n"
+        "-----------------"
+    )
 
     # Run through gallery examples and compare to reference plots
 
@@ -9953,22 +9960,24 @@ def compare_images(example=None):
     |
     """
     import hashlib
+    # TODO SLB: convert all 'home/andy/' paths to general configurable path
+    # (there are many examples below but also throughout this script)
 
     disp = which("display")
     conv = which("convert")
     comp = which("compare")
-    file = "fig" + str(example) + ".png"
-    file_new = "/home/andy/cfplot.src/cfplot/" + file
-    file_ref = "/home/andy/regression/" + file
+    file = f"fig{example}.png"
+    file_new = f"/home/andy/cfplot.src/cfplot/{file}"
+    file_ref = f"/home/andy/regression/{file}"
 
     # Check md5 checksums are the same and display files if not
     if (
         hashlib.md5(open(file_new, "rb").read()).hexdigest()
         != hashlib.md5(open(file_ref, "rb").read()).hexdigest()
     ):
-        print("***Failed example " + str(example) + "**")
-        error_image = "/home/andy/cfplot.src/cfplot/" + "error_" + file
-        diff_image = "/home/andy/cfplot.src/cfplot/" + "difference_" + file
+        print(f"***Failed example {example}**")
+        error_image = f"/home/andy/cfplot.src/cfplot/error_{file}"
+        diff_image = f"/home/andy/cfplot.src/cfplot/difference_{file}"
         p = subprocess.Popen([comp, file_new, file_ref, diff_image])
         (output, err) = p.communicate()
         p.wait()
@@ -9980,7 +9989,7 @@ def compare_images(example=None):
         subprocess.Popen([disp, diff_image])
 
     else:
-        print("Passed example " + str(example))
+        print(f"Passed example {example}")
 
 
 def compare_arrays(
