@@ -5060,9 +5060,11 @@ def cscale(
         file = os.path.join(package_path, "colourmaps/" + scale + ".rgb")
         if os.path.isfile(file) is False:
             if os.path.isfile(scale) is False:
-                errstr = "\ncscale error - colour scale not found:\n"
-                errstr = errstr + "File " + file + " not found\n"
-                errstr = errstr + "File " + scale + " not found\n"
+                errstr = (
+                    "\ncscale error - colour scale not found:\n"
+                    f"File {file} not found\n"
+                    f"File {scale} not found\n"
+                )
                 raise Warning(errstr)
             else:
                 file = scale
@@ -5156,8 +5158,7 @@ def cscale(
     hexarr = []
     for col in np.arange(np.size(r)):
         hexarr.append(
-            "#%02x%02x%02x" % (int(r[col]), int(g[col]), int(b[col]))
-        )
+            f"#{int(r[col]%02x}{int(g[col]%02x}{int(b[col])%02x}")
 
     # White requested colour positions
     if white is not None:
@@ -6222,10 +6223,10 @@ def stipple(
     """
 
     if plotvars.plot_type not in [1, 2, 3]:
-        errstr = "\n stipple error - only X-Y, X-Z and Y-Z \n"
-        errstr = errstr + "stipple supported at the present time\n"
         errstr = (
-            errstr + "Please raise a feature request if you see this error.\n"
+            "\n stipple error - only X-Y, X-Z and Y-Z \n"
+            "stipple supported at the present time\n"
+            "Please raise a feature request if you see this error.\n"
         )
         raise Warning(errstr)
 
@@ -6601,8 +6602,11 @@ def vect(
         # Check data is 2D
         ndims = np.squeeze(u.data).ndim
         if ndims != 2:
-            errstr = "\n\ncfp.vect error need a 2 dimensonal u field to make vectors\n"
-            errstr += "received " + str(np.squeeze(u.data).ndim)
+            errstr = (
+                "\n\ncfp.vect error need a 2 dimensonal u field to make "
+                "vectors\n"
+                "received {np.squeeze(u.data).ndim}"
+            )
             if ndims == 1:
                 errstr += " dimension\n\n"
             else:
@@ -6636,8 +6640,11 @@ def vect(
         # Check data is 2D
         ndims = np.squeeze(v.data).ndim
         if ndims != 2:
-            errstr = "\n\ncfp.vect error need a 2 dimensonal v field to make vectors\n"
-            errstr += "received " + str(np.squeeze(v.data).ndim)
+            errstr = (
+                "\n\ncfp.vect error need a 2 dimensonal v field to make "
+                "vectors\n"
+                "received {np.squeeze(v.data).ndim}"
+            )
             if ndims == 1:
                 errstr += " dimension\n\n"
             else:
@@ -6706,9 +6713,9 @@ def vect(
     # Calculate a set of dimension titles if requested
     if titles:
         title_dims = generate_titles(u)
-        title_dims = "u\n" + title_dims
+        title_dims = f"u\n{title_dims}"
         title_dims2 = generate_titles(v)
-        title_dims2 = "v\n" + title_dims2
+        title_dims2 = f"v\n{title_dims2}"
 
     # Open a new plot if necessary
     if plotvars.user_plot == 0:
@@ -7234,7 +7241,7 @@ def vect(
             if key_label is None:
                 key_label_u = str(key_length_u)
                 if isinstance(u, cf.Field):
-                    key_label_u = supscr(key_label_u + " (" + u.units + ")")
+                    key_label_u = supscr(f"{key_label_u} ({u.units})")
             else:
                 key_label_u = key_label[0]
             if key_show:
@@ -7271,9 +7278,9 @@ def vect(
                 key_label_u = str(key_length_u)
                 key_label_v = str(key_length_v)
                 if isinstance(u, cf.Field):
-                    key_label_u = supscr(key_label_u + " (" + u.units + ")")
+                    key_label_u = supscr(f"{key_label_u} ({u.units})")
                 if isinstance(v, cf.Field):
-                    key_label_v = supscr(key_label_v + " (" + v.units + ")")
+                    key_label_v = supscr(f"{key_label_v} ({v.units})")
             else:
                 key_label_u = supscr(key_label[0])
                 key_label_v = supscr(key_label[1])
@@ -7695,7 +7702,7 @@ def cf_var_name_titles(field=None, dim=None):
 
         units = getattr(field.construct(dim), "units", "")
         if len(units) > 0:
-            units = "(" + units + ")"
+            units = f"({units})"
     return name, units
 
 
