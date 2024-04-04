@@ -9,7 +9,7 @@ Example 4 - north pole
 ----------------------
 
 .. image::  images/fig4.png
-   :scale: 44% 
+   :scale: 44%
 
 ::
 
@@ -19,9 +19,9 @@ Example 4 - north pole
    cfp.mapset(proj='npstere')
    cfp.con(f.subspace(pressure=500))
 
-| 
-| 
-| 
+|
+|
+|
 |
 
 
@@ -30,7 +30,7 @@ Example 4 - north pole
 Example 5 - south pole with 30 degrees south being the latitude plot limit
 --------------------------------------------------------------------------
 .. image::  images/fig5.png
-   :scale: 44% 
+   :scale: 44%
 
 ::
 
@@ -39,5 +39,3 @@ Example 5 - south pole with 30 degrees south being the latitude plot limit
    f=cf.read('cfplot_data/ggap.nc')[1]
    cfp.mapset(proj='spstere', boundinglat=-30, lon_0=0)
    cfp.con(f.subspace(pressure=500))
-
-

@@ -8,7 +8,7 @@ WRF data
 
 Output data from the Weather Research and Forecasting (WRF) Model is some distance from being CF compliant.  A Python script is available, from the University of Cantabria, that converts WRF data into CF netCDF. The Python script can be downloaded from http://www.meteo.unican.es/wiki/cordexwrf/SoftwareTools/WrfncXnj
 
-Our input file here is called wrf.nc.  As the file is large at 5GB this file isn't distributed and this is a worked example of what is needed. 
+Our input file here is called wrf.nc.  As the file is large at 5GB this file isn't distributed and this is a worked example of what is needed.
 
 **python wrfncxnj.py -v T2 -o wrf2.nc wrf.nc**
 
@@ -21,7 +21,7 @@ Example 43 - plotting WRF data
 ------------------------------
 
 .. image::  images/fig43.png
-   :scale: 52% 
+   :scale: 52%
 
 ::
 
@@ -33,8 +33,5 @@ Example 43 - plotting WRF data
    cfp.con(t2, lines=False)
 
 
-| 
-| 
-
-
-
+|
+|

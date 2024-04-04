@@ -77,7 +77,7 @@ cfp.setvars(legend_frame=False)
 
 
 colorbar font properties can now be set using the setvars routine:
-cfp.setvars(colorbar_fontsize=11) 
+cfp.setvars(colorbar_fontsize=11)
 cfp.setvars(colorbar_fontweight='normal')
 
 
@@ -107,7 +107,7 @@ Two new marker properties have been introduced to the lineplot routine.
 
 The default of having a frame around the legend can now be turned off with:
 
-cfp.setvars(legend_frame=False) 
+cfp.setvars(legend_frame=False)
 
 
 Legend frame face and edge colors can be set with:
@@ -127,8 +127,8 @@ cfp.setvars(legend_frame_edge_color='blue')
 8. axes - degree symbol option for longitude and latitude labelling
 ===================================================================
 
-The default labelling for longitude and latitude axes is 90E, 30N etc.  
-If a degree symbol is required this can be made the default for all subsequent 
+The default labelling for longitude and latitude axes is 90E, 30N etc.
+If a degree symbol is required this can be made the default for all subsequent
 plots with:
 
 cfp.setvars(degsym=True)
@@ -137,7 +137,7 @@ Users can also add this option to the ~/.cfplot_defaults file as
 
 degsym True
 
- 
+
 The degree symbol is '$\degree$' as a string for any further plot customisation.
 
 ::
@@ -149,7 +149,7 @@ The degree symbol is '$\degree$' as a string for any further plot customisation.
 9. rgrot, rgunrot - removed rotated axis routines
 =================================================
 
-The rgrot and rgunrot routines are no longer needed and have been replaced 
+The rgrot and rgunrot routines are no longer needed and have been replaced
 by using the Cartopy ccrs.RotatedPole transform.
 
 
@@ -164,7 +164,7 @@ by using the Cartopy ccrs.RotatedPole transform.
 
 
 The crop limits used in Cartopy / Matplotlib for polarstereographic and lcc
-projections are slightly wrong.  These were fixed by recalculating the limits 
+projections are slightly wrong.  These were fixed by recalculating the limits
 and setting them with set_xlim and set_ylim within the plot_map_axes routine.
 
 
@@ -232,8 +232,8 @@ of the drawn axes around the plot.
 15. cf-data-assign - rotated pole axis specification bug
 ========================================================
 
-A bug appears in the internal routine cf-data_assign for rotated pole plots when both 
-the X and Y axes have the same number of points.  The cf_data_assign routine was modified to 
+A bug appears in the internal routine cf-data_assign for rotated pole plots when both
+the X and Y axes have the same number of points.  The cf_data_assign routine was modified to
 properly assign grid_longitude and grid_latitude.
 
 
@@ -275,8 +275,3 @@ In lineplot if no axis labels are provided then the axis labels were copied from
 ::
 
     Fixed
-
-
-
-
-
