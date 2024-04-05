@@ -4865,7 +4865,7 @@ def cf_data_assign(
             except ValueError:
                 errstr = (
                     "\n\ncf_data_assign - cannot find data to return\n\n"
-                    f"{f.constructs.domain_axis_identity(d))}\n\n"
+                    f"{f.constructs.domain_axis_identity(d)}\n\n"
                 )
                 raise Warning(errstr)
 
@@ -5158,7 +5158,7 @@ def cscale(
     hexarr = []
     for col in np.arange(np.size(r)):
         hexarr.append(
-            f"#{int(r[col]%02x}{int(g[col]%02x}{int(b[col])%02x}")
+            f"#{int(r[col]):02x}{int(g[col]):02x}{int(b[col]):02x}")
 
     # White requested colour positions
     if white is not None:
@@ -8869,6 +8869,7 @@ def lineplot(
                 xlabel_units = str(getattr(f.construct(mydim), "Units", ""))
                 plot_xlabel = (
                     f"{cf_var_name(field=f, dim=mydim)} ({xlabel_units})"
+                )
                 y = np.squeeze(f.array)
 
                 # y label
@@ -10078,7 +10079,7 @@ def compare_arrays(
         if anom == 1:
             print(
                 "***mapaxis failure***\n\n"
-                f"cfp.mapaxis(min={}, max={max}, type={type})\n"
+                f"cfp.mapaxis(min={min}, max={max}, type={type})\n"
                 f"generated values are:{test_ticks}\n"
                 f"with labels:{test_labels}\n\n"
                 f"expected ticks:{ref_ticks}\n"
