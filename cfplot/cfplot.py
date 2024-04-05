@@ -8776,8 +8776,8 @@ def lineplot(
     | yunits=None - y units
     | xlabel=None - x name
     | ylabel=None - y name
-    | xname=None - depreciated keyword
-    | yname=None - depreciated keyword
+    | xname=None - deprecated keyword
+    | yname=None - deprecated keyword
     | xticks=None - x ticks
     | xticklabels=None - x tick labels
     | yticks=None - y ticks
@@ -8797,7 +8797,7 @@ def lineplot(
     if verbose:
         print("lineplot - making a line plot")
 
-    # Catch depreciated keywords
+    # Catch deprecated keywords
     if xname is not None or yname is not None:
         print(
             "\nlineplot error"
