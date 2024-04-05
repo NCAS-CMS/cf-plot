@@ -10025,15 +10025,15 @@ def compare_arrays(
                     anom = 1
 
         if anom == 1:
-            print("***levs failure***")
-            print("min, max, step are", min, max, step)
-            print("generated levels are:")
-            print(plotvars.levels)
-            print("expected levels:")
-            print(ref)
+            print(
+                "***levs failure***\n"
+                f"min, max, step are {min}, {max}, {step}\n"
+                "generated levels are:\n"
+                f"{plotvars.levels}\n"
+                f"expected levels:\n{ref}"
+            )
         else:
-            pass_str = "Passed cfp.levs(min=" + str(min) + ", max="
-            pass_str += str(max) + ", step=" + str(step) + ")"
+            pass_str = f"Passed cfp.levs(min={min}, max={max}, step={step})"
             print(pass_str)
 
     anom = 0
@@ -10049,16 +10049,16 @@ def compare_arrays(
             anom = 1
 
         if anom == 1:
-            print("***gvals failure***")
-            print("cfp.gvals(" + str(min) + ", " + str(max) + ")")
-            print("")
-            print("generated values are:", vals)
-            print("with a  multiplier of ", testmult)
-            print("")
-            print("expected values:", ref)
-            print("with a  multiplier of ", mult)
+            print(
+                "***gvals failure***\n"
+                "cfp.gvals({min}, {max})\n\n"
+                f"generated values are:{vals}\n"
+                f"with a  multiplier of {testmult}\n\n"
+                f"expected values:{ref}\n"
+                f"with a multiplier of {mult}\n"
+            )
         else:
-            pass_str = "Passed cfp.gvals(" + str(min) + ", " + str(max) + ")"
+            pass_str = f"Passed cfp.gvals({min}, {max})"
             print(pass_str)
 
     anom = 0
@@ -10076,18 +10076,16 @@ def compare_arrays(
                     anom = 1
 
         if anom == 1:
-            print("***mapaxis failure***")
-            print("")
-            print("cfp.mapaxis(min=" + str(min) + ", max=" + str(max))
-            print(", type=" + str(type) + ")")
-            print("generated values are:", test_ticks)
-            print("with labels:", test_labels)
-            print("")
-            print("expected ticks:", ref_ticks)
-            print("with labels:", ref_labels)
+            print(
+                "***mapaxis failure***\n\n"
+                f"cfp.mapaxis(min={}, max={max}, type={type})\n"
+                f"generated values are:{test_ticks}\n"
+                f"with labels:{test_labels}\n\n"
+                f"expected ticks:{ref_ticks}\n"
+                f"with labels:{ref_labels}\n"
+            )
         else:
-            pass_str = "Passed cfp.mapaxis(min=" + str(min) + ", max="
-            pass_str += str(max) + ", type=" + str(type) + ")"
+            pass_str = f"Passed cfp.mapaxis(min={min}, max={max}, type={type})"
             print(pass_str)
 
 
@@ -10203,8 +10201,8 @@ def traj(
     if isinstance(f, cf.FieldList):
         errstr = (
             "\n\ncfp.traj - cannot make a trajectory plot from a field list "
+            "- need to pass a field\n\n"
         )
-        errstr += "- need to pass a field\n\n"
         raise TypeError(errstr)
 
     # Read in data
@@ -10311,7 +10309,8 @@ def traj(
         if plotvars.levels is not None:
             if verbose:
                 print(
-                    "traj - plotting different colour markers based on a user set of levels"
+                    "traj - plotting different colour markers based on a "
+                    "user set of levels"
                 )
             levs = plotvars.levels
 
@@ -10571,7 +10570,7 @@ def traj(
                 if str(f.Units) == "":
                     colorbar_title += ""
                 else:
-                    colorbar_title += "(" + supscr(str(f.Units)) + ")"
+                    colorbar_title += f"({supscr(str(f.Units))})"
 
         levs = plotvars.levels
         if colorbar_labels is not None:
@@ -11792,7 +11791,10 @@ def irregular_window(field, lons, lats):
         pts = np.where(lons_irregular < plotvars.lonmin)
         lons_irregular[pts] = lons_irregular[pts] + 360.0
     else:
-        errstr = "/n/n cf-plot error - cannot determine grid offset in add_cyclic_irregular/n/n"
+        errstr = (
+            "\n\ncf-plot error - cannot determine grid offset in "
+            "add_cyclic_irregular\n\n"
+        )
         raise Warning(errstr)
 
     field_wrap = deepcopy(field_irregular)
@@ -11956,7 +11958,8 @@ def calculate_levels(field=None, level_spacing=None, verbose=None):
             fmult = 1
             if verbose:
                 print(
-                    "cfp.calculate_levels - generating automatic contour levels"
+                    "cfp.calculate_levels - generating automatic contour "
+                    "levels"
                 )
 
             if level_spacing == "outlier" or level_spacing == "inspect":
@@ -11986,8 +11989,11 @@ def calculate_levels(field=None, level_spacing=None, verbose=None):
                 if isinstance(
                     np.ma.min(dmin), np.ma.core.MaskedConstant
                 ) or isinstance(np.ma.min(dmax), np.ma.core.MaskedConstant):
-                    errstr = "cf-plot calculate_levels error - data is entirely masked\n"
-                    errstr += "setting levels to 0 and 0.1 to produce a plot"
+                    errstr = (
+                        "cf-plot calculate_levels error - data is entirely "
+                        "masked\n"
+                        "setting levels to 0 and 0.1 to produce a plot"
+                    )
                     print(errstr)
                     dmin = 0.0
                     dmax = 0.1
@@ -12054,7 +12060,8 @@ def calculate_levels(field=None, level_spacing=None, verbose=None):
     if plotvars.levels_step is not None:
         if verbose:
             print(
-                "calculate_levels - using specified step to generate contour levels"
+                "calculate_levels - using specified step to generate "
+                "contour levels"
             )
 
         step = plotvars.levels_step
@@ -12201,8 +12208,11 @@ def stream(
         # Check data is 2D
         ndims = np.squeeze(u.data).ndim
         if ndims != 2:
-            errstr = "\n\ncfp.vect error need a 2 dimensonal u field to make vectors\n"
-            errstr += "received " + str(np.squeeze(u.data).ndim)
+            errstr = (
+                "\n\ncfp.vect error need a 2 dimensonal u field to make "
+                "vectors\n"
+                f"received {np.squeeze(u.data).ndim}"
+            )
             if ndims == 1:
                 errstr += " dimension\n\n"
             else:
@@ -12236,8 +12246,11 @@ def stream(
         # Check data is 2D
         ndims = np.squeeze(v.data).ndim
         if ndims != 2:
-            errstr = "\n\ncfp.vect error need a 2 dimensonal v field to make vectors\n"
-            errstr += "received " + str(np.squeeze(v.data).ndim)
+            errstr = (
+                "\n\ncfp.vect error need a 2 dimensonal v field to make "
+                "vectors\n"
+                f"received {np.squeeze(v.data).ndim}"
+            )
             if ndims == 1:
                 errstr += " dimension\n\n"
             else:
@@ -12515,9 +12528,7 @@ def generate_titles(f=None):
                     value = ""
                 else:
                     value = str(values)
-                title_dims += (
-                    mycoord + ": " + title + " " + value + " " + units + "\n"
-                )
+                title_dims += f"{mycoord}: {title} {value} {units}\n"
 
             else:
                 # if well_formed:
@@ -12531,7 +12542,7 @@ def generate_titles(f=None):
                     value = ""
                 else:
                     value = str(cf.Data(values).datetime_as_string)
-                title_dims += mycoord + ": " + title + " " + value + "\n"
+                title_dims += f"{mycoord}: {title} {value}\n"
 
         if len(f.cell_methods()) > 0:
             title_dims += "cell_methods: "
@@ -12558,7 +12569,7 @@ def generate_titles(f=None):
                     if i > 0:
                         title_dims += ", "
 
-                    title_dims += myid + ": " + value + " " + qualifier_text
+                    title_dims += f"{myid}: {value} {qualifier_text}"
 
                     i += 1
 
@@ -12668,10 +12679,8 @@ def find_dim_names(field):
             else:
                 errstr = (
                     "find_data_names error  - cannot find a coordinate for "
-                    + daxes[i]
-                    + "\n"
+                    f"{daxes[i]}\nin the data\n"
                 )
-                errstr += "in the data\n"
                 raise Warning(errstr)
     else:
         coords = dcoords
@@ -12775,7 +12784,7 @@ def orca_check(x, verbose=False):
 
         if verbose:
             print(
-                "orca_check spread is ", np.max(np.abs(np.diff([v1, v2, v3])))
+                f"orca_check spread is {np.max(np.abs(np.diff([v1, v2, v3])))}"
             )
 
         # Check for discontinuity spead of less than 20 places
