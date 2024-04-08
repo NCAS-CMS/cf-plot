@@ -50,7 +50,7 @@ class pvars(object):
         """x.__str__() <==> str(x)"""
         a = None
         v = None
-        out = ["%s = %s" % (a, repr(v))]
+        out = ["{} = {}".format(a, repr(v))]
         for a, v in self.__dict__.items():
             return "\n".join(out)
 
