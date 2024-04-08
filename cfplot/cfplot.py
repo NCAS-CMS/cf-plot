@@ -50,7 +50,7 @@ class pvars(object):
         """x.__str__() <==> str(x)"""
         a = None
         v = None
-        out = ["{} = {}".format(a, repr(v))]
+        out = [f"{a} = {repr(v)}"]
         for a, v in self.__dict__.items():
             return "\n".join(out)
 
@@ -747,7 +747,7 @@ def con(
             errstr = (
                 "\n\ncfp.con error need a 1 or 2 dimensional field to "
                 "contour\n"
-                f"received {str(np.squeeze(f.data).ndim)} dimensions\n\n"
+                f"received {np.squeeze(f.data).ndim} dimensions\n\n"
                 f"{f}"
             )
             raise TypeError(errstr)
@@ -4967,9 +4967,9 @@ def check_data(field=None, x=None, y=None):
     if args is False:
         errstr = (
             "\nInput arguments incorrectly shaped:\n"
-            f"x has shape:{str(np.shape(x))}\n"
-            f"y has shape:{str(np.shape(y))}\n"
-            f"field has shape{str(np.shape(field))}\n\n"
+            f"x has shape:{np.shape(x)}\n"
+            f"y has shape:{np.shape(y)}\n"
+            f"field has shape{np.shape(field)}\n\n"
             "Expected x=xpts, y=ypts, field=(ypts,xpts)\n"
             "x=npts, y=npts, field=npts\n"
             "or x=[ypts, xpts], y=[ypts, xpts], field=[ypts, xpts]\n"
@@ -5063,7 +5063,7 @@ def cscale(
                 errstr = (
                     "\ncscale error - colour scale not found:\n"
                     f"File {file} not found\n"
-                    f"File {scale} not found\n"
+                    f"Scale {scale} not found\n"
                 )
                 raise Warning(errstr)
             else:
@@ -6605,7 +6605,7 @@ def vect(
             errstr = (
                 "\n\ncfp.vect error need a 2 dimensonal u field to make "
                 "vectors\n"
-                "received {np.squeeze(u.data).ndim}"
+                f"received {np.squeeze(u.data).ndim}"
             )
             if ndims == 1:
                 errstr += " dimension\n\n"
@@ -8800,8 +8800,8 @@ def lineplot(
     # Catch deprecated keywords
     if xname is not None or yname is not None:
         print(
-            "\nlineplot error"
-            "xname and yname are now deprecated keywords"
+            "\nlineplot error\n"
+            "xname and yname are now deprecated keywords\n"
             "Please use xlabel and ylabel\n"
         )
         return
@@ -9976,7 +9976,7 @@ def compare_images(example=None):
         hashlib.md5(open(file_new, "rb").read()).hexdigest()
         != hashlib.md5(open(file_ref, "rb").read()).hexdigest()
     ):
-        print(f"***Failed example {example}**")
+        print(f"***Failed example {example}***")
         error_image = f"/home/andy/cfplot.src/cfplot/error_{file}"
         diff_image = f"/home/andy/cfplot.src/cfplot/difference_{file}"
         p = subprocess.Popen([comp, file_new, file_ref, diff_image])
@@ -10052,7 +10052,7 @@ def compare_arrays(
         if anom == 1:
             print(
                 "***gvals failure***\n"
-                "cfp.gvals({min}, {max})\n\n"
+                f"cfp.gvals({min}, {max})\n\n"
                 f"generated values are:{vals}\n"
                 f"with a  multiplier of {testmult}\n\n"
                 f"expected values:{ref}\n"
