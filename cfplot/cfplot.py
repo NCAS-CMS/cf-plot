@@ -10681,7 +10681,7 @@ def cbar(
 
     # Code for when the user specifies nlevs to the contour command rather than
     # letting cf-plot work out some levels
-    if isinstance(clevs, int):
+    if isinstance(levs, int):
         if plotvars.plot_type == 0:
             myplot = plotvars.mymap
         else:
