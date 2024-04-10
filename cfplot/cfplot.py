@@ -3761,7 +3761,7 @@ def axes_plot(
         this_plot = plotvars.plot
 
     # get the plot bounds
-    l, b, w, h = this_plot.get_position().bounds
+    left, bottom, width, height = this_plot.get_position().bounds
 
     lonrange = plotvars.lonmax - plotvars.lonmin
     lon_mid = plotvars.lonmin + (plotvars.lonmax - plotvars.lonmin) / 2.0
@@ -10722,7 +10722,7 @@ def cbar(
         ):
             this_plot = plotvars.plot
 
-        l, b, w, h = this_plot.get_position().bounds
+        left, bottom, width, height = this_plot.get_position().bounds
 
         if orientation == "horizontal":
             if (
@@ -10731,7 +10731,8 @@ def cbar(
                 or plotvars.proj
                 not in ["cyl", "lcc", "moll", "merc", "ortho", "robin"]
             ):
-                this_plot.set_position([l, b + fraction, w, h - fraction])
+                this_plot.set_position(
+                    [left, bottom + fraction, width, height - fraction])
 
             # if plotvars.plot_type == 1 and plotvars.proj == 'cyl':
             if plotvars.plot_type == 1 and plotvars.proj in [
@@ -10747,27 +10748,30 @@ def cbar(
                 latrange = plotvars.latmax - plotvars.latmin
 
                 if (lonrange / latrange) <= 1.5:
-                    this_plot.set_position([l, b + 0.08, w, h - 0.12])
-                    l, b, w, h = this_plot.get_position().bounds
+                    this_plot.set_position(
+                        [left, bottom + 0.08, width, height - 0.12])
+                    left, bottom, width, height = (
+                        this_plot.get_position().bounds)
 
                 ax1 = plotvars.master_plot.add_axes(
                     [
-                        l + w * (1.0 - shrink) / 2.0,
-                        b - fraction * (1.0 - anchor),
-                        w * shrink,
+                        left + width * (1.0 - shrink) / 2.0,
+                        bottom - fraction * (1.0 - anchor),
+                        width * shrink,
                         thick,
                     ]
                 )
 
             if plotvars.plot_type > 1 or plotvars.plot_type == 0:
-                this_plot.set_position([l, b + fraction, w, h - fraction])
+                this_plot.set_position(
+                    [left, bottom + fraction, width, height - fraction])
 
                 ax1 = plotvars.master_plot.add_axes(
                     [
-                        l + w * (1.0 - shrink) / 2.0,
+                        left + width * (1.0 - shrink) / 2.0,
                         # b - fraction * (1.0 - anchor),
-                        b,
-                        w * shrink,
+                        bottom,
+                        width * shrink,
                         thick,
                     ]
                 )
@@ -10775,13 +10779,14 @@ def cbar(
         else:
             ax1 = plotvars.master_plot.add_axes(
                 [
-                    l + w + fraction * (anchor - 1),
-                    b + h * (1.0 - shrink) / 2.0,
+                    left + width + fraction * (anchor - 1),
+                    bottom + height * (1.0 - shrink) / 2.0,
                     thick,
-                    h * shrink,
+                    height * shrink,
                 ]
             )
-            this_plot.set_position([l, b, w - fraction, h])
+            this_plot.set_position(
+                [left, bottom, width - fraction, height])
 
     else:
         # Set axes position on coords supplied by the user
@@ -11052,18 +11057,18 @@ def map_title(title=None, dims=False):
 
         # Get plot position
         this_plot = plotvars.plot
-        l, b, w, h = this_plot.get_position().bounds
+        left, bottom, width, height = this_plot.get_position().bounds
 
         # Shift to left
         # if plotvars.plot_type == 1 and plotvars.proj !=cyl:
-        l = l - 0.1
-        this_plot.set_position([l, b, w, h])
+        left -= 0.1
+        this_plot.set_position([left, bottom, width, height])
 
-        l, b, w, h = this_plot.get_position().bounds
+        left, bottom, width, height = this_plot.get_position().bounds
 
         plotvars.plot.text(
-            l + w,
-            b + h,
+            left + width,
+            bottom + height,
             title,
             va="bottom",
             ha=halign,
@@ -11122,13 +11127,13 @@ def dim_titles(title=None, title2=None, title3=None):
     else:
         this_plot = plotvars.plot
 
-    l, b, w, h = this_plot.get_position().bounds
+    left, bottom, width, height = this_plot.get_position().bounds
 
     valign = "bottom"
 
     # Shift down if a cylindrical projection plot else to the left
     if plotvars.plot_type == 1 and plotvars.proj != "cyl":
-        l = l - 0.1
+        left -= 0.1
         myx = 1.25
         myy = 1.0
         valign = "top"
@@ -11144,24 +11149,24 @@ def dim_titles(title=None, title2=None, title3=None):
         if (lonrange / latrange) > 1.2 and (lonrange / latrange) <= 1.5:
             myx = 0.0
             myy = 1.02
-            h = h - 0.015
+            height -= 0.015
 
         if (lonrange / latrange) <= 1.2:
-            l = l - 0.1
+            left -= 0.1
             # if title2 is not None:
             #    l = l - 0.1
             myx = 1.05
             myy = 1.0
-            w = w - 0.1
+            width -= 0.1
             valign = "top"
     else:
-        h = h - 0.1
+        height -= 0.1
         myx = 0.0
         myy = 1.02
 
     # Change the plot position if title3 is None
     if title3 is None:
-        this_plot.set_position([l, b, w, h])
+        this_plot.set_position([left, bottom, width, height])
 
     # Set x and y spacing depending on the label location
     xspacing = 0.3
