@@ -6988,7 +6988,7 @@ def vect(
 
             # Titles for dimensions
             if titles:
-                dim_titles(title=title_dims, titles2=dim_titles2)
+                dim_titles(title=title_dims, titles2=title_dims2)
 
     ######################################
     # Latitude or longitude vs height plot
@@ -7339,7 +7339,7 @@ def vect(
 
             # Titles for dimensions
             if titles:
-                dim_titles(title=title_dims, titles2=dim_titles2)
+                dim_titles(title=title_dims, titles2=title_dims2)
 
     ##########
     # Save plot
