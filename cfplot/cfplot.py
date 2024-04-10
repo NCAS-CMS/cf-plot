@@ -1313,8 +1313,7 @@ def con(
                     transform_first = True
 
             # Fast map contours are also needed when clevs is a integer
-            if (
-                type(clevs) == int
+            if (isinstance(clevs, int)
                 and plotvars.plot_type == 1
                 and plotvars.proj == "cyl"
             ):
@@ -1492,7 +1491,7 @@ def con(
                     zorder=zorder,
                 )
 
-            if line_labels and type(clevs) != int:
+            if line_labels and not isinstance(clevs, int):
                 nd = ndecs(clevs)
                 fmt = "%d"
                 if nd != 0:
@@ -1991,7 +1990,7 @@ def con(
                 linestyles=linestyles,
                 zorder=zorder,
             )
-            if line_labels and type(clevs) != int:
+            if line_labels and not isinstance(clevs, int):
                 nd = ndecs(clevs)
                 fmt = "%d"
                 if nd != 0:
@@ -2328,7 +2327,7 @@ def con(
                 linestyles=linestyles,
                 alpha=alpha,
             )
-            if line_labels and type(clevs) != int:
+            if line_labels and not isinstance(clevs, int):
                 nd = ndecs(clevs)
                 fmt = "%d"
                 if nd != 0:
@@ -2524,7 +2523,7 @@ def con(
                 zorder=zorder,
                 **plotargs
             )
-            if line_labels and type(clevs) != int:
+            if line_labels and not isinstance(clevs, int):
                 nd = ndecs(clevs)
                 fmt = "%d"
                 if nd != 0:
@@ -2939,7 +2938,7 @@ def con(
                 linestyles=linestyles,
                 zorder=zorder,
             )
-            if line_labels and type(clevs) != int:
+            if line_labels and not isinstance(clevs, int):
                 nd = ndecs(clevs)
                 fmt = "%d"
                 if nd != 0:
@@ -5479,7 +5478,7 @@ def bfill(
         transform = ccrs.PlateCarree()
 
     if fast:
-        if type(clevs) == int:
+        if isinstance(clevs, int):
             norm = False
 
         if two_d:
@@ -5497,7 +5496,7 @@ def bfill(
         else:
             if lonlat:
                 for offset in [0, 360.0]:
-                    if type(clevs) == int:
+                    if isinstance(clevs, int):
                         plotvars.image = plotvars.mymap.pcolormesh(
                             xpts + offset,
                             ypts,
@@ -5516,7 +5515,7 @@ def bfill(
                         )
 
             else:
-                if type(clevs) == int:
+                if isinstance(clevs, int):
                     plotvars.image = plotvars.plot.pcolormesh(
                         xpts, ypts, field, cmap=cmap
                     )
@@ -5929,7 +5928,7 @@ def bfill_orig(
         transform = ccrs.PlateCarree()
 
     if fast:
-        if type(clevs) == int:
+        if isinstance(clevs, int):
             norm = False
 
         if orca:
@@ -5948,7 +5947,7 @@ def bfill_orig(
         else:
             if lonlat:
                 for offset in [0, 360.0]:
-                    if type(clevs) == int:
+                    if isinstance(clevs, int):
                         plotvars.image = plotvars.mymap.pcolormesh(
                             xpts + offset,
                             ypts,
@@ -5967,7 +5966,7 @@ def bfill_orig(
                         )
 
             else:
-                if type(clevs) == int:
+                if isinstance(clevs, int):
                     plotvars.image = plotvars.plot.pcolormesh(
                         xpts, ypts, field, cmap=cmap
                     )
@@ -10682,7 +10681,7 @@ def cbar(
 
     # Code for when the user specifies nlevs to the contour command rather than
     # letting cf-plot work out some levels
-    if type(levs) == int:
+    if isinstance(clevs, int):
         if plotvars.plot_type == 0:
             myplot = plotvars.mymap
         else:
@@ -10826,7 +10825,7 @@ def cbar(
     if extend == "both" or extend == "max":
         ncolors = ncolors - 1
 
-    if type(levs) != int:
+    if not isinstance(levs, int):
         plotvars.norm = matplotlib.colors.BoundaryNorm(
             boundaries=levs, ncolors=ncolors
         )
@@ -10853,7 +10852,7 @@ def cbar(
                 lbot_new.append(mid_point)
             lbot = lbot_new
 
-        if type(levs) != list:
+        if not isinstance(levs, list):
             lbot = None
 
         colorbar = matplotlib.colorbar.ColorbarBase(
