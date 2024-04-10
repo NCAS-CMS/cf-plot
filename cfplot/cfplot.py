@@ -40,7 +40,7 @@ except ImportError:
 
 # Initiate the pvars class
 # This is used for storing plotting variables in cfp.plotvars
-class pvars(object):
+class pvars:
     def __init__(self, **kwargs):
         """Initialize a new Pvars instance"""
         for attr, value in kwargs.items():
@@ -3454,13 +3454,11 @@ def timeaxis(dtimes=None):
         for year in tvals:
             time_ticks.append(
                 np.min(
-                    (
                         cf.Data(
                             cf.dt(f"{int(year)}-01-01 00:00:00"),
                             units=time_units,
                             calendar=calendar,
                         ).array
-                    )
                 )
             )
             time_labels.append(str(int(year)))
@@ -3508,11 +3506,9 @@ def timeaxis(dtimes=None):
                 if mytime >= tmin and mytime <= tmax:
                     time_ticks.append(
                         np.min(
-                            (
                                 cf.Data(
                                     mytime, units=time_units, calendar=calendar
                                 ).array
-                            )
                         )
                     )
                     time_labels.append(
@@ -5070,7 +5066,7 @@ def cscale(
                 file = scale
 
         # Read in rgb values and convert to hex
-        f = open(file, "r")
+        f = open(file)
         lines = f.read()
         lines = lines.splitlines()
         r = []
