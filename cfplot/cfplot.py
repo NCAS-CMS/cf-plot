@@ -817,7 +817,7 @@ def con(
                     for i, start in enumerate(
                         np.argmax(np.abs(np.diff(x)) > 180, axis=1)
                     ):
-                        fixed_x[i, start + 1 :] += 360
+                        fixed_x[i, start + 1:] += 360
                     x = fixed_x
 
     if np.ndim(x) == 2:
@@ -1247,8 +1247,8 @@ def con(
                         vals=y, val=plotvars.boundinglat, above=True
                     )
                     if myypos != -1:
-                        y = y[0 : myypos + 1]
-                        field = field[0 : myypos + 1, :]
+                        y = y[0: myypos + 1]
+                        field = field[0: myypos + 1, :]
 
         # Set the longitudes and latitudes
         lons, lats = x, y
@@ -5044,7 +5044,7 @@ def cscale(
             myhex = myhex.lstrip("#")
             mylen = len(myhex)
             rgb = tuple(
-                int(myhex[i : i + mylen // 3], 16)
+                int(myhex[i: i + mylen // 3], 16)
                 for i in range(0, mylen, mylen // 3)
             )
             r.append(rgb[0])
@@ -5145,9 +5145,9 @@ def cscale(
         # Reset colours if uniform is set
         if uniform:
             mid_pt = max(below, above)
-            r = r[mid_pt - below : mid_pt + above]
-            g = g[mid_pt - below : mid_pt + above]
-            b = b[mid_pt - below : mid_pt + above]
+            r = r[mid_pt - below: mid_pt + above]
+            g = g[mid_pt - below: mid_pt + above]
+            b = b[mid_pt - below: mid_pt + above]
 
     # Convert to hex
     hexarr = []
@@ -5184,7 +5184,7 @@ def cscale_get_map():
     """
     cscale_ncols = np.size(plotvars.cs)
     if plotvars.levels_extend == "both":
-        colmap = plotvars.cs[1 : cscale_ncols - 1]
+        colmap = plotvars.cs[1: cscale_ncols - 1]
     if plotvars.levels_extend == "min":
         colmap = plotvars.cs[1:]
     if plotvars.levels_extend == "max":
@@ -5488,7 +5488,7 @@ def bfill(
             for i, start in enumerate(
                 np.argmax(np.abs(np.diff(x)) > 180, axis=1)
             ):
-                fixed_x[i, start + 1 :] += 360
+                fixed_x[i, start + 1:] += 360
             plotvars.image = plotvars.mymap.pcolormesh(
                 fixed_x, y, field, cmap=cmap, transform=transform, norm=norm
             )
@@ -5938,7 +5938,7 @@ def bfill_orig(
             for i, start in enumerate(
                 np.argmax(np.abs(np.diff(x)) > 180, axis=1)
             ):
-                fixed_x[i, start + 1 :] += 360
+                fixed_x[i, start + 1:] += 360
 
             plotvars.image = plotvars.mymap.pcolormesh(
                 fixed_x, y, field, cmap=cmap, transform=transform
@@ -10395,8 +10395,8 @@ def traj(
 
                     col = plotvars.cs[np.max(np.where(val > plotvars.levels))]
                     mymap.plot(
-                        line_xpts[i : i + 2],
-                        line_ypts[i : i + 2],
+                        line_xpts[i: i + 2],
+                        line_ypts[i: i + 2],
                         color=col,
                         linewidth=plot_linewidth,
                         linestyle=linestyle,
