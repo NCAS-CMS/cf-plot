@@ -3,23 +3,24 @@ Climate contour/vector plots using cf-python, matplotlib and cartopy.
 Andy Heaps NCAS-CMS November 2023
 """
 
-import numpy as np
-import subprocess
-from scipy import interpolate
-import matplotlib
-from copy import deepcopy
 import os
+import subprocess
 import sys
-import matplotlib.pyplot as plot
-from matplotlib.collections import PolyCollection
+from copy import deepcopy
 from distutils.version import StrictVersion
+
 import cartopy
 import cartopy.crs as ccrs
-import cartopy.util as cartopy_util
 import cartopy.feature as cfeature
-from scipy.interpolate import griddata
-import shapely.geometry as sgeom
+import cartopy.util as cartopy_util
+import matplotlib
 import matplotlib.patches as mpatches
+import matplotlib.pyplot as plot
+import numpy as np
+import shapely.geometry as sgeom
+from matplotlib.collections import PolyCollection
+from scipy import interpolate
+from scipy.interpolate import griddata
 
 # Check for the minimum cf-python version
 cf_version_min = "3.0.0b2"
@@ -9835,8 +9836,8 @@ def regression_tests():
     # example26
     reset()
     setvars(file="fig26.png")
-    from netCDF4 import Dataset as ncfile
     from matplotlib.mlab import griddata
+    from netCDF4 import Dataset as ncfile
 
     # Get an Orca grid and flatten the arrays
     nc = ncfile("/opt/graphics/cfplot_data/orca2.nc")
@@ -9955,6 +9956,7 @@ def compare_images(example=None):
     |
     """
     import hashlib
+
     # TODO SLB: convert all 'home/andy/' paths to general configurable path
     # (there are many examples below but also throughout this script)
 
