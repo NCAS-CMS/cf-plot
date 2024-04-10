@@ -19,8 +19,6 @@ import cartopy.util as cartopy_util
 import cartopy.feature as cfeature
 from scipy.interpolate import griddata
 import shapely.geometry as sgeom
-import shapely
-from matplotlib.collections import PatchCollection
 import matplotlib.patches as mpatches
 
 # Check for the minimum cf-python version
