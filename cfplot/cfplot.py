@@ -1083,6 +1083,8 @@ def con(
     well_formed = False
     if isinstance(f, cf.Field):
         well_formed = check_well_formed(f)
+        # TODO SLB - probably there should be an error raised here if not
+        # 'well-formed'?
 
     if nlevs is not False:
         clevs = nlevs
@@ -5730,8 +5732,6 @@ def bfill_orig(
         cols = single_fill_color
 
     cmap = matplotlib.colors.ListedColormap(cols)
-
-    levels_orig = deepcopy(levels)
 
     if single_fill_color is None:
         if plotvars.levels_extend == "both" or plotvars.levels_extend == "min":
@@ -11968,17 +11968,14 @@ def calculate_levels(field=None, level_spacing=None, verbose=None):
                 hist = np.histogram(field, 100)[0]
                 pts = np.size(field)
                 rate = 0.01
-                outlier_detected = False
 
                 if sum(hist[1:-2]) == 0:
                     if hist[0] / hist[-1] < rate:
-                        outlier_detected = True
                         pts = np.where(field == dmin)
                         field2[pts] = dmax
                         dmin = np.nanmin(field2)
 
                     if hist[-1] / hist[0] < rate:
-                        outlier_detected = True
                         pts = np.where(field == dmax)
                         field2[pts] = dmin
                         dmax = np.nanmax(field2)
@@ -12673,7 +12670,7 @@ def find_dim_names(field):
 
                 # print(ajh - daxes[i], dcoords[j], field.get_data_axes(dcoords[j])[0])
 
-                if daxes[i] == field.get_data_axes(dcoords[j])[0]:
+                if val == field.get_data_axes(dcoords[j])[0]:
                     coord = dcoords[j]
 
             if coord is not None:
@@ -12681,7 +12678,7 @@ def find_dim_names(field):
             else:
                 errstr = (
                     "find_data_names error  - cannot find a coordinate for "
-                    f"{daxes[i]}\nin the data\n"
+                    f"{val}\nin the data\n"
                 )
                 raise Warning(errstr)
     else:
@@ -12726,11 +12723,7 @@ def find_z(f):
         return None
 
     myz = "Z"
-    z_count = 0
-    z_names = []
-
     mycoords = find_dim_names(f)
-
     myz = None
     for mycoord in mycoords:
         if f.coord(mycoord).Z:
@@ -12758,15 +12751,12 @@ def orca_check(x, verbose=False):
 
     lons_lower = lons[int(nvpts / 4), :]
     discont_lower_idx = np.where(abs(np.diff(lons_lower)) > 120)
-    discont_lower = lons_lower[discont_lower_idx]
 
     lons_mid = lons[int(nvpts / 2), :]
     discont_mid_idx = np.where(abs(np.diff(lons_mid)) > 120)
-    discont_mid = lons_mid[discont_mid_idx]
 
     lons_upper = lons[int(nvpts * 3 / 4), :]
     discont_upper_idx = np.where(abs(np.diff(lons_upper)) > 120)
-    discont_mid = lons_mid[discont_mid_idx]
 
     # Check for one discontinuity
     retval = False
