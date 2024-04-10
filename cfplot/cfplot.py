@@ -1313,7 +1313,8 @@ def con(
                     transform_first = True
 
             # Fast map contours are also needed when clevs is a integer
-            if (isinstance(clevs, int)
+            if (
+                isinstance(clevs, int)
                 and plotvars.plot_type == 1
                 and plotvars.proj == "cyl"
             ):
