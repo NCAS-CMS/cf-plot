@@ -3453,11 +3453,11 @@ def timeaxis(dtimes=None):
         for year in tvals:
             time_ticks.append(
                 np.min(
-                        cf.Data(
-                            cf.dt(f"{int(year)}-01-01 00:00:00"),
-                            units=time_units,
-                            calendar=calendar,
-                        ).array
+                    cf.Data(
+                        cf.dt(f"{int(year)}-01-01 00:00:00"),
+                        units=time_units,
+                        calendar=calendar,
+                    ).array
                 )
             )
             time_labels.append(str(int(year)))
@@ -3505,9 +3505,9 @@ def timeaxis(dtimes=None):
                 if mytime >= tmin and mytime <= tmax:
                     time_ticks.append(
                         np.min(
-                                cf.Data(
-                                    mytime, units=time_units, calendar=calendar
-                                ).array
+                            cf.Data(
+                                mytime, units=time_units, calendar=calendar
+                            ).array
                         )
                     )
                     time_labels.append(
