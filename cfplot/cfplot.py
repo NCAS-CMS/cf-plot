@@ -62,7 +62,8 @@ except Exception:
     matplotlib.use("Agg")
 
 
-# Check for user setting of pre_existing_data_dir pointing to central cartopy setup
+# Check for user setting of pre_existing_data_dir pointing to central
+# cartopy setup
 # This is used in the cfview simple setup process
 try:
     pre_existing_data_dir = os.environ["pre_existing_data_dir"]
@@ -630,23 +631,29 @@ def con(
     |                          of values would be [0.1, 0.05, 0.8, 0.02]
     | colorbar_fontsize=None - text size for colorbar labels and title
     | colorbar_fontweight=None - font weight for colorbar labels and title
-    | colorbar_text_up_down=False - if True horizontal colour bar labels alternate
-    |                             above (start) and below the colour bar
-    | colorbar_text_down_up=False - if True horizontal colour bar labels alternate
-    |                             below (start) and above the colour bar
+    | colorbar_text_up_down=False - if True horizontal colour bar labels
+    |                               alternate above (start) and below the
+    |                               colour bar
+    | colorbar_text_down_up=False - if True horizontal colour bar labels
+    |                               alternate below (start) and above the
+    |                               colour bar
     | colorbar_drawedges=True - draw internal divisions in the colorbar
-    | colorbar_fraction=None - space for the colorbar - default = 0.21, in normalised
+    | colorbar_fraction=None - space for the colorbar - default = 0.21,
+    |                          in normalised
     |                       coordinates
-    | colorbar_thick=None - thickness of the colorbar - default = 0.015, in normalised
-    |                       coordinates
-    | colorbar_anchor=None - default=0.5 - anchor point of colorbar within the fraction space.
+    | colorbar_thick=None - thickness of the colorbar - default = 0.015,
+    |                       in normalised coordinates
+    | colorbar_anchor=None - default=0.5 - anchor point of colorbar within
+    |                        the fraction space.
     |                        0.0 = close to plot, 1.0 = further away
-    | colorbar_labels=None - labels to use for colorbar.  The default is to use the contour
-    |                        levels as labels
+    | colorbar_labels=None - labels to use for colorbar. The default is to
+    |                        use the contour levels as labels
     | colorbar_text_up_down=False - on a horizontal colorbar alternate the
-    |                               labels top and bottom starting in the up position
+    |                               labels top and bottom starting in the
+    |                               up position
     | colorbar_text_down_up=False - on a horizontal colorbar alternate the
-    |                               labels bottom and top starting in the bottom position
+    |                               labels bottom and top starting in the
+    |                               bottom position
     | colorbar_drawedges=True - draw internal delimeter lines in the colorbar
     | colors='k' - contour line colors - takes one or many values.
     | xlog=False - logarithmic x axis
@@ -668,27 +675,37 @@ def con(
     | linestyles=None - takes 'solid', 'dashed', 'dashdot' or 'dotted'
     | alpha=1.0 - transparency setting.  The default is no transparency.
     | zorder=1 - order of drawing
-    | level_spacing=None - Default of 'linear' level spacing.  Also takes 'log', 'loglike',
-    |                      'outlier' and 'inspect'
+    | level_spacing=None - Default of 'linear' level spacing.  Also takes
+    |                      'log', 'loglike', 'outlier' and 'inspect'
     | irregular=None - flag for contouring irregular data
     | face_lons=None - longitude points for face vertices
     | face_lats=None - latitude points for face verticies
     | face_connectivity=None - connectivity for face verticies
     | titles=False - set to True to have a dimensions title
-    | transform_first=None - Cartopy should transform the points before calling the contouring algorithm,
-    |                         which can have a significant impact on speed (it is much faster to transform
-    |                         points than it is to transform patches) If this is unset and the number of points
-    |                         in the x direction is > 400 then it is set to True.
-    | blockfill_fast=None - Use pcolormesh blockfill.  This is possibly less reliable that the usual code but is
+    | transform_first=None - Cartopy should transform the points before
+    |                        calling the contouring algorithm, which can have
+    |                        a significant impact on speed (it is much
+    |                        faster to transform points than it is to
+    |                        transform patches) If this is unset and the
+    |                        number of points in the x direction is > 400
+    |                        then it is set to True.
+    | blockfill_fast=None - Use pcolormesh blockfill. This is possibly less
+    |                       reliable that the usual code but is
     |                       faster for higher resolution datasets
     | nlevs=False - Let Matplotlib work out the levels for the contour plot
-    | orca=None - User specifies this is an orca tripolar grid.  Internally cf-plot tries to detect this by looking
-    |             for a single discontinuity in the logitude 2D array. If found a fix it make to the longitudes so
-    |             that they are no longer discontinuous.
-    | orca_skip=None - Only plot every nth grid point in the 2D longitude and latitude arrays.  This is useful for when
-    |                  plotting his resolution data over the whole globe which would otherwise be very slow to visualize.
-    | grid=False - Draw a grid on the map using the parameters set by cfp.setvars.  Defaults are grid_x_spacing=60,
-    |              grid_y_spacing=30, grid_colour='k', grid_linestyle = '--', grid_thickness=1.0
+    | orca=None - User specifies this is an orca tripolar grid. Internally
+    |             cf-plot tries to detect this by looking for a single
+    |             discontinuity in the logitude 2D array. If found a fix
+    |             it make to the longitudes so that they are no longer
+    |             discontinuous.
+    | orca_skip=None - Only plot every nth grid point in the 2D longitude
+    |                  and latitude arrays.  This is useful for when
+    |                  plotting his resolution data over the whole globe
+    |                  which would otherwise be very slow to visualize.
+    | grid=False - Draw a grid on the map using the parameters set by
+    |              cfp.setvars. Defaults are grid_x_spacing=60,
+    |              grid_y_spacing=30, grid_colour='k',
+    |              grid_linestyle = '--', grid_thickness=1.0
     |
     :Returns:
      None
@@ -809,7 +826,8 @@ def con(
                         field = field[::orca_skip, ::orca_skip]
 
                     # orca grids have a discontinuity in the longitude grid
-                    # use the method at https://gist.github.com/pelson/79cf31ef324774c97ae7
+                    # use the method at
+                    # https://gist.github.com/pelson/79cf31ef324774c97ae7
                     # to remove the discontinuity
 
                     fixed_x = x.copy()
@@ -1180,8 +1198,9 @@ def con(
                         x = x + 360
             elif not orca:
                 # Get the irregular data within the map coordinates
-                # Matplotlib tricontour cannot plot missing data so we need to split
-                # the missing data into a separate field to deal with this
+                # Matplotlib tricontour cannot plot missing data so we need to
+                # split the missing data into a separate field to deal with
+                # this
 
                 field_modified = deepcopy(field)
                 pts_nan = np.where(np.isnan(field_modified))
@@ -1303,8 +1322,8 @@ def con(
             ):
                 cmap.set_over(plotvars.cs[-1])
 
-            # For fast map contours add transform_first=True to contourf command
-            # and make lons and lats 2D
+            # For fast map contours add transform_first=True to contourf
+            # command and make lons and lats 2D
             if (
                 transform_first is None
                 and np.ndim(lons) == 1
@@ -1382,9 +1401,11 @@ def con(
 
                 # elif orca:
                 elif two_d:
-                    # bfill(f=f, clevs=clevs, lonlat=False, alpha=alpha, fast=blockfill_fast,zorder=zorder)
-                    # bfill(x=x, y=y, f=field * fmult, clevs=clevs, lonlat=False, alpha=alpha,\
-                    #      fast=blockfill_fast, zorder=zorder, orca=True)
+                    # bfill(f=f, clevs=clevs, lonlat=False,
+                    #       alpha=alpha, fast=blockfill_fast,zorder=zorder)
+                    # bfill(x=x, y=y, f=field * fmult,
+                    #       clevs=clevs, lonlat=False, alpha=alpha,\
+                    #       fast=blockfill_fast, zorder=zorder, orca=True)
                     bfill(
                         x=x,
                         y=y,
@@ -1918,7 +1939,10 @@ def con(
                         xpts = np.append(
                             xpts, f.coord("X").bounds.array[-1, 1]
                         )
-                        ypts = np.squeeAllTrop_UpStrat_Eq_Total_AllWN_Timeseries_2ze(
+                        # Use 'noqa' to prevent PEP8 E501 being raised due to
+                        # line length being too long. Can't prevent this
+                        # straightforwardly given function name of that length.
+                        ypts = np.squeeAllTrop_UpStrat_Eq_Total_AllWN_Timeseries_2ze(  # noqa
                             f.coord("Z").bounds.array
                         )[
                             :, 0
@@ -3092,8 +3116,9 @@ def mapset(
     | The default setting for the cylindrical projection is for 1 degree of
     | longitude to have the same size as one degree of latitude.  When plotting
     | a smaller map setting aspect='auto' turns this off and the map fills the
-    | plot area. Setting aspect to a number a circle will be stretched such that
-    | the height is num times the width. aspect=1 is the same as aspect='equal'.
+    | plot area. Setting aspect to a number a circle will be stretched such
+    | that the height is num times the width. aspect=1 is the same as
+    | aspect='equal'.
     |
     | The proj parameter accepts 'npstere' and 'spstere' for northern
     | hemisphere or southern hemisphere polar stereographic projections.
@@ -3176,12 +3201,11 @@ def levs(min=None, max=None, step=None, manual=None, extend="both"):
 
     | Use the levs command when a predefined set of levels is required. The
     | min, max and step parameters can be used to define a set of levels.
-    | These can take integer or floating point numbers. If the min and max are specified
-    | then a step also needs to be specified.
+    | These can take integer or floating point numbers. If the min and max
+    | are specified then a step also needs to be specified.
 
-    | If just the step is specified then cf-plot will internally try to define a reasonable set
-    | of levels.
-
+    | If just the step is specified then cf-plot will internally try to
+    | define a reasonable set of levels.
 
     | If colour filled contours are plotted then the default is to extend
     | the minimum and maximum contours coloured for out of range values
@@ -3978,8 +4002,10 @@ def gopen(
     | right=None - right margin in normalised coordinates - default=0.92
     | top=None - top margin in normalised coordinates - default=0.08
     | bottom=None - bottom margin in normalised coordinates - default=0.08
-    | wspace=None - width reserved for blank space between subplots - default=0.2
-    | hspace=None - height reserved for white space between subplots - default=0.2
+    | wspace=None - width reserved for blank space between
+    |               subplots - default=0.2
+    | hspace=None - height reserved for white space between
+    |               subplots - default=0.2
     | dpi=None - resolution in dots per inch
     | user_position=False - set to True to supply plot position via gpos
     |               xmin, xmax, ymin, ymax values
@@ -4485,7 +4511,8 @@ def gvals(dmin=None, dmax=None, mystep=None, mod=True):
             vals = np.concatenate((vals1, vals2))
 
         # Round off decimal numbers so that
-        # (np.arange(4) * -0.1)[3] = -0.30000000000000004 gives -0.3 as expected
+        # (np.arange(4) * -0.1)[3] = -0.30000000000000004 gives -0.3
+        # as expected
         if step < 1:
             vals = vals.round(6)
 
@@ -5227,7 +5254,8 @@ def bfill(
     |                        - makes maplotlib named colours or
     |                        - hexadecimal notation - '#d3d3d3' for grey
     | zorder=4 - plotting order
-    | fast=None - use fast plotting with pcolormesh which is useful for larger datasets
+    | fast=None - use fast plotting with pcolormesh which is useful for
+    |             larger datasets
     | transform=False - map transform supplied by calling routine
     | orca=False - data is orca data
     |
@@ -5278,15 +5306,19 @@ def bfill(
     # levels_orig = deepcopy(levels)
 
     # if single_fill_color is None:
-    #    if plotvars.levels_extend == 'both' or plotvars.levels_extend == 'min':
+    #    if (plotvars.levels_extend == 'both' or
+    #        plotvars.levels_extend == 'min'):
     #        levels = np.insert(levels, 0, -1e30)
-    #    if plotvars.levels_extend == 'both' or plotvars.levels_extend == 'max':
+    #    if (plotvars.levels_extend == 'both' or
+    #        plotvars.levels_extend == 'max'):
     #        levels = np.append(levels, 1e30)
 
-    #    if plotvars.levels_extend == 'both' or plotvars.levels_extend == 'min':
+    #    if (plotvars.levels_extend == 'both' or
+    #        plotvars.levels_extend == 'min'):
     #        cmap.set_under(plotvars.cs[0])
     #        cols = cols[1:]
-    #    if plotvars.levels_extend == 'both' or plotvars.levels_extend == 'max':
+    #    if (plotvars.levels_extend == 'both' or
+    #        plotvars.levels_extend == 'max'):
     #        cmap.set_over(plotvars.cs[-1])
     #        cols = cols[:-1]
 
@@ -5373,11 +5405,13 @@ def bfill(
 
             # Shift lon grid if needed
             if lonlat:
-                # Extract upper bound and original rhs of box longitude bounding points
+                # Extract upper bound and original rhs of box longitude
+                # bounding points
                 upper_bound = ypts[-1]
 
                 # Reduce xpts and ypts by 1 or shifting of grid fails
-                # The last points are the right / upper bounds for the last data box
+                # The last points are the right / upper bounds for the
+                # last data box
                 xpts = xpts[0:-1]
                 ypts = ypts[0:-1]
 
@@ -5410,7 +5444,8 @@ def bfill(
                 for ix in np.arange(nx):
                     for iy in np.arange(ny):
 
-                        # Calculate the local size difference and set the square points
+                        # Calculate the local size difference and set the
+                        # square points
                         if ix < nx - 2:
                             xdiff = (x[iy, ix + 1] - x[iy, ix]) / 2
                         else:
@@ -5685,7 +5720,8 @@ def bfill_orig(
     |                        - makes maplotlib named colours or
     |                        - hexadecimal notation - '#d3d3d3' for grey
     | zorder=4 - plotting order
-    | fast=None - use fast plotting with pcolormesh which is useful for larger datasets
+    | fast=None - use fast plotting with pcolormesh which is useful for
+    |             larger datasets
     | transform=False - map transform supplied by calling routine
     | orca=False - data is orca data
     |
@@ -5826,11 +5862,13 @@ def bfill_orig(
 
                 # Shift lon grid if needed
                 if lonlat:
-                    # Extract upper bound and original rhs of box longitude bounding points
+                    # Extract upper bound and original rhs of box longitude
+                    # bounding points
                     upper_bound = ypts[-1]
 
                     # Reduce xpts and ypts by 1 or shifting of grid fails
-                    # The last points are the right / upper bounds for the last data box
+                    # The last points are the right / upper bounds for the
+                    # last data box
                     xpts = xpts[0:-1]
                     ypts = ypts[0:-1]
 
@@ -5842,7 +5880,8 @@ def bfill_orig(
                     # Add cyclic information if missing.
                     lonrange = np.nanmax(xpts) - np.nanmin(xpts)
                     if lonrange < 360 and lonrange > 350:
-                        # field, xpts = cartopy_util.add_cyclic_point(field, xpts)
+                        # field, xpts = cartopy_util.add_cyclic_point(
+                        #     field, xpts)
                         field, xpts = add_cyclic(field, xpts)
 
                     right_bound = xpts[-1] + (xpts[-1] - xpts[-2])
@@ -5858,7 +5897,8 @@ def bfill_orig(
                 for ix in np.arange(nx - 1):
                     for iy in np.arange(ny - 1):
 
-                        # Calculate the local size difference and set the square points
+                        # Calculate the local size difference and set
+                        # the square points
                         if ix < nx - 2:
                             xdiff = (x[iy, ix + 1] - x[iy, ix]) / 2
                         else:
@@ -6276,7 +6316,8 @@ def stipple(
             # Calculate interpolation points
             xnew, ynew, xnew_map, ynew_map = polar_regular_grid()
             # Convert longitudes to be 0 to 360
-            # negative longitudes are incorrectly regridded in polar stereographic projection
+            # negative longitudes are incorrectly regridded in polar
+            # stereographic projection
             xnew = np.mod(xnew + 360.0, 360.0)
 
     if plotvars.plot_type >= 2 and plotvars.plot_type <= 3:
@@ -6769,7 +6810,8 @@ def vect(
         lonmax = plotvars.lonmax
         proj = ccrs.PlateCarree()
 
-        # Fix for high latitude vectors as described at https://github.com/SciTools/cartopy/issues/1179
+        # Fix for high latitude vectors as described at
+        # https://github.com/SciTools/cartopy/issues/1179
         if plotvars.proj != "cyl":
             u_src_crs = u_data / np.cos(u_y[:, np.newaxis] / 180 * np.pi)
             v_src_crs = v_data
@@ -6799,8 +6841,8 @@ def vect(
             )
         else:
             if plotvars.proj == "cyl":
-                # **cartopy 0.16 fix for longitide points in cylindrical projection
-                # when regridding to a number of points
+                # **cartopy 0.16 fix for longitide points in cylindrical
+                # projection when regridding to a number of points
                 # Make points within the plotting region
                 for pt in np.arange(np.size(u_x)):
                     if u_x[pt] > lonmax:
@@ -7172,7 +7214,8 @@ def vect(
             )
 
             if ytype == 0:
-                # Make y interpolation in log space as we have a pressure coordinate
+                # Make y interpolation in log space as we have a pressure
+                # coordinate
                 u_vals = regrid(
                     f=u_data,
                     x=u_x,
@@ -7408,8 +7451,8 @@ def set_map():
     if plotvars.proj == "npstere":
         proj = ccrs.NorthPolarStereo(central_longitude=plotvars.lon_0)
         # **cartopy 0.16 fix
-        # Here we add in 0.01 to the longitude extent as this helps with plotting
-        # lines and line labels
+        # Here we add in 0.01 to the longitude extent as this helps with
+        # plotting lines and line labels
         lonmin = plotvars.lon_0 - 180
         lonmax = plotvars.lon_0 + 180.01
         latmin = plotvars.boundinglat
@@ -7418,8 +7461,8 @@ def set_map():
     if plotvars.proj == "spstere":
         proj = ccrs.SouthPolarStereo(central_longitude=plotvars.lon_0)
         # **cartopy 0.16 fix
-        # Here we add in 0.01 to the longitude extent as this helps with plotting
-        # lines and line labels
+        # Here we add in 0.01 to the longitude extent as this helps with
+        # plotting lines and line labels
         lonmin = plotvars.lon_0 - 180
         lonmax = plotvars.lonmax + 180.01
         latmin = -90
@@ -8124,7 +8167,8 @@ def setvars(
     | feature_zorder=None - plotting zorder for above three features
     | rotated_grid_spacing=10 - rotated grid spacing in degrees
     | rotated_deg_spacing=0.75 - rotated grid spacing between graticule dots
-    | rotated_deg_tkickness=1.0 - rotated grid thickness for longitude and latitude lines
+    | rotated_deg_tkickness=1.0 - rotated grid thickness for longitude and
+    |                             latitude lines
     | rotated_continents=True - draw rotated continents
     | rotated_grid=True - draw rotated grid
     | rotated_labels=True - draw rotated grid labels
@@ -8141,8 +8185,8 @@ def setvars(
     | grid_zorder=100 - plotting order for the grid lines
     | grid_thickness=1.0 - grid thickness
     | tight=False - remove whitespace around the plot
-    | level_spacing=None - default contour level spacing - takes 'linear', 'log', 'loglike',
-    |                      'outlier' and 'inspect'
+    | level_spacing=None - default contour level spacing - takes 'linear',
+    |                      'log', 'loglike', 'outlier' and 'inspect'
     |
     | Use setvars() to reset to the defaults
     |
@@ -8746,7 +8790,8 @@ def lineplot(
     | x - x locations of data in y
     | y - y locations of data in x
     | linestyle='-' - line style
-    | color=None - line color.  Defaults to Matplotlib colour scheme unless specified
+    | color=None - line color. Defaults to Matplotlib colour scheme
+    |              unless specified
     | linewidth=1.0 - line width
     | marker=None - marker for points along the line
     | markersize=5.0 - size of the marker
@@ -8756,10 +8801,13 @@ def lineplot(
     | ylog=False - log y-axis
     | label=None - line label - label for line
     | legend_location='upper right' - default location of legend
-    |                 Other options are {'best': 0, 'center': 10, 'center left': 6,
+    |                 Other options are {'best': 0, 'center': 10,
+    |                                    'center left': 6,
     |                                    'center right': 7, 'lower center': 8,
-    |                                    'lower left': 3, 'lower right': 4, 'right': 5,
-    |                                    'upper center': 9, 'upper left': 2, 'upper right': 1}
+    |                                    'lower left': 3, 'lower right': 4,
+    |                                    'right': 5,
+    |                                    'upper center': 9, 'upper left': 2,
+    |                                    'upper right': 1}
     | titles=False - set to True to have a dimensions title
     | verbose=None - change to 1 to get a verbose listing of what lineplot
     |                is doing
@@ -8825,7 +8873,8 @@ def lineplot(
             ndims = np.squeeze(f.data).ndim
             if ndims != 1:
                 errstr = (
-                    "\n\ncfp.lineplot error need a 1 dimensonal field to make a line\n"
+                    "\n\ncfp.lineplot error need a 1 dimensonal field to "
+                    "make a line\n"
                     f"received {np.squeeze(f.data).ndim} dimensions\n\n"
                 )
                 raise TypeError(errstr)
@@ -8833,9 +8882,12 @@ def lineplot(
             if x is not None:
                 if isinstance(x, cf.Field):
                     errstr = (
-                        "\n\ncfp.lineplot error - two or more cf-fields passed for plotting.\n"
-                        "To plot two cf-fields open a graphics plot with cfp.gopen(), \n"
-                        "plot the two fields separately with cfp.lineplot and then close\n"
+                        "\n\ncfp.lineplot error - two or more cf-fields "
+                        "passed for plotting.\n"
+                        "To plot two cf-fields open a graphics plot with "
+                        "cfp.gopen(), \n"
+                        "plot the two fields separately with cfp.lineplot "
+                        "and then close\n"
                         "the graphics plot with cfp.gclose()\n\n"
                     )
                     raise TypeError(errstr)
@@ -10144,7 +10196,8 @@ def traj(
     | markersize=30 - size of the marker
     | markerfacecolor='b' - colour of the marker face
     | markeredgecolor='g' - colour of the marker edge
-    | legend=False - plot different colour markers based on a set of user levels
+    | legend=False - plot different colour markers based on a set of user
+    |                levels
     | zorder=None - order for plotting
     | verbose=None - Set to True to get a verbose listing of what traj is doing
     |
@@ -10167,21 +10220,25 @@ def traj(
     |                          of values would be [0.1, 0.05, 0.8, 0.02]
     | colorbar_orientation=None - orientation of the colorbar
     | colorbar_title=None - title for the colorbar
-    | colorbar_text_up_down=False - if True horizontal colour bar labels alternate
-    |                             above (start) and below the colour bar
-    | colorbar_text_down_up=False - if True horizontal colour bar labels alternate
-    |                             below (start) and above the colour bar
+    | colorbar_text_up_down=False - if True horizontal colour bar labels
+    |                               alternate above (start) and below the
+    |                               colour bar
+    | colorbar_text_down_up=False - if True horizontal colour bar labels
+    |                               alternate below (start) and above the
+    |                               colour bar
     | colorbar_drawedges=True - draw internal divisions in the colorbar
-    | colorbar_fraction=None - space for the colorbar - default = 0.21, in normalised
-    |                       coordinates
-    | colorbar_thick=None - thickness of the colorbar - default = 0.015, in normalised
-    |                       coordinates
-    | colorbar_anchor=None - default=0.5 - anchor point of colorbar within the fraction space.
-    |                        0.0 = close to plot, 1.0 = further away
+    | colorbar_fraction=None - space for the colorbar - default = 0.21, in
+    |                          normalised coordinates
+    | colorbar_thick=None - thickness of the colorbar - default = 0.015, in
+    |                       normalised coordinates
+    | colorbar_anchor=None - default=0.5 - anchor point of colorbar within
+    |                        the fraction space. 0.0 = close to plot,
+    |                        1.0 = further away
     | colorbar_shrink=None - value to shrink the colorbar by.  If the colorbar
     |                        exceeds the plot area then values of 1.0, 0.55
     |                        or 0.5m ay help it better fit the plot area.
-    | colorbar_labels=None - labels for the colorbar.  Default is to use the levels defined
+    | colorbar_labels=None - labels for the colorbar. Default is to use the
+    |                        levels defined
     |                        using cfp.levs
     | Vector options
     | vector=False - Draw vectors
@@ -10439,7 +10496,8 @@ def traj(
     # Plot different colour markers based on a user set of levels
     if legend:
 
-        # For polar stereographic plots mask any points outside the plotting limb
+        # For polar stereographic plots mask any points outside the
+        # plotting limb
         if plotvars.proj == "npstere":
             pts = np.where(lats < plotvars.boundinglat)
             if np.size(pts) > 0:
@@ -10633,10 +10691,10 @@ def cbar(
     | levs - colorbar levels
     | thick - set height of colorbar - default = 0.015,
     |         in normalised plot coordinates
-    | anchor - default=0.3 - anchor point of colorbar within the fraction space.
-    |                        0.0 = close to plot, 1.0 = further away
-    | extend = None - extensions for colorbar.  The default is for extensions at
-    |                 both ends.
+    | anchor - default=0.3 - anchor point of colorbar within the fraction
+    |                        space. 0.0 = close to plot, 1.0 = further away
+    | extend = None - extensions for colorbar. The default is for
+    |                 extensions at both ends.
     | mid = False - label mid points of colours rather than the boundaries
     | verbose = None
     |
@@ -11095,7 +11153,8 @@ def map_title(title=None, dims=False):
 
 def dim_titles(title=None, title2=None, title3=None):
     """
-    | dim_titles is an internal routine to draw a set of dimension titles on a  plot
+    | dim_titles is an internal routine to draw a set of dimension titles
+    | on a plot
     |
     | title=None - title to put on the plot
     | title2=None - additional title
@@ -11459,7 +11518,8 @@ def plot_map_axes(
             clip_on=False,
         )
 
-        # Modify xlim and ylim values as the default values clip the plot slightly
+        # Modify xlim and ylim values as the default values clip the
+        # plot slightly
         xmax = np.max(np.abs(mymap.set_xlim(None)))
         mymap.set_xlim((-xmax, xmax), emit=False)
         ymax = np.max(np.abs(mymap.set_ylim(None)))
@@ -11486,7 +11546,8 @@ def plot_map_axes(
         latmin = plotvars.latmin
         latmax = plotvars.latmax
 
-        # Modify xlim and ylim values as the default values clip the plot slightly
+        # Modify xlim and ylim values as the default values clip the
+        # plot slightly
         xmin = mymap.set_xlim(None)[0]
         xmax = mymap.set_xlim(None)[1]
         ymin = mymap.set_ylim(None)[0]
@@ -11497,7 +11558,8 @@ def plot_map_axes(
 
         # Mask off contours that appear because of the plot extention
         # mymap.add_patch(mpatches.Polygon([[xmin, ymin], [xmax,ymin],
-        #                                  [xmax, ymin*1.05], [xmin, ymin*1.05]],
+        #                                  [xmax, ymin*1.05],
+        #                                  [xmin, ymin*1.05]],
         #                                  facecolor='red'))
         # transform=ccrs.PlateCarree()))
 
@@ -11755,10 +11817,10 @@ def add_cyclic(field, lons):
     """
     | add_cyclic is a wrapper for cartopy_util.add_cyclic_point(field, lons)
     | This is needed for the case of when the longitudes are not evenly spaced
-    | due to numpy rounding which causes an error from the cartopy wrapping routine.
-    | In this case the longitudes are promoted to 64 bit and then rounded
-    | to an appropriate number of decimal places before passing to the cartopy
-    | add_cyclic routine.
+    | due to numpy rounding which causes an error from the cartopy wrapping
+    | routine. In this case the longitudes are promoted to 64 bit and then
+    | rounded to an appropriate number of decimal places before passing to
+    | the cartopy add_cyclic routine.
     """
 
     try:
@@ -11778,7 +11840,8 @@ def irregular_window(field, lons, lats):
     lats_irregular = deepcopy(lats)
 
     # Fix longitudes to be -180 to 180
-    # lons_irregular = ((lons_irregular + plotvars.lonmin) % 360) + plotvars.lonmin
+    # lons_irregular = (
+    #     (lons_irregular + plotvars.lonmin) % 360) + plotvars.lonmin
 
     # Test data to get appropiate longitude offset to perform remapping
     found_lon = False
@@ -11813,8 +11876,8 @@ def irregular_window(field, lons, lats):
     lons_wrap = np.concatenate([lons_wrap, lons_left])
     lats_wrap = np.concatenate([lats_wrap, lats_left])
 
-    # Make a line of interpolated data on left hand side of plot and insert this into the data
-    # on both the left and the right before contouring
+    # Make a line of interpolated data on left hand side of plot and insert
+    # this into the data on both the left and the right before contouring
     lons_new = np.zeros(181) + plotvars.lonmin
     lats_new = np.arange(181) - 90
     field_new = griddata(
@@ -11997,13 +12060,6 @@ def calculate_levels(field=None, level_spacing=None, verbose=None):
                     dmin = 0.0
                     dmax = 0.1
 
-                # if dmax - dmin < 1e-12:
-                #   errstr = 'cf-plot calculate_levels error - field difference is < 1e-12\n'
-                #   errstr += 'setting levels to min-0.1 and min+0.1 to produce a plot'
-                #   print(errstr)
-                #   dmin = dmin - 1
-                #   dmax = dmin + 1
-
                 clevs, mult = gvals(dmin=dmin, dmax=dmax)
                 fmult = 10**-mult
                 tight = False
@@ -12126,7 +12182,8 @@ def stream(
     zorder=None,
 ):
     """
-    | stream - plot a streamplot which is used to show fluid flow and 2D field gradients
+    | stream - plot a streamplot which is used to show fluid flow and
+    |          2D field gradients
     |
     | u=None - u wind
     | v=None - v wind
@@ -12134,9 +12191,9 @@ def stream(
     | y=None - y locations of u and v
     | density=None - controls the closeness of streamlines. When density = 1,
     |                the domain is divided into a 30x30 grid
-    | linewidth=None - the width of the stream lines. With a 2D array the line width
-    |                  can be varied across the grid. The array must have the same shape
-    |                  as u and v
+    | linewidth=None - the width of the stream lines. With a 2D array the
+    |                  line width can be varied across the grid. The array
+    |                  must have the same shape as u and v
     | color=None - the streamline color
     | arrowsize=None - scaling factor for the arrow size
     | arrowstyle=None - arrow style specification
@@ -12473,7 +12530,8 @@ def bfill_ugrid(
 
         nverts = len(lons)
 
-        # Add extra verticies if any of the points are at the north or south pole
+        # Add extra verticies if any of the points are at the north or
+        # south pole
         if np.max(lats) == 90 or np.min(lats) == -90:
 
             geom = sgeom.Polygon(
@@ -12511,7 +12569,9 @@ def generate_titles(f=None):
     """Generate a set of title dims to put at the top of plots"""
 
     mycoords = find_dim_names(f)
-    well_formed = check_well_formed(f)
+    # TODO SLB, see 'well_formed' dead code below in case this is important.
+    # For now, us 'noqa' to prevent PEP8 F841 being raised due to lack of use.
+    well_formed = check_well_formed(f)  # noqa
 
     title_dims = ""
     if isinstance(f, cf.Field):
@@ -12641,7 +12701,8 @@ def find_dim_names(field):
 
     # print('ajh - find_dim_names - nx, ny, nz, nt are ', nx, ny, nz, nt)
 
-    # Strip out any auxiliary coordinates if the field is not a trajectory field
+    # Strip out any auxiliary coordinates if the field is not a
+    # trajectory field
     # remove_aux = True
     # if field.get_property('featureType', False) is not False:
     #    if field.featureType == 'trajectory':
@@ -12650,7 +12711,8 @@ def find_dim_names(field):
     # New test
     remove_aux = False
 
-    # Strip out any auxiliary coordinates if the field is not a trajectory field
+    # Strip out any auxiliary coordinates if the field is not a
+    # trajectory field
     if remove_aux:
         for i in np.arange(len(dcoords)):
             if dcoords[i][:-1] == "auxiliarycoordinate":
@@ -12668,7 +12730,8 @@ def find_dim_names(field):
             coord = None
             for j in np.arange(len(dcoords)):
 
-                # print(ajh - daxes[i], dcoords[j], field.get_data_axes(dcoords[j])[0])
+                # print(ajh - daxes[i], dcoords[j],
+                # field.get_data_axes(dcoords[j])[0])
 
                 if val == field.get_data_axes(dcoords[j])[0]:
                     coord = dcoords[j]
@@ -12691,7 +12754,8 @@ def find_dim_names(field):
     mycoords = deepcopy(coords)
 
     # Convert to X, Y, Z, T if coordinate is one of these
-    # If the number of coordinates of this type is greater than 1 then don't do this as f.coord('Z') gives an
+    # If the number of coordinates of this type is greater than 1 then don't
+    # do this as f.coord('Z') gives an
     # error as there are more that one coordinates to return
     for i in np.arange(len(daxes)):
         if field.coord(coords[i]).X:
@@ -12707,7 +12771,8 @@ def find_dim_names(field):
             if nt == 1:
                 mycoords[i] = "T"
 
-    # Return the reverse of the coordinates so that they are in the order [X, Y, Z, T]
+    # Return the reverse of the coordinates so that they are in the
+    # order [X, Y, Z, T]
     mycoords.reverse()
 
     # print('ajh - find_dim_names - mycoords are ', mycoords)
