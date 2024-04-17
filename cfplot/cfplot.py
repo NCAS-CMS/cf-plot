@@ -67,7 +67,7 @@ except Exception:
 try:
     pre_existing_data_dir = os.environ["pre_existing_data_dir"]
     cartopy.config["pre_existing_data_dir"] = pre_existing_data_dir
-except:
+except KeyError:
     pass
 
 
@@ -12553,7 +12553,7 @@ def generate_titles(f=None):
                     try:
                         # Change domainaxis0 etc to an axis
                         myid = f.constructs.domain_axis_identity(axis)
-                    except:
+                    except ValueError:
                         myid = axis
 
                     value = ""
