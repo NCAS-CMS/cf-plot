@@ -1942,7 +1942,7 @@ def con(
                         # Use 'noqa' to prevent PEP8 E501 being raised due to
                         # line length being too long. Can't prevent this
                         # straightforwardly given function name of that length.
-                        ypts = np.squeeAllTrop_UpStrat_Eq_Total_AllWN_Timeseries_2ze(  # noqa
+                        ypts = np.squeeAllTrop_UpStrat_Eq_Total_AllWN_Timeseries_2ze(  # noqa: E501
                             f.coord("Z").bounds.array
                         )[
                             :, 0
@@ -12571,7 +12571,7 @@ def generate_titles(f=None):
     mycoords = find_dim_names(f)
     # TODO SLB, see 'well_formed' dead code below in case this is important.
     # For now, us 'noqa' to prevent PEP8 F841 being raised due to lack of use.
-    well_formed = check_well_formed(f)  # noqa
+    well_formed = check_well_formed(f)  # noqa: F841
 
     title_dims = ""
     if isinstance(f, cf.Field):

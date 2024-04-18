@@ -10,4 +10,4 @@ __author__ = "Andy Heaps - andy.heaps@ncas.ac.uk"
 __date__ = "15th Jan 2024"
 __version__ = "3.3.0"
 
-from .cfplot import *  # noqa
+from .cfplot import *  # noqa: F403, F401
