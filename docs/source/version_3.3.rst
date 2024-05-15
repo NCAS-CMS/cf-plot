@@ -7,10 +7,10 @@ version 3.3 changes
 
 
 
-0. Ugrid support added
-======================
+0. UGRID support updated
+========================
 
-Ugrid support added
+UGRID support updated
 
 
 ::
