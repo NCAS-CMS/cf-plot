@@ -2,13 +2,19 @@
 
 .. _unstructured:
 
-Unstructured grids
-******************
+Unstructured grids and UGRID
+****************************
 
-Unstructured grids have data points in non-regular locations. Examples of these are the LFRic model grid, the ORCA ocean grid and weather station data.
+*Unstructured* grids have data points in non-regular locations. Examples of
+these are the LFRic model grid, the ORCA ocean grid and weather station data.
 
-The `UGRID <https://ugrid-conventions.github.io/ugrid-conventions>`_ data storage convention for netCDF isn't yet part of the CF metadata conventions but cf-python and cf-plot will be updated once it is.  This page shows how to plot data that is both in UGRID compliant netCDF and numpy arrays of unstructured data.
+The `UGRID Conventions <https://ugrid-conventions.github.io/ugrid-conventions>`_
+are conventions for storing unstructured (or flexible mesh) model data in
+netCDF. As of CF-1.11, version 1.0 of UGRID is
+`partially included within the CF Conventions <https://cfconventions.org/Data/cf-conventions/cf-conventions-1.11/cf-conventions.html#ugrid-conventions>`_.
 
+This page demonstrates how to plot data in the form of both UGRID-compliant
+netCDF and NumPy arrays of unstructured data.
 
 
 .. image::  images/us01.png
