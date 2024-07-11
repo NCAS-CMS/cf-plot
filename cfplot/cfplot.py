@@ -514,8 +514,8 @@ if sys.platform == "darwin":
 # INTERNAL-INTENT FUNCTIONS
 # ===================================
 
-# Code to check if the ImageMagick display command is available
-def which(program):
+def _which(program):
+    """Check if the ImageMagick display command is available."""
     def is_exe(fpath):
         return os.path.exists(fpath) and os.access(fpath, os.X_OK)
 
@@ -533,9 +533,9 @@ def which(program):
     return None
 
 
-def dim_titles(title=None, title2=None, title3=None):
+def _dim_titles(title=None, title2=None, title3=None):
     """
-    | dim_titles is an internal routine to draw a set of dimension titles
+    | _dim_titles is an internal routine to draw a set of dimension titles
     | on a plot
     |
     | title=None - title to put on the plot
@@ -653,7 +653,7 @@ def dim_titles(title=None, title2=None, title3=None):
         )
 
 
-def bfill_ugrid(
+def _bfill_ugrid(
     f=None,
     face_lons=None,
     face_lats=None,
@@ -663,7 +663,7 @@ def bfill_ugrid(
     zorder=None,
 ):
     """
-    | bfill_ugrid - block fill a irregular field with colour rectangles
+    | _bfill_ugrid - block fill a irregular field with colour rectangles
     | This is an internal routine and is not generally used by the user.
     |
     | f=None - field
@@ -766,9 +766,9 @@ def bfill_ugrid(
     )
 
 
-def mapaxis(min=None, max=None, type=None):
+def _mapaxis(min=None, max=None, type=None):
     """
-    | mapaxis is used to work out a sensible set of longitude and latitude
+    | _mapaxis is used to work out a sensible set of longitude and latitude
     | tick marks and labels.  This is an internal routine and is not used
     | by the user.
 
@@ -3374,10 +3374,10 @@ def plot_map_axes(
 
         if verbose:
             print("con - adding cylindrical axes")
-        lonticks, lonlabels = mapaxis(
+        lonticks, lonlabels = _mapaxis(
             min=plotvars.lonmin, max=plotvars.lonmax, type=1
         )
-        latticks, latlabels = mapaxis(
+        latticks, latlabels = _mapaxis(
             min=plotvars.latmin, max=plotvars.latmax, type=2
         )
 
@@ -3469,7 +3469,7 @@ def plot_map_axes(
                     lonvals = xticks
 
                 for lon in lonvals:
-                    label = mapaxis(lon, lon, 1)[1][0]
+                    label = _mapaxis(lon, lon, 1)[1][0]
 
                     if plotvars.proj == "npstere":
                         lats = np.arange(90 - boundinglat) + boundinglat
@@ -3501,7 +3501,7 @@ def plot_map_axes(
 
             if xaxis and axis_label_fontsize > 0.0:
                 for xtick in lonvals:
-                    label = mapaxis(xtick, xtick, 1)[1][0]
+                    label = _mapaxis(xtick, xtick, 1)[1][0]
                     lonr, latr = proj.transform_point(
                         xtick, latpt, ccrs.PlateCarree()
                     )
@@ -3733,7 +3733,7 @@ def plot_map_axes(
         fw = plotvars.axis_label_fontweight
         if axes and xaxis:
             if xticks is None:
-                map_xticks, map_xticklabels = mapaxis(
+                map_xticks, map_xticklabels = _mapaxis(
                     min=plotvars.lonmin, max=plotvars.lonmax, type=1
                 )
             else:
@@ -3776,7 +3776,7 @@ def plot_map_axes(
                     )
 
         if yticks is None:
-            map_yticks, map_yticklabels = mapaxis(
+            map_yticks, map_yticklabels = _mapaxis(
                 min=plotvars.latmin, max=plotvars.latmax, type=2
             )
         else:
@@ -4815,7 +4815,7 @@ def con(
         if blockfill_ugrid and not blockfill_2d:
             if verbose:
                 print("con - adding blockfill for irregular")
-            bfill_ugrid(
+            _bfill_ugrid(
                 f=field_orig * fmult,
                 face_lons=face_lons_array,
                 face_lats=face_lats_array,
@@ -4963,7 +4963,7 @@ def con(
 
         # Titles for dimensions
         if titles:
-            dim_titles(title=title_dims)
+            _dim_titles(title=title_dims)
 
         # Color bar
         if colorbar:
@@ -5154,11 +5154,11 @@ def con(
 
         if xticks is None and xaxis:
             if ptype == 2:
-                xticks, xticklabels = mapaxis(
+                xticks, xticklabels = _mapaxis(
                     min=xmin, max=xmax, type=2
                 )  # lat-pressure
             if ptype == 3:
-                xticks, xticklabels = mapaxis(
+                xticks, xticklabels = _mapaxis(
                     min=xmin, max=xmax, type=1
                 )  # lon-pressure
 
@@ -5388,7 +5388,7 @@ def con(
 
         # Titles for dimensions
         if titles:
-            dim_titles(title=title_dims)
+            _dim_titles(title=title_dims)
 
         # Color bar
         if colorbar:
@@ -5515,9 +5515,9 @@ def con(
         time_ticks, time_labels, ylabel = timeaxis(f.construct("T"))
 
         if ptype == 4:
-            lonlatticks, lonlatlabels = mapaxis(min=xmin, max=xmax, type=1)
+            lonlatticks, lonlatlabels = _mapaxis(min=xmin, max=xmax, type=1)
         if ptype == 5:
-            lonlatticks, lonlatlabels = mapaxis(min=xmin, max=xmax, type=2)
+            lonlatticks, lonlatlabels = _mapaxis(min=xmin, max=xmax, type=2)
 
         if axes:
             if xaxis:
@@ -5724,7 +5724,7 @@ def con(
                     )
         # Titles for dimensions
         if titles:
-            dim_titles(title=title_dims)
+            _dim_titles(title=title_dims)
 
         # Color bar
         if colorbar:
@@ -5922,7 +5922,7 @@ def con(
 
         # Titles for dimensions
         if titles:
-            dim_titles(title=title_dims)
+            _dim_titles(title=title_dims)
 
         # Color bar
         if colorbar:
@@ -6149,7 +6149,7 @@ def con(
                 mylabel = None
 
                 if f.coord(mycoords[icoord]).X:
-                    myaxisticks, myaxislabels = mapaxis(
+                    myaxisticks, myaxislabels = _mapaxis(
                         np.min(f.coord("X").array),
                         np.max(f.coord("X").array),
                         type=1,
@@ -6157,7 +6157,7 @@ def con(
                     mylabel = "longitude"
 
                 if f.coord(mycoords[icoord]).Y:
-                    myaxisticks, myaxislabels = mapaxis(
+                    myaxisticks, myaxislabels = _mapaxis(
                         np.min(f.coord("Y").array),
                         np.max(f.coord("Y").array),
                         type=2,
@@ -6336,7 +6336,7 @@ def con(
 
         # Titles for dimensions
         if titles:
-            dim_titles(title=title_dims)
+            _dim_titles(title=title_dims)
 
         # Color bar
         if colorbar:
@@ -7188,7 +7188,7 @@ def gclose(view=True):
     else:
         if plotvars.viewer == "display" and interactive is False:
             # Use Imagemagick display command if this exists
-            disp = which("display")
+            disp = _which("display")
             if disp is not None:
                 tfile = "cfplot.png"
                 plotvars.master_plot.savefig(
@@ -8335,9 +8335,9 @@ def vect(
         # Titles for dimensions
         if titles:
             if plotvars.titles_con_called is False:
-                dim_titles(title=title_dims, title2=title_dims2)
+                _dim_titles(title=title_dims, title2=title_dims2)
             else:
-                dim_titles(title2=title_dims, title3=title_dims2)
+                _dim_titles(title2=title_dims, title3=title_dims2)
 
     if plotvars.plot_type == 6:
         if u.ref("grid_mapping_name:rotated_latitude_longitude", False):
@@ -8435,7 +8435,7 @@ def vect(
 
             # Titles for dimensions
             if titles:
-                dim_titles(title=title_dims, titles2=title_dims2)
+                _dim_titles(title=title_dims, titles2=title_dims2)
 
     ######################################
     # Latitude or longitude vs height plot
@@ -8509,7 +8509,7 @@ def vect(
             lltype = 1
             if plotvars.plot_type == 2:
                 lltype = 2
-            llticks, lllabels = mapaxis(min=xmin, max=xmax, type=lltype)
+            llticks, lllabels = _mapaxis(min=xmin, max=xmax, type=lltype)
 
             heightticks = gvals(dmin=ymin, dmax=ymax, mystep=ystep, mod=False)[
                 0
@@ -8564,7 +8564,7 @@ def vect(
                 ylog=1,
                 user_gset=user_gset,
             )
-            llticks, lllabels = mapaxis(
+            llticks, lllabels = _mapaxis(
                 min=xmin, max=xmax, type=plotvars.plot_type
             )
 
@@ -8787,7 +8787,7 @@ def vect(
 
             # Titles for dimensions
             if titles:
-                dim_titles(title=title_dims, titles2=title_dims2)
+                _dim_titles(title=title_dims, titles2=title_dims2)
 
     ##########
     # Save plot
@@ -9578,7 +9578,7 @@ def rgaxes(
                                 line.set_clip_on(False)
                                 fw = plotvars.text_fontweight
                                 if xticklabels is None:
-                                    xticklabel = mapaxis(
+                                    xticklabel = _mapaxis(
                                         lons[val], lons[val], type=1
                                     )[1][0]
                                 else:
@@ -9634,7 +9634,7 @@ def rgaxes(
                                     line.set_clip_on(False)
                                     fw = plotvars.text_fontweight
                                     if yticklabels is None:
-                                        yticklabel = mapaxis(
+                                        yticklabel = _mapaxis(
                                             lats[val], lats[val], type=2
                                         )[1][0]
                                     else:
@@ -10041,9 +10041,9 @@ def lineplot(
 
     if xticks is None:
         if plot_xlabel[0:3].lower() == "lon":
-            xticks, xticklabels = mapaxis(minx, maxx, type=1)
+            xticks, xticklabels = _mapaxis(minx, maxx, type=1)
         if plot_xlabel[0:3].lower() == "lat":
-            xticks, xticklabels = mapaxis(minx, maxx, type=2)
+            xticks, xticklabels = _mapaxis(minx, maxx, type=2)
     if cf_field:
         if xticks is None:
             if f.has_construct("T"):
@@ -10242,7 +10242,7 @@ def lineplot(
     if titles:
         plotvars.plot = graph
         plotvars.plot_type = 0
-        dim_titles(title=title_dims)
+        _dim_titles(title=title_dims)
 
     ##################
     # Save or view plot
@@ -12761,9 +12761,9 @@ def compare_images(example=None):
     # TODO SLB: convert all 'home/andy/' paths to general configurable path
     # (there are many examples below but also throughout this script)
 
-    disp = which("display")
-    conv = which("convert")
-    comp = which("compare")
+    disp = _which("display")
+    conv = _which("convert")
+    comp = _which("compare")
     file = f"fig{example}.png"
     file_new = f"/home/andy/cfplot.src/cfplot/{file}"
     file_ref = f"/home/andy/regression/{file}"
@@ -12863,7 +12863,7 @@ def compare_arrays(
     if mapaxis_test:
         ref_ticks = ref[0]
         ref_labels = ref[1]
-        test_ticks, test_labels = mapaxis(min=min, max=max, type=type)
+        test_ticks, test_labels = _mapaxis(min=min, max=max, type=type)
         if np.size(test_ticks) != np.size(ref_ticks):
             anom = 1
         else:
@@ -12876,12 +12876,12 @@ def compare_arrays(
         if anom == 1:
             print(
                 "***mapaxis failure***\n\n"
-                f"cfp.mapaxis(min={min}, max={max}, type={type})\n"
+                f"cfp._mapaxis(min={min}, max={max}, type={type})\n"
                 f"generated values are:{test_ticks}\n"
                 f"with labels:{test_labels}\n\n"
                 f"expected ticks:{ref_ticks}\n"
                 f"with labels:{ref_labels}\n"
             )
         else:
-            pass_str = f"Passed cfp.mapaxis(min={min}, max={max}, type={type})"
+            pass_str = f"Passed cfp._mapaxis<(min={min}, max={max}, type={type})"
             print(pass_str)
