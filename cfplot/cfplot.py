@@ -861,9 +861,9 @@ def _mapaxis(min=None, max=None, type=None):
         return (latticks, latlabels)
 
 
-def timeaxis(dtimes=None):
+def _timeaxis(dtimes=None):
     """
-    | timeaxis is used to work out a sensible set of time labels and tick
+    | _timeaxis is used to work out a sensible set of time labels and tick
     | marks given a time span  This is an internal routine and is not used
     | by the user.
 
@@ -1080,9 +1080,9 @@ def timeaxis(dtimes=None):
     return (time_ticks, time_labels, axis_label)
 
 
-def supscr(text=None):
+def _supscr(text=None):
     """
-    | supscr - add superscript text formatting for ** and ^
+    | _supscr - add superscript text formatting for ** and ^
     | This is an internal routine used in titles and colour bars
     | and not used by the user.
     | text=None - input text
@@ -1099,7 +1099,7 @@ def supscr(text=None):
     """
 
     if text is None:
-        errstr = "\n supscr error - supscr must have text input\n"
+        errstr = "\n _supscr error - _supscr must have text input\n"
         raise Warning(errstr)
 
     tform = ""
@@ -1140,9 +1140,9 @@ def supscr(text=None):
     return tform
 
 
-def gvals(dmin=None, dmax=None, mystep=None, mod=True):
+def _gvals(dmin=None, dmax=None, mystep=None, mod=True):
     """
-    | gvals - work out a sensible set of values between two limits
+    | _gvals - work out a sensible set of values between two limits
     | This is an internal routine used for contour levels and axis
     | labelling and is not generally used by the user.
 
@@ -1244,8 +1244,8 @@ def gvals(dmin=None, dmax=None, mystep=None, mod=True):
 
         # Return an error if no step found
         if step is None:
-            errstr = "\n\n cfp.gvals - no valid step values found \n\n"
-            errstr += "cfp.gvals(" + str(dmin1) + "," + str(dmax1) + ")\n\n"
+            errstr = "\n\n cfp._gvals - no valid step values found \n\n"
+            errstr += "cfp._gvals(" + str(dmin1) + "," + str(dmax1) + ")\n\n"
             raise Warning(errstr)
 
         # values  < 0.0
@@ -1291,7 +1291,7 @@ def gvals(dmin=None, dmax=None, mystep=None, mod=True):
     return (vals, mult)
 
 
-def cf_data_assign(
+def _cf_data_assign(
     f=None, colorbar_title=None, verbose=None, rotated_vect=False
 ):
     """
@@ -1301,7 +1301,7 @@ def cf_data_assign(
     | colorbar_title=None - input colour bar title
     | rotated vect=False - return 1D x and y for rotated plot vectors
     | verbose=None - set to 1 to get a verbose idea of what the
-    |          cf_data_assign is doing
+    |          _cf_data_assign is doing
 
     :Returns:
      | f - data for contouring
@@ -1328,9 +1328,9 @@ def cf_data_assign(
         if ndim > 2 or ndim < 1:
             print("")
             if ndim > 2:
-                errstr = "cf_data_assign error - data has too many dimensions"
+                errstr = "_cf_data_assign error - data has too many dimensions"
             if ndim < 1:
-                errstr = "cf_data_assign error - data has too few dimensions"
+                errstr = "_cf_data_assign error - data has too few dimensions"
             errstr += "\n cf-plot requires one or two dimensional data\n"
             for mydim in list(f.dimension_coordinates()):
                 sn = getattr(f.construct(mydim), "standard_name", False)
@@ -1644,7 +1644,7 @@ def cf_data_assign(
                     count += 1
             except ValueError:
                 errstr = (
-                    "\n\ncf_data_assign - cannot find data to return\n\n"
+                    "\n\n_cf_data_assign - cannot find data to return\n\n"
                     f"{f.constructs.domain_axis_identity(d)}\n\n"
                 )
                 raise Warning(errstr)
@@ -1669,7 +1669,7 @@ def cf_data_assign(
                 colorbar_title = colorbar_title
             else:
                 colorbar_title = (
-                    f"{colorbar_title}({supscr(str(f.Units))})"
+                    f"{colorbar_title}({_supscr(str(f.Units))})"
                 )
 
     # Return data
@@ -4113,7 +4113,7 @@ def con(
 
         # Extract data
         if verbose:
-            print("con - calling cf_data_assign")
+            print("con - calling _cf_data_assign")
 
         # Subset the data if a user map is set
         # This is use to speed up the plotting
@@ -4128,7 +4128,7 @@ def con(
 
         # Extract the data
         field, x, y, ptype, colorbar_title, xlabel, ylabel, xpole, ypole = (
-            cf_data_assign(f, colorbar_title, verbose=verbose)
+            _cf_data_assign(f, colorbar_title, verbose=verbose)
         )
 
         if user_xlabel is not None:
@@ -4262,7 +4262,7 @@ def con(
                 ylabel,
                 xpole,
                 ypole,
-            ) = cf_data_assign(f, colorbar_title, verbose=verbose)
+            ) = _cf_data_assign(f, colorbar_title, verbose=verbose)
         clevs, mult, fmult = calculate_levels(
             field=field, level_spacing=spacing, verbose=verbose
         )
@@ -5084,7 +5084,7 @@ def con(
 
         # Work out ticks and tick labels
         if ylog is False or ylog == 0:
-            heightticks = gvals(
+            heightticks = _gvals(
                 dmin=min(ymin, ymax),
                 dmax=max(ymin, ymax),
                 mystep=ystep,
@@ -5180,7 +5180,7 @@ def con(
                     taxis = cf.Data(
                         [cf.dt(tmin), cf.dt(tmax)], units=time_units
                     )
-                    time_ticks, time_labels, tlabel = timeaxis(taxis)
+                    time_ticks, time_labels, tlabel = _timeaxis(taxis)
 
                     # Use user supplied labels if present
                     if user_xlabel is None:
@@ -5512,7 +5512,7 @@ def con(
             )
             raise TypeError(errstr)
 
-        time_ticks, time_labels, ylabel = timeaxis(f.construct("T"))
+        time_ticks, time_labels, ylabel = _timeaxis(f.construct("T"))
 
         if ptype == 4:
             lonlatticks, lonlatlabels = _mapaxis(min=xmin, max=xmax, type=1)
@@ -6130,9 +6130,9 @@ def con(
                         taxis.calendar = ref_calendar
 
                 if xtimeaxis:
-                    xaxisticks, xaxislabels, xplotlabel = timeaxis(taxis)
+                    xaxisticks, xaxislabels, xplotlabel = _timeaxis(taxis)
                 if ytimeaxis:
-                    yaxisticks, yaxislabels, yplotlabel = timeaxis(taxis)
+                    yaxisticks, yaxislabels, yplotlabel = _timeaxis(taxis)
 
         if cf_field:
             coords = list(f.coords())
@@ -6179,11 +6179,11 @@ def con(
                         )
 
         if xaxisticks is None:
-            xaxisticks = gvals(dmin=xmin, dmax=xmax, mod=False)[0]
+            xaxisticks = _gvals(dmin=xmin, dmax=xmax, mod=False)[0]
             xaxislabels = xaxisticks
 
         if yaxisticks is None:
-            yaxisticks = gvals(dmin=ymax, dmax=ymin, mod=False)[0]
+            yaxisticks = _gvals(dmin=ymax, dmax=ymin, mod=False)[0]
             yaxislabels = yaxisticks
 
         if user_xlabel is not None:
@@ -7684,7 +7684,7 @@ def stipple(
             ylabel,
             xpole,
             ypole,
-        ) = cf_data_assign(f, colorbar_title)
+        ) = _cf_data_assign(f, colorbar_title)
     elif isinstance(f, cf.FieldList):
         raise TypeError("Can't plot a field list")
     else:
@@ -8064,7 +8064,7 @@ def vect(
             ylabel,
             xpole,
             ypole,
-        ) = cf_data_assign(u, colorbar_title, rotated_vect=rotated_vect)
+        ) = _cf_data_assign(u, colorbar_title, rotated_vect=rotated_vect)
     elif isinstance(u, cf.FieldList):
         raise TypeError("Can't plot a field list")
     else:
@@ -8102,7 +8102,7 @@ def vect(
             ylabel,
             xpole,
             ypole,
-        ) = cf_data_assign(v, colorbar_title, rotated_vect=rotated_vect)
+        ) = _cf_data_assign(v, colorbar_title, rotated_vect=rotated_vect)
     elif isinstance(v, cf.FieldList):
         raise TypeError("Can't plot a field list")
     else:
@@ -8276,7 +8276,7 @@ def vect(
         if key_label is None:
             key_label = str(key_length)
         if isinstance(u, cf.Field):
-            key_label = supscr(key_label + u.units)
+            key_label = _supscr(key_label + u.units)
         if key_show:
             plotvars.mymap.quiverkey(
                 quiv,
@@ -8382,7 +8382,7 @@ def vect(
             if key_label is None:
                 key_label = str(key_length)
             if isinstance(u, cf.Field):
-                key_label = supscr(key_label + u.units)
+                key_label = _supscr(key_label + u.units)
 
             if key_show:
                 plotvars.mymap.quiverkey(
@@ -8511,7 +8511,7 @@ def vect(
                 lltype = 2
             llticks, lllabels = _mapaxis(min=xmin, max=xmax, type=lltype)
 
-            heightticks = gvals(dmin=ymin, dmax=ymax, mystep=ystep, mod=False)[
+            heightticks = _gvals(dmin=ymin, dmax=ymax, mystep=ystep, mod=False)[
                 0
             ]
             heightlabels = heightticks
@@ -8684,7 +8684,7 @@ def vect(
             if key_label is None:
                 key_label_u = str(key_length_u)
                 if isinstance(u, cf.Field):
-                    key_label_u = supscr(f"{key_label_u} ({u.units})")
+                    key_label_u = _supscr(f"{key_label_u} ({u.units})")
             else:
                 key_label_u = key_label[0]
             if key_show:
@@ -8721,12 +8721,12 @@ def vect(
                 key_label_u = str(key_length_u)
                 key_label_v = str(key_length_v)
                 if isinstance(u, cf.Field):
-                    key_label_u = supscr(f"{key_label_u} ({u.units})")
+                    key_label_u = _supscr(f"{key_label_u} ({u.units})")
                 if isinstance(v, cf.Field):
-                    key_label_v = supscr(f"{key_label_v} ({v.units})")
+                    key_label_v = _supscr(f"{key_label_v} ({v.units})")
             else:
-                key_label_u = supscr(key_label[0])
-                key_label_v = supscr(key_label[1])
+                key_label_u = _supscr(key_label[0])
+                key_label_v = _supscr(key_label[1])
 
             # Plot reference vectors and keys
             if key_show:
@@ -10048,9 +10048,9 @@ def lineplot(
         if xticks is None:
             if f.has_construct("T"):
                 if np.size(f.construct("T").array) > 1:
-                    xticks, xticklabels, plot_xlabel = timeaxis(taxis)
+                    xticks, xticklabels, plot_xlabel = _timeaxis(taxis)
     if xticks is None:
-        xticks, ymult = gvals(dmin=minx, dmax=maxx, mod=mod)
+        xticks, ymult = _gvals(dmin=minx, dmax=maxx, mod=mod)
 
         # Fix long floating point numbers if necessary
         fix_floats(xticks)
@@ -10064,12 +10064,12 @@ def lineplot(
     if yticks is None:
         if abs(maxy - miny) > 1:
             if miny < maxy:
-                yticks, ymult = gvals(dmin=miny, dmax=maxy, mod=mod)
+                yticks, ymult = _gvals(dmin=miny, dmax=maxy, mod=mod)
             if maxy < miny:
-                yticks, ymult = gvals(dmin=maxy, dmax=miny, mod=mod)
+                yticks, ymult = _gvals(dmin=maxy, dmax=miny, mod=mod)
 
         else:
-            yticks, ymult = gvals(dmin=miny, dmax=maxy, mod=mod)
+            yticks, ymult = _gvals(dmin=miny, dmax=maxy, mod=mod)
 
             # Fix long floating point numbers if necessary
             fix_floats(yticks)
@@ -10489,7 +10489,7 @@ def traj(
                 print("traj - generating automatic legend levels")
             dmin = np.nanmin(data)
             dmax = np.nanmax(data)
-            levs, mult = gvals(dmin=dmin, dmax=dmax, mod=False)
+            levs, mult = _gvals(dmin=dmin, dmax=dmax, mod=False)
 
         # Add extend options to the levels if set
         if plotvars.levels_extend == "min" or plotvars.levels_extend == "both":
@@ -10740,7 +10740,7 @@ def traj(
                 if str(f.Units) == "":
                     colorbar_title += ""
                 else:
-                    colorbar_title += f"({supscr(str(f.Units))})"
+                    colorbar_title += f"({_supscr(str(f.Units))})"
 
         levs = plotvars.levels
         if colorbar_labels is not None:
@@ -11363,7 +11363,7 @@ def calculate_levels(field=None, level_spacing=None, verbose=None):
                         field2[pts] = dmin
                         dmax = np.nanmax(field2)
 
-                clevs, mult = gvals(dmin=dmin, dmax=dmax)
+                clevs, mult = _gvals(dmin=dmin, dmax=dmax)
                 fmult = 10**-mult
                 tight = False
 
@@ -11380,7 +11380,7 @@ def calculate_levels(field=None, level_spacing=None, verbose=None):
                     dmin = 0.0
                     dmax = 0.1
 
-                clevs, mult = gvals(dmin=dmin, dmax=dmax)
+                clevs, mult = _gvals(dmin=dmin, dmax=dmax)
                 fmult = 10**-mult
                 tight = False
 
@@ -11605,7 +11605,7 @@ def stream(
             ylabel,
             xpole,
             ypole,
-        ) = cf_data_assign(u, colorbar_title, rotated_vect=rotated_vect)
+        ) = _cf_data_assign(u, colorbar_title, rotated_vect=rotated_vect)
     elif isinstance(u, cf.FieldList):
         raise TypeError("Can't plot a field list")
     else:
@@ -11643,7 +11643,7 @@ def stream(
             ylabel,
             xpole,
             ypole,
-        ) = cf_data_assign(v, colorbar_title, rotated_vect=rotated_vect)
+        ) = _cf_data_assign(v, colorbar_title, rotated_vect=rotated_vect)
     elif isinstance(v, cf.FieldList):
         raise TypeError("Can't plot a field list")
     else:
@@ -12089,7 +12089,7 @@ def map_grid():
 def regression_tests():
     """
     | Test for cf-plot regressions
-    | Run through some standard levs, gvals, lon and lat labelling
+    | Run through some standard levs, _gvals, lon and lat labelling
     | Make all the gallery plots and use Imagemagick to display them
     | alongside a reference plot
     |
@@ -12174,7 +12174,7 @@ def regression_tests():
 
     print(
         "\n-----------------\n"
-        "Testing for gvals\n"
+        "Testing for _gvals\n"
         "-----------------\n"
     )
     ref_answer = [
@@ -12836,7 +12836,7 @@ def compare_arrays(
 
     anom = 0
     if gvals_test:
-        vals, testmult = gvals(min, max)
+        vals, testmult = _gvals(min, max)
         if np.size(ref) != np.size(vals):
             anom = 1
         else:
@@ -12849,14 +12849,14 @@ def compare_arrays(
         if anom == 1:
             print(
                 "***gvals failure***\n"
-                f"cfp.gvals({min}, {max})\n\n"
+                f"cfp._gvals({min}, {max})\n\n"
                 f"generated values are:{vals}\n"
                 f"with a  multiplier of {testmult}\n\n"
                 f"expected values:{ref}\n"
                 f"with a multiplier of {mult}\n"
             )
         else:
-            pass_str = f"Passed cfp.gvals({min}, {max})"
+            pass_str = f"Passed cfp._gvals({min}, {max})"
             print(pass_str)
 
     anom = 0
