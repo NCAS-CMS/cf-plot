@@ -1676,9 +1676,9 @@ def _cf_data_assign(
     return (field, x, y, ptype, colorbar_title, xlabel, ylabel, xpole, ypole)
 
 
-def check_data(field=None, x=None, y=None):
+def _check_data(field=None, x=None, y=None):
     """
-    | check_data - check user input contour data is correct.
+    | _check_data - check user input contour data is correct.
     | This is an internal routine and is not used by the user.
     |
     | field=None - field
@@ -1757,9 +1757,9 @@ def check_data(field=None, x=None, y=None):
         raise Warning(errstr)
 
 
-def cscale_get_map():
+def _cscale_get_map():
     """
-    | cscale_get_map - return colour map for use in contour plots.
+    | _cscale_get_map - return colour map for use in contour plots.
     |                   This depends on the colour bar extensions
     | This is an internal routine and is not used by the user.
     |
@@ -1784,7 +1784,7 @@ def cscale_get_map():
     return colmap
 
 
-def bfill(
+def _bfill(
     f=None,
     x=None,
     y=None,
@@ -1800,7 +1800,7 @@ def bfill(
     orca=False,
 ):
     """
-    | bfill - block fill a field with colour rectangles
+    | _bfill - block fill a field with colour rectangles
     | This is an internal routine and is not generally used by the user.
     |
     | f=None - field
@@ -1889,7 +1889,7 @@ def bfill(
     # are then changed on the colorbar and plot after the plot is made
 
     if single_fill_color is None:
-        colmap = cscale_get_map()
+        colmap = _cscale_get_map()
         cmap = matplotlib.colors.ListedColormap(colmap)
         if plotvars.levels_extend in ["min", "both"]:
             cmap.set_under(plotvars.cs[0])
@@ -2069,7 +2069,7 @@ def bfill(
         if np.size(pts) > 0:
             ypts[pts] = -90.0
 
-    # Set the transform if not supplied to bfill
+    # Set the transform if not supplied to _bfill
     if transform:
         lonlat = True
     else:
@@ -2089,460 +2089,6 @@ def bfill(
                 fixed_x[i, start + 1:] += 360
             plotvars.image = plotvars.mymap.pcolormesh(
                 fixed_x, y, field, cmap=cmap, transform=transform, norm=norm
-            )
-
-        else:
-            if lonlat:
-                for offset in [0, 360.0]:
-                    if isinstance(clevs, int):
-                        plotvars.image = plotvars.mymap.pcolormesh(
-                            xpts + offset,
-                            ypts,
-                            field,
-                            transform=transform,
-                            cmap=cmap,
-                        )
-                    else:
-                        plotvars.image = plotvars.mymap.pcolormesh(
-                            xpts + offset,
-                            ypts,
-                            field,
-                            transform=transform,
-                            cmap=cmap,
-                            norm=norm,
-                        )
-
-            else:
-                if isinstance(clevs, int):
-                    plotvars.image = plotvars.plot.pcolormesh(
-                        xpts, ypts, field, cmap=cmap
-                    )
-                else:
-                    plotvars.image = plotvars.plot.pcolormesh(
-                        xpts, ypts, field, cmap=cmap, norm=norm
-                    )
-
-    else:
-
-        if plotvars.plot_type == 1 and plotvars.proj != "cyl":
-
-            for i in np.arange(np.size(levels) - 1):
-                allverts = []
-                xy_stack = np.column_stack(np.where(colarr == i))
-
-                for pt in np.arange(np.shape(xy_stack)[0]):
-                    ix = xy_stack[pt][1]
-                    iy = xy_stack[pt][0]
-                    lons = [
-                        xpts[ix],
-                        xpts[ix + 1],
-                        xpts[ix + 1],
-                        xpts[ix],
-                        xpts[ix],
-                    ]
-                    lats = [
-                        ypts[iy],
-                        ypts[iy],
-                        ypts[iy + 1],
-                        ypts[iy + 1],
-                        ypts[iy],
-                    ]
-
-                    txpts, typts = lons, lats
-                    verts = [
-                        (txpts[0], typts[0]),
-                        (txpts[1], typts[1]),
-                        (txpts[2], typts[2]),
-                        (txpts[3], typts[3]),
-                        (txpts[4], typts[4]),
-                    ]
-
-                    allverts.append(verts)
-
-                # Make the collection and add it to the plot.
-                if single_fill_color is None:
-                    color = plotvars.cs[i]
-                else:
-                    color = single_fill_color
-                coll = PolyCollection(
-                    allverts,
-                    facecolor=color,
-                    edgecolors=color,
-                    alpha=alpha,
-                    zorder=zorder,
-                    **plotargs
-                )
-
-                if lonlat:
-                    plotvars.mymap.add_collection(coll)
-                else:
-                    plotvars.plot.add_collection(coll)
-        else:
-            for i in np.arange(np.size(levels) - 1):
-
-                allverts = []
-                xy_stack = np.column_stack(np.where(colarr == i))
-                for pt in np.arange(np.shape(xy_stack)[0]):
-                    ix = xy_stack[pt][1]
-                    iy = xy_stack[pt][0]
-                    verts = [
-                        (xpts[ix], ypts[iy]),
-                        (xpts[ix + 1], ypts[iy]),
-                        (xpts[ix + 1], ypts[iy + 1]),
-                        (xpts[ix], ypts[iy + 1]),
-                        (xpts[ix], ypts[iy]),
-                    ]
-
-                    allverts.append(verts)
-
-                # Make the collection and add it to the plot.
-                if single_fill_color is None:
-                    color = plotvars.cs[i]
-                else:
-                    color = single_fill_color
-
-                coll = PolyCollection(
-                    allverts,
-                    facecolor=color,
-                    edgecolors=color,
-                    alpha=alpha,
-                    zorder=zorder,
-                    **plotargs
-                )
-
-                if lonlat:
-                    plotvars.mymap.add_collection(coll)
-                else:
-                    plotvars.plot.add_collection(coll)
-
-        # Add white for undefined areas
-        if white:
-            allverts = []
-            xy_stack = np.column_stack(np.where(colarr == -1))
-            for pt in np.arange(np.shape(xy_stack)[0]):
-                ix = xy_stack[pt][1]
-                iy = xy_stack[pt][0]
-
-                verts = [
-                    (xpts[ix], ypts[iy]),
-                    (xpts[ix + 1], ypts[iy]),
-                    (xpts[ix + 1], ypts[iy + 1]),
-                    (xpts[ix], ypts[iy + 1]),
-                    (xpts[ix], ypts[iy]),
-                ]
-
-                allverts.append(verts)
-
-            # Make the collection and add it to the plot.
-            color = plotvars.cs[i]
-            coll = PolyCollection(
-                allverts,
-                facecolor="#ffffff",
-                edgecolors="#ffffff",
-                alpha=alpha,
-                zorder=zorder,
-                **plotargs
-            )
-
-            if lonlat:
-                plotvars.mymap.add_collection(coll)
-            else:
-                plotvars.plot.add_collection(coll)
-
-
-def bfill_orig(
-    f=None,
-    x=None,
-    y=None,
-    clevs=False,
-    lonlat=None,
-    bound=False,
-    alpha=1.0,
-    single_fill_color=None,
-    white=True,
-    zorder=4,
-    fast=None,
-    transform=False,
-    orca=False,
-):
-    """
-    | bfill - block fill a field with colour rectangles
-    | This is an internal routine and is not generally used by the user.
-    |
-    | f=None - field
-    | x=None - x points for field
-    | y=None - y points for field
-    | clevs=None - levels for filling
-    | lonlat=None - longitude and latitude data
-    | bound=False - x and y are cf data boundaries
-    | alpha=alpha - transparency setting 0 to 1
-    | white=True - colour unplotted areas white
-    | single_fill_color=None - colour for a blockfill between two levels
-    |                        - makes maplotlib named colours or
-    |                        - hexadecimal notation - '#d3d3d3' for grey
-    | zorder=4 - plotting order
-    | fast=None - use fast plotting with pcolormesh which is useful for
-    |             larger datasets
-    | transform=False - map transform supplied by calling routine
-    | orca=False - data is orca data
-    |
-     :Returns:
-       None
-    |
-    |
-    |
-    |
-    """
-
-    # Set lonlat if not specified
-    lonlat = False
-    if plotvars.plot_type == 1:
-        lonlat = True
-
-    # If single_fill_color is defined then turn off whiting out the background.
-    if single_fill_color is not None:
-        white = False
-
-    # Set 2D lon lat if data is that format
-    two_d = False
-    if not isinstance(f, cf.Field):
-        if np.ndim(x) == 2 and np.ndim(x) == 2:
-            two_d = True
-
-    # Set the default map coordinates for the data to be PlateCarree
-    plotargs = {}
-    if lonlat:
-        plotargs = {"transform": ccrs.PlateCarree()}
-
-    # Set the field
-    if isinstance(f, cf.Field):
-        field = f.array
-    else:
-        field = f
-
-    levels = np.array(deepcopy(clevs)).astype("float")
-
-    # Generate a Matplotlib colour map
-    if single_fill_color is None:
-        cols = plotvars.cs
-    else:
-        cols = single_fill_color
-
-    cmap = matplotlib.colors.ListedColormap(cols)
-
-    if single_fill_color is None:
-        if plotvars.levels_extend == "both" or plotvars.levels_extend == "min":
-            levels = np.insert(levels, 0, -1e30)
-        if plotvars.levels_extend == "both" or plotvars.levels_extend == "max":
-            levels = np.append(levels, 1e30)
-
-        if plotvars.levels_extend == "both" or plotvars.levels_extend == "min":
-            cmap.set_under(plotvars.cs[0])
-            cols = cols[1:]
-        if plotvars.levels_extend == "both" or plotvars.levels_extend == "max":
-            cmap.set_over(plotvars.cs[-1])
-            cols = cols[:-1]
-
-    # Colour array for storing the cell colour.  Start with -1 as the default
-    # as the colours run from 0 to np.size(levels)-1
-    colarr = np.zeros([np.shape(field)[0], np.shape(field)[1]]) - 1
-    for i in np.arange(np.size(levels) - 1):
-        lev = levels[i]
-        pts = np.where(np.logical_and(field >= lev, field < levels[i + 1]))
-        colarr[pts] = int(i)
-
-    # Change points that are masked back to -1
-    if isinstance(field, np.ma.MaskedArray):
-        pts = np.ma.where(field.mask)
-        if np.size(pts) > 0:
-            colarr[pts] = -1
-
-    norm = matplotlib.colors.BoundaryNorm(levels, cmap.N)
-
-    if isinstance(f, cf.Field):
-        if f.ref("grid_mapping_name:transverse_mercator", default=False):
-            lonlat = True
-
-            # Case of transverse mercator of which UKCP is an example
-            ref = f.ref("grid_mapping_name:transverse_mercator")
-            false_easting = ref["false_easting"]
-            false_northing = ref["false_northing"]
-            central_longitude = ref["longitude_of_central_meridian"]
-            central_latitude = ref["latitude_of_projection_origin"]
-            scale_factor = ref["scale_factor_at_central_meridian"]
-
-            transform = ccrs.TransverseMercator(
-                false_easting=false_easting,
-                false_northing=false_northing,
-                central_longitude=central_longitude,
-                central_latitude=central_latitude,
-                scale_factor=scale_factor,
-            )
-
-            # Extract the axes and data
-            xpts = np.append(
-                f.dim("X").bounds.array[:, 0], f.dim("X").bounds.array[-1, 1]
-            )
-            ypts = np.append(
-                f.dim("Y").bounds.array[:, 0], f.dim("Y").bounds.array[-1, 1]
-            )
-            field = np.squeeze(f.array)
-            plotargs = {"transform": transform}
-
-    else:
-
-        if orca is False:
-
-            # Assign f to field as this may be modified in lat-lon plots
-            field = f
-
-            if two_d is False:
-                if bound:
-                    xpts = x
-                    ypts = y
-                else:
-                    # Find x box boundaries
-                    xpts = x[0] - (x[1] - x[0]) / 2.0
-                    for ix in np.arange(np.size(x) - 1):
-                        xpts = np.append(
-                            xpts, x[ix] + (x[ix + 1] - x[ix]) / 2.0
-                        )
-                    xpts = np.append(
-                        xpts, x[ix + 1] + (x[ix + 1] - x[ix]) / 2.0
-                    )
-
-                    # Find y box boundaries
-                    ypts = y[0] - (y[1] - y[0]) / 2.0
-                    for iy in np.arange(np.size(y) - 1):
-                        ypts = np.append(
-                            ypts, y[iy] + (y[iy + 1] - y[iy]) / 2.0
-                        )
-                    ypts = np.append(
-                        ypts, y[iy + 1] + (y[iy + 1] - y[iy]) / 2.0
-                    )
-
-                # Shift lon grid if needed
-                if lonlat:
-                    # Extract upper bound and original rhs of box longitude
-                    # bounding points
-                    upper_bound = ypts[-1]
-
-                    # Reduce xpts and ypts by 1 or shifting of grid fails
-                    # The last points are the right / upper bounds for the
-                    # last data box
-                    xpts = xpts[0:-1]
-                    ypts = ypts[0:-1]
-
-                    if plotvars.lonmin < np.nanmin(xpts):
-                        xpts = xpts - 360
-                    if plotvars.lonmin > np.nanmax(xpts):
-                        xpts = xpts + 360
-
-                    # Add cyclic information if missing.
-                    lonrange = np.nanmax(xpts) - np.nanmin(xpts)
-                    if lonrange < 360 and lonrange > 350:
-                        # field, xpts = cartopy_util.add_cyclic_point(
-                        #     field, xpts)
-                        field, xpts = add_cyclic(field, xpts)
-
-                    right_bound = xpts[-1] + (xpts[-1] - xpts[-2])
-
-                    # Add end x and y end points
-                    xpts = np.append(xpts, right_bound)
-                    ypts = np.append(ypts, upper_bound)
-            else:
-                # 2D lons and lats code
-                nx = np.shape(x)[1]
-                ny = np.shape(x)[0]
-
-                for ix in np.arange(nx - 1):
-                    for iy in np.arange(ny - 1):
-
-                        # Calculate the local size difference and set
-                        # the square points
-                        if ix < nx - 2:
-                            xdiff = (x[iy, ix + 1] - x[iy, ix]) / 2
-                        else:
-                            xdiff = (x[iy, ix] - x[iy, ix - 1]) / 2
-
-                        if iy < ny - 2:
-                            ydiff = (y[iy + 1, ix] - y[iy, ix]) / 2
-                        else:
-                            ydiff = (y[iy, ix] - y[iy - 1, ix]) / 2
-
-                        xpts = [
-                            x[iy, ix] - xdiff,
-                            x[iy, ix] + xdiff,
-                            x[iy, ix] + xdiff,
-                            x[iy, ix] - xdiff,
-                            x[iy, ix] - xdiff,
-                        ]
-                        ypts = [
-                            y[iy, ix] - ydiff,
-                            y[iy, ix] - ydiff,
-                            y[iy, ix] + ydiff,
-                            y[iy, ix] + ydiff,
-                            y[iy, ix] - ydiff,
-                        ]
-
-                        # Plot the square
-                        plotvars.mymap.add_patch(
-                            mpatches.Polygon(
-                                [
-                                    [xpts[0], ypts[0]],
-                                    [xpts[1], ypts[1]],
-                                    [xpts[2], ypts[2]],
-                                    [xpts[3], ypts[3]],
-                                    [xpts[4], ypts[4]],
-                                ],
-                                facecolor=plotvars.cs[int(colarr[iy, ix])],
-                                zorder=zorder,
-                                transform=ccrs.PlateCarree(),
-                            )
-                        )
-
-                return
-
-    # Polar stereographic
-    # Set points past plotting limb to be plotvars.boundinglat
-    # Also set any lats past the pole to be the pole
-    if plotvars.proj == "npstere" and not orca:
-        pts = np.where(ypts < plotvars.boundinglat)
-        if np.size(pts) > 0:
-            ypts[pts] = plotvars.boundinglat
-        pts = np.where(ypts > 90.0)
-        if np.size(pts) > 0:
-            ypts[pts] = 90.0
-
-    if plotvars.proj == "spstere" and not orca:
-        pts = np.where(ypts > plotvars.boundinglat)
-        if np.size(pts) > 0:
-            ypts[pts] = plotvars.boundinglat
-        pts = np.where(ypts < -90.0)
-        if np.size(pts) > 0:
-            ypts[pts] = -90.0
-
-    # Set the transform if not supplied to bfill
-    if transform:
-        lonlat = True
-    else:
-        transform = ccrs.PlateCarree()
-
-    if fast:
-        if isinstance(clevs, int):
-            norm = False
-
-        if orca:
-            # Plot using pcolormesh if an orca grid
-            field = f
-            fixed_x = x.copy()
-            for i, start in enumerate(
-                np.argmax(np.abs(np.diff(x)) > 180, axis=1)
-            ):
-                fixed_x[i, start + 1:] += 360
-
-            plotvars.image = plotvars.mymap.pcolormesh(
-                fixed_x, y, field, cmap=cmap, transform=transform
             )
 
         else:
@@ -4146,7 +3692,7 @@ def con(
         if y is None:
             y = np.arange(np.shape(field)[0])
 
-        check_data(field, x, y)
+        _check_data(field, x, y)
         xlabel = ""
         ylabel = ""
 
@@ -4651,7 +4197,7 @@ def con(
             # If colour bar extensions are enabled then the colour map goes
             # from 1 to ncols-2.  The colours for the colour bar extensions
             # are then changed on the colorbar and plot after the plot is made
-            colmap = cscale_get_map()
+            colmap = _cscale_get_map()
 
             cmap = matplotlib.colors.ListedColormap(colmap)
             if (
@@ -4733,7 +4279,7 @@ def con(
                     "grid_mapping_name:transverse_mercator", default=False
                 ):
                     # Special case for transverse mercator
-                    bfill(
+                    _bfill(
                         f=f,
                         clevs=clevs,
                         lonlat=False,
@@ -4744,12 +4290,12 @@ def con(
 
                 # elif orca:
                 elif two_d:
-                    # bfill(f=f, clevs=clevs, lonlat=False,
+                    # _bfill(f=f, clevs=clevs, lonlat=False,
                     #       alpha=alpha, fast=blockfill_fast,zorder=zorder)
-                    # bfill(x=x, y=y, f=field * fmult,
+                    # _bfill(x=x, y=y, f=field * fmult,
                     #       clevs=clevs, lonlat=False, alpha=alpha,\
                     #       fast=blockfill_fast, zorder=zorder, orca=True)
-                    bfill(
+                    _bfill(
                         x=x,
                         y=y,
                         f=field * fmult,
@@ -4774,7 +4320,7 @@ def con(
                             ypts, f.coord("Y").bounds.array[-1, 1]
                         )
 
-                        bfill(
+                        _bfill(
                             f=field_orig * fmult,
                             x=xpts,
                             y=ypts,
@@ -4786,7 +4332,7 @@ def con(
                             zorder=zorder,
                         )
                     else:
-                        bfill(
+                        _bfill(
                             f=field_orig * fmult,
                             x=x_orig,
                             y=y_orig,
@@ -4799,7 +4345,7 @@ def con(
                         )
 
             else:
-                bfill(
+                _bfill(
                     f=field_orig * fmult,
                     x=x_orig,
                     y=y_orig,
@@ -5228,11 +4774,11 @@ def con(
         # If colour bar extensions are enabled then the colour map goes
         # from 1 to ncols-2.  The colours for the colour bar extensions are
         # then changed on the colorbar and plot after the plot is made
-        colmap = cscale_get_map()
+        colmap = _cscale_get_map()
 
         # Filled contours
         if fill:
-            colmap = cscale_get_map()
+            colmap = _cscale_get_map()
             cmap = matplotlib.colors.ListedColormap(colmap)
             if (
                 plotvars.levels_extend == "min"
@@ -5310,7 +4856,7 @@ def con(
                         hasbounds = False
 
                 if hasbounds:
-                    bfill(
+                    _bfill(
                         f=field_orig * fmult,
                         x=xpts,
                         y=ypts,
@@ -5322,7 +4868,7 @@ def con(
                         zorder=zorder,
                     )
                 else:
-                    bfill(
+                    _bfill(
                         f=field_orig * fmult,
                         x=x_orig,
                         y=y_orig,
@@ -5335,7 +4881,7 @@ def con(
                     )
 
             else:
-                bfill(
+                _bfill(
                     f=field_orig * fmult,
                     x=x_orig,
                     y=y_orig,
@@ -5592,11 +5138,11 @@ def con(
         # If colour bar extensions are enabled then the colour map goes
         # from 1 to ncols-2.  The colours for the colour bar extensions are
         # then changed on the colorbar and plot after the plot is made
-        colmap = cscale_get_map()
+        colmap = _cscale_get_map()
 
         # Filled contours
         if fill:
-            colmap = cscale_get_map()
+            colmap = _cscale_get_map()
             cmap = matplotlib.colors.ListedColormap(colmap)
             if (
                 plotvars.levels_extend == "min"
@@ -5641,7 +5187,7 @@ def con(
                         xpts, ypts = ypts, xpts
                         field_orig = np.flipud(np.rot90(field_orig))
 
-                    bfill(
+                    _bfill(
                         f=field_orig * fmult,
                         x=xpts,
                         y=ypts,
@@ -5656,7 +5202,7 @@ def con(
                     if swap_axes:
                         x_orig, y_orig = y_orig, x_orig
                         field_orig = np.flipud(np.rot90(field_orig))
-                    bfill(
+                    _bfill(
                         f=field_orig * fmult,
                         x=x_orig,
                         y=y_orig,
@@ -5672,7 +5218,7 @@ def con(
                 if swap_axes:
                     x_orig, y_orig = y_orig, x_orig
                     field_orig = np.flipud(np.rot90(field_orig))
-                bfill(
+                _bfill(
                     f=field_orig * fmult,
                     x=x_orig,
                     y=y_orig,
@@ -5834,11 +5380,11 @@ def con(
         # If colour bar extensions are enabled then the colour map goes
         # from 1 to ncols-2.  The colours for the colour bar extensions are
         # then changed on the colorbar and plot after the plot is made
-        colmap = cscale_get_map()
+        colmap = _cscale_get_map()
 
         # Filled contours
         if fill:
-            colmap = cscale_get_map()
+            colmap = _cscale_get_map()
             cmap = matplotlib.colors.ListedColormap(colmap)
             if (
                 plotvars.levels_extend == "min"
@@ -5866,7 +5412,7 @@ def con(
 
         # Block fill
         if blockfill:
-            bfill(
+            _bfill(
                 f=field_orig * fmult,
                 x=xpts,
                 y=ypts,
@@ -6252,11 +5798,11 @@ def con(
         # If colour bar extensions are enabled then the colour map goes
         # then from 1 to ncols-2.  The colours for the colour bar extensions
         # are changed on the colorbar and plot after the plot is made
-        colmap = cscale_get_map()
+        colmap = _cscale_get_map()
 
         # Filled contours
         if fill:
-            colmap = cscale_get_map()
+            colmap = _cscale_get_map()
             cmap = matplotlib.colors.ListedColormap(colmap)
             if (
                 plotvars.levels_extend == "min"
@@ -6283,7 +5829,7 @@ def con(
 
         # Block fill
         if blockfill:
-            bfill(
+            _bfill(
                 f=field_orig * fmult,
                 x=x_orig,
                 y=y_orig,
@@ -7689,7 +7235,7 @@ def stipple(
         raise TypeError("Can't plot a field list")
     else:
         field = f  # field data passed in as f
-        check_data(field, x, y)
+        _check_data(field, x, y)
         xpts = x
         ypts = y
 
@@ -8069,7 +7615,7 @@ def vect(
         raise TypeError("Can't plot a field list")
     else:
         # field=f #field data passed in as f
-        check_data(u, x, y)
+        _check_data(u, x, y)
         u_data = deepcopy(u)
         u_x = deepcopy(x)
         u_y = deepcopy(y)
@@ -8107,7 +7653,7 @@ def vect(
         raise TypeError("Can't plot a field list")
     else:
         # field=f #field data passed in as f
-        check_data(v, x, y)
+        _check_data(v, x, y)
         v_data = deepcopy(v)
         v_x = deepcopy(x)
         xlabel = ""
@@ -10989,7 +10535,7 @@ def cbar(
         ltop = levs[1:][::2]
 
     # Get the colour map
-    colmap = cscale_get_map()
+    colmap = _cscale_get_map()
     cmap = matplotlib.colors.ListedColormap(colmap)
     if extend is None:
         extend = plotvars.levels_extend
@@ -11610,7 +11156,7 @@ def stream(
         raise TypeError("Can't plot a field list")
     else:
         # field=f #field data passed in as f
-        check_data(u, x, y)
+        _check_data(u, x, y)
         u_data = deepcopy(u)
         u_x = deepcopy(x)
         u_y = deepcopy(y)
@@ -11648,7 +11194,7 @@ def stream(
         raise TypeError("Can't plot a field list")
     else:
         # field=f #field data passed in as f
-        check_data(v, x, y)
+        _check_data(v, x, y)
         v_data = deepcopy(v)
         xlabel = ""
         ylabel = ""
