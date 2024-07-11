@@ -735,9 +735,6 @@ def _bfill_ugrid(
                 geom, ccrs.Geodetic()
             )
 
-            # Original method for shapely < 2.0
-            # coords = geom_cyl[0].exterior.coords[:]
-
             # New method for shapely 2.0 +
             poly_mapped = sgeom.mapping(geom_cyl.geoms[0])
 
@@ -946,7 +943,6 @@ def _timeaxis(dtimes=None):
 
     # Months
     if yearmax - yearmin <= 4:
-
         months = [
             "Jan",
             "Feb",
@@ -1811,33 +1807,6 @@ def _bfill(
         field = f
 
     levels = np.array(deepcopy(clevs)).astype("float")
-
-    # Generate a Matplotlib colour map
-    # if single_fill_color is None:
-    #    cols = plotvars.cs
-    # else:
-    #    cols = single_fill_color
-
-    # cmap = matplotlib.colors.ListedColormap(cols)
-
-    # levels_orig = deepcopy(levels)
-
-    # if single_fill_color is None:
-    #    if (plotvars.levels_extend == 'both' or
-    #        plotvars.levels_extend == 'min'):
-    #        levels = np.insert(levels, 0, -1e30)
-    #    if (plotvars.levels_extend == 'both' or
-    #        plotvars.levels_extend == 'max'):
-    #        levels = np.append(levels, 1e30)
-
-    #    if (plotvars.levels_extend == 'both' or
-    #        plotvars.levels_extend == 'min'):
-    #        cmap.set_under(plotvars.cs[0])
-    #        cols = cols[1:]
-    #    if (plotvars.levels_extend == 'both' or
-    #        plotvars.levels_extend == 'max'):
-    #        cmap.set_over(plotvars.cs[-1])
-    #        cols = cols[:-1]
 
     # Get colour scale for use in contouring
     # If colour bar extensions are enabled then the colour map goes
@@ -2798,13 +2767,6 @@ def _plot_map_axes(
         mymap.set_ylim(ymin * 1.05, ymax, emit=False)
         mymap.set_ylim(None)
 
-        # Mask off contours that appear because of the plot extention
-        # mymap.add_patch(mpatches.Polygon([[xmin, ymin], [xmax,ymin],
-        #                                  [xmax, ymin*1.05],
-        #                                  [xmin, ymin*1.05]],
-        #                                  facecolor='red'))
-        # transform=ccrs.PlateCarree()))
-
         lons = np.arange(lonmax - lonmin + 1) + lonmin
         lats = np.arange(latmax - latmin + 1) + latmin
         verts = []
@@ -2891,7 +2853,6 @@ def _plot_map_axes(
         )
 
         # Turn off drawing of the rectangular box around the plot
-        # mymap.outline_patch.set_visible(False)
         mymap.set_frame_on(False)
 
         if lat_0 < 0:
@@ -3019,21 +2980,6 @@ def _plot_map_axes(
 
     # UKCP grid
     if plotvars.proj == "UKCP" and plotvars.grid:
-        # lonmin = -11
-        # lonmax = 3
-        # latmin = 49
-        # latmax = 61
-        # spacing = plotvars.grid_spacing
-        # if xticks is None:
-        #    lons = np.arange(30 / spacing + 1) * spacing
-        #    lons = np.append((lons*-1)[::-1], lons[1:])
-        # else:
-        #    lons = xticks
-        # if yticks is None:
-        #    lats = np.arange(90.0 / spacing + 1) * spacing
-        # else:
-        #    lats = yticks
-
         lons = (
             np.arange((360 / plotvars.grid_x_spacing) + 1)
             * plotvars.grid_x_spacing
@@ -3933,11 +3879,6 @@ def con(
 
                 # elif orca:
                 elif two_d:
-                    # _bfill(f=f, clevs=clevs, lonlat=False,
-                    #       alpha=alpha, fast=blockfill_fast,zorder=zorder)
-                    # _bfill(x=x, y=y, f=field * fmult,
-                    #       clevs=clevs, lonlat=False, alpha=alpha,\
-                    #       fast=blockfill_fast, zorder=zorder, orca=True)
                     _bfill(
                         x=x,
                         y=y,
@@ -10878,11 +10819,6 @@ def generate_titles(f=None):
                 title_dims += f"{mycoord}: {title} {value} {units}\n"
 
             else:
-                # if well_formed:
-                #    values = f.construct(mycoord).dtarray
-                # else:
-                #    values = f.construct(mycoord).array
-
                 values = f.construct(mycoord).dtarray
 
                 if len(values) > 1:
@@ -10986,17 +10922,7 @@ def find_dim_names(field):
         if field.coord(dcoords[i]).Z:
             nz += 1
         if field.coord(dcoords[i]).T:
-            # print('ajh - t found - ', coords[i])
             nt += 1
-
-    # print('ajh - find_dim_names - nx, ny, nz, nt are ', nx, ny, nz, nt)
-
-    # Strip out any auxiliary coordinates if the field is not a
-    # trajectory field
-    # remove_aux = True
-    # if field.get_property('featureType', False) is not False:
-    #    if field.featureType == 'trajectory':
-    #        remove_aux = False
 
     # New test
     remove_aux = False
@@ -11009,9 +10935,6 @@ def find_dim_names(field):
                 dcoords[i] = "aux"
         dcoords = list(filter(("aux").__ne__, dcoords))
 
-    # print('ajh - daxes are', daxes)
-    # print('ajh - dcoords are', dcoords)
-
     # Convert these into corresponding dimension coordinates
     if remove_aux:
         coords = []
@@ -11019,10 +10942,6 @@ def find_dim_names(field):
             val = daxes[i]
             coord = None
             for j in np.arange(len(dcoords)):
-
-                # print(ajh - daxes[i], dcoords[j],
-                # field.get_data_axes(dcoords[j])[0])
-
                 if val == field.get_data_axes(dcoords[j])[0]:
                     coord = dcoords[j]
 
@@ -11036,9 +10955,6 @@ def find_dim_names(field):
                 raise Warning(errstr)
     else:
         coords = dcoords
-
-    # print('ajh - coords are', coords)
-    # print('ajh - dcoords are', dcoords)
 
     # Make a copy of coords in mycoords
     mycoords = deepcopy(coords)
@@ -11065,8 +10981,6 @@ def find_dim_names(field):
     # order [X, Y, Z, T]
     mycoords.reverse()
 
-    # print('ajh - find_dim_names - mycoords are ', mycoords)
-
     return mycoords
 
 
@@ -11083,10 +10997,6 @@ def find_z(f):
     for mycoord in mycoords:
         if f.coord(mycoord).Z:
             myz = mycoord
-
-    # if myz is None:
-    #    errstr = 'cf-plot error - cannot find the Z coordinate'
-    #    raise Warning(errstr)
 
     return myz
 
