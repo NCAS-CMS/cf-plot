@@ -38,14 +38,14 @@ except ImportError:
 
 
 class pvars:
-    """Stores plotting variables in cfp.plotvars."""
+    """Stores plotting variables in `cfp.plotvars`."""
     def __init__(self, **kwargs):
         """Initialize a new Pvars instance."""
         for attr, value in kwargs.items():
             setattr(self, attr, value)
 
     def __str__(self):
-        """x.__str__() <==> str(x)"""
+        """`x.__str__() <==> str(x)`"""
         a = None
         v = None
         out = [f"{a} = {repr(v)}"]
@@ -516,9 +516,11 @@ if sys.platform == "darwin":
 def _which(program):
     """Check if the ImageMagick display command is available."""
     def is_exe(fpath):
+        """TODO DOCS."""
         return os.path.exists(fpath) and os.access(fpath, os.X_OK)
 
     def ext_candidates(fpath):
+        """TODO DOCS."""
         yield fpath
         for ext in os.environ.get("PATHEXT", "").split(os.pathsep):
             yield fpath + ext
@@ -10235,6 +10237,7 @@ def add_cyclic(field, lons):
 
 
 def irregular_window(field, lons, lats):
+    """TODO DOCS."""
 
     field_irregular = deepcopy(field)
     lons_irregular = deepcopy(lons)
@@ -10338,6 +10341,8 @@ def irregular_window(field, lons, lats):
 
 
 def max_ndecs_data(data):
+    """TODO DOCS."""
+
     ndecs_max = 1
     data_ndecs = np.zeros(len(data))
     for i in np.arange(len(data)):
@@ -10400,6 +10405,7 @@ def fix_floats(data):
 
 
 def calculate_levels(field=None, level_spacing=None, verbose=None):
+    """TODO DOCS."""
 
     dmin = np.nanmin(field)
     dmax = np.nanmax(field)
