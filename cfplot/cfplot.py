@@ -2250,9 +2250,9 @@ def _bfill(
                 plotvars.plot.add_collection(coll)
 
 
-def set_map():
+def _set_map():
     """
-    | set_map - set map and write into plotvars.mymap
+    | _set_map - set map and write into plotvars.mymap
     |
     | No inputs
     | This is an internal routine and not used by the user
@@ -2437,311 +2437,9 @@ def set_map():
     plotvars.mymap = mymap
 
 
-def process_color_scales():
+def _map_title(title=None, dims=False):
     """
-    | Process colour scales to generate images of them for the web
-    | documentation and the rst code for inclusion in the
-    | colour_scale.rst file.
-    |
-    |
-    | No inputs
-    | This is an internal routine and not used by the user
-    |
-    |
-    |
-    |
-    |
-    :Returns:
-     None
-    |
-    |
-    |
-    """
-
-    # Define scale categories
-    uniform = ["viridis", "magma", "inferno", "plasma", "parula", "gray"]
-
-    ncl_large = [
-        "amwg256",
-        "BkBlAqGrYeOrReViWh200",
-        "BlAqGrYeOrRe",
-        "BlAqGrYeOrReVi200",
-        "BlGrYeOrReVi200",
-        "BlRe",
-        "BlueRed",
-        "BlueRedGray",
-        "BlueWhiteOrangeRed",
-        "BlueYellowRed",
-        "BlWhRe",
-        "cmp_b2r",
-        "cmp_haxby",
-        "detail",
-        "extrema",
-        "GrayWhiteGray",
-        "GreenYellow",
-        "helix",
-        "helix1",
-        "hotres",
-        "matlab_hot",
-        "matlab_hsv",
-        "matlab_jet",
-        "matlab_lines",
-        "ncl_default",
-        "ncview_default",
-        "OceanLakeLandSnow",
-        "rainbow",
-        "rainbow_white_gray",
-        "rainbow_white",
-        "rainbow_gray",
-        "tbr_240_300",
-        "tbr_stdev_0_30",
-        "tbr_var_0_500",
-        "tbrAvg1",
-        "tbrStd1",
-        "tbrVar1",
-        "thelix",
-        "ViBlGrWhYeOrRe",
-        "wh_bl_gr_ye_re",
-        "WhBlGrYeRe",
-        "WhBlReWh",
-        "WhiteBlue",
-        "WhiteBlueGreenYellowRed",
-        "WhiteGreen",
-        "WhiteYellowOrangeRed",
-        "WhViBlGrYeOrRe",
-        "WhViBlGrYeOrReWh",
-        "wxpEnIR",
-        "3gauss",
-        "3saw",
-        "BrBG",
-    ]
-
-    ncl_meteoswiss = [
-        "hotcold_18lev",
-        "hotcolr_19lev",
-        "mch_default",
-        "perc2_9lev",
-        "percent_11lev",
-        "precip2_15lev",
-        "precip2_17lev",
-        "precip3_16lev",
-        "precip4_11lev",
-        "precip4_diff_19lev",
-        "precip_11lev",
-        "precip_diff_12lev",
-        "precip_diff_1lev",
-        "rh_19lev",
-        "spread_15lev",
-    ]
-
-    ncl_color_blindness = [
-        "StepSeq25",
-        "posneg_2",
-        "posneg_1",
-        "BlueDarkOrange18",
-        "BlueDarkRed18",
-        "GreenMagenta16",
-        "BlueGreen14",
-        "BrownBlue12",
-        "Cat12",
-    ]
-
-    ncl_small = [
-        "amwg",
-        "amwg_blueyellowred",
-        "BlueDarkRed18",
-        "BlueDarkOrange18",
-        "BlueGreen14",
-        "BrownBlue12",
-        "Cat12",
-        "cmp_flux",
-        "cosam12",
-        "cosam",
-        "GHRSST_anomaly",
-        "GreenMagenta16",
-        "hotcold_18lev",
-        "hotcolr_19lev",
-        "mch_default",
-        "nrl_sirkes",
-        "nrl_sirkes_nowhite",
-        "perc2_9lev",
-        "percent_11lev",
-        "posneg_2",
-        "prcp_1",
-        "prcp_2",
-        "prcp_3",
-        "precip_11lev",
-        "precip_diff_12lev",
-        "precip_diff_1lev",
-        "precip2_15lev",
-        "precip2_17lev",
-        "precip3_16lev",
-        "precip4_11lev",
-        "precip4_diff_19lev",
-        "radar",
-        "radar_1",
-        "rh_19lev",
-        "seaice_1",
-        "seaice_2",
-        "so4_21",
-        "spread_15lev",
-        "StepSeq25",
-        "sunshine_9lev",
-        "sunshine_diff_12lev",
-        "temp_19lev",
-        "temp_diff_18lev",
-        "temp_diff_1lev",
-        "topo_15lev",
-        "wgne15",
-        "wind_17lev",
-    ]
-
-    orography = [
-        "os250kmetres",
-        "wiki_1_0_2",
-        "wiki_1_0_3",
-        "wiki_2_0",
-        "wiki_2_0_reduced",
-        "arctic",
-    ]
-
-    idl_guide = []
-    for i in np.arange(1, 45):
-        idl_guide.append("scale" + str(i))
-
-    # TODO SLB improve string formatting below and consolidate
-    for category in [
-        "uniform",
-        "ncl_meteoswiss",
-        "ncl_small",
-        "ncl_large",
-        "ncl_color_blindness",
-        "orography",
-        "idl_guide",
-    ]:
-        if category == "uniform":
-            scales = uniform
-            div = "================== ====="
-            chars = 10
-            title = (
-                "Perceptually uniform colour maps for use with continuous "
-                "data"
-            )
-            print(title)
-            print("----------------------------------------------")
-            print("")
-            print(div)
-            print("Name               Scale")
-            print(div)
-
-        if category == "ncl_meteoswiss":
-            scales = ncl_meteoswiss
-            div = "================== ====="
-            chars = 19
-            print("NCAR Command Language - MeteoSwiss colour maps")
-            print("----------------------------------------------")
-            print("")
-            print(div)
-            print("Name               Scale")
-            print(div)
-        if category == "ncl_small":
-            scales = ncl_small
-            div = "=================== ====="
-            chars = 20
-            print("NCAR Command Language - small color maps (<50 colours)")
-            print("------------------------------------------------------")
-            print("")
-            print(div)
-            print("Name                Scale")
-            print(div)
-        if category == "ncl_large":
-            scales = ncl_large
-            div = "======================= ====="
-            chars = 24
-            print("NCAR Command Language - large colour maps (>50 colours)")
-            print("-------------------------------------------------------")
-            print("")
-            print(div)
-            print("Name                    Scale")
-            print(div)
-        if category == "ncl_color_blindness":
-            scales = ncl_color_blindness
-            div = "================ ====="
-            chars = 17
-            title = (
-                "NCAR Command Language - Enhanced to help with colour "
-                "blindness"
-            )
-            print(title)
-            title = (
-                "-----------------------------------------------------"
-                "---------"
-            )
-            print(title)
-            print("")
-            print(div)
-            print("Name             Scale")
-            print(div)
-            chars = 17
-        if category == "orography":
-            scales = orography
-            div = "================ ====="
-            chars = 17
-            print("Orography/bathymetry colour scales")
-            print("----------------------------------")
-            print("")
-            print(div)
-            print("Name             Scale")
-            print(div)
-            chars = 17
-        if category == "idl_guide":
-            scales = idl_guide
-            div = "======= ====="
-            chars = 8
-            print("IDL guide scales")
-            print("----------------")
-            print("")
-            print(div)
-            print("Name    Scale")
-            print(div)
-            chars = 8
-
-        for scale in scales:
-            # Make image of scale
-            fig = plot.figure(figsize=(8, 0.5))
-            ax1 = fig.add_axes([0.05, 0.1, 0.9, 0.2])
-            cscale(scale)
-            cmap = matplotlib.colors.ListedColormap(plotvars.cs)
-            cb1 = matplotlib.colorbar.ColorbarBase(
-                ax1, cmap=cmap, orientation="horizontal", ticks=None
-            )
-            cb1.set_ticks([0.0, 1.0])
-            cb1.set_ticklabels(["", ""])
-            # TODO SLB, update path below to non-specific one
-            file = (
-                "/home/andy/cf-docs/cfplot_sphinx/images/"
-                f"colour_scales/{scale}.png"
-            )
-            plot.savefig(file)
-            plot.close()
-
-            # Use convert to trim the png file to remove white space
-            subprocess.call(["convert", "-trim", file, file])
-
-            name_pad = scale
-            while len(name_pad) < chars:
-                name_pad = name_pad + " "
-            fn = f"{name_pad}.. image:: images/colour_scales/{scale}.png"
-            print(fn)
-
-        print(div)
-        print("")
-        print("")
-
-
-def map_title(title=None, dims=False):
-    """
-    | map_title is an internal routine to draw a title on a map plot
+    | _map_title is an internal routine to draw a title on a map plot
     |
     | title=None - title to put on map plot
     | dim=False - draw a set of dimension titles
@@ -2872,7 +2570,7 @@ def map_title(title=None, dims=False):
         )
 
 
-def plot_map_axes(
+def _plot_map_axes(
     axes=None,
     xaxis=None,
     yaxis=None,
@@ -2885,7 +2583,7 @@ def plot_map_axes(
     verbose=None,
 ):
     """
-    | plot_map_axes is an internal routine to draw the axes on a map plot
+    | _plot_map_axes is an internal routine to draw the axes on a map plot
     |
     | axes=None - drawing axes
     | xaxis=None - drawing x-axis
@@ -4036,7 +3734,7 @@ def con(
             lonrange = 360.0
 
         if (lonrange > 350 and latrange > 160) or plotvars.user_mapset == 1:
-            set_map()
+            _set_map()
         else:
             mapset(
                 lonmin=mylonmin,
@@ -4047,7 +3745,7 @@ def con(
                 resolution=resolution_orig,
             )
 
-            set_map()
+            _set_map()
 
         mymap = plotvars.mymap
         user_mapset = plotvars.user_mapset
@@ -4450,7 +4148,7 @@ def con(
                 )
 
         # Axes
-        plot_map_axes(
+        _plot_map_axes(
             axes=axes,
             xaxis=xaxis,
             yaxis=yaxis,
@@ -4505,7 +4203,7 @@ def con(
 
         # Title
         if title != "":
-            map_title(title)
+            _map_title(title)
 
         # Titles for dimensions
         if titles:
@@ -5349,7 +5047,7 @@ def con(
             )
             plotargs = {"transform": transform}
             if plotvars.user_mapset == 1:
-                set_map()
+                _set_map()
             else:
                 if np.ndim(xpts) == 1:
                     lonpts, latpts = np.meshgrid(xpts, ypts)
@@ -5371,7 +5069,7 @@ def con(
                     user_mapset=0,
                     resolution=resolution_orig,
                 )
-                set_map()
+                _set_map()
 
             plotargs = {"transform": transform}
             plot = plotvars.mymap
@@ -5493,7 +5191,7 @@ def con(
         # Rotated grid axes
         if axes:
             if plotvars.proj == "cyl":
-                plot_map_axes(
+                _plot_map_axes(
                     axes=axes,
                     xaxis=xaxis,
                     yaxis=yaxis,
@@ -5552,7 +5250,7 @@ def con(
 
             # Title
             if title != "":
-                map_title(title)
+                _map_title(title)
 
         # Add title for native grid
         if plotvars.proj == "rotated":
@@ -7723,7 +7421,7 @@ def vect(
     if plotvars.plot_type == 1:
         # Set up mapping
         if (lonrange > 350 and latrange > 170) or plotvars.user_mapset == 1:
-            set_map()
+            _set_map()
         else:
             mapset(
                 lonmin=np.nanmin(u_x),
@@ -7733,7 +7431,7 @@ def vect(
                 user_mapset=0,
                 resolution=resolution_orig,
             )
-            set_map()
+            _set_map()
 
         mymap = plotvars.mymap
 
@@ -7837,7 +7535,7 @@ def vect(
             )
 
         # axes
-        plot_map_axes(
+        _plot_map_axes(
             axes=axes,
             xaxis=xaxis,
             yaxis=yaxis,
@@ -7876,7 +7574,7 @@ def vect(
 
         # Title
         if title is not None:
-            map_title(title)
+            _map_title(title)
 
         # Titles for dimensions
         if titles:
@@ -7893,7 +7591,7 @@ def vect(
             if (
                 lonrange > 350 and latrange > 170
             ) or plotvars.user_mapset == 1:
-                set_map()
+                _set_map()
 
             else:
                 mapset(
@@ -7904,7 +7602,7 @@ def vect(
                     user_mapset=0,
                     resolution=resolution_orig,
                 )
-                set_map()
+                _set_map()
 
             quiv = plotvars.mymap.quiver(
                 u_x,
@@ -7962,7 +7660,7 @@ def vect(
                 )
 
             if plotvars.plot == "cyl":
-                plot_map_axes(
+                _plot_map_axes(
                     axes=axes,
                     xaxis=xaxis,
                     yaxis=yaxis,
@@ -7977,7 +7675,7 @@ def vect(
 
             # Title
             if title is not None:
-                map_title(title)
+                _map_title(title)
 
             # Titles for dimensions
             if titles:
@@ -9996,7 +9694,7 @@ def traj(
         plotvars.latmin = -90
         plotvars.latmax = 90
 
-    set_map()
+    _set_map()
     mymap = plotvars.mymap
 
     # Set the plot limits
@@ -10204,7 +9902,7 @@ def traj(
                     )
 
     # Axes
-    plot_map_axes(
+    _plot_map_axes(
         axes=axes,
         xaxis=xaxis,
         yaxis=yaxis,
@@ -10256,7 +9954,7 @@ def traj(
 
     # Title
     if title is not None:
-        map_title(title)
+        _map_title(title)
 
     # Color bar
     plot_colorbar = False
@@ -11242,7 +10940,7 @@ def stream(
     if plotvars.plot_type == 1:
         # Set up mapping
         if (lonrange > 350 and latrange > 170) or plotvars.user_mapset == 1:
-            set_map()
+            _set_map()
         else:
             mapset(
                 lonmin=np.nanmin(u_x),
@@ -11252,7 +10950,7 @@ def stream(
                 user_mapset=0,
                 resolution=resolution_orig,
             )
-            set_map()
+            _set_map()
 
         mymap = plotvars.mymap
 
@@ -11264,7 +10962,7 @@ def stream(
         )
 
         # axes
-        plot_map_axes(
+        _plot_map_axes(
             axes=axes,
             xaxis=xaxis,
             yaxis=yaxis,
@@ -11303,7 +11001,7 @@ def stream(
 
         # Title
         if title is not None:
-            map_title(title)
+            _map_title(title)
 
     ##########
     # Save plot
@@ -11626,6 +11324,312 @@ def map_grid():
         ylocs=lats,
         zorder=plotvars.grid_zorder,
     )
+
+
+# ======================================================
+# MISC. - TODO move these out of functional library code
+# ======================================================
+
+def _process_color_scales():
+    """
+    | Process colour scales to generate images of them for the web
+    | documentation and the rst code for inclusion in the
+    | colour_scale.rst file.
+    |
+    |
+    | No inputs
+    | This is an internal routine and not used by the user
+    |
+    |
+    |
+    |
+    |
+    :Returns:
+     None
+    |
+    |
+    |
+    """
+
+    # Define scale categories
+    uniform = ["viridis", "magma", "inferno", "plasma", "parula", "gray"]
+
+    ncl_large = [
+        "amwg256",
+        "BkBlAqGrYeOrReViWh200",
+        "BlAqGrYeOrRe",
+        "BlAqGrYeOrReVi200",
+        "BlGrYeOrReVi200",
+        "BlRe",
+        "BlueRed",
+        "BlueRedGray",
+        "BlueWhiteOrangeRed",
+        "BlueYellowRed",
+        "BlWhRe",
+        "cmp_b2r",
+        "cmp_haxby",
+        "detail",
+        "extrema",
+        "GrayWhiteGray",
+        "GreenYellow",
+        "helix",
+        "helix1",
+        "hotres",
+        "matlab_hot",
+        "matlab_hsv",
+        "matlab_jet",
+        "matlab_lines",
+        "ncl_default",
+        "ncview_default",
+        "OceanLakeLandSnow",
+        "rainbow",
+        "rainbow_white_gray",
+        "rainbow_white",
+        "rainbow_gray",
+        "tbr_240_300",
+        "tbr_stdev_0_30",
+        "tbr_var_0_500",
+        "tbrAvg1",
+        "tbrStd1",
+        "tbrVar1",
+        "thelix",
+        "ViBlGrWhYeOrRe",
+        "wh_bl_gr_ye_re",
+        "WhBlGrYeRe",
+        "WhBlReWh",
+        "WhiteBlue",
+        "WhiteBlueGreenYellowRed",
+        "WhiteGreen",
+        "WhiteYellowOrangeRed",
+        "WhViBlGrYeOrRe",
+        "WhViBlGrYeOrReWh",
+        "wxpEnIR",
+        "3gauss",
+        "3saw",
+        "BrBG",
+    ]
+
+    ncl_meteoswiss = [
+        "hotcold_18lev",
+        "hotcolr_19lev",
+        "mch_default",
+        "perc2_9lev",
+        "percent_11lev",
+        "precip2_15lev",
+        "precip2_17lev",
+        "precip3_16lev",
+        "precip4_11lev",
+        "precip4_diff_19lev",
+        "precip_11lev",
+        "precip_diff_12lev",
+        "precip_diff_1lev",
+        "rh_19lev",
+        "spread_15lev",
+    ]
+
+    ncl_color_blindness = [
+        "StepSeq25",
+        "posneg_2",
+        "posneg_1",
+        "BlueDarkOrange18",
+        "BlueDarkRed18",
+        "GreenMagenta16",
+        "BlueGreen14",
+        "BrownBlue12",
+        "Cat12",
+    ]
+
+    ncl_small = [
+        "amwg",
+        "amwg_blueyellowred",
+        "BlueDarkRed18",
+        "BlueDarkOrange18",
+        "BlueGreen14",
+        "BrownBlue12",
+        "Cat12",
+        "cmp_flux",
+        "cosam12",
+        "cosam",
+        "GHRSST_anomaly",
+        "GreenMagenta16",
+        "hotcold_18lev",
+        "hotcolr_19lev",
+        "mch_default",
+        "nrl_sirkes",
+        "nrl_sirkes_nowhite",
+        "perc2_9lev",
+        "percent_11lev",
+        "posneg_2",
+        "prcp_1",
+        "prcp_2",
+        "prcp_3",
+        "precip_11lev",
+        "precip_diff_12lev",
+        "precip_diff_1lev",
+        "precip2_15lev",
+        "precip2_17lev",
+        "precip3_16lev",
+        "precip4_11lev",
+        "precip4_diff_19lev",
+        "radar",
+        "radar_1",
+        "rh_19lev",
+        "seaice_1",
+        "seaice_2",
+        "so4_21",
+        "spread_15lev",
+        "StepSeq25",
+        "sunshine_9lev",
+        "sunshine_diff_12lev",
+        "temp_19lev",
+        "temp_diff_18lev",
+        "temp_diff_1lev",
+        "topo_15lev",
+        "wgne15",
+        "wind_17lev",
+    ]
+
+    orography = [
+        "os250kmetres",
+        "wiki_1_0_2",
+        "wiki_1_0_3",
+        "wiki_2_0",
+        "wiki_2_0_reduced",
+        "arctic",
+    ]
+
+    idl_guide = []
+    for i in np.arange(1, 45):
+        idl_guide.append("scale" + str(i))
+
+    # TODO SLB improve string formatting below and consolidate
+    for category in [
+        "uniform",
+        "ncl_meteoswiss",
+        "ncl_small",
+        "ncl_large",
+        "ncl_color_blindness",
+        "orography",
+        "idl_guide",
+    ]:
+        if category == "uniform":
+            scales = uniform
+            div = "================== ====="
+            chars = 10
+            title = (
+                "Perceptually uniform colour maps for use with continuous "
+                "data"
+            )
+            print(title)
+            print("----------------------------------------------")
+            print("")
+            print(div)
+            print("Name               Scale")
+            print(div)
+
+        if category == "ncl_meteoswiss":
+            scales = ncl_meteoswiss
+            div = "================== ====="
+            chars = 19
+            print("NCAR Command Language - MeteoSwiss colour maps")
+            print("----------------------------------------------")
+            print("")
+            print(div)
+            print("Name               Scale")
+            print(div)
+        if category == "ncl_small":
+            scales = ncl_small
+            div = "=================== ====="
+            chars = 20
+            print("NCAR Command Language - small color maps (<50 colours)")
+            print("------------------------------------------------------")
+            print("")
+            print(div)
+            print("Name                Scale")
+            print(div)
+        if category == "ncl_large":
+            scales = ncl_large
+            div = "======================= ====="
+            chars = 24
+            print("NCAR Command Language - large colour maps (>50 colours)")
+            print("-------------------------------------------------------")
+            print("")
+            print(div)
+            print("Name                    Scale")
+            print(div)
+        if category == "ncl_color_blindness":
+            scales = ncl_color_blindness
+            div = "================ ====="
+            chars = 17
+            title = (
+                "NCAR Command Language - Enhanced to help with colour "
+                "blindness"
+            )
+            print(title)
+            title = (
+                "-----------------------------------------------------"
+                "---------"
+            )
+            print(title)
+            print("")
+            print(div)
+            print("Name             Scale")
+            print(div)
+            chars = 17
+        if category == "orography":
+            scales = orography
+            div = "================ ====="
+            chars = 17
+            print("Orography/bathymetry colour scales")
+            print("----------------------------------")
+            print("")
+            print(div)
+            print("Name             Scale")
+            print(div)
+            chars = 17
+        if category == "idl_guide":
+            scales = idl_guide
+            div = "======= ====="
+            chars = 8
+            print("IDL guide scales")
+            print("----------------")
+            print("")
+            print(div)
+            print("Name    Scale")
+            print(div)
+            chars = 8
+
+        for scale in scales:
+            # Make image of scale
+            fig = plot.figure(figsize=(8, 0.5))
+            ax1 = fig.add_axes([0.05, 0.1, 0.9, 0.2])
+            cscale(scale)
+            cmap = matplotlib.colors.ListedColormap(plotvars.cs)
+            cb1 = matplotlib.colorbar.ColorbarBase(
+                ax1, cmap=cmap, orientation="horizontal", ticks=None
+            )
+            cb1.set_ticks([0.0, 1.0])
+            cb1.set_ticklabels(["", ""])
+            # TODO SLB, update path below to non-specific one
+            file = (
+                "/home/andy/cf-docs/cfplot_sphinx/images/"
+                f"colour_scales/{scale}.png"
+            )
+            plot.savefig(file)
+            plot.close()
+
+            # Use convert to trim the png file to remove white space
+            subprocess.call(["convert", "-trim", file, file])
+
+            name_pad = scale
+            while len(name_pad) < chars:
+                name_pad = name_pad + " "
+            fn = f"{name_pad}.. image:: images/colour_scales/{scale}.png"
+            print(fn)
+
+        print(div)
+        print("")
+        print("")
 
 
 # ====================================================
