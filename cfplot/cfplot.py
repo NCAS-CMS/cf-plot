@@ -40,7 +40,7 @@ except ImportError:
 class pvars:
     """Stores plotting variables in cfp.plotvars."""
     def __init__(self, **kwargs):
-        """Initialize a new Pvars instance"""
+        """Initialize a new Pvars instance."""
         for attr, value in kwargs.items():
             setattr(self, attr, value)
 
@@ -534,8 +534,7 @@ def _which(program):
 
 def _dim_titles(title=None, title2=None, title3=None):
     """
-    | _dim_titles is an internal routine to draw a set of dimension titles
-    | on a plot
+    | An internal routine to draw a set of dimension titles on a plot.
     |
     | title=None - title to put on the plot
     | title2=None - additional title
@@ -658,7 +657,7 @@ def _bfill_ugrid(
     zorder=None,
 ):
     """
-    | _bfill_ugrid - block fill a irregular field with colour rectangles
+    | Block fill a irregular field with colour rectangles.
     | This is an internal routine and is not generally used by the user.
     |
     | f=None - field
@@ -760,8 +759,8 @@ def _bfill_ugrid(
 
 def _mapaxis(min=None, max=None, type=None):
     """
-    | _mapaxis is used to work out a sensible set of longitude and latitude
-    | tick marks and labels.  This is an internal routine and is not used
+    | Work out a sensible set of longitude and latitude
+    | tick marks and labels. This is an internal routine and is not used
     | by the user.
 
     | min=None - minimum axis value
@@ -849,8 +848,8 @@ def _mapaxis(min=None, max=None, type=None):
 
 def _timeaxis(dtimes=None):
     """
-    | _timeaxis is used to work out a sensible set of time labels and tick
-    | marks given a time span  This is an internal routine and is not used
+    | Work out a sensible set of time labels and tick
+    | marks given a time span. This is an internal routine and is not used
     | by the user.
 
     | dtimes=None - data times as a CF variable
@@ -1062,9 +1061,10 @@ def _timeaxis(dtimes=None):
 
 def _supscr(text=None):
     """
-    | _supscr - add superscript text formatting for ** and ^
+    | Add superscript text formatting for `**` and `^`.
     | This is an internal routine used in titles and colour bars
     | and not used by the user.
+    |
     | text=None - input text
 
     :Returns:
@@ -1116,7 +1116,7 @@ def _supscr(text=None):
 
 def _gvals(dmin=None, dmax=None, mystep=None, mod=True):
     """
-    | _gvals - work out a sensible set of values between two limits
+    | Work out a sensible set of values between two limits.
     | This is an internal routine used for contour levels and axis
     | labelling and is not generally used by the user.
 
@@ -1266,6 +1266,7 @@ def _cf_data_assign(
     """
     | Check cf input data is okay and return data for contour plot.
     | This is an internal routine not used by the user.
+    |
     | f=None - input cf field
     | colorbar_title=None - input colour bar title
     | rotated vect=False - return 1D x and y for rotated plot vectors
@@ -1643,7 +1644,7 @@ def _cf_data_assign(
 
 def _check_data(field=None, x=None, y=None):
     """
-    | _check_data - check user input contour data is correct.
+    | Check user input contour data is correct.
     | This is an internal routine and is not used by the user.
     |
     | field=None - field
@@ -1719,10 +1720,10 @@ def _check_data(field=None, x=None, y=None):
 
 def _cscale_get_map():
     """
-    | _cscale_get_map - return colour map for use in contour plots.
-    |                   This depends on the colour bar extensions
+    | Return colour map for use in contour plots.
     | This is an internal routine and is not used by the user.
     |
+    | This depends on the colour bar extensions.
     |
     :Returns:
          colour map
@@ -1756,7 +1757,7 @@ def _bfill(
     orca=False,
 ):
     """
-    | _bfill - block fill a field with colour rectangles
+    | Block fill a field with colour rectangles.
     | This is an internal routine and is not generally used by the user.
     |
     | f=None - field
@@ -2205,10 +2206,10 @@ def _bfill(
 
 def _set_map():
     """
-    | _set_map - set map and write into plotvars.mymap
+    | Set map and write into `plotvars.mymap`.
+    | This is an internal routine and not used by the user.
     |
     | No inputs
-    | This is an internal routine and not used by the user
     |
     |
     :Returns:
@@ -2387,7 +2388,7 @@ def _set_map():
 
 def _map_title(title=None, dims=False):
     """
-    | _map_title is an internal routine to draw a title on a map plot
+    | An internal routine to draw a title on a map plot.
     |
     | title=None - title to put on map plot
     | dim=False - draw a set of dimension titles
@@ -2527,7 +2528,7 @@ def _plot_map_axes(
     verbose=None,
 ):
     """
-    | _plot_map_axes is an internal routine to draw the axes on a map plot
+    | An internal routine to draw the axes on a map plot.
     |
     | axes=None - drawing axes
     | xaxis=None - drawing x-axis
@@ -3116,7 +3117,9 @@ def con(
     grid=False,
 ):
     """
-    | con is the interface to contouring in cf-plot. The minimum use is con(f)
+    | The interface to contouring in cf-plot.
+    |
+    | The minimum use is con(f)
     | where f is a 2 dimensional array. If a cf field is passed then an
     | appropriate plot will be produced i.e. a longitude-latitude or
     | latitude-height plot for example. If a 2d numeric array is passed then
@@ -5604,7 +5607,7 @@ def mapset(
     aspect=None,
 ):
     """
-    | mapset sets the mapping parameters.
+    | Sets the mapping parameters.
     |
     | lonmin=lonmin - minimum longitude
     | lonmax=lonmax - maximum longitude
@@ -5718,7 +5721,7 @@ def mapset(
 
 def levs(min=None, max=None, step=None, manual=None, extend="both"):
     """
-    | The levs command manually sets the contour levels.
+    | Manually sets the contour levels.
 
     | min=min - minimum level
     | max=max - maximum level
@@ -5820,8 +5823,8 @@ def levs(min=None, max=None, step=None, manual=None, extend="both"):
 
 def ndecs(data=None):
     """
-    | ndecs finds the number of decimal places in an array.  Needed to make the
-    | colour bar match the contour line labelling.
+    | Finds the number of decimal places in an array.
+    | Needed to make the colour bar match the contour line labelling.
 
     | data=data - input array of values
 
@@ -5855,7 +5858,7 @@ def axes(
     title=None,
 ):
     """
-    | axes is a function to set axes plotting parameters. The xstep and ystep
+    | Set axes plotting parameters. The xstep and ystep
     | parameters are used to label the axes starting at the left hand side and
     | bottom of the plot respectively. For tighter control over labelling use
     | xticks, yticks to specify the tick positions and xticklabels,
@@ -5923,7 +5926,7 @@ def axes_plot(
     title=None,
 ):
     """
-    | axes_plot is a system function to specify axes plotting parameters.
+    | A system function to specify axes plotting parameters.
     | Use xticks, yticks to specify the tick positions and xticklabels,
     | yticklabels to specify the associated labels.
     |
@@ -6079,7 +6082,7 @@ def gset(
     twiny=None,
 ):
     """
-    | Set plot limits for all non longitude-latitide plots.
+    | Set plot limits for all non-longitude-latitide plots.
     | xmin, xmax, ymin, ymax are all needed to set the plot limits.
     | Set xlog/ylog to True or 1 to get a log axis.
     |
@@ -6190,7 +6193,7 @@ def gopen(
     user_position=False,
 ):
     """
-    | gopen is used to open a graphic file.
+    | Open a graphic file.
     |
     | rows=1 - number of plot rows on the page
     | columns=1 - number of plot columns on the page
@@ -6288,8 +6291,8 @@ def gopen(
 
 def gclose(view=True):
     """
-    | gclose saves a graphics file.  The default is to view the file as well
-    | - use view = False to turn this off.
+    | Saves a graphics file. The default is to view the file as well
+    | but `view=False` can be used to turn this off.
 
     | view = True - view graphics file
     :Returns:
@@ -6457,8 +6460,8 @@ def gpos(pos=1, xmin=None, xmax=None, ymin=None, ymax=None):
 
 def pcon(mb=None, km=None, h=7.0, p0=1000):
     """
-    | pcon is a function for converting pressure to height in kilometers and
-    | vice-versa. This function uses the equation P=P0exp(-z/H) to translate
+    | Convert pressure to height in kilometers and vice-versa.
+    | This function uses the equation P=P0exp(-z/H) to translate
     | between pressure and height. In pcon the surface pressure P0 is set to
     | 1000.0mb and the scale height H is set to 7.0. The value of H can vary
     | from 6.0 in the polar regions to 8.5 in the tropics as well as
@@ -6504,8 +6507,8 @@ def cscale(
     uniform=False,
 ):
     """
-    | cscale - choose and manipulate colour maps.  Around 200 colour scales are
-    |          available - see the gallery section for more details.
+    | Choose and manipulate colour maps. Around 200 colour scales are
+    | available (see the gallery section for more details).
     |
     | scale=None - name of colour map
     | ncols=None - number of colours for colour map
@@ -6686,8 +6689,7 @@ def cscale(
 
 def regrid(f=None, x=None, y=None, xnew=None, ynew=None):
     """
-    | regrid - bilinear interpolation of a grid to new grid locations
-    |
+    | Bilinear interpolation of a grid to new grid locations.
     |
     |     f=None - original field
     |     x=None - original field x values
@@ -6699,6 +6701,7 @@ def regrid(f=None, x=None, y=None, xnew=None, ynew=None):
        field values at requested locations
     |
     """
+    # TODO SLB: what is this method for and why named/described as such???
 
     # Copy input arrays
     regrid_f = deepcopy(f)
@@ -6773,7 +6776,7 @@ def stipple(
     zorder=1,
 ):
     """
-    | stipple - put markers on a plot to indicate value of interest
+    | Put markers on a plot to indicate value of interest.
     |
     | f=None - cf field or field
     | x=None - x points for field
@@ -6927,7 +6930,7 @@ def stipple_points(
     xmin=None, xmax=None, ymin=None, ymax=None, pts=None, stype=None
 ):
     """
-    | stipple_points - calculate interpolation points
+    | Calculate interpolation points.
     |
     | xmin=None - plot x minimum
     | ymax=None - plot x maximum
@@ -6996,7 +6999,7 @@ def stipple_points(
 
 def find_pos_in_array(vals=None, val=None, above=False):
     """
-    | find_pos_in_array - find the position of a point in an array
+    | Find the position of a point in an array.
     |
     | vals - array values
     | val - value to find position of
@@ -7059,7 +7062,7 @@ def vect(
     alpha=1.0,
 ):
     """
-    | vect - plot vectors
+    | Plot vectors.
     |
     | u=None - u wind
     | v=None - v wind
@@ -7925,8 +7928,7 @@ def vect(
 
 def polar_regular_grid(pts=50):
     """
-    | polar_regular_grid - return a regular grid over a polar
-    |                      stereographic area
+    | Return a regular grid over a polar stereographic area.
     |
     | pts=50 - number  of grid points in the x and y directions
     |
@@ -7976,12 +7978,13 @@ def polar_regular_grid(pts=50):
 
 def cf_var_name(field=None, dim=None):
     """
-    | cf_var_name - return the name from a supplied dimension
-    |               in the following order
-    |               ncvar
-    |               short_name
-    |               long_name
-    |               standard_name
+    | Return the name from a supplied dimension in order.
+    |
+    | Names are returned in the following order:
+    | * ncvar
+    | * short_name
+    | * long_name
+    | * standard_name
     |
     | field=None - field
     | dim=None - dimension required - 'dim0', 'dim1' etc.
@@ -8026,19 +8029,21 @@ def cf_var_name(field=None, dim=None):
 
 def cf_var_name_titles(field=None, dim=None):
     """
-    | cf_var_name - return the name from a supplied dimension
-    |               in the following preference order:
-    |               standard_name
-    |               long_name
-    |               short_name
-    |               ncvar
+    | Return the name from a supplied dimension in order.
     |
+    | Names are returned in the following order:
+    | * standard_name
+    | * long_name
+    | * short_name
+    | * ncvar
+
     | field=None - field
     | dim=None - dimension required - 'dim0', 'dim1' etc.
     |
     :Returns:
      name
     """
+    # TODO SLB: combine with 'cf_var_name', which does reverse
 
     name = None
     units = None
@@ -8070,7 +8075,7 @@ def cf_var_name_titles(field=None, dim=None):
 
 def reset():
     """
-    | reset all plotting variables
+    | Reset all plotting variables.
     |
     :Returns:
      name
@@ -8140,7 +8145,7 @@ def setvars(
     level_spacing=None,
 ):
     """
-    | setvars - set plotting variables and their defaults
+    | Set plotting variables and their defaults.
     |
     | file=None - output file name
     | title_fontsize=None - title fontsize, default=15
@@ -8430,7 +8435,7 @@ def setvars(
 
 def vloc(xvec=None, yvec=None, lons=None, lats=None):
     """
-    | vloc is used to locate the positions of a set of points in a vector
+    | Locate the positions of a set of points in a vector.
     |
     | xvec=None - data longitudes
     | yvec=None - data latitudes
@@ -8514,7 +8519,7 @@ def rgaxes(
     ylabel=None,
 ):
     """
-    | rgaxes - label rotated grid plots
+    | Label rotated grid plots.
     |
     | xpole=None - location of xpole in degrees
     | ypole=None - location of ypole in degrees
@@ -8770,7 +8775,8 @@ def lineplot(
     zorder=None,
 ):
     """
-    | lineplot is the interface to line plotting in cf-plot.
+    | The interface to line plotting in cf-plot.
+    |
     | The minimum use is lineplot(f) where f is a CF field.
     | If x and y are passed then an appropriate plot is made allowing
     | x vs data and y vs data plots.
@@ -9376,7 +9382,8 @@ def traj(
     zorder=None,
 ):
     """
-    | traj is the interface to trajectory plotting in cf-plot.
+    | The interface to trajectory plotting in cf-plot.
+    |
     | The minimum use is traj(f) where f is a CF field.
     |
     | f - CF data used to make a line plot
@@ -9863,7 +9870,7 @@ def cbar(
     verbose=None,
 ):
     """
-    | cbar is the cf-plot interface to the Matplotlib colorbar routine
+    | The cf-plot interface to the Matplotlib colorbar routine.
     |
     | labels - colorbar labels
     | orientation - orientation 'horizontal' or 'vertical'
@@ -10208,7 +10215,8 @@ def cbar(
 
 def add_cyclic(field, lons):
     """
-    | add_cyclic is a wrapper for cartopy_util.add_cyclic_point(field, lons)
+    | A wrapper for `cartopy_util.add_cyclic_point(field, lons)`.
+    |
     | This is needed for the case of when the longitudes are not evenly spaced
     | due to numpy rounding which causes an error from the cartopy wrapping
     | routine. In this case the longitudes are promoted to 64 bit and then
@@ -10347,9 +10355,7 @@ def max_ndecs_data(data):
 
 def fix_floats(data):
     """
-    | fix_floats fixes numpy rounding issues where 0.4 becomes
-    | 0.399999999999999999999
-    |
+    Fixes numpy rounding issues where 0.4 becomes 0.399999999999999999999.
     """
 
     # Return unchecked if any values have an e in them, for example 7.85e-8
@@ -10575,8 +10581,7 @@ def stream(
     zorder=None,
 ):
     """
-    | stream - plot a streamplot which is used to show fluid flow and
-    |          2D field gradients
+    | Plot a streamplot to show fluid flow and 2D field gradients.
     |
     | u=None - u wind
     | v=None - v wind
@@ -10843,7 +10848,7 @@ def stream(
 
 
 def generate_titles(f=None):
-    """Generate a set of title dims to put at the top of plots"""
+    """Generate a set of title dims to put at the top of plots."""
 
     mycoords = find_dim_names(f)
     # TODO SLB, see 'well_formed' dead code below in case this is important.
@@ -10914,7 +10919,8 @@ def generate_titles(f=None):
 
 def check_well_formed(field):
     """
-    Check the coordinates are all recognizably of the form X, Y, Z, T
+    Check the coordinates are all of the form X, Y, Z, T.
+
     returns boolean
     """
 
@@ -10948,8 +10954,9 @@ def check_well_formed(field):
 
 
 def find_dim_names(field):
-    """Find the field dimension coordinate names
-    Ignores auxiliary coordinates (for now)
+    """Find the field dimension coordinate names.
+    Ignores auxiliary coordinates (for now).
+
     returns:
     coordinates in the order [T, X, Y, Z]
     """
@@ -11058,7 +11065,7 @@ def find_dim_names(field):
 
 
 def find_z(f):
-    """Find the Z coordinate if it exists"""
+    """Find the Z coordinate if it exists."""
 
     # Return if f is undefined
     if f is None:
@@ -11079,9 +11086,11 @@ def find_z(f):
 
 
 def orca_check(x, verbose=False):
-    """Check input data to see if it is an orca ocean grid
+    """Check input data to see if it is an orca ocean grid.
+
     We look for a single discontinuity in longitude where the data changes by
-    greater that 120 degrees."""
+    greater that 120 degrees.
+    """
 
     lons = deepcopy(x)
 
@@ -11129,7 +11138,7 @@ def orca_check(x, verbose=False):
 
 
 def map_grid():
-    """Plot a grid on a map"""
+    """Plot a grid on a map."""
 
     lons = (
         np.arange((360 / plotvars.grid_x_spacing) + 1)
@@ -11457,7 +11466,8 @@ def _process_color_scales():
 
 def regression_tests():
     """
-    | Test for cf-plot regressions
+    | Test for cf-plot regressions.
+    |
     | Run through some standard levs, _gvals, lon and lat labelling
     | Make all the gallery plots and use Imagemagick to display them
     | alongside a reference plot
@@ -12111,7 +12121,7 @@ def regression_tests():
 
 def compare_images(example=None):
     """
-    Compare images and return an error string if they don't match
+    Compare images and return an error string if they don't match.
     """
     import hashlib
 
@@ -12159,7 +12169,7 @@ def compare_arrays(
     type=None,
 ):
     """
-    Compare arrays and return an error string if they don't match
+    Compare arrays and return an error string if they don't match.
     """
 
     anom = 0
