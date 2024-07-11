@@ -37,9 +37,8 @@ except ImportError:
     raise Warning(errstr)
 
 
-# Initiate the pvars class
-# This is used for storing plotting variables in cfp.plotvars
 class pvars:
+    """Stores plotting variables in cfp.plotvars."""
     def __init__(self, **kwargs):
         """Initialize a new Pvars instance"""
         for attr, value in kwargs.items():
@@ -382,7 +381,7 @@ if os.path.exists(defaults_file):
             if com == "viewer":
                 global_viewer = val.strip()
 
-# plotvars - global plotting variables
+"""Global plotting variables."""
 plotvars = pvars(
     lonmin=-180,
     lonmax=180,
@@ -542,10 +541,6 @@ def _dim_titles(title=None, title2=None, title3=None):
     | title2=None - additional title
     | title3=None - additional title
     |
-    |
-    |
-    |
-    |
     """
 
     # Logic for the supplied titles
@@ -679,9 +674,6 @@ def _bfill_ugrid(
      :Returns:
        None
     |
-    |
-    |
-    |
     """
 
     # Colour faces according to value
@@ -779,12 +771,6 @@ def _mapaxis(min=None, max=None, type=None):
     :Returns:
      longtitude/latitude ticks and longitude/latitude tick labels
     |
-    |
-    |
-    |
-    |
-    |
-    |
     """
 
     degsym = ""
@@ -871,12 +857,6 @@ def _timeaxis(dtimes=None):
 
     :Returns:
      time ticks and labels
-    |
-    |
-    |
-    |
-    |
-    |
     |
     """
 
@@ -1090,12 +1070,6 @@ def _supscr(text=None):
     :Returns:
      Formatted text
     |
-    |
-    |
-    |
-    |
-    |
-    |
     """
 
     if text is None:
@@ -1150,11 +1124,6 @@ def _gvals(dmin=None, dmax=None, mystep=None, mod=True):
     | dmax = None - maximum
     | mystep = None - use this step
     | mod = True - modify data to make use of a multipler
-    |
-    |
-    |
-    |
-    |
     |
     """
 
@@ -1311,10 +1280,6 @@ def _cf_data_assign(
      | colorbar_title - colour bar title
      | xlabel - x label for plot
      | ylabel - y label for plot
-     |
-     |
-     |
-     |
      |
     """
 
@@ -1685,11 +1650,6 @@ def _check_data(field=None, x=None, y=None):
     | x=None - x points for field
     | y=None - y points for field
     |
-    |
-    |
-    |
-    |
-    |
     """
 
     # Input error trapping
@@ -1767,10 +1727,6 @@ def _cscale_get_map():
     :Returns:
          colour map
     |
-    |
-    |
-    |
-    |
     """
     cscale_ncols = np.size(plotvars.cs)
     if plotvars.levels_extend == "both":
@@ -1822,9 +1778,6 @@ def _bfill(
     |
      :Returns:
        None
-    |
-    |
-    |
     |
     """
 
@@ -2258,13 +2211,8 @@ def _set_map():
     | This is an internal routine and not used by the user
     |
     |
-    |
-    |
-    |
     :Returns:
      None
-    |
-    |
     |
     """
 
@@ -2444,10 +2392,6 @@ def _map_title(title=None, dims=False):
     | title=None - title to put on map plot
     | dim=False - draw a set of dimension titles
     |
-    |
-    |
-    |
-    |
     """
 
     boundinglat = plotvars.boundinglat
@@ -2595,10 +2539,6 @@ def _plot_map_axes(
     | user_xlabel=None - user defined xlabel
     | user_ylabel=None - user defined ylabel
     | verbose=None
-    |
-    |
-    |
-    |
     |
     """
     # Font definitions
@@ -5888,13 +5828,6 @@ def ndecs(data=None):
     :Returns:
     |  maximum number of necimal places
     |
-    |
-    |
-    |
-    |
-    |
-    |
-    |
     """
 
     maxdecs = 0
@@ -6170,14 +6103,8 @@ def gset(
     |
     | Note the correct date format is 'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM:SS'
     | anything else will give unexpected results.
-
     :Returns:
      None
-
-    |
-    |
-    |
-    |
 
     """
 
@@ -6282,16 +6209,8 @@ def gopen(
     | dpi=None - resolution in dots per inch
     | user_position=False - set to True to supply plot position via gpos
     |               xmin, xmax, ymin, ymax values
-
-
     :Returns:
      None
-
-    |
-    |
-    |
-    |
-    |
 
     """
 
@@ -6373,19 +6292,8 @@ def gclose(view=True):
     | - use view = False to turn this off.
 
     | view = True - view graphics file
-
     :Returns:
      None
-
-    |
-    |
-    |
-    |
-    |
-    |
-    |
-    |
-    |
 
     """
 
@@ -6483,19 +6391,8 @@ def gpos(pos=1, xmin=None, xmax=None, ymin=None, ymax=None):
     | ymin=None ymin in normalised coordinates
     | ymax=None ymax in normalised coordinates
     |
-    |
-
     :Returns:
      None
-
-    |
-    |
-    |
-    |
-    |
-    |
-    |
-    |
 
     """
 
@@ -6635,11 +6532,6 @@ def cscale(
     |
     :Returns:
         None
-
-    |
-    |
-    |
-    |
     """
 
     # If no map requested reset to default
@@ -6806,7 +6698,6 @@ def regrid(f=None, x=None, y=None, xnew=None, ynew=None):
     :Returns:
        field values at requested locations
     |
-    |
     """
 
     # Copy input arrays
@@ -6899,10 +6790,8 @@ def stipple(
     |              is required
     | zorder=2 - plotting order
     |
-    |
     :Returns:
        None
-    |
     |
     """
 
@@ -7049,11 +6938,8 @@ def stipple_points(
     |
     | stype=None - type of grid.  1=regular, 2=offset
     |
-    |
-    |
     :Returns:
        stipple locations in x and y
-    |
     |
     """
 
@@ -7115,15 +7001,8 @@ def find_pos_in_array(vals=None, val=None, above=False):
     | vals - array values
     | val - value to find position of
     |
-    |
-    |
-    |
-    |
-    |
     :Returns:
       position in array
-    |
-    |
     |
     """
 
@@ -7241,8 +7120,6 @@ def vect(
     |
     :Returns:
      None
-    |
-    |
     |
     """
 
@@ -8053,17 +7930,9 @@ def polar_regular_grid(pts=50):
     |
     | pts=50 - number  of grid points in the x and y directions
     |
-    |
-    |
-    |
-    |
-    |
     :Returns:
      lons, lats of grid in degrees
      x, y locations of lons and lats
-    |
-    |
-    |
     """
 
     boundinglat = plotvars.boundinglat
@@ -8117,15 +7986,8 @@ def cf_var_name(field=None, dim=None):
     | field=None - field
     | dim=None - dimension required - 'dim0', 'dim1' etc.
     |
-    |
-    |
-    |
-    |
     :Returns:
      name
-    |
-    |
-    |
     """
 
     # Check for multiple Z coordinates
@@ -8210,17 +8072,8 @@ def reset():
     """
     | reset all plotting variables
     |
-    |
-    |
-    |
-    |
-    |
-    |
     :Returns:
      name
-    |
-    |
-    |
     """
     axes()
     cscale()
@@ -8350,13 +8203,8 @@ def setvars(
     |
     | Use setvars() to reset to the defaults
     |
-    |
-    |
     :Returns:
      name
-    |
-    |
-    |
     """
 
     vals = [
@@ -8584,8 +8432,6 @@ def vloc(xvec=None, yvec=None, lons=None, lats=None):
     """
     | vloc is used to locate the positions of a set of points in a vector
     |
-    |
-    |
     | xvec=None - data longitudes
     | yvec=None - data latitudes
     | lons=None - required longitude positions
@@ -8593,13 +8439,6 @@ def vloc(xvec=None, yvec=None, lons=None, lats=None):
 
     :Returns:
      locations of user points in the longitude and latitude points
-    |
-    |
-    |
-    |
-    |
-    |
-    |
     """
 
     # Check input parameters
@@ -8694,12 +8533,6 @@ def rgaxes(
     |
     :Returns:
      name
-    |
-    |
-    |
-    |
-    |
-    |
     """
 
     spacing = plotvars.rotated_grid_spacing
@@ -8994,7 +8827,6 @@ def lineplot(
     | a) set the axis limits with gset before plotting the lines
     | b) the last call to lineplot is the one that any of the above
     |    axis overrides should be placed in.
-    |
     |
     """
     if verbose:
@@ -9606,7 +9438,6 @@ def traj(
     | fc='k' - vector face colour
     | ec='k' - vector edge colour
 
-
     """
     if verbose:
         print("traj - making a trajectory plot")
@@ -10056,8 +9887,6 @@ def cbar(
     |                 extensions at both ends.
     | mid = False - label mid points of colours rather than the boundaries
     | verbose = None
-    |
-    |
     |
     """
 
@@ -10777,9 +10606,6 @@ def stream(
     |
     :Returns:
      None
-    |
-    |
-    |
     """
 
     colorbar_title = ""
@@ -11340,15 +11166,8 @@ def _process_color_scales():
     | No inputs
     | This is an internal routine and not used by the user
     |
-    |
-    |
-    |
-    |
     :Returns:
      None
-    |
-    |
-    |
     """
 
     # Define scale categories
@@ -11642,11 +11461,6 @@ def regression_tests():
     | Run through some standard levs, _gvals, lon and lat labelling
     | Make all the gallery plots and use Imagemagick to display them
     | alongside a reference plot
-    |
-    |
-    |
-    |
-    |
     """
 
     print(
@@ -12297,14 +12111,7 @@ def regression_tests():
 
 def compare_images(example=None):
     """
-    | Compare images and return an error string if they don't match
-    |
-    |
-    |
-    |
-    |
-    |
-    |
+    Compare images and return an error string if they don't match
     """
     import hashlib
 
@@ -12352,14 +12159,7 @@ def compare_arrays(
     type=None,
 ):
     """
-    | Compare arrays and return an error string if they don't match
-    |
-    |
-    |
-    |
-    |
-    |
-    |
+    Compare arrays and return an error string if they don't match
     """
 
     anom = 0
