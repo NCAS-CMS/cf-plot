@@ -21,6 +21,7 @@ class Basic_array_test(unittest.TestCase):
     |
     |
     """
+
     def setup(self):
         print(
             "==================\n"
@@ -55,10 +56,26 @@ class Basic_array_test(unittest.TestCase):
             60,
             65,
         ]
-        cfp.compare_arrays(ref=ref_answer, levs_test=True, min=-35, max=65, step=5)
+        cfp.compare_arrays(
+            ref=ref_answer, levs_test=True, min=-35, max=65, step=5
+        )
 
-        ref_answer = [-6.0, -4.8, -3.6, -2.4, -1.2, 0.0, 1.2, 2.4, 3.6, 4.8, 6.0]
-        cfp.compare_arrays(ref=ref_answer, levs_test=True, min=-6, max=6, step=1.2)
+        ref_answer = [
+            -6.0,
+            -4.8,
+            -3.6,
+            -2.4,
+            -1.2,
+            0.0,
+            1.2,
+            2.4,
+            3.6,
+            4.8,
+            6.0,
+        ]
+        cfp.compare_arrays(
+            ref=ref_answer, levs_test=True, min=-6, max=6, step=1.2
+        )
 
     def test_arrays2(self):
         ref_answer = [
@@ -77,6 +94,7 @@ class Basic_array_test(unittest.TestCase):
         cfp.compare_arrays(
             ref=ref_answer, levs_test=True, min=50000, max=60000, step=1000
         )
+
     def test_arrays3(self):
         ref_answer = [
             -7000,
@@ -102,11 +120,9 @@ class Basic_array_test(unittest.TestCase):
 class Gvals_array_test(unittest.TestCase):
     def setup(self):
         print(
-            "\n-----------------\n"
-            "Testing for gvals\n"
-            "-----------------\n"
+            "\n-----------------\n" "Testing for gvals\n" "-----------------\n"
         )
-    
+
     def test_gvals1(self):
         ref_answer = [
             281,
@@ -130,6 +146,7 @@ class Gvals_array_test(unittest.TestCase):
             mult=0,
             gvals_test=True,
         )
+
     def test_gvals2(self):
 
         ref_answer = [
@@ -174,7 +191,11 @@ class Gvals_array_test(unittest.TestCase):
             50,
         ]
         cfp.compare_arrays(
-            ref=ref_answer, min=-49.510975, max=53.206604, mult=0, gvals_test=True
+            ref=ref_answer,
+            min=-49.510975,
+            max=53.206604,
+            mult=0,
+            gvals_test=True,
         )
 
     def test_gvals4(self):
@@ -217,7 +238,10 @@ class Gvals_array_test(unittest.TestCase):
             0.0,
             0.1,
         ]
-        cfp.compare_arrays(ref=ref_answer, min=-1.0, max=0.1, mult=0, gvals_test=True)
+        cfp.compare_arrays(
+            ref=ref_answer, min=-1.0, max=0.1, mult=0, gvals_test=True
+        )
+
 
 class test_lonlat(unittest.TestCase):
     def setup(self):
@@ -225,7 +249,7 @@ class test_lonlat(unittest.TestCase):
         print("----------------------------------------")
         print("Testing for longitude/latitude labelling")
         print("----------------------------------------")
-    
+
     def test_lonlat1(self):
         ref_answer = (
             [-180, -120, -60, 0, 60, 120, 180],
@@ -240,35 +264,53 @@ class test_lonlat(unittest.TestCase):
             [150, 180, 210, 240, 270],
             ["150E", "180", "150W", "120W", "90W"],
         )
-        cfp.compare_arrays(ref=ref_answer, min=135, max=280, type=1, mapaxis_test=True)
+        cfp.compare_arrays(
+            ref=ref_answer, min=135, max=280, type=1, mapaxis_test=True
+        )
 
     def test_lonlat3(self):
         ref_answer = (
             [0, 10, 20, 30, 40, 50, 60, 70, 80, 90],
-            ["0", "10E", "20E", "30E", "40E", "50E", "60E", "70E", "80E", "90E"],
+            [
+                "0",
+                "10E",
+                "20E",
+                "30E",
+                "40E",
+                "50E",
+                "60E",
+                "70E",
+                "80E",
+                "90E",
+            ],
         )
-        cfp.compare_arrays(ref=ref_answer, min=0, max=90, type=1, mapaxis_test=True)
+        cfp.compare_arrays(
+            ref=ref_answer, min=0, max=90, type=1, mapaxis_test=True
+        )
 
     def test_lonlat4(self):
         ref_answer = (
             [-90, -60, -30, 0, 30, 60, 90],
             ["90S", "60S", "30S", "0", "30N", "60N", "90N"],
         )
-        cfp.compare_arrays(ref=ref_answer, min=-90, max=90, type=2, mapaxis_test=True)
+        cfp.compare_arrays(
+            ref=ref_answer, min=-90, max=90, type=2, mapaxis_test=True
+        )
 
     def test_lonlat5(self):
         ref_answer = (
             [0, 5, 10, 15, 20, 25, 30],
             ["0", "5N", "10N", "15N", "20N", "25N", "30N"],
         )
-        cfp.compare_arrays(ref=ref_answer, min=0, max=30, type=2, mapaxis_test=True)
+        cfp.compare_arrays(
+            ref=ref_answer, min=0, max=30, type=2, mapaxis_test=True
+        )
+
 
 class ExamplesTest(unittest.TestCase):
     def setup(self):
         print(
-            "\n-----------------\n"
-            "Testing for plots\n"
-            "-----------------"
+            "\n-----------------\n" "Testing for plots\n" "-----------------"
         )
 
     # Run through gallery examples and compare to reference plots
@@ -307,7 +349,7 @@ class ExamplesTest(unittest.TestCase):
         cfp.mapset(proj="npstere")
         cfp.con(f.subspace(pressure=500))
         cfp.compare_images(4)
-    
+
     def test_example5(self):
         # example5
         cfp.reset()
@@ -340,7 +382,7 @@ class ExamplesTest(unittest.TestCase):
         f = cf.read(f"{data_dir}/ggap.nc")[1]
         cfp.con(f.collapse("mean", "longitude"), ylog=1)
         cfp.compare_images(8)
-    
+
     def test_example9(self):
         # example9
         cfp.reset()
@@ -459,7 +501,9 @@ class ExamplesTest(unittest.TestCase):
         cfp.cscale("magma")
         cfp.con(g)
         cfp.stipple(f=g, min=220, max=260, size=100, color="#00ff00")
-        cfp.stipple(f=g, min=300, max=330, size=50, color="#0000ff", marker="s")
+        cfp.stipple(
+            f=g, min=300, max=330, size=50, color="#0000ff", marker="s"
+        )
         cfp.gclose()
         cfp.compare_images(17)
 
@@ -548,15 +592,14 @@ class ExamplesTest(unittest.TestCase):
         cfp.cscale("plasma")
         xpts = np.arange(np.size(xvec))
         ypts = np.arange(np.size(yvec))
-        cfp.gset(xmin=0, xmax=np.size(xvec) - 1, ymin=0, ymax=np.size(yvec) - 1)
+        cfp.gset(
+            xmin=0, xmax=np.size(xvec) - 1, ymin=0, ymax=np.size(yvec) - 1
+        )
         cfp.levs(min=980, max=1035, step=2.5)
         cfp.con(data, xpts, ypts[::-1])
         cfp.rgaxes(xpole=xpole, ypole=ypole, xvec=xvec, yvec=yvec)
         cfp.gclose()
         cfp.compare_images(23)
-
-
-
 
 
 class DataExamples(unittest.TestCase):
@@ -574,7 +617,9 @@ class DataExamples(unittest.TestCase):
         # Linearly interpolate data to a regular grid
         lons_new = np.arange(140) * 0.1 - 11.0
         lats_new = np.arange(140) * 0.1 + 49.0
-        temp_new = griddata(lons, lats, temp, lons_new, lats_new, interp="linear")
+        temp_new = griddata(
+            lons, lats, temp, lons_new, lats_new, interp="linear"
+        )
 
         cfp.cscale("parula")
         cfp.con(x=lons_new, y=lats_new, f=temp_new, ptype=1)
@@ -638,7 +683,9 @@ class DataExamples(unittest.TestCase):
 
         lons_new = np.arange(181 * 8) * 0.25 - 180.0
         lats_new = np.arange(91 * 8) * 0.25 - 90.0
-        temp_new = griddata(lons, lats, temp, lons_new, lats_new, interp="linear")
+        temp_new = griddata(
+            lons, lats, temp, lons_new, lats_new, interp="linear"
+        )
 
         cfp.con(x=lons_new, y=lats_new, f=temp_new, ptype=1)
         cfp.compare_images(26)
@@ -707,7 +754,6 @@ class DataExamples(unittest.TestCase):
         cfp.gclose()
         cfp.compare_images(28)
 
-
     def test_example29(self):
         # example29
         cfp.reset()
@@ -727,8 +773,8 @@ class DataExamples(unittest.TestCase):
     def test_example31(self):
         # example31
         cfp.reset
-        f=cf.read(f"{data_dir}/ukcp_rcm_test.nc")[0]
-        cfp.mapset(proj='UKCP', resolution='50m')
+        f = cf.read(f"{data_dir}/ukcp_rcm_test.nc")[0]
+        cfp.mapset(proj="UKCP", resolution="50m")
         cfp.levs(-3, 7, 0.5)
         cfp.setvars(grid_x_spacing=1, grid_y_spacing=1)
         cfp.con(f, lines=False)
