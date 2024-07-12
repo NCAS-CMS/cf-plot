@@ -1,13 +1,13 @@
-
 import unittest
 import cf
 import coverage
 import numpy as np
 import cfplot as cfp
-#from matplotlib.mlab import griddata
 from scipy.interpolate import griddata
 
-data_dir = "../cfplot_data"
+
+data_dir = "../../cfplot_data"
+
 
 class Basic_array_test(unittest.TestCase):
     """
