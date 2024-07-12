@@ -1,3 +1,7 @@
+"""
+Testing module for cf-plot.
+"""
+
 import unittest
 import cf
 import coverage
@@ -6,23 +10,20 @@ import cfplot as cfp
 from scipy.interpolate import griddata
 
 
-data_dir = "../../cfplot_data"
+DATA_DIR = "../../cfplot_data"
 
 
-class Basic_array_test(unittest.TestCase):
+class BasicArrayTest(unittest.TestCase):
     """
-    | Test for cf-plot regressions
-    | Run through some standard cfp.levs, gvals, lon and lat labelling
-    | Make all the gallery plots and use Imagemagick to display them
-    | alongside a reference plot
-    |
-    |
-    |
-    |
-    |
+    Test for cf-plot regressions.
+
+    Run through some standard cfp.levs, gvals, lon and lat labelling
+    Make all the gallery plots and use Imagemagick to display them
+    alongside a reference plot.
     """
 
     def setup(self):
+        """TODO DOCS."""
         print(
             "==================\n"
             "Regression testing\n"
@@ -32,7 +33,8 @@ class Basic_array_test(unittest.TestCase):
             "------------------\n"
         )
 
-    def test_arrays1(self):
+    def test_arrays_1(self):
+        """TODO DOCS."""
         ref_answer = [
             -35,
             -30,
@@ -77,7 +79,8 @@ class Basic_array_test(unittest.TestCase):
             ref=ref_answer, levs_test=True, min=-6, max=6, step=1.2
         )
 
-    def test_arrays2(self):
+    def test_arrays_2(self):
+        """TODO DOCS."""
         ref_answer = [
             50000,
             51000,
@@ -95,7 +98,8 @@ class Basic_array_test(unittest.TestCase):
             ref=ref_answer, levs_test=True, min=50000, max=60000, step=1000
         )
 
-    def test_arrays3(self):
+    def test_arrays_3(self):
+        """TODO DOCS."""
         ref_answer = [
             -7000,
             -6500,
@@ -117,13 +121,17 @@ class Basic_array_test(unittest.TestCase):
         )
 
 
-class Gvals_array_test(unittest.TestCase):
+class GvalsArrayTest(unittest.TestCase):
+    """TODO DOCS."""
+
     def setup(self):
+        """TODO DOCS."""
         print(
             "\n-----------------\n" "Testing for gvals\n" "-----------------\n"
         )
 
-    def test_gvals1(self):
+    def test_gvals_1(self):
+        """TODO DOCS."""
         ref_answer = [
             281,
             282,
@@ -147,8 +155,8 @@ class Gvals_array_test(unittest.TestCase):
             gvals_test=True,
         )
 
-    def test_gvals2(self):
-
+    def test_gvals_2(self):
+        """TODO DOCS."""
         ref_answer = [
             0.356,
             0.385,
@@ -167,7 +175,8 @@ class Gvals_array_test(unittest.TestCase):
             ref=ref_answer, min=0.356, max=0.675, mult=0, gvals_test=True
         )
 
-    def test_gvals3(self):
+    def test_gvals_3(self):
+        """TODO DOCS."""
         ref_answer = [
             -45,
             -40,
@@ -198,7 +207,8 @@ class Gvals_array_test(unittest.TestCase):
             gvals_test=True,
         )
 
-    def test_gvals4(self):
+    def test_gvals_4(self):
+        """TODO DOCS."""
         ref_answer = [
             47000,
             48000,
@@ -223,7 +233,8 @@ class Gvals_array_test(unittest.TestCase):
             ref=ref_answer, min=46956, max=64538, mult=0, gvals_test=True
         )
 
-    def test_gvals5(self):
+    def test_gvals_5(self):
+        """TODO DOCS."""
         ref_answer = [
             -1.0,
             -0.9,
@@ -243,14 +254,16 @@ class Gvals_array_test(unittest.TestCase):
         )
 
 
-class test_lonlat(unittest.TestCase):
+class LonLatTest(unittest.TestCase):
     def setup(self):
+        """TODO DOCS."""
         print("")
         print("----------------------------------------")
         print("Testing for longitude/latitude labelling")
         print("----------------------------------------")
 
-    def test_lonlat1(self):
+    def test_lonlat_1(self):
+        """TODO DOCS."""
         ref_answer = (
             [-180, -120, -60, 0, 60, 120, 180],
             ["180", "120W", "60W", "0", "60E", "120E", "180"],
@@ -259,7 +272,8 @@ class test_lonlat(unittest.TestCase):
             ref=ref_answer, min=-180, max=180, type=1, mapaxis_test=True
         )
 
-    def test_lonlat2(self):
+    def test_lonlat_2(self):
+        """TODO DOCS."""
         ref_answer = (
             [150, 180, 210, 240, 270],
             ["150E", "180", "150W", "120W", "90W"],
@@ -268,7 +282,8 @@ class test_lonlat(unittest.TestCase):
             ref=ref_answer, min=135, max=280, type=1, mapaxis_test=True
         )
 
-    def test_lonlat3(self):
+    def test_lonlat_3(self):
+        """TODO DOCS."""
         ref_answer = (
             [0, 10, 20, 30, 40, 50, 60, 70, 80, 90],
             [
@@ -288,7 +303,8 @@ class test_lonlat(unittest.TestCase):
             ref=ref_answer, min=0, max=90, type=1, mapaxis_test=True
         )
 
-    def test_lonlat4(self):
+    def test_lonlat_4(self):
+        """TODO DOCS."""
         ref_answer = (
             [-90, -60, -30, 0, 30, 60, 90],
             ["90S", "60S", "30S", "0", "30N", "60N", "90N"],
@@ -297,7 +313,8 @@ class test_lonlat(unittest.TestCase):
             ref=ref_answer, min=-90, max=90, type=2, mapaxis_test=True
         )
 
-    def test_lonlat5(self):
+    def test_lonlat_5(self):
+        """TODO DOCS."""
         ref_answer = (
             [0, 5, 10, 15, 20, 25, 30],
             ["0", "5N", "10N", "15N", "20N", "25N", "30N"],
@@ -308,133 +325,135 @@ class test_lonlat(unittest.TestCase):
 
 
 class ExamplesTest(unittest.TestCase):
+    """Run through gallery examples and compare to reference plots."""
+    data_dir = DATA_DIR
+
     def setup(self):
+        """TODO DOCS."""
         print(
             "\n-----------------\n" "Testing for plots\n" "-----------------"
         )
 
-    # Run through gallery examples and compare to reference plots
-
-    def test_example1(self):
-        # example1
+    def test_example_1(self):
+        """Test Example 1."""
         cfp.reset()
         cfp.setvars(file="fig1.png")
-        f = cf.read(f"{data_dir}/tas_A1.nc")[0]
+        f = cf.read(f"{self.data_dir}/tas_A1.nc")[0]
         cfp.con(f.subspace(time=15))
         cfp.compare_images(1)
 
-    def test_example2(self):
-        # example2
+    def test_example_2(self):
+        """Test Example 2."""
         cfp.reset()
         cfp.setvars(file="fig2.png")
-        f = cf.read(f"{data_dir}/tas_A1.nc")[0]
+        f = cf.read(f"{self.data_dir}/tas_A1.nc")[0]
         cfp.con(f.subspace(time=15), blockfill=True, lines=False)
         cfp.compare_images(2)
 
-    def test_example3(self):
-        # example3
+    def test_example_3(self):
+        """Test Example 3."""
         cfp.reset()
         cfp.setvars(file="fig3.png")
-        f = cf.read(f"{data_dir}/tas_A1.nc")[0]
+        f = cf.read(f"{self.data_dir}/tas_A1.nc")[0]
         cfp.mapset(lonmin=-15, lonmax=3, latmin=48, latmax=60)
         cfp.levs(min=265, max=285, step=1)
         cfp.con(f.subspace(time=15))
         cfp.compare_images(3)
 
-    def test_example4(self):
-        # example4
+    def test_example_4(self):
+        """Test Example 4."""
         cfp.reset()
         cfp.setvars(file="fig4.png")
-        f = cf.read(f"{data_dir}/ggap.nc")[1]
+        f = cf.read(f"{self.data_dir}/ggap.nc")[1]
         cfp.mapset(proj="npstere")
         cfp.con(f.subspace(pressure=500))
         cfp.compare_images(4)
 
-    def test_example5(self):
-        # example5
+    def test_example_5(self):
+        """Test Example 5."""
         cfp.reset()
         cfp.setvars(file="fig5.png")
-        f = cf.read(f"{data_dir}/ggap.nc")[1]
+        f = cf.read(f"{self.data_dir}/ggap.nc")[1]
         cfp.mapset(proj="spstere", boundinglat=-30, lon_0=180)
         cfp.con(f.subspace(pressure=500))
         cfp.compare_images(5)
 
-    def test_example6(self):
-        # example6
+    def test_example_6(self):
+        """Test Example 6."""
         cfp.reset()
         cfp.setvars(file="fig6.png")
-        f = cf.read(f"{data_dir}/ggap.nc")[3]
+        f = cf.read(f"{self.data_dir}/ggap.nc")[3]
         cfp.con(f.subspace(longitude=0))
         cfp.compare_images(6)
 
-    def test_example7(self):
-        # example7
+    def test_example_7(self):
+        """Test Example 7."""
         cfp.reset()
         cfp.setvars(file="fig7.png")
-        f = cf.read(f"{data_dir}/ggap.nc")[1]
+        f = cf.read(f"{self.data_dir}/ggap.nc")[1]
         cfp.con(f.collapse("mean", "longitude"))
         cfp.compare_images(7)
 
-    def test_example8(self):
-        # example8
+    def test_example_8(self):
+        """Test Example 8."""
         cfp.reset()
         cfp.setvars(file="fig8.png")
-        f = cf.read(f"{data_dir}/ggap.nc")[1]
+        f = cf.read(f"{self.data_dir}/ggap.nc")[1]
         cfp.con(f.collapse("mean", "longitude"), ylog=1)
         cfp.compare_images(8)
 
-    def test_example9(self):
-        # example9
+    def test_example_9(self):
+        """Test Example 9."""
         cfp.reset()
         cfp.setvars(file="fig9.png")
-        f = cf.read(f"{data_dir}/ggap.nc")[0]
+        f = cf.read(f"{self.data_dir}/ggap.nc")[0]
         cfp.con(f.collapse("mean", "latitude"))
         cfp.compare_images(9)
 
-    def test_example10(self):
-        # example10
+    def test_example_10(self):
+        """Test Example 10."""
         cfp.reset()
         cfp.setvars(file="fig10.png")
-        f = cf.read(f"{data_dir}/tas_A1.nc")[0]
+        f = cf.read(f"{self.data_dir}/tas_A1.nc")[0]
         cfp.cscale("plasma")
         cfp.con(f.subspace(longitude=0), lines=0)
         cfp.compare_images(10)
 
-    def test_example11(self):
-        # example11
+    def test_example_11(self):
+        """Test Example 11."""
         cfp.reset()
         cfp.setvars(file="fig11.png")
-        f = cf.read(f"{data_dir}/tas_A1.nc")[0]
+        f = cf.read(f"{self.data_dir}/tas_A1.nc")[0]
         cfp.gset(-30, 30, "1960-1-1", "1980-1-1")
         cfp.levs(min=280, max=305, step=1)
         cfp.cscale("plasma")
         cfp.con(f.subspace(longitude=0), lines=0)
         cfp.compare_images(11)
 
-    def test_example12(self):
-        # example12
+    def test_example_12(self):
+        """Test Example 12."""
         cfp.reset()
         cfp.setvars(file="fig12.png")
-        f = cf.read(f"{data_dir}/tas_A1.nc")[0]
+        f = cf.read(f"{self.data_dir}/tas_A1.nc")[0]
         cfp.cscale("plasma")
         cfp.con(f.subspace(latitude=0), lines=0)
         cfp.compare_images(12)
 
-    def test_example13(self):
-        # example13
+    def test_example_13(self):
+        """Test Example 13."""
         cfp.reset()
         cfp.setvars(file="fig13.png")
-        f = cf.read(f"{data_dir}/ggap.nc")
+        f = cf.read(f"{self.data_dir}/ggap.nc")
         u = f[1].subspace(pressure=500)
         v = f[3].subspace(pressure=500)
         cfp.vect(u=u, v=v, key_length=10, scale=100, stride=5)
         cfp.compare_images(13)
 
-    def test_example14(self):
-        # example14
+    def test_example_14(self):
+        """Test Example 14."""
         cfp.reset()
         cfp.setvars(file="fig14.png")
-        f = cf.read(f"{data_dir}/ggap.nc")
+        f = cf.read(f"{self.data_dir}/ggap.nc")
         u = f[1].subspace(pressure=500)
         v = f[3].subspace(pressure=500)
         t = f[0].subspace(pressure=500)
@@ -447,12 +466,12 @@ class ExamplesTest(unittest.TestCase):
         cfp.gclose()
         cfp.compare_images(14)
 
-    def test_example15(self):
-        # example15
+    def test_example_15(self):
+        """Test Example 15."""
         cfp.reset()
         cfp.setvars(file="fig15.png")
-        u = cf.read(f"{data_dir}/ggap.nc")[1]
-        v = cf.read(f"{data_dir}/ggap.nc")[3]
+        u = cf.read(f"{self.data_dir}/ggap.nc")[1]
+        v = cf.read(f"{self.data_dir}/ggap.nc")[3]
         u = u.subspace(Z=500)
         v = v.subspace(Z=500)
 
@@ -467,16 +486,16 @@ class ExamplesTest(unittest.TestCase):
         )
         cfp.compare_images(15)
 
-    def test_example16(self):
-        # example16
+    def test_example_16(self):
+        """Test Example 16."""
         cfp.reset()
         cfp.setvars(file="fig16.png")
-        c = cf.read(f"{data_dir}/vaAMIPlcd_DJF.nc")[0]
+        c = cf.read(f"{self.data_dir}/vaAMIPlcd_DJF.nc")[0]
         c = c.subspace(Y=cf.wi(-60, 60))
         c = c.subspace(X=cf.wi(80, 160))
         c = c.collapse("T: mean X: mean")
 
-        g = cf.read(f"{data_dir}/wapAMIPlcd_DJF.nc")[0]
+        g = cf.read(f"{self.data_dir}/wapAMIPlcd_DJF.nc")[0]
         g = g.subspace(Y=cf.wi(-60, 60))
         g = g.subspace(X=cf.wi(80, 160))
         g = g.collapse("T: mean X: mean")
@@ -491,11 +510,11 @@ class ExamplesTest(unittest.TestCase):
         )
         cfp.compare_images(16)
 
-    def test_example17(self):
-        # example17
+    def test_example_17(self):
+        """Test Example 17."""
         cfp.reset()
         cfp.setvars(file="fig17.png")
-        f = cf.read(f"{data_dir}/tas_A1.nc")[0]
+        f = cf.read(f"{self.data_dir}/tas_A1.nc")[0]
         g = f.subspace(time=15)
         cfp.gopen()
         cfp.cscale("magma")
@@ -507,11 +526,11 @@ class ExamplesTest(unittest.TestCase):
         cfp.gclose()
         cfp.compare_images(17)
 
-    def test_example18(self):
-        # example18
+    def test_example_18(self):
+        """Test Example 18."""
         cfp.reset()
         cfp.setvars(file="fig18.png")
-        f = cf.read(f"{data_dir}/tas_A1.nc")[0]
+        f = cf.read(f"{self.data_dir}/tas_A1.nc")[0]
         g = f.subspace(time=15)
         cfp.gopen()
         cfp.cscale("magma")
@@ -521,11 +540,11 @@ class ExamplesTest(unittest.TestCase):
         cfp.gclose()
         cfp.compare_images(18)
 
-    def test_example19(self):
-        # example19
+    def test_example_19(self):
+        """Test Example 19."""
         cfp.reset()
         cfp.setvars(file="fig19.png")
-        f = cf.read(f"{data_dir}/ggap.nc")[1]
+        f = cf.read(f"{self.data_dir}/ggap.nc")[1]
         cfp.gopen(rows=2, columns=2, bottom=0.2)
         cfp.gpos(1)
         cfp.con(f.subspace(pressure=500), colorbar=None)
@@ -545,19 +564,19 @@ class ExamplesTest(unittest.TestCase):
         cfp.gclose()
         cfp.compare_images(19)
 
-    def test_example20(self):
-        # example20
+    def test_example_20(self):
+        """Test Example 20."""
         cfp.reset()
         cfp.setvars(file="fig20.png")
-        f = cf.read(f"{data_dir}/Geostropic_Adjustment.nc")[0]
+        f = cf.read(f"{self.data_dir}/Geostropic_Adjustment.nc")[0]
         cfp.con(f.subspace[9])
         cfp.compare_images(20)
 
-    def test_example21(self):
-        # example21
+    def test_example_21(self):
+        """Test Example 21."""
         cfp.reset()
         cfp.setvars(file="fig21.png")
-        f = cf.read(f"{data_dir}/Geostropic_Adjustment.nc")[0]
+        f = cf.read(f"{self.data_dir}/Geostropic_Adjustment.nc")[0]
         cfp.con(
             f.subspace[9],
             title="test data",
@@ -568,20 +587,20 @@ class ExamplesTest(unittest.TestCase):
         )
         cfp.compare_images(21)
 
-    def test_example22(self):
-        # example22
+    def test_example_22(self):
+        """Test Example 22."""
         cfp.reset()
         cfp.setvars(file="fig22.png")
-        f = cf.read_field(f"{data_dir}/rgp.nc")
+        f = cf.read_field(f"{self.data_dir}/rgp.nc")
         cfp.cscale("gray")
         cfp.con(f)
         cfp.compare_images(22)
 
-    def test_example23(self):
-        # example23
+    def test_example_23(self):
+        """Test Example 23."""
         cfp.reset()
         cfp.setvars(file="fig23.png")
-        f = cf.read_field(f"{data_dir}/rgp.nc")
+        f = cf.read_field(f"{self.data_dir}/rgp.nc")
         data = f.array
         xvec = f.construct("dim1").array
         yvec = f.construct("dim0").array
@@ -602,10 +621,14 @@ class ExamplesTest(unittest.TestCase):
         cfp.compare_images(23)
 
 
-class DataExamples(unittest.TestCase):
+class DataExamplesTest(unittest.TestCase):
+    """TODO DOCS."""
+    data_dir = DATA_DIR
+
     def setup(self):
+        """TODO DOCS."""
         # Read data
-        f = open(f"{data_dir}/synop_data.txt")
+        f = open(f"{self.data_dir}/synop_data.txt")
         lines = f.readlines()
         for line in lines:
             mysplit = line.split()
@@ -625,8 +648,8 @@ class DataExamples(unittest.TestCase):
         cfp.con(x=lons_new, y=lats_new, f=temp_new, ptype=1)
         cfp.compare_images(24)
 
-    def test_example24(self):
-        # example24
+    def test_example_24(self):
+        """Test Example 24."""
         cfp.reset()
         cfp.setvars(file="fig24.png")
 
@@ -636,8 +659,8 @@ class DataExamples(unittest.TestCase):
         pressure = []
         temp = []
 
-    def test_example25(self):
-        # example25
+    def test_example_25(self):
+        """Test Example 25."""
         cfp.reset()
         cfp.setvars(file="fig25.png")
         cfp.gopen()
@@ -654,15 +677,15 @@ class DataExamples(unittest.TestCase):
         cfp.gclose()
         cfp.compare_images(25)
 
-    def test_example26(self):
-        # example26
+    def test_example_26(self):
+        """Test Example 26."""
         cfp.reset()
         cfp.setvars(file="fig26.png")
         from matplotlib.mlab import griddata
         from netCDF4 import Dataset as ncfile
 
         # Get an Orca grid and flatten the arrays
-        nc = ncfile(f"{data_dir}/orca2.nc")
+        nc = ncfile(f"{self.data_dir}/orca2.nc")
         lons = np.array(nc.variables["longitude"])
         lats = np.array(nc.variables["latitude"])
         temp = np.array(nc.variables["sst"])
@@ -690,11 +713,11 @@ class DataExamples(unittest.TestCase):
         cfp.con(x=lons_new, y=lats_new, f=temp_new, ptype=1)
         cfp.compare_images(26)
 
-    def test_example27(self):
-        # example27
+    def test_example_27(self):
+        """Test Example 27."""
         cfp.reset()
         cfp.setvars(file="fig27.png")
-        f = cf.read(f"{data_dir}/ggap.nc")[1]
+        f = cf.read(f"{self.data_dir}/ggap.nc")[1]
         g = f.collapse("X: mean")
         cfp.lineplot(
             g.subspace(pressure=100),
@@ -704,11 +727,11 @@ class DataExamples(unittest.TestCase):
         )
         cfp.compare_images(27)
 
-    def test_example28(self):
-        # example28
+    def test_example_28(self):
+        """Test Example 28."""
         cfp.reset()
         cfp.setvars(file="fig28.png")
-        f = cf.read(f"{data_dir}/ggap.nc")[1]
+        f = cf.read(f"{self.data_dir}/ggap.nc")[1]
         g = f.collapse("X: mean")
         xticks = [-90, -75, -60, -45, -30, -15, 0, 15, 30, 45, 60, 75, 90]
         xticklabels = [
@@ -754,11 +777,11 @@ class DataExamples(unittest.TestCase):
         cfp.gclose()
         cfp.compare_images(28)
 
-    def test_example29(self):
-        # example29
+    def test_example_29(self):
+        """Test Example 29."""
         cfp.reset()
         cfp.setvars(file="fig29.png")
-        f = cf.read(f"{data_dir}/tas_A1.nc")[0]
+        f = cf.read(f"{self.data_dir}/tas_A1.nc")[0]
         temp = f.subspace(time=cf.wi(cf.dt("1900-01-01"), cf.dt("1980-01-01")))
         temp_annual = temp.collapse("T: mean", group=cf.Y())
         temp_annual_global = temp_annual.collapse("area: mean", weights="area")
@@ -770,10 +793,10 @@ class DataExamples(unittest.TestCase):
         )
         cfp.compare_images(29)
 
-    def test_example31(self):
-        # example31
+    def test_example_31(self):
+        """Test Example 31."""
         cfp.reset
-        f = cf.read(f"{data_dir}/ukcp_rcm_test.nc")[0]
+        f = cf.read(f"{self.data_dir}/ukcp_rcm_test.nc")[0]
         cfp.mapset(proj="UKCP", resolution="50m")
         cfp.levs(-3, 7, 0.5)
         cfp.setvars(grid_x_spacing=1, grid_y_spacing=1)
