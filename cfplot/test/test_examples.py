@@ -644,13 +644,25 @@ class ExamplesTest(unittest.TestCase):
 
 
 class DataExamplesTest(unittest.TestCase):
-    """Test gallery examples requiring data set-up."""
+    """Test data-specific gallery examples."""
     data_dir = DATA_DIR
 
     def setup(self):
         """Preparations called immediately before each test method."""
-        # Read data
+        cfp.reset()
+
+    def test_example_24(self):
+        """Test Example 24."""
+        cfp.setvars(file="fig24.png")
+
+        # Arrays for data
+        lons = []
+        lats = []
+        pressure = []
+        temp = []
+
         f = open(f"{self.data_dir}/synop_data.txt")
+
         lines = f.readlines()
         for line in lines:
             mysplit = line.split()
@@ -670,18 +682,6 @@ class DataExamplesTest(unittest.TestCase):
 
         cfp.con(x=lons_new, y=lats_new, f=temp_new, ptype=1)
         cfp.compare_images(24)
-
-        cfp.reset()
-
-    def test_example_24(self):
-        """Test Example 24."""
-        cfp.setvars(file="fig24.png")
-
-        # Arrays for data
-        lons = []
-        lats = []
-        pressure = []
-        temp = []
 
     def test_example_25(self):
         """Test Example 25."""
