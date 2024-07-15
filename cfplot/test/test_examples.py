@@ -2,12 +2,17 @@
 Testing module for cf-plot.
 """
 
-import unittest
-import cf
 import coverage
+import faulthandler
 import numpy as np
-import cfplot as cfp
 from scipy.interpolate import griddata
+import unittest
+
+import cfplot as cfp
+import cf
+
+
+faulthandler.enable()  # to debug seg faults and timeouts
 
 
 DATA_DIR = "../../cfplot_data"
