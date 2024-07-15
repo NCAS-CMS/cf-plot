@@ -23,6 +23,136 @@ faulthandler.enable()  # to debug seg faults and timeouts
 DATA_DIR = "../../cfplot_data"
 
 
+def compare_images(example=None):
+    """
+    Compare images and return an error string if they don't match.
+    """
+    import hashlib
+
+    # TODO SLB: convert all 'home/andy/' paths to general configurable path
+    # (there are many examples below but also throughout this script)
+
+    disp = _which("display")
+    conv = _which("convert")
+    comp = _which("compare")
+    file = f"fig{example}.png"
+    file_new = f"/home/andy/cfplot.src/cfplot/{file}"
+    file_ref = f"/home/andy/regression/{file}"
+
+    # Check md5 checksums are the same and display files if not
+    if (
+        hashlib.md5(open(file_new, "rb").read()).hexdigest()
+        != hashlib.md5(open(file_ref, "rb").read()).hexdigest()
+    ):
+        print(f"***Failed example {example}***")
+        error_image = f"/home/andy/cfplot.src/cfplot/error_{file}"
+        diff_image = f"/home/andy/cfplot.src/cfplot/difference_{file}"
+        p = subprocess.Popen([comp, file_new, file_ref, diff_image])
+        (output, err) = p.communicate()
+        p.wait()
+        p = subprocess.Popen(
+            [conv, "+append", file_new, file_ref, error_image]
+        )
+        (output, err) = p.communicate()
+        p.wait()
+        subprocess.Popen([disp, diff_image])
+
+    else:
+        print(f"Passed example {example}")
+
+
+def compare_arrays(
+    ref=None,
+    levs_test=None,
+    gvals_test=None,
+    mapaxis_test=None,
+    min=None,
+    max=None,
+    step=None,
+    mult=None,
+    type=None,
+):
+    """
+    Compare arrays and return an error string if they don't match.
+    """
+
+    anom = 0
+    if levs_test:
+        levs(min, max, step)
+        if np.size(ref) != np.size(plotvars.levels):
+            anom = 1
+        else:
+            for val in np.arange(np.size(ref)):
+                if abs(ref[val] - plotvars.levels[val]) >= 1e-6:
+                    anom = 1
+
+        if anom == 1:
+            print(
+                "***levs failure***\n"
+                f"min, max, step are {min}, {max}, {step}\n"
+                "generated levels are:\n"
+                f"{plotvars.levels}\n"
+                f"expected levels:\n{ref}"
+            )
+        else:
+            pass_str = f"Passed cfp.levs(min={min}, max={max}, step={step})"
+            print(pass_str)
+
+    anom = 0
+    if gvals_test:
+        vals, testmult = _gvals(min, max)
+        if np.size(ref) != np.size(vals):
+            anom = 1
+        else:
+            for val in np.arange(np.size(ref)):
+                if abs(ref[val] - vals[val]) >= 1e-6:
+                    anom = 1
+        if mult != testmult:
+            anom = 1
+
+        if anom == 1:
+            print(
+                "***gvals failure***\n"
+                f"cfp._gvals({min}, {max})\n\n"
+                f"generated values are:{vals}\n"
+                f"with a  multiplier of {testmult}\n\n"
+                f"expected values:{ref}\n"
+                f"with a multiplier of {mult}\n"
+            )
+        else:
+            pass_str = f"Passed cfp._gvals({min}, {max})"
+            print(pass_str)
+
+    anom = 0
+    if mapaxis_test:
+        ref_ticks = ref[0]
+        ref_labels = ref[1]
+        test_ticks, test_labels = _mapaxis(min=min, max=max, type=type)
+        if np.size(test_ticks) != np.size(ref_ticks):
+            anom = 1
+        else:
+            for val in np.arange(np.size(ref_ticks)):
+                if abs(ref_ticks[val] - test_ticks[val]) >= 1e-6:
+                    anom = 1
+                if ref_labels[val] != test_labels[val]:
+                    anom = 1
+
+        if anom == 1:
+            print(
+                "***mapaxis failure***\n\n"
+                f"cfp._mapaxis(min={min}, max={max}, type={type})\n"
+                f"generated values are:{test_ticks}\n"
+                f"with labels:{test_labels}\n\n"
+                f"expected ticks:{ref_ticks}\n"
+                f"with labels:{ref_labels}\n"
+            )
+        else:
+            pass_str = (
+                f"Passed cfp._mapaxis<(min={min}, max={max}, type={type})"
+            )
+            print(pass_str)
+
+
 class BasicArrayTest(unittest.TestCase):
     """Contour levels `levs` array comparison testing."""
 
@@ -59,9 +189,7 @@ class BasicArrayTest(unittest.TestCase):
             60,
             65,
         ]
-        cfp.compare_arrays(
-            ref=ref_answer, levs_test=True, min=-35, max=65, step=5
-        )
+        compare_arrays(ref=ref_answer, levs_test=True, min=-35, max=65, step=5)
 
         ref_answer = [
             -6.0,
@@ -76,9 +204,7 @@ class BasicArrayTest(unittest.TestCase):
             4.8,
             6.0,
         ]
-        cfp.compare_arrays(
-            ref=ref_answer, levs_test=True, min=-6, max=6, step=1.2
-        )
+        compare_arrays(ref=ref_answer, levs_test=True, min=-6, max=6, step=1.2)
 
     def test_arrays_2(self):
         """Test 2 for `levs` contour levels array comparison."""
@@ -95,7 +221,7 @@ class BasicArrayTest(unittest.TestCase):
             59000,
             60000,
         ]
-        cfp.compare_arrays(
+        compare_arrays(
             ref=ref_answer, levs_test=True, min=50000, max=60000, step=1000
         )
 
@@ -117,7 +243,7 @@ class BasicArrayTest(unittest.TestCase):
             -1000,
             -500,
         ]
-        cfp.compare_arrays(
+        compare_arrays(
             ref=ref_answer, levs_test=True, min=-7000, max=-300, step=500
         )
 
@@ -150,7 +276,7 @@ class GvalsArrayTest(unittest.TestCase):
             292,
             293,
         ]
-        cfp.compare_arrays(
+        compare_arrays(
             ref=ref_answer,
             min=280.50619506835938,
             max=293.48431396484375,
@@ -174,7 +300,7 @@ class GvalsArrayTest(unittest.TestCase):
             0.646,
             0.675,
         ]
-        cfp.compare_arrays(
+        compare_arrays(
             ref=ref_answer, min=0.356, max=0.675, mult=0, gvals_test=True
         )
 
@@ -202,7 +328,7 @@ class GvalsArrayTest(unittest.TestCase):
             45,
             50,
         ]
-        cfp.compare_arrays(
+        compare_arrays(
             ref=ref_answer,
             min=-49.510975,
             max=53.206604,
@@ -232,7 +358,7 @@ class GvalsArrayTest(unittest.TestCase):
             63000,
             64000,
         ]
-        cfp.compare_arrays(
+        compare_arrays(
             ref=ref_answer, min=46956, max=64538, mult=0, gvals_test=True
         )
 
@@ -252,7 +378,7 @@ class GvalsArrayTest(unittest.TestCase):
             0.0,
             0.1,
         ]
-        cfp.compare_arrays(
+        compare_arrays(
             ref=ref_answer, min=-1.0, max=0.1, mult=0, gvals_test=True
         )
 
@@ -272,7 +398,7 @@ class LonLatTest(unittest.TestCase):
             [-180, -120, -60, 0, 60, 120, 180],
             ["180", "120W", "60W", "0", "60E", "120E", "180"],
         )
-        cfp.compare_arrays(
+        compare_arrays(
             ref=ref_answer, min=-180, max=180, type=1, mapaxis_test=True
         )
 
@@ -282,7 +408,7 @@ class LonLatTest(unittest.TestCase):
             [150, 180, 210, 240, 270],
             ["150E", "180", "150W", "120W", "90W"],
         )
-        cfp.compare_arrays(
+        compare_arrays(
             ref=ref_answer, min=135, max=280, type=1, mapaxis_test=True
         )
 
@@ -303,7 +429,7 @@ class LonLatTest(unittest.TestCase):
                 "90E",
             ],
         )
-        cfp.compare_arrays(
+        compare_arrays(
             ref=ref_answer, min=0, max=90, type=1, mapaxis_test=True
         )
 
@@ -313,7 +439,7 @@ class LonLatTest(unittest.TestCase):
             [-90, -60, -30, 0, 30, 60, 90],
             ["90S", "60S", "30S", "0", "30N", "60N", "90N"],
         )
-        cfp.compare_arrays(
+        compare_arrays(
             ref=ref_answer, min=-90, max=90, type=2, mapaxis_test=True
         )
 
@@ -323,13 +449,14 @@ class LonLatTest(unittest.TestCase):
             [0, 5, 10, 15, 20, 25, 30],
             ["0", "5N", "10N", "15N", "20N", "25N", "30N"],
         )
-        cfp.compare_arrays(
+        compare_arrays(
             ref=ref_answer, min=0, max=30, type=2, mapaxis_test=True
         )
 
 
 class ExamplesTest(unittest.TestCase):
     """Run through gallery examples and compare to reference plots."""
+
     data_dir = DATA_DIR
 
     def setup(self):
@@ -347,7 +474,7 @@ class ExamplesTest(unittest.TestCase):
         f = cf.read(f"{self.data_dir}/tas_A1.nc")[0]
 
         cfp.con(f.subspace(time=15))
-        cfp.compare_images(1)
+        compare_images(1)
 
     def test_example_2(self):
         """Test Example 2."""
@@ -355,7 +482,7 @@ class ExamplesTest(unittest.TestCase):
         f = cf.read(f"{self.data_dir}/tas_A1.nc")[0]
 
         cfp.con(f.subspace(time=15), blockfill=True, lines=False)
-        cfp.compare_images(2)
+        compare_images(2)
 
     def test_example_3(self):
         """Test Example 3."""
@@ -366,7 +493,7 @@ class ExamplesTest(unittest.TestCase):
         cfp.levs(min=265, max=285, step=1)
 
         cfp.con(f.subspace(time=15))
-        cfp.compare_images(3)
+        compare_images(3)
 
     def test_example_4(self):
         """Test Example 4."""
@@ -376,7 +503,7 @@ class ExamplesTest(unittest.TestCase):
         cfp.mapset(proj="npstere")
 
         cfp.con(f.subspace(pressure=500))
-        cfp.compare_images(4)
+        compare_images(4)
 
     def test_example_5(self):
         """Test Example 5."""
@@ -386,7 +513,7 @@ class ExamplesTest(unittest.TestCase):
         cfp.mapset(proj="spstere", boundinglat=-30, lon_0=180)
 
         cfp.con(f.subspace(pressure=500))
-        cfp.compare_images(5)
+        compare_images(5)
 
     def test_example_6(self):
         """Test Example 6."""
@@ -394,7 +521,7 @@ class ExamplesTest(unittest.TestCase):
         f = cf.read(f"{self.data_dir}/ggap.nc")[3]
 
         cfp.con(f.subspace(longitude=0))
-        cfp.compare_images(6)
+        compare_images(6)
 
     def test_example_7(self):
         """Test Example 7."""
@@ -402,7 +529,7 @@ class ExamplesTest(unittest.TestCase):
         f = cf.read(f"{self.data_dir}/ggap.nc")[1]
 
         cfp.con(f.collapse("mean", "longitude"))
-        cfp.compare_images(7)
+        compare_images(7)
 
     def test_example_8(self):
         """Test Example 8."""
@@ -410,7 +537,7 @@ class ExamplesTest(unittest.TestCase):
         f = cf.read(f"{self.data_dir}/ggap.nc")[1]
 
         cfp.con(f.collapse("mean", "longitude"), ylog=1)
-        cfp.compare_images(8)
+        compare_images(8)
 
     def test_example_9(self):
         """Test Example 9."""
@@ -418,7 +545,7 @@ class ExamplesTest(unittest.TestCase):
         f = cf.read(f"{self.data_dir}/ggap.nc")[0]
 
         cfp.con(f.collapse("mean", "latitude"))
-        cfp.compare_images(9)
+        compare_images(9)
 
     def test_example_10(self):
         """Test Example 10."""
@@ -428,7 +555,7 @@ class ExamplesTest(unittest.TestCase):
         cfp.cscale("plasma")
 
         cfp.con(f.subspace(longitude=0), lines=0)
-        cfp.compare_images(10)
+        compare_images(10)
 
     def test_example_11(self):
         """Test Example 11."""
@@ -440,7 +567,7 @@ class ExamplesTest(unittest.TestCase):
         cfp.cscale("plasma")
 
         cfp.con(f.subspace(longitude=0), lines=0)
-        cfp.compare_images(11)
+        compare_images(11)
 
     def test_example_12(self):
         """Test Example 12."""
@@ -450,7 +577,7 @@ class ExamplesTest(unittest.TestCase):
         cfp.cscale("plasma")
 
         cfp.con(f.subspace(latitude=0), lines=0)
-        cfp.compare_images(12)
+        compare_images(12)
 
     def test_example_13(self):
         """Test Example 13."""
@@ -461,7 +588,7 @@ class ExamplesTest(unittest.TestCase):
         v = f[3].subspace(pressure=500)
 
         cfp.vect(u=u, v=v, key_length=10, scale=100, stride=5)
-        cfp.compare_images(13)
+        compare_images(13)
 
     def test_example_14(self):
         """Test Example 14."""
@@ -479,7 +606,7 @@ class ExamplesTest(unittest.TestCase):
         cfp.vect(u=u, v=v, key_length=10, scale=50, stride=2)
         cfp.gclose()
 
-        cfp.compare_images(14)
+        compare_images(14)
 
     def test_example_15(self):
         """Test Example 15."""
@@ -500,7 +627,7 @@ class ExamplesTest(unittest.TestCase):
             pts=40,
             title="Polar plot with regular point distribution",
         )
-        cfp.compare_images(15)
+        compare_images(15)
 
     def test_example_16(self):
         """Test Example 16."""
@@ -524,7 +651,7 @@ class ExamplesTest(unittest.TestCase):
             title="DJF",
             key_location=[0.95, -0.05],
         )
-        cfp.compare_images(16)
+        compare_images(16)
 
     def test_example_17(self):
         """Test Example 17."""
@@ -542,7 +669,7 @@ class ExamplesTest(unittest.TestCase):
         )
         cfp.gclose()
 
-        cfp.compare_images(17)
+        compare_images(17)
 
     def test_example_18(self):
         """Test Example 18."""
@@ -558,7 +685,7 @@ class ExamplesTest(unittest.TestCase):
         cfp.stipple(f=g, min=265, max=295, size=100, color="#00ff00")
         cfp.gclose()
 
-        cfp.compare_images(18)
+        compare_images(18)
 
     def test_example_19(self):
         """Test Example 19."""
@@ -582,7 +709,7 @@ class ExamplesTest(unittest.TestCase):
             colorbar_orientation="horizontal",
         )
         cfp.gclose()
-        cfp.compare_images(19)
+        compare_images(19)
 
     def test_example_20(self):
         """Test Example 20."""
@@ -590,7 +717,7 @@ class ExamplesTest(unittest.TestCase):
         f = cf.read(f"{self.data_dir}/Geostropic_Adjustment.nc")[0]
 
         cfp.con(f.subspace[9])
-        cfp.compare_images(20)
+        compare_images(20)
 
     def test_example_21(self):
         """Test Example 21."""
@@ -605,7 +732,7 @@ class ExamplesTest(unittest.TestCase):
             xlabel="x-axis",
             ylabel="z-axis",
         )
-        cfp.compare_images(21)
+        compare_images(21)
 
     def test_example_22(self):
         """Test Example 22."""
@@ -615,7 +742,7 @@ class ExamplesTest(unittest.TestCase):
         cfp.cscale("gray")
 
         cfp.con(f)
-        cfp.compare_images(22)
+        compare_images(22)
 
     def test_example_23(self):
         """Test Example 23."""
@@ -640,16 +767,7 @@ class ExamplesTest(unittest.TestCase):
         cfp.rgaxes(xpole=xpole, ypole=ypole, xvec=xvec, yvec=yvec)
         cfp.gclose()
 
-        cfp.compare_images(23)
-
-
-class DataExamplesTest(unittest.TestCase):
-    """Test data-specific gallery examples."""
-    data_dir = DATA_DIR
-
-    def setup(self):
-        """Preparations called immediately before each test method."""
-        cfp.reset()
+        compare_images(23)
 
     def test_example_24(self):
         """Test Example 24."""
@@ -681,7 +799,7 @@ class DataExamplesTest(unittest.TestCase):
         cfp.cscale("parula")
 
         cfp.con(x=lons_new, y=lats_new, f=temp_new, ptype=1)
-        cfp.compare_images(24)
+        compare_images(24)
 
     def test_example_25(self):
         """Test Example 25."""
@@ -701,7 +819,7 @@ class DataExamplesTest(unittest.TestCase):
 
         cfp.gclose()
 
-        cfp.compare_images(25)
+        compare_images(25)
 
     def test_example_26(self):
         """Test Example 26."""
@@ -736,7 +854,7 @@ class DataExamplesTest(unittest.TestCase):
         )
 
         cfp.con(x=lons_new, y=lats_new, f=temp_new, ptype=1)
-        cfp.compare_images(26)
+        compare_images(26)
 
     def test_example_27(self):
         """Test Example 27."""
@@ -751,7 +869,7 @@ class DataExamplesTest(unittest.TestCase):
             color="blue",
             title="Zonal mean zonal wind at 100mb",
         )
-        cfp.compare_images(27)
+        compare_images(27)
 
     def test_example_28(self):
         """Test Example 28."""
@@ -780,7 +898,7 @@ class DataExamplesTest(unittest.TestCase):
         ypts = [-8, -8, 5, 5, -8]
 
         cfp.gset(xmin=-90, xmax=90, ymin=-10, ymax=50)
-    
+
         cfp.gopen()
         cfp.lineplot(
             g.subspace(pressure=100),
@@ -804,7 +922,7 @@ class DataExamplesTest(unittest.TestCase):
         )
         cfp.gclose()
 
-        cfp.compare_images(28)
+        compare_images(28)
 
     def test_example_29(self):
         """Test Example 29."""
@@ -821,7 +939,7 @@ class DataExamplesTest(unittest.TestCase):
             title="Global average annual temperature",
             color="blue",
         )
-        cfp.compare_images(29)
+        compare_images(29)
 
     def test_example_31(self):
         """Test Example 31."""
@@ -833,13 +951,13 @@ class DataExamplesTest(unittest.TestCase):
 
         cfp.con(f, lines=False)
 
+        # TODO SLB: add image comparison here.
+
+    # TODO SLB: add rest of examples from current documentation here
+
 
 if __name__ == "__main__":
-    print(
-        "==================\n"
-        "Regression testing\n"
-        "==================\n"
-    )
+    print("==================\n" "Regression testing\n" "==================\n")
     cov = coverage.Coverage()
     cov.start()
     unittest.main()
@@ -848,8 +966,4 @@ if __name__ == "__main__":
     cov.save()
 
     cov.report()
-    print(
-        "================\n"
-        "Testing complete\n"
-        "================\n"
-    )
+    print("================\n" "Testing complete\n" "================\n")
