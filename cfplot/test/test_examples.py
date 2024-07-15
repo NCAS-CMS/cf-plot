@@ -642,15 +642,6 @@ class ExamplesTest(unittest.TestCase):
 
         cfp.compare_images(23)
 
-
-class DataExamplesTest(unittest.TestCase):
-    """Test data-specific gallery examples."""
-    data_dir = DATA_DIR
-
-    def setup(self):
-        """Preparations called immediately before each test method."""
-        cfp.reset()
-
     def test_example_24(self):
         """Test Example 24."""
         cfp.setvars(file="fig24.png")
