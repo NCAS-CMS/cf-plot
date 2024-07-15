@@ -9,6 +9,7 @@ alongside a reference plot.
 
 import coverage
 import faulthandler
+import hashlib
 import numpy as np
 from scipy.interpolate import griddata
 import unittest
@@ -21,23 +22,20 @@ faulthandler.enable()  # to debug seg faults and timeouts
 
 
 DATA_DIR = "../../cfplot_data"
+TEST_GEN_DIR = "./generated-example-images"
+TEST_REF_DIR = "./reference-example-images"
 
 
 def compare_images(example=None):
     """
     Compare images and return an error string if they don't match.
     """
-    import hashlib
-
-    # TODO SLB: convert all 'home/andy/' paths to general configurable path
-    # (there are many examples below but also throughout this script)
-
     disp = cfp._which("display")
     conv = cfp._which("convert")
     comp = cfp._which("compare")
     file = f"fig{example}.png"
-    file_new = f"/home/andy/cfplot.src/cfplot/{file}"
-    file_ref = f"/home/andy/regression/{file}"
+    file_new = f"{TEST_GEN_DIR}/{file}"
+    file_ref = f"{TEST_REF_DIR}/{file}"
 
     # Check md5 checksums are the same and display files if not
     if (
@@ -45,8 +43,8 @@ def compare_images(example=None):
         != hashlib.md5(open(file_ref, "rb").read()).hexdigest()
     ):
         print(f"***Failed example {example}***")
-        error_image = f"/home/andy/cfplot.src/cfplot/error_{file}"
-        diff_image = f"/home/andy/cfplot.src/cfplot/difference_{file}"
+        error_image = f"{TEST_HOME_DIR}/error_{file}"
+        diff_image = f"{TEST_HOME_DIR}/difference_{file}"
         p = subprocess.Popen([comp, file_new, file_ref, diff_image])
         (output, err) = p.communicate()
         p.wait()
