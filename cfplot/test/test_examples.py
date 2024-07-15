@@ -1,5 +1,10 @@
 """
-Testing module for cf-plot.
+Regression testing module for cf-plot.
+
+Test standard `levs`, `gvals`, and `lon` and `lat` labelling.
+Make all the gallery plots and use Imagemagick to display them
+alongside a reference plot.
+
 """
 
 import coverage
@@ -19,27 +24,18 @@ DATA_DIR = "../../cfplot_data"
 
 
 class BasicArrayTest(unittest.TestCase):
-    """
-    Test for cf-plot regressions.
-
-    Run through some standard cfp.levs, gvals, lon and lat labelling
-    Make all the gallery plots and use Imagemagick to display them
-    alongside a reference plot.
-    """
+    """Contour levels `levs` array comparison testing."""
 
     def setup(self):
-        """TODO DOCS."""
+        """Preparations called immediately before each test method."""
         print(
-            "==================\n"
-            "Regression testing\n"
-            "==================\n\n"
-            "------------------\n"
-            "Testing for levels\n"
-            "------------------\n"
+            "---------------------------------\n"
+            "Testing for `levs` contour levels\n"
+            "---------------------------------\n"
         )
 
     def test_arrays_1(self):
-        """TODO DOCS."""
+        """Test 1 for `levs` contour levels array comparison."""
         ref_answer = [
             -35,
             -30,
@@ -85,7 +81,7 @@ class BasicArrayTest(unittest.TestCase):
         )
 
     def test_arrays_2(self):
-        """TODO DOCS."""
+        """Test 2 for `levs` contour levels array comparison."""
         ref_answer = [
             50000,
             51000,
@@ -104,7 +100,7 @@ class BasicArrayTest(unittest.TestCase):
         )
 
     def test_arrays_3(self):
-        """TODO DOCS."""
+        """Test 3 for `levs` contour levels array comparison."""
         ref_answer = [
             -7000,
             -6500,
@@ -127,16 +123,18 @@ class BasicArrayTest(unittest.TestCase):
 
 
 class GvalsArrayTest(unittest.TestCase):
-    """TODO DOCS."""
+    """Contour levels `gvals` array comparison testing."""
 
     def setup(self):
-        """TODO DOCS."""
+        """Preparations called immediately before each test method."""
         print(
-            "\n-----------------\n" "Testing for gvals\n" "-----------------\n"
+            "----------------------------------\n"
+            "Testing for `gvals` contour levels\n"
+            "----------------------------------\n"
         )
 
     def test_gvals_1(self):
-        """TODO DOCS."""
+        """Test 1 for `gvals` contour levels array comparison."""
         ref_answer = [
             281,
             282,
@@ -161,7 +159,7 @@ class GvalsArrayTest(unittest.TestCase):
         )
 
     def test_gvals_2(self):
-        """TODO DOCS."""
+        """Test 2 for `gvals` contour levels array comparison."""
         ref_answer = [
             0.356,
             0.385,
@@ -181,7 +179,7 @@ class GvalsArrayTest(unittest.TestCase):
         )
 
     def test_gvals_3(self):
-        """TODO DOCS."""
+        """Test 3 for `gvals` contour levels array comparison."""
         ref_answer = [
             -45,
             -40,
@@ -213,7 +211,7 @@ class GvalsArrayTest(unittest.TestCase):
         )
 
     def test_gvals_4(self):
-        """TODO DOCS."""
+        """Test 4 for `gvals` contour levels array comparison."""
         ref_answer = [
             47000,
             48000,
@@ -239,7 +237,7 @@ class GvalsArrayTest(unittest.TestCase):
         )
 
     def test_gvals_5(self):
-        """TODO DOCS."""
+        """Test 5 for `gvals` contour levels array comparison."""
         ref_answer = [
             -1.0,
             -0.9,
@@ -260,15 +258,16 @@ class GvalsArrayTest(unittest.TestCase):
 
 
 class LonLatTest(unittest.TestCase):
+    """Tests for `mapaxis` longitude-latitude labelling."""
+
     def setup(self):
-        """TODO DOCS."""
-        print("")
-        print("----------------------------------------")
-        print("Testing for longitude/latitude labelling")
-        print("----------------------------------------")
+        """Preparations called immediately before each test method."""
+        print("--------------------------------------------------\n")
+        print("Testing for `mapaxis` longitude-latitude labelling\n")
+        print("--------------------------------------------------\n")
 
     def test_lonlat_1(self):
-        """TODO DOCS."""
+        """Test 1 for `mapaxis` longitude-latitude labelling."""
         ref_answer = (
             [-180, -120, -60, 0, 60, 120, 180],
             ["180", "120W", "60W", "0", "60E", "120E", "180"],
@@ -278,7 +277,7 @@ class LonLatTest(unittest.TestCase):
         )
 
     def test_lonlat_2(self):
-        """TODO DOCS."""
+        """Test 2 for `mapaxis` longitude-latitude labelling."""
         ref_answer = (
             [150, 180, 210, 240, 270],
             ["150E", "180", "150W", "120W", "90W"],
@@ -288,7 +287,7 @@ class LonLatTest(unittest.TestCase):
         )
 
     def test_lonlat_3(self):
-        """TODO DOCS."""
+        """Test 3 for `mapaxis` longitude-latitude labelling."""
         ref_answer = (
             [0, 10, 20, 30, 40, 50, 60, 70, 80, 90],
             [
@@ -309,7 +308,7 @@ class LonLatTest(unittest.TestCase):
         )
 
     def test_lonlat_4(self):
-        """TODO DOCS."""
+        """Test 4 for `mapaxis` longitude-latitude labelling."""
         ref_answer = (
             [-90, -60, -30, 0, 30, 60, 90],
             ["90S", "60S", "30S", "0", "30N", "60N", "90N"],
@@ -319,7 +318,7 @@ class LonLatTest(unittest.TestCase):
         )
 
     def test_lonlat_5(self):
-        """TODO DOCS."""
+        """Test 5 for `mapaxis` longitude-latitude labelling."""
         ref_answer = (
             [0, 5, 10, 15, 20, 25, 30],
             ["0", "5N", "10N", "15N", "20N", "25N", "30N"],
@@ -334,9 +333,13 @@ class ExamplesTest(unittest.TestCase):
     data_dir = DATA_DIR
 
     def setup(self):
-        """TODO DOCS."""
+        """Preparations called immediately before each test method."""
         cfp.reset()
-        print("Testing for plots")
+        print(
+            "------------------------------\n"
+            "Testing gallery example plots.\n"
+            "------------------------------\n"
+        )
 
     def test_example_1(self):
         """Test Example 1."""
@@ -641,11 +644,11 @@ class ExamplesTest(unittest.TestCase):
 
 
 class DataExamplesTest(unittest.TestCase):
-    """TODO DOCS."""
+    """Test gallery examples requiring data set-up."""
     data_dir = DATA_DIR
 
     def setup(self):
-        """TODO DOCS."""
+        """Preparations called immediately before each test method."""
         # Read data
         f = open(f"{self.data_dir}/synop_data.txt")
         lines = f.readlines()
@@ -832,6 +835,11 @@ class DataExamplesTest(unittest.TestCase):
 
 
 if __name__ == "__main__":
+    print(
+        "==================\n"
+        "Regression testing\n"
+        "==================\n"
+    )
     cov = coverage.Coverage()
     cov.start()
     unittest.main()
@@ -840,4 +848,8 @@ if __name__ == "__main__":
     cov.save()
 
     cov.report()
-    print("Tested!")
+    print(
+        "================\n"
+        "Testing complete\n"
+        "================\n"
+    )
