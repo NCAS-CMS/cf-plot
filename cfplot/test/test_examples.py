@@ -32,9 +32,9 @@ def compare_images(example=None):
     # TODO SLB: convert all 'home/andy/' paths to general configurable path
     # (there are many examples below but also throughout this script)
 
-    disp = _which("display")
-    conv = _which("convert")
-    comp = _which("compare")
+    disp = cfp._which("display")
+    conv = cfp._which("convert")
+    comp = cfp._which("compare")
     file = f"fig{example}.png"
     file_new = f"/home/andy/cfplot.src/cfplot/{file}"
     file_ref = f"/home/andy/regression/{file}"
@@ -75,23 +75,24 @@ def compare_arrays(
     """
     Compare arrays and return an error string if they don't match.
     """
+    plotvar_levs = cfp.plotvars.levels
 
     anom = 0
     if levs_test:
-        levs(min, max, step)
-        if np.size(ref) != np.size(plotvars.levels):
+        cfp.levs(min, max, step)
+        if np.size(ref) != np.size(plotvar_levs):
             anom = 1
         else:
             for val in np.arange(np.size(ref)):
-                if abs(ref[val] - plotvars.levels[val]) >= 1e-6:
+                if abs(ref[val] - plotvar_levs[val]) >= 1e-6:
                     anom = 1
 
         if anom == 1:
             print(
-                "***levs failure***\n"
+                "***cfp.levs failure***\n"
                 f"min, max, step are {min}, {max}, {step}\n"
                 "generated levels are:\n"
-                f"{plotvars.levels}\n"
+                f"{plotvar_levs}\n"
                 f"expected levels:\n{ref}"
             )
         else:
@@ -100,7 +101,7 @@ def compare_arrays(
 
     anom = 0
     if gvals_test:
-        vals, testmult = _gvals(min, max)
+        vals, testmult = cfp._gvals(min, max)
         if np.size(ref) != np.size(vals):
             anom = 1
         else:
@@ -127,7 +128,7 @@ def compare_arrays(
     if mapaxis_test:
         ref_ticks = ref[0]
         ref_labels = ref[1]
-        test_ticks, test_labels = _mapaxis(min=min, max=max, type=type)
+        test_ticks, test_labels = cfp._mapaxis(min=min, max=max, type=type)
         if np.size(test_ticks) != np.size(ref_ticks):
             anom = 1
         else:

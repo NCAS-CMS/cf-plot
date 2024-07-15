@@ -11,3 +11,8 @@ __date__ = "15th Jan 2024"
 __version__ = "3.3.0"
 
 from .cfplot import *  # noqa: F403, F401
+
+# Internal-use methods required for testing
+from .cfplot import _gvals
+from .cfplot import _mapaxis
+from .cfplot import _which
