@@ -34,29 +34,30 @@ def compare_images(example=None):
     conv = cfp._which("convert")
     comp = cfp._which("compare")
     file = f"fig{example}.png"
-    file_new = f"{TEST_GEN_DIR}/{file}"
+    file_gen = f"{TEST_GEN_DIR}/{file}"
     file_ref = f"{TEST_REF_DIR}/{file}"
 
     # Check md5 checksums are the same and display files if not
-    if (
-        hashlib.md5(open(file_new, "rb").read()).hexdigest()
-        != hashlib.md5(open(file_ref, "rb").read()).hexdigest()
-    ):
-        print(f"***Failed example {example}***")
-        error_image = f"{TEST_HOME_DIR}/error_{file}"
-        diff_image = f"{TEST_HOME_DIR}/difference_{file}"
-        p = subprocess.Popen([comp, file_new, file_ref, diff_image])
-        (output, err) = p.communicate()
-        p.wait()
-        p = subprocess.Popen(
-            [conv, "+append", file_new, file_ref, error_image]
-        )
-        (output, err) = p.communicate()
-        p.wait()
-        subprocess.Popen([disp, diff_image])
-
-    else:
-        print(f"Passed example {example}")
+    with open(file_gen, "rb") as gen_image:
+        with open(file_ref, "rb") as ref_image:
+            if (
+                hashlib.md5(gen_image).hexdigest()
+                != hashlib.md5(ref_image).hexdigest()
+            ):
+                print(f"***Failed example {example}***")
+                error_image = f"{TEST_HOME_DIR}/error_{file}"
+                diff_image = f"{TEST_HOME_DIR}/difference_{file}"
+                p = subprocess.Popen([comp, file_new, file_ref, diff_image])
+                (output, err) = p.communicate()
+                p.wait()
+                p = subprocess.Popen(
+                    [conv, "+append", file_new, file_ref, error_image]
+                )
+                (output, err) = p.communicate()
+                p.wait()
+                subprocess.Popen([disp, diff_image])
+            else:
+                print(f"Passed example {example}")
 
 
 def compare_arrays(
@@ -650,6 +651,8 @@ class ExamplesTest(unittest.TestCase):
             title="DJF",
             key_location=[0.95, -0.05],
         )
+
+        # TODO SLB, EXAMPLE IS BROKEN SO NO OUTPUT TO COMPARE TO
         compare_images(16)
 
     def test_example_17(self):
@@ -736,6 +739,7 @@ class ExamplesTest(unittest.TestCase):
     def test_example_22(self):
         """Test Example 22."""
         cfp.setvars(file="fig22.png")
+        # TODO SLB needs fix
         f = cf.read_field(f"{self.data_dir}/rgp.nc")
 
         cfp.cscale("gray")
@@ -746,9 +750,11 @@ class ExamplesTest(unittest.TestCase):
     def test_example_23(self):
         """Test Example 23."""
         cfp.setvars(file="fig23.png")
+        # TODO SLB needs fix
         f = cf.read_field(f"{self.data_dir}/rgp.nc")
 
         data = f.array
+        # TODO SLB needs fix
         xvec = f.construct("dim1").array
         yvec = f.construct("dim0").array
         xpole = 160
@@ -791,6 +797,7 @@ class ExamplesTest(unittest.TestCase):
         # Linearly interpolate data to a regular grid
         lons_new = np.arange(140) * 0.1 - 11.0
         lats_new = np.arange(140) * 0.1 + 49.0
+        # TODO SLB needs fixing, fails here due to SciPy API updates or similar
         temp_new = griddata(
             lons, lats, temp, lons_new, lats_new, interp="linear"
         )
@@ -803,6 +810,32 @@ class ExamplesTest(unittest.TestCase):
     def test_example_25(self):
         """Test Example 25."""
         cfp.setvars(file="fig25.png")
+
+        # Note the block of code until '---' is shared with example 24.
+        # Arrays for data
+        lons = []
+        lats = []
+        pressure = []
+        temp = []
+
+        f = open(f"{self.data_dir}/synop_data.txt")
+
+        lines = f.readlines()
+        for line in lines:
+            mysplit = line.split()
+            lons = np.append(lons, float(mysplit[1]))
+            lats = np.append(lats, float(mysplit[2]))
+            pressure = np.append(pressure, float(mysplit[3]))
+            temp = np.append(temp, float(mysplit[4]))
+
+        # Linearly interpolate data to a regular grid
+        lons_new = np.arange(140) * 0.1 - 11.0
+        lats_new = np.arange(140) * 0.1 + 49.0
+        # TODO SLB needs fixing, fails here due to SciPy API updates or similar
+        temp_new = griddata(
+            lons, lats, temp, lons_new, lats_new, interp="linear"
+        )
+        # ---
 
         cfp.gopen()
 
@@ -848,6 +881,7 @@ class ExamplesTest(unittest.TestCase):
 
         lons_new = np.arange(181 * 8) * 0.25 - 180.0
         lats_new = np.arange(91 * 8) * 0.25 - 90.0
+        # TODO SLB needs fixing, fails here due to SciPy API updates or similar
         temp_new = griddata(
             lons, lats, temp, lons_new, lats_new, interp="linear"
         )
@@ -940,6 +974,11 @@ class ExamplesTest(unittest.TestCase):
         )
         compare_images(29)
 
+    def test_example_30(self):
+        """Test Example 30."""
+        # TODO SLB missing example 30.
+        pass
+
     def test_example_31(self):
         """Test Example 31."""
         f = cf.read(f"{self.data_dir}/ukcp_rcm_test.nc")[0]
@@ -948,6 +987,7 @@ class ExamplesTest(unittest.TestCase):
         cfp.levs(-3, 7, 0.5)
         cfp.setvars(grid_x_spacing=1, grid_y_spacing=1)
 
+        # TODO SLB: this fails with 'UnboundLocalError'
         cfp.con(f, lines=False)
 
         # TODO SLB: add image comparison here.
