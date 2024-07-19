@@ -11,8 +11,10 @@ import coverage
 import faulthandler
 import hashlib
 import numpy as np
-from scipy.interpolate import griddata
 import unittest
+
+from netCDF4 import Dataset as ncfile
+from scipy.interpolate import griddata
 
 import cfplot as cfp
 import cf
@@ -774,6 +776,7 @@ class ExamplesTest(unittest.TestCase):
     def test_example_24(self):
         """Test Example 24."""
         cfp.setvars(file="fig24.png")
+        # SADIE GRID THREE HERE
 
         # Arrays for data
         lons = []
@@ -794,9 +797,10 @@ class ExamplesTest(unittest.TestCase):
         # Linearly interpolate data to a regular grid
         lons_new = np.arange(140) * 0.1 - 11.0
         lats_new = np.arange(140) * 0.1 + 49.0
-        # TODO SLB needs fixing, fails here due to SciPy API updates or similar
+        # TODO SLB needs fixing, fails on an IndexError
         temp_new = griddata(
-            lons, lats, temp, lons_new, lats_new, interp="linear"
+            points=(lons, lats), values=temp, xi=(lons_new, lats_new),
+            method="linear"
         )
 
         cfp.cscale("parula")
@@ -828,9 +832,10 @@ class ExamplesTest(unittest.TestCase):
         # Linearly interpolate data to a regular grid
         lons_new = np.arange(140) * 0.1 - 11.0
         lats_new = np.arange(140) * 0.1 + 49.0
-        # TODO SLB needs fixing, fails here due to SciPy API updates or similar
+        # TODO SLB needs fixing, fails on an IndexError
         temp_new = griddata(
-            lons, lats, temp, lons_new, lats_new, interp="linear"
+            points=(lons, lats), values=temp, xi=(lons_new, lats_new),
+            method="linear"
         )
         # ---
 
@@ -853,8 +858,6 @@ class ExamplesTest(unittest.TestCase):
     def test_example_26(self):
         """Test Example 26."""
         cfp.setvars(file="fig26.png")
-        from matplotlib.mlab import griddata
-        from netCDF4 import Dataset as ncfile
 
         # Get an Orca grid and flatten the arrays
         nc = ncfile(f"{self.data_dir}/orca2.nc")
@@ -878,9 +881,10 @@ class ExamplesTest(unittest.TestCase):
 
         lons_new = np.arange(181 * 8) * 0.25 - 180.0
         lats_new = np.arange(91 * 8) * 0.25 - 90.0
-        # TODO SLB needs fixing, fails here due to SciPy API updates or similar
+        # TODO SLB needs fixing, fails on an IndexError
         temp_new = griddata(
-            lons, lats, temp, lons_new, lats_new, interp="linear"
+            points=(lons, lats), values=temp, xi=(lons_new, lats_new),
+            method="linear"
         )
 
         cfp.con(x=lons_new, y=lats_new, f=temp_new, ptype=1)
