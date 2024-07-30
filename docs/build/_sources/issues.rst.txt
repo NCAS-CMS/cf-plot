@@ -19,7 +19,7 @@ i.e. if you make a plot using:
    f=cf.read('cfplot_data/ggap.nc')[1]
    cfp.con(f.collapse('mean','longitude'))
 
-Then use cf-python to write out the data used to make the plot and then send the data (newfile.nc) and plotting line to me.  
+Then use cf-python to write out the data used to make the plot and then send the data (newfile.nc) and plotting line to me.
 
 ::
 
@@ -44,25 +44,22 @@ If you are using arrays of data use numpy to write out the relevant data:
    np.save('lats.npy', lats)
    np.save('field.npy', field)
 
-|  
-|  
-|  
+|
+|
+|
 
 
 
 
-| 
-| 
-| 
-| 
-| 
-| 
-| 
-| 
-| 
-| 
-| 
-| 
-
-
-
+|
+|
+|
+|
+|
+|
+|
+|
+|
+|
+|
+|

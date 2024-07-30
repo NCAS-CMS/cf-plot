@@ -1,43 +1,323 @@
+
 <!DOCTYPE html>
 
-<html lang="en" data-content_root="./">
+
+<html lang="en" data-content_root="./" >
+
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>version 2.1 changes &#8212; cf-plot 3.3.0 documentation</title>
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
-    <link rel="stylesheet" type="text/css" href="_static/classic.css?v=97decc96" />
-    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=eafc0fe6" />
-    
-    <script src="_static/documentation_options.js?v=3eb8911e"></script>
-    <script src="_static/doctools.js?v=888ff710"></script>
-    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
-    
-    <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" /> 
-  </head><body>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="nav-item nav-item-0"><a href="index.html">cf-plot 3.3.0 documentation</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">version 2.1 changes</a></li> 
-      </ul>
-    </div>  
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
 
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
-          <div class="body" role="main">
-            
+  
+  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=fd3f3429" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="_static/documentation_options.js?v=3eb8911e"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'version_2.1';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+<aside class="bd-header-announcement" aria-label="Announcement">
+  <div class="bd-header-announcement__content">This is the new permanent home of the cf-plot documentation: please consult this and not the old frozen version under 'http://ajheaps.github.io'.</div>
+</aside>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">cf-plot 3.3.0 documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+<h3><a href="index.html">Homepage</a><p></h3>
+<h5><a href="gallery.html">Gallery</a><p></h5>
+<h5><a href="user_guide.html">User Guide</a><p></h5>
+<h5><a href="training.html">Training material</a><p></h5>
+<h5><a href="routines.html">Routines</a><p></h5>
+<h5><a href="internal_routines.html">Routines - internal</a><p></h5>
+<h5><a href="advanced.html">Advanced Use</a><p></h5>
+<h5><a href="versions.html">Versions</a><p></h5>
+<h5><a href="issues.html">Issues</a><p></h5>
+<h5><a href="download.html">Download/Install</a><p></h5>
+<h5><a href="license.html">License</a><p></h5>
+<h5><a href="older_documentation.html">Older documentation</a><p></h5>
+<h5><a href="search.html">Search</a><p></h5></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">version 2.1 changes</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
   <section id="version-2-1-changes">
-<span id="version-2-1"></span><h1>version 2.1 changes<a class="headerlink" href="#version-2-1-changes" title="Link to this heading">¶</a></h1>
+<span id="version-2-1"></span><h1>version 2.1 changes<a class="headerlink" href="#version-2-1-changes" title="Link to this heading">#</a></h1>
 <p>Rolling set of small additions and bug fixes.</p>
 <section id="log-pressure-axis-labelling">
-<h2>1. Log pressure axis labelling<a class="headerlink" href="#log-pressure-axis-labelling" title="Link to this heading">¶</a></h2>
+<h2>1. Log pressure axis labelling<a class="headerlink" href="#log-pressure-axis-labelling" title="Link to this heading">#</a></h2>
 <p>Log pressure axis labelling was changed from the in-built Matplotlib labelling with used 10^3, 10^2 10^1 to 1000, 10, 1.</p>
 <blockquote>
 <div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
@@ -46,7 +326,7 @@
 </div></blockquote>
 </section>
 <section id="rotated-grid-axis-labelling">
-<h2>2. Rotated grid axis labelling<a class="headerlink" href="#rotated-grid-axis-labelling" title="Link to this heading">¶</a></h2>
+<h2>2. Rotated grid axis labelling<a class="headerlink" href="#rotated-grid-axis-labelling" title="Link to this heading">#</a></h2>
 <p>Missing longitude and latitude labels were added to rotated pole plots.</p>
 <blockquote>
 <div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
@@ -55,19 +335,22 @@
 </div></blockquote>
 </section>
 <section id="cscale-uniform-keyword-added">
-<h2>3. cscale - uniform keyword added<a class="headerlink" href="#cscale-uniform-keyword-added" title="Link to this heading">¶</a></h2>
+<h2>3. cscale - uniform keyword added<a class="headerlink" href="#cscale-uniform-keyword-added" title="Link to this heading">#</a></h2>
 <p>When a divergent colour scheme is used such as in example 4 in the gallery the default colour scale is stretched
 so that blues are below zero and reds above zero.  When the number of colours above and below differ quite markedly
 this can give undue emphasis to data by having too strong colours in the above or below zero scale.  A new keyword was
 introduced, uniform=True (or False), to address this issue.  The default is now uniform=True for divergent data
 contour plots where no user colour scale has been defined:</p>
-<a class="reference internal image-reference" href="_images/scale1_new.png"><img alt="_images/scale1_new.png" src="_images/scale1_new.png" style="width: 502.84000000000003px; height: 33.28px;" /></a>
+<a class="reference internal image-reference" href="_images/scale1_new.png"><img alt="_images/scale1_new.png" src="_images/scale1_new.png" style="width: 502.84000000000003px; height: 33.28px;" />
+</a>
 <p>Use:</p>
 <p><strong>cfp.setvars(cs_uniform=False)</strong></p>
 <p>to revert to the previous behaviour.</p>
+<a class="reference internal image-reference" href="_images/scale1_original.png"><img alt="_images/scale1_original.png" src="_images/scale1_original.png" style="width: 504.40000000000003px; height: 31.200000000000003px;" />
+</a>
 </section>
 <section id="mapset-new-projections-added">
-<h2>4. mapset - new projections added<a class="headerlink" href="#mapset-new-projections-added" title="Link to this heading">¶</a></h2>
+<h2>4. mapset - new projections added<a class="headerlink" href="#mapset-new-projections-added" title="Link to this heading">#</a></h2>
 <p>Added Mercator, Lambert Conformal, Orthographic and Robinson projections.  See the Basemap documentation
 at <a class="reference external" href="http://matplotlib.org/basemap/users/mapsetup.html">http://matplotlib.org/basemap/users/mapsetup.html</a> for calling parameters.</p>
 <blockquote>
@@ -77,7 +360,7 @@ at <a class="reference external" href="http://matplotlib.org/basemap/users/mapse
 </div></blockquote>
 </section>
 <section id="lineplot-axis-labelling-renamed">
-<h2>5. lineplot - axis labelling renamed<a class="headerlink" href="#lineplot-axis-labelling-renamed" title="Link to this heading">¶</a></h2>
+<h2>5. lineplot - axis labelling renamed<a class="headerlink" href="#lineplot-axis-labelling-renamed" title="Link to this heading">#</a></h2>
 <p>xname and yname have been depreciated in favour of xlabel and ylabel.  This change was made to be consistent
 with xlabel and ylabel as used in the con and vect routines.</p>
 <blockquote>
@@ -87,7 +370,7 @@ with xlabel and ylabel as used in the con and vect routines.</p>
 </div></blockquote>
 </section>
 <section id="cropped-area-on-map-lcc-projections">
-<h2>6. Cropped area on map lcc projections<a class="headerlink" href="#cropped-area-on-map-lcc-projections" title="Link to this heading">¶</a></h2>
+<h2>6. Cropped area on map lcc projections<a class="headerlink" href="#cropped-area-on-map-lcc-projections" title="Link to this heading">#</a></h2>
 <p>Lambert conformal projections can now be cropped as in the following code:</p>
 <div class="line-block">
 <div class="line">import cf</div>
@@ -96,9 +379,11 @@ with xlabel and ylabel as used in the con and vect routines.</p>
 <div class="line">cfp.mapset(proj='lcc', lonmin=-50, lonmax=50, latmin=20, latmax=85)</div>
 <div class="line">cfp.con(f.subspace(time=15))</div>
 </div>
+<a class="reference internal image-reference" href="_images/cm.png"><img alt="_images/cm.png" src="_images/cm.png" style="width: 364.0px; height: 339.04px;" />
+</a>
 </section>
 <section id="better-determination-of-up-on-the-z-axis">
-<h2>7. Better determination of up on the Z axis<a class="headerlink" href="#better-determination-of-up-on-the-z-axis" title="Link to this heading">¶</a></h2>
+<h2>7. Better determination of up on the Z axis<a class="headerlink" href="#better-determination-of-up-on-the-z-axis" title="Link to this heading">#</a></h2>
 <p>The CF metadata attribute of postitive for the Z coordinate is now used in the con and lineplot routines.</p>
 <blockquote>
 <div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
@@ -107,7 +392,7 @@ with xlabel and ylabel as used in the con and vect routines.</p>
 </div></blockquote>
 </section>
 <section id="con-colors-option-for-contour-lines">
-<h2>9. con - colors option for contour lines<a class="headerlink" href="#con-colors-option-for-contour-lines" title="Link to this heading">¶</a></h2>
+<h2>9. con - colors option for contour lines<a class="headerlink" href="#con-colors-option-for-contour-lines" title="Link to this heading">#</a></h2>
 <p>con - added colors keyword for the contour lines.  This keyword takes a single colour or a list
 of colours.  The default is 'k' or black'</p>
 <blockquote>
@@ -117,7 +402,7 @@ of colours.  The default is 'k' or black'</p>
 </div></blockquote>
 </section>
 <section id="con-lines-true-now-the-default">
-<h2>10. con - lines=True now the default<a class="headerlink" href="#con-lines-true-now-the-default" title="Link to this heading">¶</a></h2>
+<h2>10. con - lines=True now the default<a class="headerlink" href="#con-lines-true-now-the-default" title="Link to this heading">#</a></h2>
 <p>Within con the lines=True parameter is now the default.  This change was made due to the complex and
 somewhat obscure logic in the blockfill section of code.  The change will affect blockfill plots
 which were previously drawn with no lines using blockfill=True.  The syntax for blockfill with no lines
@@ -129,7 +414,7 @@ is now blockfill=True, lines=False.</p>
 </div></blockquote>
 </section>
 <section id="con-colorbar-logic-correction">
-<h2>11. con - colorbar logic correction<a class="headerlink" href="#con-colorbar-logic-correction" title="Link to this heading">¶</a></h2>
+<h2>11. con - colorbar logic correction<a class="headerlink" href="#con-colorbar-logic-correction" title="Link to this heading">#</a></h2>
 <p>A correction was made to the colorbar logic so that it works properly when fill=False is selected.</p>
 <blockquote>
 <div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
@@ -138,11 +423,13 @@ is now blockfill=True, lines=False.</p>
 </div></blockquote>
 </section>
 <section id="cscale-new-colour-scale-added">
-<h2>12. cscale - new colour scale added<a class="headerlink" href="#cscale-new-colour-scale-added" title="Link to this heading">¶</a></h2>
+<h2>12. cscale - new colour scale added<a class="headerlink" href="#cscale-new-colour-scale-added" title="Link to this heading">#</a></h2>
 <p>A new colour scale was added - brown to blue - BrBG.</p>
+<a class="reference internal image-reference" href="_images/BrBG.png"><img alt="_images/BrBG.png" src="_images/BrBG.png" style="width: 375.96000000000004px; height: 6.76px;" />
+</a>
 </section>
 <section id="stipple-added-edgecolors-keyword">
-<h2>13. stipple - added edgecolors keyword<a class="headerlink" href="#stipple-added-edgecolors-keyword" title="Link to this heading">¶</a></h2>
+<h2>13. stipple - added edgecolors keyword<a class="headerlink" href="#stipple-added-edgecolors-keyword" title="Link to this heading">#</a></h2>
 <p>The edcolors keyword was added to the stipple routine.  This contrils the border colour of the filled polygon.
 Setting it to 'face' gives the same colour as the filled polygon.</p>
 <blockquote>
@@ -152,7 +439,7 @@ Setting it to 'face' gives the same colour as the filled polygon.</p>
 </div></blockquote>
 </section>
 <section id="con-better-yaxis-labelling-for-hybrid-height-coordinates">
-<h2>14. con - better yaxis labelling for hybrid height coordinates<a class="headerlink" href="#con-better-yaxis-labelling-for-hybrid-height-coordinates" title="Link to this heading">¶</a></h2>
+<h2>14. con - better yaxis labelling for hybrid height coordinates<a class="headerlink" href="#con-better-yaxis-labelling-for-hybrid-height-coordinates" title="Link to this heading">#</a></h2>
 <p>Better yaxis labelling for hybrid height coordinates.</p>
 <blockquote>
 <div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
@@ -161,7 +448,7 @@ Setting it to 'face' gives the same colour as the filled polygon.</p>
 </div></blockquote>
 </section>
 <section id="lineplot-check-for-a-t-axis-before-accessing-it">
-<h2>15. lineplot - check for a 'T' axis before accessing it<a class="headerlink" href="#lineplot-check-for-a-t-axis-before-accessing-it" title="Link to this heading">¶</a></h2>
+<h2>15. lineplot - check for a 'T' axis before accessing it<a class="headerlink" href="#lineplot-check-for-a-t-axis-before-accessing-it" title="Link to this heading">#</a></h2>
 <p>Check if a cf-field has a 'T' axis before trying to access it.</p>
 <blockquote>
 <div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
@@ -170,7 +457,7 @@ Setting it to 'face' gives the same colour as the filled polygon.</p>
 </div></blockquote>
 </section>
 <section id="lineplot-check-xlabel-is-not-none-before-accessing-it">
-<h2>16. lineplot - check xlabel is not None before accessing it<a class="headerlink" href="#lineplot-check-xlabel-is-not-none-before-accessing-it" title="Link to this heading">¶</a></h2>
+<h2>16. lineplot - check xlabel is not None before accessing it<a class="headerlink" href="#lineplot-check-xlabel-is-not-none-before-accessing-it" title="Link to this heading">#</a></h2>
 <p>Check if xlabel is not None before trying to access it.</p>
 <blockquote>
 <div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
@@ -179,7 +466,7 @@ Setting it to 'face' gives the same colour as the filled polygon.</p>
 </div></blockquote>
 </section>
 <section id="lineplot-generate-a-more-correct-set-of-yticks-if-yrange-1">
-<h2>17. lineplot - Generate a more correct set of yticks if yrange &lt; 1<a class="headerlink" href="#lineplot-generate-a-more-correct-set-of-yticks-if-yrange-1" title="Link to this heading">¶</a></h2>
+<h2>17. lineplot - Generate a more correct set of yticks if yrange &lt; 1<a class="headerlink" href="#lineplot-generate-a-more-correct-set-of-yticks-if-yrange-1" title="Link to this heading">#</a></h2>
 <p>Generate a more correct set of yticks if yrange &lt; 1.</p>
 <blockquote>
 <div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
@@ -188,7 +475,7 @@ Setting it to 'face' gives the same colour as the filled polygon.</p>
 </div></blockquote>
 </section>
 <section id="con-blockfill-code-correction-for-masked-arrays">
-<h2>18. con - blockfill code correction for masked arrays<a class="headerlink" href="#con-blockfill-code-correction-for-masked-arrays" title="Link to this heading">¶</a></h2>
+<h2>18. con - blockfill code correction for masked arrays<a class="headerlink" href="#con-blockfill-code-correction-for-masked-arrays" title="Link to this heading">#</a></h2>
 <p>In con the blockfill code was updated to correct an error when plotting masked arrays.</p>
 <blockquote>
 <div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
@@ -197,7 +484,7 @@ Setting it to 'face' gives the same colour as the filled polygon.</p>
 </div></blockquote>
 </section>
 <section id="mapaxis-change-labeling-in-cylindrical-projection">
-<h2>19. mapaxis - change labeling in cylindrical projection<a class="headerlink" href="#mapaxis-change-labeling-in-cylindrical-projection" title="Link to this heading">¶</a></h2>
+<h2>19. mapaxis - change labeling in cylindrical projection<a class="headerlink" href="#mapaxis-change-labeling-in-cylindrical-projection" title="Link to this heading">#</a></h2>
 <p>Change labels returned by mapaxis as below.</p>
 <p>180, 120W, 60W, 0, 60E, 120E, 180</p>
 <p>to</p>
@@ -209,7 +496,7 @@ Setting it to 'face' gives the same colour as the filled polygon.</p>
 </div></blockquote>
 </section>
 <section id="con-hovmuller-user-axis-labeling">
-<h2>20. con -  Hovmuller user axis labeling<a class="headerlink" href="#con-hovmuller-user-axis-labeling" title="Link to this heading">¶</a></h2>
+<h2>20. con -  Hovmuller user axis labeling<a class="headerlink" href="#con-hovmuller-user-axis-labeling" title="Link to this heading">#</a></h2>
 <p>Hovmuller user axis labeling wasn't working.</p>
 <blockquote>
 <div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
@@ -218,7 +505,7 @@ Setting it to 'face' gives the same colour as the filled polygon.</p>
 </div></blockquote>
 </section>
 <section id="setvars-a-master-title-for-multi-panel-plots">
-<h2>21. setvars -  A master title for multi-panel plots<a class="headerlink" href="#setvars-a-master-title-for-multi-panel-plots" title="Link to this heading">¶</a></h2>
+<h2>21. setvars -  A master title for multi-panel plots<a class="headerlink" href="#setvars-a-master-title-for-multi-panel-plots" title="Link to this heading">#</a></h2>
 <p>Added a master title for multi-panel plots to the setvars routine.</p>
 <div class="line-block">
 <div class="line">master_title=None - master title text</div>
@@ -233,7 +520,7 @@ Setting it to 'face' gives the same colour as the filled polygon.</p>
 </div></blockquote>
 </section>
 <section id="con-missing-colorbar-annotation-with-ptype-1">
-<h2>22. con -  Missing colorbar annotation with ptype=1<a class="headerlink" href="#con-missing-colorbar-annotation-with-ptype-1" title="Link to this heading">¶</a></h2>
+<h2>22. con -  Missing colorbar annotation with ptype=1<a class="headerlink" href="#con-missing-colorbar-annotation-with-ptype-1" title="Link to this heading">#</a></h2>
 <p>When making a contour plot with cfp.con(f=f, x=x, y=y, ptype=1) the default
 contour scaling was omitted from the colorbar label.  This has now been added.</p>
 <blockquote>
@@ -243,7 +530,7 @@ contour scaling was omitted from the colorbar label.  This has now been added.</
 </div></blockquote>
 </section>
 <section id="vect-missing-longitude-height-vectors">
-<h2>23. vect - missing longitude-height vectors<a class="headerlink" href="#vect-missing-longitude-height-vectors" title="Link to this heading">¶</a></h2>
+<h2>23. vect - missing longitude-height vectors<a class="headerlink" href="#vect-missing-longitude-height-vectors" title="Link to this heading">#</a></h2>
 <p>Longitude-height vector code was missing.</p>
 <blockquote>
 <div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
@@ -252,7 +539,7 @@ contour scaling was omitted from the colorbar label.  This has now been added.</
 </div></blockquote>
 </section>
 <section id="con-map-colorbar-labelling-issue">
-<h2>24. con - map colorbar labelling issue<a class="headerlink" href="#con-map-colorbar-labelling-issue" title="Link to this heading">¶</a></h2>
+<h2>24. con - map colorbar labelling issue<a class="headerlink" href="#con-map-colorbar-labelling-issue" title="Link to this heading">#</a></h2>
 <p>In certain circumstances the colorbar labeling in a map plot was in correct.
 Using the string of the colorbar labels produces the correct results.</p>
 <p>cbar.set_ticklabels([str(i) for i in colorbar_labels])</p>
@@ -263,7 +550,7 @@ Using the string of the colorbar labels produces the correct results.</p>
 </div></blockquote>
 </section>
 <section id="con-blockfill-incorrect-for-very-tight-contour-ranges">
-<h2>25. con - blockfill incorrect for very tight contour ranges<a class="headerlink" href="#con-blockfill-incorrect-for-very-tight-contour-ranges" title="Link to this heading">¶</a></h2>
+<h2>25. con - blockfill incorrect for very tight contour ranges<a class="headerlink" href="#con-blockfill-incorrect-for-very-tight-contour-ranges" title="Link to this heading">#</a></h2>
 <p>When the data range is very small the blockfill contour scheme miscalculated the upper bound for
 the data.</p>
 <blockquote>
@@ -273,7 +560,7 @@ the data.</p>
 </div></blockquote>
 </section>
 <section id="timeaxis-code-change">
-<h2>26. timeaxis - code change<a class="headerlink" href="#timeaxis-code-change" title="Link to this heading">¶</a></h2>
+<h2>26. timeaxis - code change<a class="headerlink" href="#timeaxis-code-change" title="Link to this heading">#</a></h2>
 <p>The minimum and maximum years were not calculated due to some faulty logic.</p>
 <blockquote>
 <div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
@@ -282,7 +569,7 @@ the data.</p>
 </div></blockquote>
 </section>
 <section id="mapset-documentation-improved">
-<h2>27. mapset - documentation improved<a class="headerlink" href="#mapset-documentation-improved" title="Link to this heading">¶</a></h2>
+<h2>27. mapset - documentation improved<a class="headerlink" href="#mapset-documentation-improved" title="Link to this heading">#</a></h2>
 <p>The documentation for mapset in the routine in the user guide was improved to make it flow better
 and include recent map additions.</p>
 <blockquote>
@@ -292,7 +579,7 @@ and include recent map additions.</p>
 </div></blockquote>
 </section>
 <section id="gset-ylog-true-now-feeds-through-to-contour-plots">
-<h2>28. gset - ylog=True now feeds through to contour plots<a class="headerlink" href="#gset-ylog-true-now-feeds-through-to-contour-plots" title="Link to this heading">¶</a></h2>
+<h2>28. gset - ylog=True now feeds through to contour plots<a class="headerlink" href="#gset-ylog-true-now-feeds-through-to-contour-plots" title="Link to this heading">#</a></h2>
 <p>The 2.0 code base changes removed the ylog=True feed through to contour plotting.</p>
 <blockquote>
 <div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
@@ -301,7 +588,7 @@ and include recent map additions.</p>
 </div></blockquote>
 </section>
 <section id="lineplot-cf-field-incorrectly-plotted">
-<h2>29. lineplot - CF field incorrectly plotted<a class="headerlink" href="#lineplot-cf-field-incorrectly-plotted" title="Link to this heading">¶</a></h2>
+<h2>29. lineplot - CF field incorrectly plotted<a class="headerlink" href="#lineplot-cf-field-incorrectly-plotted" title="Link to this heading">#</a></h2>
 <p>When plotting a CF field with a Z axis the data wasn't correctly plotted</p>
 <blockquote>
 <div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
@@ -310,7 +597,7 @@ and include recent map additions.</p>
 </div></blockquote>
 </section>
 <section id="con-blockfill-rewritten">
-<h2>30. con - blockfill rewritten<a class="headerlink" href="#con-blockfill-rewritten" title="Link to this heading">¶</a></h2>
+<h2>30. con - blockfill rewritten<a class="headerlink" href="#con-blockfill-rewritten" title="Link to this heading">#</a></h2>
 <p>Blockfill plots in the con routine were rewitten to use PolyCollection from matplotlib.collections rather than
 pcolormesh.  The new method allows better control of the various colorbar extension behaviour and data masking.
 It is slower for larger grids than pcolormesh but more accurate.</p>
@@ -321,7 +608,7 @@ It is slower for larger grids than pcolormesh but more accurate.</p>
 </div></blockquote>
 </section>
 <section id="con-blockfill-for-map-plots-other-than-cylindrical-projection">
-<h2>31. con - blockfill for map plots other than cylindrical projection<a class="headerlink" href="#con-blockfill-for-map-plots-other-than-cylindrical-projection" title="Link to this heading">¶</a></h2>
+<h2>31. con - blockfill for map plots other than cylindrical projection<a class="headerlink" href="#con-blockfill-for-map-plots-other-than-cylindrical-projection" title="Link to this heading">#</a></h2>
 <p>Blockfill for map plots other than the cylindrical projection was implemented. Trim the data to the required
 map limits to avoid them being plotted.</p>
 <blockquote>
@@ -331,7 +618,7 @@ map limits to avoid them being plotted.</p>
 </div></blockquote>
 </section>
 <section id="axes-user-defined-axes">
-<h2>32. axes - user defined axes<a class="headerlink" href="#axes-user-defined-axes" title="Link to this heading">¶</a></h2>
+<h2>32. axes - user defined axes<a class="headerlink" href="#axes-user-defined-axes" title="Link to this heading">#</a></h2>
 <p>Axes defined with the axes command should feed through to con, vect and lineplot.  The priority order of axis
 labeling in order of preference is:
 1) user passed to routine
@@ -344,7 +631,7 @@ labeling in order of preference is:
 </div></blockquote>
 </section>
 <section id="con-ability-to-swap-axes-for-hovmuller-plots">
-<h2>33. con - ability to swap axes for hovmuller plots<a class="headerlink" href="#con-ability-to-swap-axes-for-hovmuller-plots" title="Link to this heading">¶</a></h2>
+<h2>33. con - ability to swap axes for hovmuller plots<a class="headerlink" href="#con-ability-to-swap-axes-for-hovmuller-plots" title="Link to this heading">#</a></h2>
 <p>In Hovmuller plots sometimes the axes are show as time vs longitude or latitude.  The swap_axes keyword
 was added to con to facilitate this.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
@@ -352,14 +639,14 @@ was added to con to facilitate this.</p>
 </div>
 </section>
 <section id="con-blockfill-produces-an-error-for-bounded-data-in-hovmuller-plots">
-<h2>34. con - blockfill produces an error for bounded data in Hovmuller plots<a class="headerlink" href="#con-blockfill-produces-an-error-for-bounded-data-in-hovmuller-plots" title="Link to this heading">¶</a></h2>
+<h2>34. con - blockfill produces an error for bounded data in Hovmuller plots<a class="headerlink" href="#con-blockfill-produces-an-error-for-bounded-data-in-hovmuller-plots" title="Link to this heading">#</a></h2>
 <p>The data bounds passed for Hovmuller blockfill plots were incorrect.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
 </pre></div>
 </div>
 </section>
 <section id="jupyter-notebook-detection-of-inline-images">
-<h2>35. jupyter notebook detection of inline images<a class="headerlink" href="#jupyter-notebook-detection-of-inline-images" title="Link to this heading">¶</a></h2>
+<h2>35. jupyter notebook detection of inline images<a class="headerlink" href="#jupyter-notebook-detection-of-inline-images" title="Link to this heading">#</a></h2>
 <p>cf-plot now detects the jupyter notebook magic command for inlining images:
 %matplotlib inline</p>
 <p>The cfp.setvars(viewer=None) is no longer required in the jupyter notebook session.</p>
@@ -368,14 +655,14 @@ was added to con to facilitate this.</p>
 </div>
 </section>
 <section id="stipple-now-works-in-y-z-and-x-z-plots">
-<h2>36. stipple - now works in Y-Z and X-Z plots<a class="headerlink" href="#stipple-now-works-in-y-z-and-x-z-plots" title="Link to this heading">¶</a></h2>
+<h2>36. stipple - now works in Y-Z and X-Z plots<a class="headerlink" href="#stipple-now-works-in-y-z-and-x-z-plots" title="Link to this heading">#</a></h2>
 <p>Stippling now works in Y-Z and X-Z plots.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
 </pre></div>
 </div>
 </section>
 <section id="con-axis-labels-for-lcc-map-plots">
-<h2>37. con - axis labels for lcc map plots<a class="headerlink" href="#con-axis-labels-for-lcc-map-plots" title="Link to this heading">¶</a></h2>
+<h2>37. con - axis labels for lcc map plots<a class="headerlink" href="#con-axis-labels-for-lcc-map-plots" title="Link to this heading">#</a></h2>
 <p>The axis_label_fontsize and axis_label_fontweight now apply to lcc (Lambert Conformal projection)
 plots.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
@@ -383,14 +670,14 @@ plots.</p>
 </div>
 </section>
 <section id="lineplot-user-defined-time-axis-fails">
-<h2>38. lineplot - user defined time axis fails<a class="headerlink" href="#lineplot-user-defined-time-axis-fails" title="Link to this heading">¶</a></h2>
+<h2>38. lineplot - user defined time axis fails<a class="headerlink" href="#lineplot-user-defined-time-axis-fails" title="Link to this heading">#</a></h2>
 <p>When making a time lineplot with a predefined gset call to set the axes an error occurs.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
 </pre></div>
 </div>
 </section>
 <section id="con-negative-linestyle">
-<h2>39. con - negative_linestyle<a class="headerlink" href="#con-negative-linestyle" title="Link to this heading">¶</a></h2>
+<h2>39. con - negative_linestyle<a class="headerlink" href="#con-negative-linestyle" title="Link to this heading">#</a></h2>
 <p>con - negative_linestyle takes 'solid' and 'dashed' for Matplotlib &lt; 2.  With Matplotlib &gt; 2
 it also takes 'None', 'dotted' and 'dashdot'.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
@@ -398,7 +685,7 @@ it also takes 'None', 'dotted' and 'dashdot'.</p>
 </div>
 </section>
 <section id="cf-plot-updated-for-cf-python-2-x">
-<h2>40. cf-plot updated for cf-python 2.x<a class="headerlink" href="#cf-plot-updated-for-cf-python-2-x" title="Link to this heading">¶</a></h2>
+<h2>40. cf-plot updated for cf-python 2.x<a class="headerlink" href="#cf-plot-updated-for-cf-python-2-x" title="Link to this heading">#</a></h2>
 <p>cf-plot was updated to be compatible with the 1.x to 2.x API changes to cf-python.
 See <a class="reference external" href="https://cfpython.bitbucket.io/docs/latest/1_to_2_changes.html">https://cfpython.bitbucket.io/docs/latest/1_to_2_changes.html</a></p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
@@ -406,14 +693,14 @@ See <a class="reference external" href="https://cfpython.bitbucket.io/docs/lates
 </div>
 </section>
 <section id="levs-check-extend-input-is-valid">
-<h2>41. levs - check extend input is valid<a class="headerlink" href="#levs-check-extend-input-is-valid" title="Link to this heading">¶</a></h2>
+<h2>41. levs - check extend input is valid<a class="headerlink" href="#levs-check-extend-input-is-valid" title="Link to this heading">#</a></h2>
 <p>levs now checks that the input for extend is one on 'neither', 'min, 'max' or 'both'</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
 </pre></div>
 </div>
 </section>
 <section id="con-blockfill-an-user-cscale-checks">
-<h2>42. con - blockfill an user cscale checks<a class="headerlink" href="#con-blockfill-an-user-cscale-checks" title="Link to this heading">¶</a></h2>
+<h2>42. con - blockfill an user cscale checks<a class="headerlink" href="#con-blockfill-an-user-cscale-checks" title="Link to this heading">#</a></h2>
 <p>The blockfill contour section now checks when the user has selected a colour scale with
 a set number of colours this matches the number of levels that are being contoured.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
@@ -421,7 +708,7 @@ a set number of colours this matches the number of levels that are being contour
 </div>
 </section>
 <section id="lineplot-wrong-time-axis-annotation-plotted">
-<h2>43. lineplot - wrong time axis annotation plotted<a class="headerlink" href="#lineplot-wrong-time-axis-annotation-plotted" title="Link to this heading">¶</a></h2>
+<h2>43. lineplot - wrong time axis annotation plotted<a class="headerlink" href="#lineplot-wrong-time-axis-annotation-plotted" title="Link to this heading">#</a></h2>
 <p>In lineplot an incorrect generic time axis annotation wass plotted.  This was corrected to time, time(years),
 time(months) etc.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Corrected</span>
@@ -429,14 +716,14 @@ time(months) etc.</p>
 </div>
 </section>
 <section id="con-blockfill-occasionally-produced-an-error-when-the-field-had-no-data-bounds">
-<h2>44. con - blockfill occasionally produced an error when the field had no data bounds<a class="headerlink" href="#con-blockfill-occasionally-produced-an-error-when-the-field-had-no-data-bounds" title="Link to this heading">¶</a></h2>
+<h2>44. con - blockfill occasionally produced an error when the field had no data bounds<a class="headerlink" href="#con-blockfill-occasionally-produced-an-error-when-the-field-had-no-data-bounds" title="Link to this heading">#</a></h2>
 <p>A coding error meant that blockfill occasionally produced an error when the field had no data bounds.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
 </pre></div>
 </div>
 </section>
 <section id="con-passing-numpy-arrays-code-change">
-<h2>45. con - passing numpy arrays code change<a class="headerlink" href="#con-passing-numpy-arrays-code-change" title="Link to this heading">¶</a></h2>
+<h2>45. con - passing numpy arrays code change<a class="headerlink" href="#con-passing-numpy-arrays-code-change" title="Link to this heading">#</a></h2>
 <p>When using con and numpy arrays the default was that the field x and y arrays had to be passed and to
 be consistent.  This was relaxed so that if a user passes a numpy array with no x and y values then these
 are generated internally on a basis of 0 to number of axis points -1.</p>
@@ -445,7 +732,7 @@ are generated internally on a basis of 0 to number of axis points -1.</p>
 </div>
 </section>
 <section id="con-and-stipple-transparency">
-<h2>46. con and stipple transparency<a class="headerlink" href="#con-and-stipple-transparency" title="Link to this heading">¶</a></h2>
+<h2>46. con and stipple transparency<a class="headerlink" href="#con-and-stipple-transparency" title="Link to this heading">#</a></h2>
 <p>con and stipple now have an alpha keyword indicating the tranparency for the plot.  The default is set to
 1 giving no transparency.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
@@ -453,7 +740,7 @@ are generated internally on a basis of 0 to number of axis points -1.</p>
 </div>
 </section>
 <section id="con-contour-line-thickness">
-<h2>47. con - contour line thickness<a class="headerlink" href="#con-contour-line-thickness" title="Link to this heading">¶</a></h2>
+<h2>47. con - contour line thickness<a class="headerlink" href="#con-contour-line-thickness" title="Link to this heading">#</a></h2>
 <p>Contour line thickness can now be set using the linewidths parameter to con.  One value gives the same
 thickness for all lines.  Multiple values are also accepted.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
@@ -461,21 +748,21 @@ thickness for all lines.  Multiple values are also accepted.</p>
 </div>
 </section>
 <section id="vect-vector-colours">
-<h2>48. vect - vector colours<a class="headerlink" href="#vect-vector-colours" title="Link to this heading">¶</a></h2>
+<h2>48. vect - vector colours<a class="headerlink" href="#vect-vector-colours" title="Link to this heading">#</a></h2>
 <p>vect now takes the color parameter to colour the vectors.  Takes one or multiple values.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
 </pre></div>
 </div>
 </section>
 <section id="dpi-setting-for-png-file-output">
-<h2>49. DPI setting for PNG file output<a class="headerlink" href="#dpi-setting-for-png-file-output" title="Link to this heading">¶</a></h2>
+<h2>49. DPI setting for PNG file output<a class="headerlink" href="#dpi-setting-for-png-file-output" title="Link to this heading">#</a></h2>
 <p>A dpi setting for setvars and gopen now allows the dots per inch to be set for PNG files.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
 </pre></div>
 </div>
 </section>
 <section id="vect-vector-annotation-fontsize">
-<h2>50. vect - vector annotation fontsize<a class="headerlink" href="#vect-vector-annotation-fontsize" title="Link to this heading">¶</a></h2>
+<h2>50. vect - vector annotation fontsize<a class="headerlink" href="#vect-vector-annotation-fontsize" title="Link to this heading">#</a></h2>
 <p>Vector annotation now uses the internal plotvars.axis_label_fontsize variable for the
 text size.  This is set in the setvars routine.  This allows multiple vector plots on a page to
 be scaled correctly in terms of their text size.</p>
@@ -484,7 +771,7 @@ be scaled correctly in terms of their text size.</p>
 </div>
 </section>
 <section id="gset-docstring-documentation-gave-incorrect-date-string-order">
-<h2>51. gset docstring documentation gave incorrect date string order<a class="headerlink" href="#gset-docstring-documentation-gave-incorrect-date-string-order" title="Link to this heading">¶</a></h2>
+<h2>51. gset docstring documentation gave incorrect date string order<a class="headerlink" href="#gset-docstring-documentation-gave-incorrect-date-string-order" title="Link to this heading">#</a></h2>
 <p>The gset docstring documentation gave incorrect date string order and this has now been
 corrected.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
@@ -492,7 +779,7 @@ corrected.</p>
 </div>
 </section>
 <section id="gvals-modification">
-<h2>52. gvals modification<a class="headerlink" href="#gvals-modification" title="Link to this heading">¶</a></h2>
+<h2>52. gvals modification<a class="headerlink" href="#gvals-modification" title="Link to this heading">#</a></h2>
 <p>The gvals code which generates sensible values for labelling contours and axes was changed
 to produce reasonable levels between -1.0 and 0.1.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
@@ -500,7 +787,7 @@ to produce reasonable levels between -1.0 and 0.1.</p>
 </div>
 </section>
 <section id="levs-allow-only-step-to-generate-contour-levels">
-<h2>53. levs - allow only step to generate contour levels<a class="headerlink" href="#levs-allow-only-step-to-generate-contour-levels" title="Link to this heading">¶</a></h2>
+<h2>53. levs - allow only step to generate contour levels<a class="headerlink" href="#levs-allow-only-step-to-generate-contour-levels" title="Link to this heading">#</a></h2>
 <p>Code was added to the levs and con routines to allow step to generate the levels for the contour field without having to
 specify the min and max for the levels genration.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
@@ -508,7 +795,7 @@ specify the min and max for the levels genration.</p>
 </div>
 </section>
 <section id="con-blockfill-transparency">
-<h2>54. con - blockfill transparency<a class="headerlink" href="#con-blockfill-transparency" title="Link to this heading">¶</a></h2>
+<h2>54. con - blockfill transparency<a class="headerlink" href="#con-blockfill-transparency" title="Link to this heading">#</a></h2>
 <p>Added alpha transparency to the blockfill contour routine.  To call this add the blockfill=True and
 alpha=alpha keywords to the cfp.con command.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
@@ -516,7 +803,7 @@ alpha=alpha keywords to the cfp.con command.</p>
 </div>
 </section>
 <section id="independent-user-positioning-of-plot-figures-on-a-page">
-<h2>55. Independent user positioning of plot figures on a page<a class="headerlink" href="#independent-user-positioning-of-plot-figures-on-a-page" title="Link to this heading">¶</a></h2>
+<h2>55. Independent user positioning of plot figures on a page<a class="headerlink" href="#independent-user-positioning-of-plot-figures-on-a-page" title="Link to this heading">#</a></h2>
 <p>Independent positioning of plot figures on a page isn't possible.</p>
 <p>This is now possible and an example has been added to the <a class="reference internal" href="multiple_plots.html#multiple-plots"><span class="std std-ref">Multiple plots on a page</span></a>  page.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
@@ -524,14 +811,14 @@ alpha=alpha keywords to the cfp.con command.</p>
 </div>
 </section>
 <section id="con-vertical-colorbars-don-t-pick-up-user-set-font-size">
-<h2>56. con - vertical colorbars don't pick up user set font size<a class="headerlink" href="#con-vertical-colorbars-don-t-pick-up-user-set-font-size" title="Link to this heading">¶</a></h2>
+<h2>56. con - vertical colorbars don't pick up user set font size<a class="headerlink" href="#con-vertical-colorbars-don-t-pick-up-user-set-font-size" title="Link to this heading">#</a></h2>
 <p>Vertical colorbars did't pick up user set font size or font weight.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Corrected</span>
 </pre></div>
 </div>
 </section>
 <section id="con-addcyclic-change-in-basemap">
-<h2>57. con - addcyclic change in Basemap<a class="headerlink" href="#con-addcyclic-change-in-basemap" title="Link to this heading">¶</a></h2>
+<h2>57. con - addcyclic change in Basemap<a class="headerlink" href="#con-addcyclic-change-in-basemap" title="Link to this heading">#</a></h2>
 <p>The behaviour of add cyclic in Basemap changed</p>
 <p>1.0.7 longitudes 1.875, 5.625, ..., 358.125 went to 1.875, 5.625,..., 358.125, 361.875</p>
 <p>1.0.8.dev0 and 1.1.0 longitudes 1.875, 5.625, ..., 358.125 went to 1.875, 5.625,..., 358.125, 1.875</p>
@@ -541,7 +828,7 @@ alpha=alpha keywords to the cfp.con command.</p>
 </div>
 </section>
 <section id="con-better-data-limits-when-making-a-reduced-map-plot">
-<h2>58. con - better data limits when making a reduced map plot<a class="headerlink" href="#con-better-data-limits-when-making-a-reduced-map-plot" title="Link to this heading">¶</a></h2>
+<h2>58. con - better data limits when making a reduced map plot<a class="headerlink" href="#con-better-data-limits-when-making-a-reduced-map-plot" title="Link to this heading">#</a></h2>
 <p>When passing reduced data for a map contour plot only the longitude range was checked.  This has been
 corrected so that the latitude range is also checked.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
@@ -549,7 +836,7 @@ corrected so that the latitude range is also checked.</p>
 </div>
 </section>
 <section id="con-merge-all-colorbar-calls-into-one-routine">
-<h2>60. con - merge all colorbar calls into one routine<a class="headerlink" href="#con-merge-all-colorbar-calls-into-one-routine" title="Link to this heading">¶</a></h2>
+<h2>60. con - merge all colorbar calls into one routine<a class="headerlink" href="#con-merge-all-colorbar-calls-into-one-routine" title="Link to this heading">#</a></h2>
 <p>An internal coding change to merge the five colorbar routines in con into one that is a separate
 routine.  This makes it eaier to maintain the code base.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
@@ -557,7 +844,7 @@ routine.  This makes it eaier to maintain the code base.</p>
 </div>
 </section>
 <section id="con-colorbar-changes">
-<h2>61. con - colorbar changes<a class="headerlink" href="#con-colorbar-changes" title="Link to this heading">¶</a></h2>
+<h2>61. con - colorbar changes<a class="headerlink" href="#con-colorbar-changes" title="Link to this heading">#</a></h2>
 <p>Added new functionality to the colorbar in con:</p>
 <div class="line-block">
 <div class="line">colorbar_text_up_down=False - on a horizontal colorbar alternate the</div>
@@ -575,7 +862,7 @@ routine.  This makes it eaier to maintain the code base.</p>
 </div>
 </section>
 <section id="con-longitude-wrapping-bug-in-basemap">
-<h2>62. con - longitude wrapping bug in basemap<a class="headerlink" href="#con-longitude-wrapping-bug-in-basemap" title="Link to this heading">¶</a></h2>
+<h2>62. con - longitude wrapping bug in basemap<a class="headerlink" href="#con-longitude-wrapping-bug-in-basemap" title="Link to this heading">#</a></h2>
 <p>As per change 57.  The tolerance limit was changed from 1E-5 to 1E-4 to cope with N215 Met Office
 data.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
@@ -583,7 +870,7 @@ data.</p>
 </div>
 </section>
 <section id="introduced-a-cfplot-defaults-file">
-<h2>63. Introduced a ~/.cfplot_defaults file<a class="headerlink" href="#introduced-a-cfplot-defaults-file" title="Link to this heading">¶</a></h2>
+<h2>63. Introduced a ~/.cfplot_defaults file<a class="headerlink" href="#introduced-a-cfplot-defaults-file" title="Link to this heading">#</a></h2>
 <p>A ~/.cfplot_defaults default overide file in the user home directory may contain three
 values initially. Please contact me if you would like any more defaults changed in this manner.</p>
 <div class="line-block">
@@ -600,7 +887,7 @@ option and the value must be a space.</p>
 </div>
 </section>
 <section id="setvars-introduced-land-and-ocean-colours">
-<h2>64. setvars - introduced land and ocean colours<a class="headerlink" href="#setvars-introduced-land-and-ocean-colours" title="Link to this heading">¶</a></h2>
+<h2>64. setvars - introduced land and ocean colours<a class="headerlink" href="#setvars-introduced-land-and-ocean-colours" title="Link to this heading">#</a></h2>
 <p>Introduced some extra plotting variables to the setvars routine to colour the land, ocean and lakes in a single
 colour.</p>
 <div class="line-block">
@@ -613,7 +900,7 @@ colour.</p>
 </div>
 </section>
 <section id="con-polar-stereographic-changing-axis-label-fontsize">
-<h2>65. con - polar stereographic changing axis label fontsize<a class="headerlink" href="#con-polar-stereographic-changing-axis-label-fontsize" title="Link to this heading">¶</a></h2>
+<h2>65. con - polar stereographic changing axis label fontsize<a class="headerlink" href="#con-polar-stereographic-changing-axis-label-fontsize" title="Link to this heading">#</a></h2>
 <p>It wasn't possible to change the polar stereographic longitude label fontsize or fontweight.
 This is now done using the setvars routine and changing the axis_label_fontsize and
 axis_label_fontweight values.</p>
@@ -622,15 +909,15 @@ axis_label_fontweight values.</p>
 </div>
 </section>
 <section id="lineplot-twinx-or-twiny-axes">
-<h2>66. lineplot - twinx or twiny axes<a class="headerlink" href="#lineplot-twinx-or-twiny-axes" title="Link to this heading">¶</a></h2>
+<h2>66. lineplot - twinx or twiny axes<a class="headerlink" href="#lineplot-twinx-or-twiny-axes" title="Link to this heading">#</a></h2>
 <p>It is now possible to do twinx or twiny plots in lineplot.  See example 30 in
-<a class="reference internal" href="user_guide.html#graphs"><span class="std std-ref">graphs</span></a></p>
+<a class="reference internal" href="graphs.html#graphs"><span class="std std-ref">graphs</span></a></p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
 </pre></div>
 </div>
 </section>
 <section id="vect-polar-vectors-on-original-grid">
-<h2>67. vect - polar vectors on original grid<a class="headerlink" href="#vect-polar-vectors-on-original-grid" title="Link to this heading">¶</a></h2>
+<h2>67. vect - polar vectors on original grid<a class="headerlink" href="#vect-polar-vectors-on-original-grid" title="Link to this heading">#</a></h2>
 <p>It is now possible to plot polar vectors on the original grid as in example 15 in
 <a class="reference internal" href="vectors.html#vector"><span class="std std-ref">vector</span></a></p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
@@ -638,7 +925,7 @@ axis_label_fontweight values.</p>
 </div>
 </section>
 <section id="con-linestyles-keyword-added">
-<h2>68. con - linestyles keyword added<a class="headerlink" href="#con-linestyles-keyword-added" title="Link to this heading">¶</a></h2>
+<h2>68. con - linestyles keyword added<a class="headerlink" href="#con-linestyles-keyword-added" title="Link to this heading">#</a></h2>
 <p>The linestyles keyword was added to the con routine to allow user selection of linestyle.
 Value should be one of 'solid', 'dashed', 'dashdot' or 'dotted'</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
@@ -646,7 +933,7 @@ Value should be one of 'solid', 'dashed', 'dashdot' or 'dotted'</p>
 </div>
 </section>
 <section id="lineplot-axes-xaxis-yaxis-keywords-added">
-<h2>69. lineplot - axes, xaxis, yaxis keywords added<a class="headerlink" href="#lineplot-axes-xaxis-yaxis-keywords-added" title="Link to this heading">¶</a></h2>
+<h2>69. lineplot - axes, xaxis, yaxis keywords added<a class="headerlink" href="#lineplot-axes-xaxis-yaxis-keywords-added" title="Link to this heading">#</a></h2>
 <p>The axes, xaxis, yaxis keywords were added to lineplot.  The defaults are:</p>
 <div class="line-block">
 <div class="line">axes=True - plot x and y axes</div>
@@ -658,14 +945,14 @@ Value should be one of 'solid', 'dashed', 'dashdot' or 'dotted'</p>
 </div>
 </section>
 <section id="lineplot-user-defined-time-axes">
-<h2>70. lineplot - user defined time axes<a class="headerlink" href="#lineplot-user-defined-time-axes" title="Link to this heading">¶</a></h2>
+<h2>70. lineplot - user defined time axes<a class="headerlink" href="#lineplot-user-defined-time-axes" title="Link to this heading">#</a></h2>
 <p>A bug in the specification of user time axes in lineplot caused the user time axis to be ignored.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
 </pre></div>
 </div>
 </section>
 <section id="con-user-defined-time-vs-height-pressure-axes">
-<h2>71. con - user defined time vs height / pressure axes<a class="headerlink" href="#con-user-defined-time-vs-height-pressure-axes" title="Link to this heading">¶</a></h2>
+<h2>71. con - user defined time vs height / pressure axes<a class="headerlink" href="#con-user-defined-time-vs-height-pressure-axes" title="Link to this heading">#</a></h2>
 <p>A bug in the specification of user defined time axes in  time vs height / pressure plots caused the
 user time axis to be ignored.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
@@ -673,7 +960,7 @@ user time axis to be ignored.</p>
 </div>
 </section>
 <section id="lineplot-user-specification-of-xlabel-and-xunits-not-properly-implemented">
-<h2>72. lineplot - user specification of xlabel and xunits not properly implemented<a class="headerlink" href="#lineplot-user-specification-of-xlabel-and-xunits-not-properly-implemented" title="Link to this heading">¶</a></h2>
+<h2>72. lineplot - user specification of xlabel and xunits not properly implemented<a class="headerlink" href="#lineplot-user-specification-of-xlabel-and-xunits-not-properly-implemented" title="Link to this heading">#</a></h2>
 <p>The user user specification of xlabel and xunits and ylabel and yunits was not properly implemented incorrect
 axis labels were produced.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
@@ -681,7 +968,7 @@ axis labels were produced.</p>
 </div>
 </section>
 <section id="setvars-rotated-pole-options-added">
-<h2>73. setvars - rotated pole options added<a class="headerlink" href="#setvars-rotated-pole-options-added" title="Link to this heading">¶</a></h2>
+<h2>73. setvars - rotated pole options added<a class="headerlink" href="#setvars-rotated-pole-options-added" title="Link to this heading">#</a></h2>
 <p>Some new keywords were added to setvars that affect the plotting of rotated pole grid labelling.</p>
 <div class="line-block">
 <div class="line">rotated_grid_spacing=10 - rotated grid spacing in degrees</div>
@@ -699,7 +986,7 @@ axis labels were produced.</p>
 </div>
 </section>
 <section id="training-material-added-to-cf-plot-page">
-<h2>74. Training material added to cf-plot page<a class="headerlink" href="#training-material-added-to-cf-plot-page" title="Link to this heading">¶</a></h2>
+<h2>74. Training material added to cf-plot page<a class="headerlink" href="#training-material-added-to-cf-plot-page" title="Link to this heading">#</a></h2>
 <p>The NCAS data tools training material one day course was added to the cf-plot web pages under</p>
 <p><a class="reference internal" href="training.html#training"><span class="std std-ref">training</span></a></p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
@@ -707,14 +994,14 @@ axis labels were produced.</p>
 </div>
 </section>
 <section id="rotated-pole-grid-not-drawn-in-numpy-1-13">
-<h2>75. Rotated pole grid not drawn in numpy 1.13<a class="headerlink" href="#rotated-pole-grid-not-drawn-in-numpy-1-13" title="Link to this heading">¶</a></h2>
+<h2>75. Rotated pole grid not drawn in numpy 1.13<a class="headerlink" href="#rotated-pole-grid-not-drawn-in-numpy-1-13" title="Link to this heading">#</a></h2>
 <p>The rotated pole grid was not drawn in numpy 1.13.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
 </pre></div>
 </div>
 </section>
 <section id="con-cylindrical-projection-xlabel-and-ylabel-doesn-t-use-user-defined-fontsize">
-<h2>76. con - cylindrical projection xlabel and ylabel doesn't use user defined fontsize<a class="headerlink" href="#con-cylindrical-projection-xlabel-and-ylabel-doesn-t-use-user-defined-fontsize" title="Link to this heading">¶</a></h2>
+<h2>76. con - cylindrical projection xlabel and ylabel doesn't use user defined fontsize<a class="headerlink" href="#con-cylindrical-projection-xlabel-and-ylabel-doesn-t-use-user-defined-fontsize" title="Link to this heading">#</a></h2>
 <p>The cylindrical projection contour xlabel and ylabel doesn't use user defined fontsize defined
 with cfp.setvars(axis_label_fontsize=22) for example.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
@@ -722,7 +1009,7 @@ with cfp.setvars(axis_label_fontsize=22) for example.</p>
 </div>
 </section>
 <section id="vect-vector-plots-now-respect-reduced-map-grids">
-<h2>77. vect - vector plots now respect reduced map grids<a class="headerlink" href="#vect-vector-plots-now-respect-reduced-map-grids" title="Link to this heading">¶</a></h2>
+<h2>77. vect - vector plots now respect reduced map grids<a class="headerlink" href="#vect-vector-plots-now-respect-reduced-map-grids" title="Link to this heading">#</a></h2>
 <p>When plotting vectors onto a map previous versions used a whole globe cylindrical projection.  This has now
 changed and will plot the map to match the input vectr area unless any map settings have been changed by the user.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
@@ -732,43 +1019,174 @@ changed and will plot the map to match the input vectr area unless any map setti
 </section>
 
 
-            <div class="clearer"></div>
-          </div>
-        </div>
-      </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
-<h3><a href="index.html">Homepage</a><p></h3>
-<h5><a href="gallery.html">Gallery</a><p></h5>
-<h5><a href="user_guide.html">User Guide</a><p></h5>
-<h5><a href="training.html">Training material</a><p></h5>
-<h5><a href="routines.html">Routines</a><p></h5>
-<h5><a href="internal_routines.html">Routines - internal</a><p></h5>
-<h5><a href="advanced.html">Advanced Use</a><p></h5>
-<h5><a href="versions.html">Versions</a><p></h5>
-<h5><a href="issues.html">Issues</a><p></h5>
-<h5><a href="download.html">Download/Install</a><p></h5>
-<h5><a href="license.html">License</a><p></h5>
-<h5><a href="older_documentation.html">Older documentation</a><p></h5>
-<h5><a href="search.html">Search</a><p></h5>
-        </div>
-      </div>
-      <div class="clearer"></div>
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#log-pressure-axis-labelling">1. Log pressure axis labelling</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rotated-grid-axis-labelling">2. Rotated grid axis labelling</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cscale-uniform-keyword-added">3. cscale - uniform keyword added</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mapset-new-projections-added">4. mapset - new projections added</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lineplot-axis-labelling-renamed">5. lineplot - axis labelling renamed</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cropped-area-on-map-lcc-projections">6. Cropped area on map lcc projections</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#better-determination-of-up-on-the-z-axis">7. Better determination of up on the Z axis</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#con-colors-option-for-contour-lines">9. con - colors option for contour lines</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#con-lines-true-now-the-default">10. con - lines=True now the default</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#con-colorbar-logic-correction">11. con - colorbar logic correction</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cscale-new-colour-scale-added">12. cscale - new colour scale added</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stipple-added-edgecolors-keyword">13. stipple - added edgecolors keyword</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#con-better-yaxis-labelling-for-hybrid-height-coordinates">14. con - better yaxis labelling for hybrid height coordinates</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lineplot-check-for-a-t-axis-before-accessing-it">15. lineplot - check for a 'T' axis before accessing it</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lineplot-check-xlabel-is-not-none-before-accessing-it">16. lineplot - check xlabel is not None before accessing it</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lineplot-generate-a-more-correct-set-of-yticks-if-yrange-1">17. lineplot - Generate a more correct set of yticks if yrange &lt; 1</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#con-blockfill-code-correction-for-masked-arrays">18. con - blockfill code correction for masked arrays</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mapaxis-change-labeling-in-cylindrical-projection">19. mapaxis - change labeling in cylindrical projection</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#con-hovmuller-user-axis-labeling">20. con -  Hovmuller user axis labeling</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setvars-a-master-title-for-multi-panel-plots">21. setvars -  A master title for multi-panel plots</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#con-missing-colorbar-annotation-with-ptype-1">22. con -  Missing colorbar annotation with ptype=1</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#vect-missing-longitude-height-vectors">23. vect - missing longitude-height vectors</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#con-map-colorbar-labelling-issue">24. con - map colorbar labelling issue</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#con-blockfill-incorrect-for-very-tight-contour-ranges">25. con - blockfill incorrect for very tight contour ranges</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#timeaxis-code-change">26. timeaxis - code change</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mapset-documentation-improved">27. mapset - documentation improved</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gset-ylog-true-now-feeds-through-to-contour-plots">28. gset - ylog=True now feeds through to contour plots</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lineplot-cf-field-incorrectly-plotted">29. lineplot - CF field incorrectly plotted</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#con-blockfill-rewritten">30. con - blockfill rewritten</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#con-blockfill-for-map-plots-other-than-cylindrical-projection">31. con - blockfill for map plots other than cylindrical projection</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#axes-user-defined-axes">32. axes - user defined axes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#con-ability-to-swap-axes-for-hovmuller-plots">33. con - ability to swap axes for hovmuller plots</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#con-blockfill-produces-an-error-for-bounded-data-in-hovmuller-plots">34. con - blockfill produces an error for bounded data in Hovmuller plots</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#jupyter-notebook-detection-of-inline-images">35. jupyter notebook detection of inline images</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stipple-now-works-in-y-z-and-x-z-plots">36. stipple - now works in Y-Z and X-Z plots</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#con-axis-labels-for-lcc-map-plots">37. con - axis labels for lcc map plots</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lineplot-user-defined-time-axis-fails">38. lineplot - user defined time axis fails</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#con-negative-linestyle">39. con - negative_linestyle</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cf-plot-updated-for-cf-python-2-x">40. cf-plot updated for cf-python 2.x</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#levs-check-extend-input-is-valid">41. levs - check extend input is valid</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#con-blockfill-an-user-cscale-checks">42. con - blockfill an user cscale checks</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lineplot-wrong-time-axis-annotation-plotted">43. lineplot - wrong time axis annotation plotted</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#con-blockfill-occasionally-produced-an-error-when-the-field-had-no-data-bounds">44. con - blockfill occasionally produced an error when the field had no data bounds</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#con-passing-numpy-arrays-code-change">45. con - passing numpy arrays code change</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#con-and-stipple-transparency">46. con and stipple transparency</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#con-contour-line-thickness">47. con - contour line thickness</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#vect-vector-colours">48. vect - vector colours</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dpi-setting-for-png-file-output">49. DPI setting for PNG file output</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#vect-vector-annotation-fontsize">50. vect - vector annotation fontsize</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gset-docstring-documentation-gave-incorrect-date-string-order">51. gset docstring documentation gave incorrect date string order</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gvals-modification">52. gvals modification</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#levs-allow-only-step-to-generate-contour-levels">53. levs - allow only step to generate contour levels</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#con-blockfill-transparency">54. con - blockfill transparency</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#independent-user-positioning-of-plot-figures-on-a-page">55. Independent user positioning of plot figures on a page</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#con-vertical-colorbars-don-t-pick-up-user-set-font-size">56. con - vertical colorbars don't pick up user set font size</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#con-addcyclic-change-in-basemap">57. con - addcyclic change in Basemap</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#con-better-data-limits-when-making-a-reduced-map-plot">58. con - better data limits when making a reduced map plot</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#con-merge-all-colorbar-calls-into-one-routine">60. con - merge all colorbar calls into one routine</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#con-colorbar-changes">61. con - colorbar changes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#con-longitude-wrapping-bug-in-basemap">62. con - longitude wrapping bug in basemap</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#introduced-a-cfplot-defaults-file">63. Introduced a ~/.cfplot_defaults file</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setvars-introduced-land-and-ocean-colours">64. setvars - introduced land and ocean colours</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#con-polar-stereographic-changing-axis-label-fontsize">65. con - polar stereographic changing axis label fontsize</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lineplot-twinx-or-twiny-axes">66. lineplot - twinx or twiny axes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#vect-polar-vectors-on-original-grid">67. vect - polar vectors on original grid</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#con-linestyles-keyword-added">68. con - linestyles keyword added</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lineplot-axes-xaxis-yaxis-keywords-added">69. lineplot - axes, xaxis, yaxis keywords added</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lineplot-user-defined-time-axes">70. lineplot - user defined time axes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#con-user-defined-time-vs-height-pressure-axes">71. con - user defined time vs height / pressure axes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lineplot-user-specification-of-xlabel-and-xunits-not-properly-implemented">72. lineplot - user specification of xlabel and xunits not properly implemented</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setvars-rotated-pole-options-added">73. setvars - rotated pole options added</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#training-material-added-to-cf-plot-page">74. Training material added to cf-plot page</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rotated-pole-grid-not-drawn-in-numpy-1-13">75. Rotated pole grid not drawn in numpy 1.13</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#con-cylindrical-projection-xlabel-and-ylabel-doesn-t-use-user-defined-fontsize">76. con - cylindrical projection xlabel and ylabel doesn't use user defined fontsize</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#vect-vector-plots-now-respect-reduced-map-grids">77. vect - vector plots now respect reduced map grids</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="_sources/version_2.1.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
     </div>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
-             >index</a></li>
-        <li class="nav-item nav-item-0"><a href="index.html">cf-plot 3.3.0 documentation</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">version 2.1 changes</a></li> 
-      </ul>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Sadie Bartholomew.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.0.2.
+    <br/>
+  </p>
+</div>
+      
     </div>
-    <div class="footer" role="contentinfo">
-    &#169; Copyright 2024, Sadie Bartholomew.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.4.
+</p></div>
+      
     </div>
+  
+</div>
+
+  </footer>
   </body>
 </html>

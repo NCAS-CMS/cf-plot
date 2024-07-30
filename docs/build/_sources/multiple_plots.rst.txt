@@ -12,7 +12,7 @@ Plots are arranged over rows and columns with the first plot at the top left and
 
 
 .. image::  images/fig19.png
-   :scale: 44% 
+   :scale: 44%
 
 ::
 
@@ -48,7 +48,7 @@ Cylidrical projection plots have an additional rider of having a degree in longi
 this type might not fill the plot area specified as expected.
 
 .. image::  images/fig19a.png
-   :scale: 44% 
+   :scale: 44%
 
 ::
 
@@ -73,12 +73,12 @@ Example 19b - user specified plot position to accomodate more than one color bar
 --------------------------------------------------------------------------------
 
 The plot position on the page is set manually with the user_position=True parameter to cfp.gopen
-and then passing the required plot size to cfp.gpos.  Two calls to the cfp.cbar routine 
+and then passing the required plot size to cfp.gpos.  Two calls to the cfp.cbar routine
 place colour bars on the plot.
 
 
 .. image::  images/fig19b.png
-   :scale: 44% 
+   :scale: 44%
 
 ::
 
@@ -104,9 +104,3 @@ place colour bars on the plot.
     cfp.cbar(levs=levs, position=[0.03, 0.2, 0.04, 0.6], orientation='vertical', title='topo_15lev')
 
     cfp.gclose()
-
-
-
-
-
-

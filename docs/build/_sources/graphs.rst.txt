@@ -9,7 +9,7 @@ Example 27 - graph plot
 -----------------------
 
 .. image::  images/fig27.png
-   :scale: 44% 
+   :scale: 44%
 
 ::
 
@@ -43,7 +43,7 @@ Other valid markers are:
 |    '+' 	plus
 |    'x' 	x
 |    'D' 	diamond
-|    'd' 	thin_diamond 
+|    'd' 	thin_diamond
 
 
 
@@ -51,7 +51,7 @@ Example 28 - Line and legend plot
 ---------------------------------
 
 .. image::  images/fig28.png
-   :scale: 44% 
+   :scale: 44%
 
 ::
 
@@ -79,9 +79,9 @@ Example 28 - Line and legend plot
 
 | When making a multiple line plot:
 | a) Set the axis limits if required with cfp.gset before plotting the lines.  Using cfp.gset after the last line has been plotted may give unexpected axis limits and / or labelling.  This is a feature of Matplotlib.
-| b) The last call to lineplot is the one that any of the above 
+| b) The last call to lineplot is the one that any of the above
 |    axis overrides should be placed in.
-| c) All calls to lineplot with the label attribute will appear in the legend.   
+| c) All calls to lineplot with the label attribute will appear in the legend.
 
 The cfp.plotvars.plot object contains the Matplotlib plot and will accept normal Matplotlib plotting commands.  As an example of this the following code within a cfp.gopen() cfp.gclose() construct will make a legend that is independent of any previously made lines and attached labels.
 
@@ -109,7 +109,7 @@ Valid locations for the legend_location keyword are:
 |	'upper center'
 |	'lower center'
 
-When making a call to lineplot the following parameters overide any predefined CF defaults: 
+When making a call to lineplot the following parameters overide any predefined CF defaults:
 
 | title=None - plot title
 | xunits=None - x units
@@ -127,7 +127,7 @@ Example 29 - Global average annual temperature
 ----------------------------------------------
 
 .. image::  images/fig29.png
-   :scale: 44% 
+   :scale: 44%
 
 In this example we subset a time data series of global temperature, area mean the data, convert to Celsius and plot a linegraph.
 
@@ -154,9 +154,9 @@ Example 30 - Two axis plotting
 ------------------------------
 
 .. image::  images/fig30.png
-   :scale: 44% 
+   :scale: 44%
 
-In this example we plot two x-axes, one with zonal mean zonal wind data and one with temperature data.  Somewhat confusingly 
+In this example we plot two x-axes, one with zonal mean zonal wind data and one with temperature data.  Somewhat confusingly
 the option for a twin x-axis is twiny=True.  This is a Matplotlib keyword which has been adopted within the cf-plot code.
 
 
@@ -185,11 +185,3 @@ the option for a twin x-axis is twiny=True.  This is a Matplotlib keyword which 
     cfp.lineplot(t2, color='b')
 
     cfp.gclose()
-
-
-
-
-
-
-
-

@@ -53,13 +53,13 @@ The second line is optional and installs esmpy, together with the netcdf-fortran
 
 Windows
 #######
-We have a small development team and Linux is our main working environment. Windows isn't an option for us at present given our target user base.  
+We have a small development team and Linux is our main working environment. Windows isn't an option for us at present given our target user base.
 
 If you have a Windows operating system there are a couple of options for running Linux:
 
 1) Install the Microsoft Windows Subsystem for Linux (WSL).  Once this is working install cf-python and cf-plot as per the Linux instructions above.
 
-2) Installing a Linux Virtual Machine is simple and works well.  Installation instructions and a Mint Linux Virtual Machine are available at http://gws-access.ceda.ac.uk/public/ncas_climate/ajh/data_analysis_tools/VM.  
+2) Installing a Linux Virtual Machine is simple and works well.  Installation instructions and a Mint Linux Virtual Machine are available at http://gws-access.ceda.ac.uk/public/ncas_climate/ajh/data_analysis_tools/VM.
 
 
 
@@ -101,14 +101,12 @@ These are available in the cfplot_data directory which can be linked using:
 If you are on a different server then download the `sample netCDF datasets <http://gws-access.ceda.ac.uk/public/ncas_climate/ajh/data_analysis_tools/cfplot_data.tar>`_
 
 
- 
-|
-|
-|
-|
-|
-|
-|
-| 
 
-
+|
+|
+|
+|
+|
+|
+|
+|

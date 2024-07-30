@@ -9,7 +9,7 @@ Example 1 - basic cylindrical projection
 ----------------------------------------
 
 .. image::  images/fig1.png
-   :scale: 52% 
+   :scale: 52%
 
 ::
 
@@ -19,15 +19,15 @@ Example 1 - basic cylindrical projection
    cfp.con(f.subspace(time=15))
 
 
-| 
-| 
+|
+|
 
 
 Example 2 - cylindrical projection with blockfill
 -------------------------------------------------
 
 .. image::  images/fig2.png
-   :scale: 52% 
+   :scale: 52%
 
 ::
 
@@ -38,8 +38,8 @@ Example 2 - cylindrical projection with blockfill
 
 
 
-| 
-| 
+|
+|
 
 
 
@@ -47,7 +47,7 @@ Example 3 - altering the map limits and contour levels
 ------------------------------------------------------
 
 .. image::  images/fig3.png
-   :scale: 52% 
+   :scale: 52%
 
 
 ::
@@ -58,7 +58,3 @@ Example 3 - altering the map limits and contour levels
    cfp.mapset(lonmin=-15, lonmax=3, latmin=48, latmax=60)
    cfp.levs(min=265, max=285, step=1)
    cfp.con(f.subspace(time=15))
-
-
-
-

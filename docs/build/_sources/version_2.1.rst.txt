@@ -33,14 +33,14 @@ Missing longitude and latitude labels were added to rotated pole plots.
 3. cscale - uniform keyword added
 =================================
 
-When a divergent colour scheme is used such as in example 4 in the gallery the default colour scale is stretched 
-so that blues are below zero and reds above zero.  When the number of colours above and below differ quite markedly 
+When a divergent colour scheme is used such as in example 4 in the gallery the default colour scale is stretched
+so that blues are below zero and reds above zero.  When the number of colours above and below differ quite markedly
 this can give undue emphasis to data by having too strong colours in the above or below zero scale.  A new keyword was
-introduced, uniform=True (or False), to address this issue.  The default is now uniform=True for divergent data 
+introduced, uniform=True (or False), to address this issue.  The default is now uniform=True for divergent data
 contour plots where no user colour scale has been defined:
 
 .. image::  images/scale1_new.png
-   :scale: 52% 
+   :scale: 52%
 
 Use:
 
@@ -62,7 +62,7 @@ to revert to the previous behaviour.
 4. mapset - new projections added
 =================================
 
-Added Mercator, Lambert Conformal, Orthographic and Robinson projections.  See the Basemap documentation 
+Added Mercator, Lambert Conformal, Orthographic and Robinson projections.  See the Basemap documentation
 at http://matplotlib.org/basemap/users/mapsetup.html for calling parameters.
 
  ::
@@ -94,7 +94,7 @@ Lambert conformal projections can now be cropped as in the following code:
 
 
 .. image::  images/cm.png
-   :scale: 52% 
+   :scale: 52%
 
 .. comment break to prevent indent below stopping image from rendering
 
@@ -119,7 +119,7 @@ The CF metadata attribute of postitive for the Z coordinate is now used in the c
 9. con - colors option for contour lines
 ========================================
 
-con - added colors keyword for the contour lines.  This keyword takes a single colour or a list 
+con - added colors keyword for the contour lines.  This keyword takes a single colour or a list
 of colours.  The default is 'k' or black'
 
  ::
@@ -130,8 +130,8 @@ of colours.  The default is 'k' or black'
 10. con - lines=True now the default
 ====================================
 
-Within con the lines=True parameter is now the default.  This change was made due to the complex and 
-somewhat obscure logic in the blockfill section of code.  The change will affect blockfill plots 
+Within con the lines=True parameter is now the default.  This change was made due to the complex and
+somewhat obscure logic in the blockfill section of code.  The change will affect blockfill plots
 which were previously drawn with no lines using blockfill=True.  The syntax for blockfill with no lines
 is now blockfill=True, lines=False.
 
@@ -160,7 +160,7 @@ A new colour scale was added - brown to blue - BrBG.
 
 
 .. image::  images/colour_scales/BrBG.png
-   :scale: 52% 
+   :scale: 52%
 
 .. comment break to prevent indent below stopping image from rendering
 
@@ -197,7 +197,7 @@ Better yaxis labelling for hybrid height coordinates.
 15. lineplot - check for a 'T' axis before accessing it
 =======================================================
 
-Check if a cf-field has a 'T' axis before trying to access it. 
+Check if a cf-field has a 'T' axis before trying to access it.
 
 
  ::
@@ -208,7 +208,7 @@ Check if a cf-field has a 'T' axis before trying to access it.
 16. lineplot - check xlabel is not None before accessing it
 ===========================================================
 
-Check if xlabel is not None before trying to access it. 
+Check if xlabel is not None before trying to access it.
 
 
  ::
@@ -220,7 +220,7 @@ Check if xlabel is not None before trying to access it.
 17. lineplot - Generate a more correct set of yticks if yrange < 1
 ==================================================================
 
-Generate a more correct set of yticks if yrange < 1. 
+Generate a more correct set of yticks if yrange < 1.
 
 
  ::
@@ -326,7 +326,7 @@ cbar.set_ticklabels([str(i) for i in colorbar_labels])
 25. con - blockfill incorrect for very tight contour ranges
 ===========================================================
 
-When the data range is very small the blockfill contour scheme miscalculated the upper bound for 
+When the data range is very small the blockfill contour scheme miscalculated the upper bound for
 the data.
 
 
@@ -383,7 +383,7 @@ When plotting a CF field with a Z axis the data wasn't correctly plotted
 30. con - blockfill rewritten
 =============================
 
-Blockfill plots in the con routine were rewitten to use PolyCollection from matplotlib.collections rather than 
+Blockfill plots in the con routine were rewitten to use PolyCollection from matplotlib.collections rather than
 pcolormesh.  The new method allows better control of the various colorbar extension behaviour and data masking.
 It is slower for larger grids than pcolormesh but more accurate.
 
@@ -396,7 +396,7 @@ It is slower for larger grids than pcolormesh but more accurate.
 31. con - blockfill for map plots other than cylindrical projection
 ===================================================================
 
-Blockfill for map plots other than the cylindrical projection was implemented. Trim the data to the required 
+Blockfill for map plots other than the cylindrical projection was implemented. Trim the data to the required
 map limits to avoid them being plotted.
 
 
@@ -405,7 +405,7 @@ map limits to avoid them being plotted.
     Done
 
 
-32. axes - user defined axes 
+32. axes - user defined axes
 ============================
 
 Axes defined with the axes command should feed through to con, vect and lineplot.  The priority order of axis
@@ -423,7 +423,7 @@ labeling in order of preference is:
 33. con - ability to swap axes for hovmuller plots
 ==================================================
 
-In Hovmuller plots sometimes the axes are show as time vs longitude or latitude.  The swap_axes keyword 
+In Hovmuller plots sometimes the axes are show as time vs longitude or latitude.  The swap_axes keyword
 was added to con to facilitate this.
 
 
@@ -433,7 +433,7 @@ was added to con to facilitate this.
 
 
 34. con - blockfill produces an error for bounded data in Hovmuller plots
-========================================================================= 
+=========================================================================
 
 The data bounds passed for Hovmuller blockfill plots were incorrect.
 
@@ -461,7 +461,7 @@ The cfp.setvars(viewer=None) is no longer required in the jupyter notebook sessi
 36. stipple - now works in Y-Z and X-Z plots
 ============================================
 
-Stippling now works in Y-Z and X-Z plots.  
+Stippling now works in Y-Z and X-Z plots.
 
 ::
 
@@ -546,7 +546,7 @@ a set number of colours this matches the number of levels that are being contour
 43. lineplot - wrong time axis annotation plotted
 =================================================
 
-In lineplot an incorrect generic time axis annotation wass plotted.  This was corrected to time, time(years), 
+In lineplot an incorrect generic time axis annotation wass plotted.  This was corrected to time, time(years),
 time(months) etc.
 
 
@@ -582,7 +582,7 @@ are generated internally on a basis of 0 to number of axis points -1.
 46. con and stipple transparency
 ================================
 
-con and stipple now have an alpha keyword indicating the tranparency for the plot.  The default is set to 
+con and stipple now have an alpha keyword indicating the tranparency for the plot.  The default is set to
 1 giving no transparency.
 
 ::
@@ -592,7 +592,7 @@ con and stipple now have an alpha keyword indicating the tranparency for the plo
 47. con - contour line thickness
 ================================
 
-Contour line thickness can now be set using the linewidths parameter to con.  One value gives the same 
+Contour line thickness can now be set using the linewidths parameter to con.  One value gives the same
 thickness for all lines.  Multiple values are also accepted.
 
 ::
@@ -620,20 +620,20 @@ A dpi setting for setvars and gopen now allows the dots per inch to be set for P
 50. vect - vector annotation fontsize
 =====================================
 
-Vector annotation now uses the internal plotvars.axis_label_fontsize variable for the 
-text size.  This is set in the setvars routine.  This allows multiple vector plots on a page to 
+Vector annotation now uses the internal plotvars.axis_label_fontsize variable for the
+text size.  This is set in the setvars routine.  This allows multiple vector plots on a page to
 be scaled correctly in terms of their text size.
 
 ::
 
     Done
- 
+
 
 
 51. gset docstring documentation gave incorrect date string order
 =================================================================
 
-The gset docstring documentation gave incorrect date string order and this has now been 
+The gset docstring documentation gave incorrect date string order and this has now been
 corrected.
 
 
@@ -646,7 +646,7 @@ corrected.
 52. gvals modification
 ======================
 
-The gvals code which generates sensible values for labelling contours and axes was changed 
+The gvals code which generates sensible values for labelling contours and axes was changed
 to produce reasonable levels between -1.0 and 0.1.
 
 ::
@@ -658,7 +658,7 @@ to produce reasonable levels between -1.0 and 0.1.
 53. levs - allow only step to generate contour levels
 =====================================================
 
-Code was added to the levs and con routines to allow step to generate the levels for the contour field without having to 
+Code was added to the levs and con routines to allow step to generate the levels for the contour field without having to
 specify the min and max for the levels genration.
 
 
@@ -671,7 +671,7 @@ specify the min and max for the levels genration.
 54. con - blockfill transparency
 ================================
 
-Added alpha transparency to the blockfill contour routine.  To call this add the blockfill=True and 
+Added alpha transparency to the blockfill contour routine.  To call this add the blockfill=True and
 alpha=alpha keywords to the cfp.con command.
 
 ::
@@ -730,7 +730,7 @@ This was reported to the Basemap authors and a fix put into cf-plot so that all 
 When passing reduced data for a map contour plot only the longitude range was checked.  This has been
 corrected so that the latitude range is also checked.
 
- 
+
 ::
 
     Fixed
@@ -757,10 +757,10 @@ routine.  This makes it eaier to maintain the code base.
 
 Added new functionality to the colorbar in con:
 
-| colorbar_text_up_down=False - on a horizontal colorbar alternate the 
-|                               labels top and bottom starting in the up position 
-| colorbar_text_down_up=False - on a horizontal colorbar alternate the 
-|                               labels bottom and top starting in the bottom position 
+| colorbar_text_up_down=False - on a horizontal colorbar alternate the
+|                               labels top and bottom starting in the up position
+| colorbar_text_down_up=False - on a horizontal colorbar alternate the
+|                               labels bottom and top starting in the bottom position
 | colorbar_drawedges=True - draw internal delimeter lines in the colorbar
 
 
@@ -786,7 +786,7 @@ data.
 63. Introduced a ~/.cfplot_defaults file
 ========================================
 
-A ~/.cfplot_defaults default overide file in the user home directory may contain three 
+A ~/.cfplot_defaults default overide file in the user home directory may contain three
 values initially. Please contact me if you would like any more defaults changed in this manner.
 
 | blockfill True
@@ -794,7 +794,7 @@ values initially. Please contact me if you would like any more defaults changed 
 | lines False
 
 This changes the default cfplot con options from contour fill with contour lines
-on top to blockfill with no contour lines on top.  The blockfill, fill and line 
+on top to blockfill with no contour lines on top.  The blockfill, fill and line
 options to the con routine override any of these preset values.  The delimter beween the
 option and the value must be a space.
 
@@ -824,7 +824,7 @@ colour.
 ==========================================================
 
 It wasn't possible to change the polar stereographic longitude label fontsize or fontweight.
-This is now done using the setvars routine and changing the axis_label_fontsize and 
+This is now done using the setvars routine and changing the axis_label_fontsize and
 axis_label_fontweight values.
 
 
@@ -837,7 +837,7 @@ axis_label_fontweight values.
 66. lineplot - twinx or twiny axes
 ===================================
 
-It is now possible to do twinx or twiny plots in lineplot.  See example 30 in 
+It is now possible to do twinx or twiny plots in lineplot.  See example 30 in
 :ref:`graphs<graphs>`
 
 ::
@@ -848,7 +848,7 @@ It is now possible to do twinx or twiny plots in lineplot.  See example 30 in
 67. vect - polar vectors on original grid
 =========================================
 
-It is now possible to plot polar vectors on the original grid as in example 15 in 
+It is now possible to plot polar vectors on the original grid as in example 15 in
 :ref:`vector<vector>`
 
 ::
@@ -859,7 +859,7 @@ It is now possible to plot polar vectors on the original grid as in example 15 i
 68. con - linestyles keyword added
 ==================================
 
-The linestyles keyword was added to the con routine to allow user selection of linestyle. 
+The linestyles keyword was added to the con routine to allow user selection of linestyle.
 Value should be one of 'solid', 'dashed', 'dashdot' or 'dotted'
 
 
@@ -899,7 +899,7 @@ A bug in the specification of user time axes in lineplot caused the user time ax
 71. con - user defined time vs height / pressure axes
 =====================================================
 
-A bug in the specification of user defined time axes in  time vs height / pressure plots caused the 
+A bug in the specification of user defined time axes in  time vs height / pressure plots caused the
 user time axis to be ignored.
 
 
@@ -913,7 +913,7 @@ user time axis to be ignored.
 ===============================================================================
 
 The user user specification of xlabel and xunits and ylabel and yunits was not properly implemented incorrect
-axis labels were produced. 
+axis labels were produced.
 
 
 ::
@@ -925,7 +925,7 @@ axis labels were produced.
 ========================================
 
 Some new keywords were added to setvars that affect the plotting of rotated pole grid labelling.
-  
+
 | rotated_grid_spacing=10 - rotated grid spacing in degrees
 | rotated_deg_spacing=0.75 - rotated grid spacing between graticule dots
 | rotated_continents=True - draw rotated continents
@@ -969,7 +969,7 @@ The rotated pole grid was not drawn in numpy 1.13.
 76. con - cylindrical projection xlabel and ylabel doesn't use user defined fontsize
 ====================================================================================
 
-The cylindrical projection contour xlabel and ylabel doesn't use user defined fontsize defined 
+The cylindrical projection contour xlabel and ylabel doesn't use user defined fontsize defined
 with cfp.setvars(axis_label_fontsize=22) for example.
 
 ::
@@ -988,7 +988,3 @@ changed and will plot the map to match the input vectr area unless any map setti
 ::
 
     Fixed
-
-
-
-

@@ -13,9 +13,9 @@ This is a rolling bug/feature fix version.
 
 The colorbar can sometimes be mislabelled when using unusual manual labels.
 
-cfp.levs(manual=[-1, 1, 10000, 20000, 30000, 40000, 50000, 60000]) 
+cfp.levs(manual=[-1, 1, 10000, 20000, 30000, 40000, 50000, 60000])
 will give the correct contour lines and labels but incorrect colorbar labels.  The color bar labels will
-be 0, 2, 10001, 20001, 30001, 40001, 50001, 60001 and a +1 will appear next to the color bar label. 
+be 0, 2, 10001, 20001, 30001, 40001, 50001, 60001 and a +1 will appear next to the color bar label.
 
 It looks like this is an intentional behaviour of the code for colorbar and is correct but not what is required. The cf-plot code was changed to substitute the correct colorbar labels for the ones that colorbar thinks it should use.
 
@@ -59,7 +59,7 @@ The default cylindirical projection limits of -180 to 180 in longitude and -90 t
 5. Automatic colour scales bug
 ==============================
 
-Automatic colour scales are broken.  Remove call to cscale() in gpos. 
+Automatic colour scales are broken.  Remove call to cscale() in gpos.
 
  ::
 
@@ -70,7 +70,7 @@ Automatic colour scales are broken.  Remove call to cscale() in gpos.
 6. Colorbar labels overwrite each other
 =======================================
 
-Colour bar labels overwite each other when large number of contour levels are used or when more plot columns are used.   Include code to take account of these based on the total number of characters in the contour labels and the number of 
+Colour bar labels overwite each other when large number of contour levels are used or when more plot columns are used.   Include code to take account of these based on the total number of characters in the contour labels and the number of
 columns.  If the user hasn't supplied a value for colorbar_label_skip to the con routine then the calculated value is
 used.  The labels used will start at the lowest for a continuous data set and from zero for a diverging one.
 
@@ -178,14 +178,9 @@ Options are:
 14. Reduced longitude grid not plotted correctly
 ================================================
 
-A reduced longitude grid isn't plotted correctly due to a bug in 
+A reduced longitude grid isn't plotted correctly due to a bug in
 the calculation of the lonrange variable.
 
  ::
 
    Fixed
-
-
-
-
-

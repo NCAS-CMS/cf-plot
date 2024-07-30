@@ -10,7 +10,7 @@ Example 21 - rotated pole data plot
 
 
 .. image::  images/fig21.png
-   :scale: 52% 
+   :scale: 52%
 
 ::
 
@@ -21,8 +21,8 @@ Example 21 - rotated pole data plot
    cfp.con(f)
 
 
-| 
-| 
+|
+|
 
 
 Example 22 - rotated pole data on the native grid
@@ -40,7 +40,7 @@ This plot shows some rotated pole data on the native grid. Notice the way that t
    f=cf.read('cfplot_data/rgp.nc')[0]
    cfp.cscale('plasma')
    cfp.mapset(proj='rotated')
-   cfp.con(f)        
+   cfp.con(f)
 
 
 
@@ -55,18 +55,18 @@ In this plot a cylindrical projection plot of rotated pole data is overlayed wit
 |   a) eastward wind and westward wind are relative to longitude and latitude axes
 |   b) x-wind and y-wind are relative to the rotated pole axes
 
-Here we have eastward and westward wind so these can be plotted as normal over a cylindrical projection.  For 
+Here we have eastward and westward wind so these can be plotted as normal over a cylindrical projection.  For
 the case of data in case b) above, the x-wind and y-wind will need to be appropriately rotated onto a cylindrical grid.
 
 .. image::  images/fig23.png
-   :scale: 52% 
+   :scale: 52%
 
 
 ::
 
     import cf
     import cfplot as cfp
-   
+
     f=cf.read('cfplot_data/20160601-05T0000Z_INCOMPASS_km4p4_uv_RH_500.nc')
     cfp.mapset(50, 100, 5, 35)
     cfp.levs(0, 90, 15, extend='neither')
@@ -77,15 +77,5 @@ the case of data in case b) above, the x-wind and y-wind will need to be appropr
     cfp.gclose()
 
 
-| 
-| 
-
-
-
-
-
-
-
-
-
-
+|
+|

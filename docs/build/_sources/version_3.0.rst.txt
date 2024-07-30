@@ -10,7 +10,7 @@ Change code to use Python 3 and cf-python 3.
 0. Change code to use Python 3 and cf-python 3
 ==============================================
 
-cf-plot code was changed to use Python 3 and cf-python 3.  Support for Python 2.7 and cf-python2.x was dropped. 
+cf-plot code was changed to use Python 3 and cf-python 3.  Support for Python 2.7 and cf-python2.x was dropped.
 
 
 ::
@@ -63,7 +63,7 @@ A missing initial definition of ncvar in the cf_var_name routine was fixed.
 The grid_lons and grid_lats options used in cfp.setvars have been removed.  The grid drawing options for
 UKCP grids are now controlled by xticks, yticks and xaxis, yaxis as in other plots.
 
-The polar stereographic grid now takes the line colour, line width and line style from grid_colour, grid_linestyle and grid_thickness 
+The polar stereographic grid now takes the line colour, line width and line style from grid_colour, grid_linestyle and grid_thickness
 that are set in cfp.setvars.
 
 ::
@@ -87,7 +87,7 @@ A bug in the blockfill code logic meant that some data couldn't be plotted in bl
 6. con - automatic levels sometimes have too many decimal places
 ================================================================
 
-The automatic contour level generation in con sometimes has too many decimal places.  
+The automatic contour level generation in con sometimes has too many decimal places.
 
 
 ::
@@ -111,8 +111,8 @@ Missing dependencies for cf-python, scipy and cartopy were added to setup.py
 8. Plot viewing with the Matplotlib interface
 =============================================
 
-Matplotlib can now be configured to allow non-blocking of the command prompt when a plot is 
-active.  The cf-plot code has been changed allow the default plot viewer to be the Matplotlib 
+Matplotlib can now be configured to allow non-blocking of the command prompt when a plot is
+active.  The cf-plot code has been changed allow the default plot viewer to be the Matplotlib
 interface.  Users can still use the previous Imagemagick display command by typing
 
 cfp.setvars(viewer='matplotlib')
@@ -131,12 +131,12 @@ viewer matplotlib
 9. mapset - aspect ratio in cylindrical projection plots
 ========================================================
 
-The default setting for cylindrical plots is for one degree of longitude to be the same size 
+The default setting for cylindrical plots is for one degree of longitude to be the same size
 as one degree of latitude.  This can now be changed with the aspect option to mapset:
 
 |    aspect = 'equal' - the default, 1 degree longitude is the same size as one degree of latitude
 |    aspect = 'auto'  - map fills the plot area
-|    aspect = number  - a circle will be stretched such that the height is number times the width. 
+|    aspect = number  - a circle will be stretched such that the height is number times the width.
 |                       aspect = 1 is the same as aspect='equal'.
 
 
@@ -162,7 +162,7 @@ An issue with a short time axis on a Hovmuller plot was found and fixed.
 11. con - multiple plot spacing incorrect
 =========================================
 
-Fixed a variety of issues when using cfp.con and mutiple plots using the rows and columns 
+Fixed a variety of issues when using cfp.con and mutiple plots using the rows and columns
 spacing options to cfp.gopen.
 
 
@@ -176,8 +176,8 @@ spacing options to cfp.gopen.
 ===========================================
 
 When adding an extra cyclic point in longitude and the data the cartopy_util.add_cyclic_point
-routine sometimes fails when the data isn't quite regularly spaced.  Generally this happends 
-when the numpy value for the data has a lot of decimal points.  A numeric fix for this 
+routine sometimes fails when the data isn't quite regularly spaced.  Generally this happends
+when the numpy value for the data has a lot of decimal points.  A numeric fix for this
 incorrect spacing was put in place.
 
 
@@ -195,7 +195,7 @@ labels.  A new internal routine called cfp.fix_floats addresses these issues.  F
 from 0 to 5 in steps of 0.1 sometimes produced an axis of
 0, 0.1, 0.2, 0.3, 0.3999999999999999, 0.5
 which produced a badly fored axis.
- 
+
 
 ::
 
@@ -207,7 +207,7 @@ which produced a badly fored axis.
 ==================================================================================
 
 When plotting a blockfill contour plot of data with a time mean the plot can sometimes produce unexpected results.
-For example the following data has monthly data points but bounds of ten years for each point.  
+For example the following data has monthly data points but bounds of ten years for each point.
 
 
 |   **f.coord('T').dtarray**
@@ -244,7 +244,7 @@ The new time data bounds are now monthly which is what is expected:
 
 ::
     Information added to user guide
-    
+
 
 
 15. con, vect and lineplot - input data checking
@@ -384,8 +384,8 @@ CF fields that are passed for plotting are changed to 0 or 1 values.
 25. cfp.lineplot - default line colours now taken from Matplotlib
 =================================================================
 
-The default cfp.lineplot colours are taken from Matplotlib unless specified by the user with 
-the color keyword.  The previous default was for black which made lineplots more difficult to 
+The default cfp.lineplot colours are taken from Matplotlib unless specified by the user with
+the color keyword.  The previous default was for black which made lineplots more difficult to
 interpret.
 
 
@@ -408,11 +408,11 @@ Streamplots are now available in cf-plot.  Examples are in the user guide under 
 | v=None - v wind
 | x=None - x locations of u and v
 | y=None - y locations of u and v
-| density=None - controls the closeness of streamlines. When density = 1, 
+| density=None - controls the closeness of streamlines. When density = 1,
 |                the domain is divided into a 30x30 grid
-| linewidth=None - the width of the stream lines. With a 2D array the line width 
+| linewidth=None - the width of the stream lines. With a 2D array the line width
 |                  can be varied across the grid. The array must have the same shape as u and v
-| color=None - the streamline color 
+| color=None - the streamline color
 | arrowsize=None - scaling factor for the arrow size
 | arrowstyle=None - arrow style specification
 | minlength=None - minimum length of streamline in axes coordinates
@@ -439,7 +439,7 @@ inbetween plots and also generated a step of a float of 20.0 rather than the int
 28. Code change to adhere to PEP8
 =================================
 
-The cf-plot code base was changed to adhere to PEP8 with a 100 column line length.  
+The cf-plot code base was changed to adhere to PEP8 with a 100 column line length.
 
 
 ::
@@ -497,7 +497,7 @@ the setvars command:  **cfp.setvars(tight=True)**
 33. lineplot - passing two CF fields for plotting doesn't plot the second line
 ==============================================================================
 
-Passing two CF fields for plotting to lineplot only plotted the first line.  This was intentional behaviour and now doing this causes an 
+Passing two CF fields for plotting to lineplot only plotted the first line.  This was intentional behaviour and now doing this causes an
 error.  The way to plot two lines is to open a graphics plot with cfp.gopen(), make two separate calls to cfp.lineplot and then close the graphics plot with cfp.gclose().  This is consistent with making multiple contour plots or a contour plot with overlaid vectors or stipples.
 
 ::
@@ -519,7 +519,7 @@ When using lineplot with a constant value graph the automatic y-axis limits were
 35. traj - spurious data points plotted
 =======================================
 
-When using masked trajectory data and the latest version of numpy spurious data points were sometimes plotted.  
+When using masked trajectory data and the latest version of numpy spurious data points were sometimes plotted.
 
 
 ::
@@ -531,8 +531,8 @@ When using masked trajectory data and the latest version of numpy spurious data 
 36. con and setvars - changing contour level selection from linear to log, loglike or outlier
 =============================================================================================
 
-A new routine **cfp.calculate_levels** has been added to the cf-plot code to allow different 
-schemes for contour level selection.  The default in cf-plot is that when the user hasn't made a 
+A new routine **cfp.calculate_levels** has been added to the cf-plot code to allow different
+schemes for contour level selection.  The default in cf-plot is that when the user hasn't made a
 specific level selection the contour levels will be spaced linearly between the minimum and maximum
 of the input data.
 
@@ -580,20 +580,9 @@ The default behaviour of Matplotlib has changed such that if the data is all the
 39. con - 2D data fails to plot in polar stereographic projection
 =================================================================
 
-Data associated with 2D longitude and 2D latitude arrays fails to plot in the polar stereographic projection. 
+Data associated with 2D longitude and 2D latitude arrays fails to plot in the polar stereographic projection.
 
 
 ::
 
     Fixed
-
-
-
-
-
-
-
-
-
-
-

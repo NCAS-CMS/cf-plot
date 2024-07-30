@@ -8,7 +8,7 @@ Training material
 We run one day courses on cf-python / cf-plot using the following training material.
 
 
-`https://github.com/NCAS-CMS/cf-training <https://github.com/NCAS-CMS/cf-training>`_ - 
+`https://github.com/NCAS-CMS/cf-training <https://github.com/NCAS-CMS/cf-training>`_ -
 
 
 
@@ -25,6 +25,4 @@ We run one day courses on cf-python / cf-plot using the following training mater
 |
 |
 |
-| 
-
-
+|

@@ -10,7 +10,7 @@ Example 17 - stipple plot
 -------------------------
 
 .. image::  images/fig17.png
-   :scale: 44% 
+   :scale: 44%
 
 ::
 
@@ -26,12 +26,12 @@ Example 17 - stipple plot
    cfp.gclose()
 
 
-| 
+|
 |
 |
 
-Stipple plots are usually used to display significance.  The above is a test plot 
-with a temperature field stippled between two different limits.  A contour field 
+Stipple plots are usually used to display significance.  The above is a test plot
+with a temperature field stippled between two different limits.  A contour field
 is displayed underneath to show that the stippling is in the correct regions.
 
 
@@ -40,7 +40,7 @@ Example 18 - polar stipple plot
 -------------------------------
 
 .. image::  images/fig18.png
-   :scale: 44% 
+   :scale: 44%
 
 ::
 
@@ -54,4 +54,3 @@ Example 18 - polar stipple plot
    cfp.con(g)
    cfp.stipple(f=g, min=265, max=295, size=100, color='#00ff00')
    cfp.gclose()
-

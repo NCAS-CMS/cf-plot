@@ -57,7 +57,7 @@ In the bfill routine levs=clevs.astype(float) was changed to levs=np.array(clevs
  ::
 
     Fixed
-   
+
 
 7. No change
 ============
@@ -124,11 +124,11 @@ Make viridis the default sequential colour scale.
 
 
 
-13. con update - allow default expansion of colour scales to fit the contour levels 
+13. con update - allow default expansion of colour scales to fit the contour levels
 ===================================================================================
 
 
-When setting a different colour scale cf-plot now automatically matches colour table to 
+When setting a different colour scale cf-plot now automatically matches colour table to
 the contour levels.
 
 
@@ -138,14 +138,14 @@ the contour levels.
 
 
 
-14. con update - numpy warning when having a zero contour  
+14. con update - numpy warning when having a zero contour
 =========================================================
 
 
-Having a zero contour in the levels caused a numpy warning when doing a contour map.  The 
+Having a zero contour in the levels caused a numpy warning when doing a contour map.  The
 numpy warning level was reduced in the con routine so this warning isn't shown.  This may
 be removed in a future version of cf-plot as it looks like the numpy warning isn't there in
-later versions of numpy. 
+later versions of numpy.
 
 
  ::
@@ -157,8 +157,8 @@ later versions of numpy.
 ===========================================================
 
 
-The cf-plot documentation was chaged to reflect the adoption of viridis as the new sequential 
-data colour map.  Other examples were also changed to show the new magma, inferno, plasma, 
+The cf-plot documentation was chaged to reflect the adoption of viridis as the new sequential
+data colour map.  Other examples were also changed to show the new magma, inferno, plasma,
 parula and gray colour scales.
 
 
@@ -168,11 +168,11 @@ parula and gray colour scales.
 
 
 
-16. Missing field name on PP data 
+16. Missing field name on PP data
 =================================
 
 
-With PP data that has no standard_name, long_name or short_name the field name is blank.  The field naming scheme was changed to use the cf-python method field.name('No Name') setting the field name to 'No Name' as a catch all. 
+With PP data that has no standard_name, long_name or short_name the field name is blank.  The field naming scheme was changed to use the cf-python method field.name('No Name') setting the field name to 'No Name' as a catch all.
 
 
  ::
@@ -235,12 +235,3 @@ vect to be modified to take addition values so that EP flux vector etc plots are
 ::
 
    Done - see example 15
-
-
-
-
-
-
-
-
-

@@ -13,7 +13,7 @@ Example 31 - UKCP projection
 ----------------------------
 
 .. image::  images/fig31.png
-   :scale: 52% 
+   :scale: 52%
 
 ::
 
@@ -25,8 +25,8 @@ Example 31 - UKCP projection
    cfp.setvars(grid_x_spacing=1, grid_y_spacing=1)
    cfp.con(f, lines=False)
 
-| 
-| 
+|
+|
 
 cf-plot looks for auxiliary coordinates of longitude and latitude and uses them if found.  If they aren't present then cf-plot will generate the grid required using the projection_x_coordinate and projection_y_coordinate variables.  For a blockfill plot as below it uses the latter method and the supplied bounds.
 
@@ -49,7 +49,7 @@ New cfp.setvars options affecting the grid plotting for the UKCP grid are:
 Here we change the plotted grid with the grid_colour option to cfp.setvars, xticks and yticks options to cfp.con  and make a blockfill plot.
 
 .. image::  images/fig32.png
-   :scale: 52% 
+   :scale: 52%
 
 ::
 
@@ -62,8 +62,8 @@ Here we change the plotted grid with the grid_colour option to cfp.setvars, xtic
    cfp.setvars(grid_colour='grey')
    cfp.con(f, lines=False, blockfill=True, xticks=np.arange(14)-11, yticks=np.arange(13)+49)
 
-| 
-| 
+|
+|
 
 
 
@@ -71,7 +71,7 @@ Example 33 - OSGB and EuroPP projections
 ----------------------------------------
 
 .. image::  images/fig33.png
-   :scale: 52% 
+   :scale: 52%
 
 ::
 
@@ -87,8 +87,8 @@ Example 33 - OSGB and EuroPP projections
    cfp.con(f, lines=False, colorbar_label_skip=2)
    cfp.gclose()
 
-| 
-| 
+|
+|
 
 
 
@@ -99,7 +99,7 @@ Example 34 - Cropped Lambert conformal projection
 -------------------------------------------------
 
 .. image::  images/fig34.png
-   :scale: 52% 
+   :scale: 52%
 
 
 Lambert conformal projections can now be cropped as in the following code:
@@ -114,8 +114,8 @@ Lambert conformal projections can now be cropped as in the following code:
 
 
 
-| 
-| 
+|
+|
 
 
 
@@ -124,7 +124,7 @@ Example 35 - Mollweide projection
 ---------------------------------
 
 .. image::  images/fig35.png
-   :scale: 52% 
+   :scale: 52%
 
 
 ::
@@ -141,7 +141,7 @@ Example 36 - Mercator projection
 --------------------------------
 
 .. image::  images/fig36.png
-   :scale: 52% 
+   :scale: 52%
 
 
 ::
@@ -152,14 +152,14 @@ Example 36 - Mercator projection
    cfp.mapset(proj='merc')
    cfp.con(f.subspace(time=15))
 
-| 
-| 
+|
+|
 
 Example 37 - Orthographic projection
 ------------------------------------
 
 .. image::  images/fig37.png
-   :scale: 52% 
+   :scale: 52%
 
 
 ::
@@ -172,15 +172,15 @@ Example 37 - Orthographic projection
 
 
 
-| 
-| 
+|
+|
 
 
 Example 38 - Robinson projection
 --------------------------------
 
 .. image::  images/fig38.png
-   :scale: 52% 
+   :scale: 52%
 
 
 ::
@@ -193,10 +193,5 @@ Example 38 - Robinson projection
 
 
 
-| 
-| 
-
-
-
-
-
+|
+|

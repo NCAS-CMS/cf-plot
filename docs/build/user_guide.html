@@ -1,40 +1,320 @@
+
 <!DOCTYPE html>
 
-<html lang="en" data-content_root="./">
+
+<html lang="en" data-content_root="./" >
+
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>cf-plot user guide &#8212; cf-plot 3.3.0 documentation</title>
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
-    <link rel="stylesheet" type="text/css" href="_static/classic.css?v=97decc96" />
-    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=eafc0fe6" />
-    
-    <script src="_static/documentation_options.js?v=3eb8911e"></script>
-    <script src="_static/doctools.js?v=888ff710"></script>
-    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
-    
-    <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" /> 
-  </head><body>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="nav-item nav-item-0"><a href="index.html">cf-plot 3.3.0 documentation</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">cf-plot user guide</a></li> 
-      </ul>
-    </div>  
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
 
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
-          <div class="body" role="main">
-            
+  
+  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=fd3f3429" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="_static/documentation_options.js?v=3eb8911e"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'user_guide';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+<aside class="bd-header-announcement" aria-label="Announcement">
+  <div class="bd-header-announcement__content">This is the new permanent home of the cf-plot documentation: please consult this and not the old frozen version under 'http://ajheaps.github.io'.</div>
+</aside>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">cf-plot 3.3.0 documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+<h3><a href="index.html">Homepage</a><p></h3>
+<h5><a href="gallery.html">Gallery</a><p></h5>
+<h5><a href="user_guide.html">User Guide</a><p></h5>
+<h5><a href="training.html">Training material</a><p></h5>
+<h5><a href="routines.html">Routines</a><p></h5>
+<h5><a href="internal_routines.html">Routines - internal</a><p></h5>
+<h5><a href="advanced.html">Advanced Use</a><p></h5>
+<h5><a href="versions.html">Versions</a><p></h5>
+<h5><a href="issues.html">Issues</a><p></h5>
+<h5><a href="download.html">Download/Install</a><p></h5>
+<h5><a href="license.html">License</a><p></h5>
+<h5><a href="older_documentation.html">Older documentation</a><p></h5>
+<h5><a href="search.html">Search</a><p></h5></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">cf-plot user guide</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
   <section id="cf-plot-user-guide">
-<h1>cf-plot user guide<a class="headerlink" href="#cf-plot-user-guide" title="Link to this heading">¶</a></h1>
+<h1>cf-plot user guide<a class="headerlink" href="#cf-plot-user-guide" title="Link to this heading">#</a></h1>
 <p><strong>Contents</strong></p>
 <div class="line-block">
 <div class="line"><a class="reference internal" href="#introduction">introduction</a> to cf-plot</div>
@@ -43,9 +323,9 @@
 <div class="line"><a class="reference internal" href="#contours">contours</a> - making contour plots</div>
 <div class="line"><a class="reference internal" href="#vectors">vectors</a> - plotting vectors</div>
 <div class="line"><a class="reference internal" href="#multiple">multiple</a>  plots on a page and plot positioning</div>
-<div class="line"><a class="reference internal" href="#trajectories">trajectories</a> - plotting trajectories</div>
+<div class="line"><a class="reference internal" href="#trajectoriesug">trajectoriesUG</a> - plotting trajectories</div>
 <div class="line"><a class="reference internal" href="#significance">significance</a> - plots</div>
-<div class="line"><a class="reference internal" href="#graphs">graphs</a> - making graphs</div>
+<div class="line"><a class="reference internal" href="#graphsug">graphsUG</a> - making graphs</div>
 <div class="line"><a class="reference internal" href="#colour">colour</a> scales - using and changing colour scales</div>
 <div class="line"><br /></div>
 <div class="line"><a class="reference internal" href="#appendixa">appendixA</a> - introduction to cf-python</div>
@@ -54,7 +334,7 @@
 <div class="line"><a class="reference internal" href="#appendixd">appendixD</a> - fixing data to be more cf-compliant</div>
 </div>
 <section id="introduction">
-<span id="id1"></span><h2>Introduction<a class="headerlink" href="#introduction" title="Link to this heading">¶</a></h2>
+<span id="id1"></span><h2>Introduction<a class="headerlink" href="#introduction" title="Link to this heading">#</a></h2>
 <p>cf-plot is a set of Python functions for making common contour, vector and line plots that climate researchers use. cf-plot generally uses <a class="reference external" href="https://ncas-cms.github.io/cf-python">cf-python</a> to present the data and CF attributes for plotting.  It can also use numpy arrays of data as the input fields making for flexible plotting of data.  cf-plot uses the Python numpy, matplotlib and scipy libraries.</p>
 <p>At the core of cf-plot are a set of functions for making and controlling plots.</p>
 <div class="line-block">
@@ -64,7 +344,7 @@
 <div class="line"><a class="reference internal" href="vect.html#vect"><span class="std std-ref">vect</span></a> - vector and stream plots</div>
 <div class="line"><a class="reference internal" href="traj.html#traj"><span class="std std-ref">traj</span></a>  - trajectory plots</div>
 <div class="line"><a class="reference internal" href="lineplot.html#lineplot"><span class="std std-ref">lineplot</span></a>  - make a graph</div>
-<div class="line"><a class="reference internal" href="stipple_plots.html#stipple"><span class="std std-ref">stipple</span></a>  - make a stipple plot</div>
+<div class="line"><a class="reference internal" href="stipple.html#stipple"><span class="std std-ref">stipple</span></a>  - make a stipple plot</div>
 </div>
 <div class="line-block">
 <div class="line"><strong>Plot control operators</strong></div>
@@ -81,7 +361,7 @@
 <p>This user guide is a set of examples of plots that climate scientists generally make.  Further details and fine tuning options are available by looking at the individual function documentation above.</p>
 </section>
 <section id="where-cf-plot-is-installed-and-how-to-install-it">
-<span id="access"></span><h2>Where cf-plot is installed and how to install it<a class="headerlink" href="#where-cf-plot-is-installed-and-how-to-install-it" title="Link to this heading">¶</a></h2>
+<span id="access"></span><h2>Where cf-plot is installed and how to install it<a class="headerlink" href="#where-cf-plot-is-installed-and-how-to-install-it" title="Link to this heading">#</a></h2>
 <p>cf-python and cf-plot are pre-installed on the following platforms.</p>
 <div class="line-block">
 <div class="line"><strong>Jasmin super-data-cluster</strong></div>
@@ -101,18 +381,19 @@
 <p>For other platforms follow the <a class="reference internal" href="download.html#download"><span class="std std-ref">cf-plot installation instructions</span></a></p>
 </section>
 <section id="contour-plots">
-<span id="contours"></span><h2>Contour plots<a class="headerlink" href="#contour-plots" title="Link to this heading">¶</a></h2>
+<span id="contours"></span><h2>Contour plots<a class="headerlink" href="#contour-plots" title="Link to this heading">#</a></h2>
 <p>The following examples use cf-python to present the data to cf-plot.  The syntax is quite simple and can be learned as the examples progress.  A fuller discussion of using cf-python to manipulate data is available in <a class="reference internal" href="#appendixa">appendixA</a>.  If you have numpy arrays that you wish to plot then look in <a class="reference internal" href="#appendixb">appendixB</a> for a couple of examples of how to do this.</p>
 <p>The data to make a contour plot can be read in and passed to cf-plot using cf-python as per the following example.</p>
 <section id="cylindrical-projection">
-<h3>Cylindrical projection<a class="headerlink" href="#cylindrical-projection" title="Link to this heading">¶</a></h3>
+<h3>Cylindrical projection<a class="headerlink" href="#cylindrical-projection" title="Link to this heading">#</a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
 <span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
 <span class="n">f</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/tas_A1.nc&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">15</span><span class="p">))</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/fig1.png"><img alt="_images/fig1.png" src="_images/fig1.png" style="width: 514.28px; height: 313.56px;" /></a>
+<a class="reference internal image-reference" href="_images/fig1.png"><img alt="_images/fig1.png" src="_images/fig1.png" style="width: 514.28px; height: 313.56px;" />
+</a>
 <p>Note that for a contour plot two dimensional data is required.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
 </pre></div>
@@ -129,12 +410,13 @@
 <span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">15</span><span class="p">))</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/fig3.png"><img alt="_images/fig3.png" src="_images/fig3.png" style="width: 487.24px; height: 328.12px;" /></a>
+<a class="reference internal image-reference" href="_images/fig3.png"><img alt="_images/fig3.png" src="_images/fig3.png" style="width: 487.24px; height: 328.12px;" />
+</a>
 <p>The default settings are for colour fill with contour lines over the top.  These can be changed with the <strong>fill=False</strong> and <strong>lines=False</strong> flags to <strong>cfp.con</strong>.</p>
 <p>To reset the mapping to the default cylindrical projection -180 to 180 in longitude and -90 to 90 in latitude use <strong>cfp.mapset()</strong>.  Likewise to reset the contour levels use <strong>cfp.levs()</strong>.</p>
 </section>
 <section id="blockfill-plots">
-<h3>Blockfill plots<a class="headerlink" href="#blockfill-plots" title="Link to this heading">¶</a></h3>
+<h3>Blockfill plots<a class="headerlink" href="#blockfill-plots" title="Link to this heading">#</a></h3>
 <p>Blockfill plots in the cylindrical projection are made using the <strong>blockfill=True</strong> flag to the <strong>cfp.con</strong> routine.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
 <span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
@@ -142,10 +424,11 @@
 <span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">15</span><span class="p">),</span> <span class="n">blockfill</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">lines</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/fig2.png"><img alt="_images/fig2.png" src="_images/fig2.png" style="width: 514.28px; height: 313.56px;" /></a>
+<a class="reference internal image-reference" href="_images/fig2.png"><img alt="_images/fig2.png" src="_images/fig2.png" style="width: 514.28px; height: 313.56px;" />
+</a>
 </section>
 <section id="polar-stereographic-plots">
-<h3>Polar stereographic plots<a class="headerlink" href="#polar-stereographic-plots" title="Link to this heading">¶</a></h3>
+<h3>Polar stereographic plots<a class="headerlink" href="#polar-stereographic-plots" title="Link to this heading">#</a></h3>
 <p>Polar Stereographic plots are set using <strong>proj='npstere'</strong> or <strong>proj='spstere'</strong> in the call to <strong>cfp.mapset</strong>.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
 <span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
@@ -154,7 +437,8 @@
 <span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">pressure</span><span class="o">=</span><span class="mi">500</span><span class="p">))</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/fig4.png"><img alt="_images/fig4.png" src="_images/fig4.png" style="width: 439.92px; height: 387.40000000000003px;" /></a>
+<a class="reference internal image-reference" href="_images/fig4.png"><img alt="_images/fig4.png" src="_images/fig4.png" style="width: 439.92px; height: 387.40000000000003px;" />
+</a>
 <p>The <strong>mapset</strong> <strong>bounding_lat</strong> and <strong>lon_0</strong> parameters are used to set the latitude limit of the plot and the orientation of the plot. Generally for the southern hemisphere the Greenwich Meridian (zero degrees longitude) is plotted at the top of the plot and is set with <strong>lon_0=0</strong>.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
 <span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
@@ -163,10 +447,11 @@
 <span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">pressure</span><span class="o">=</span><span class="mi">500</span><span class="p">))</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/fig5.png"><img alt="_images/fig5.png" src="_images/fig5.png" style="width: 438.88px; height: 384.28000000000003px;" /></a>
+<a class="reference internal image-reference" href="_images/fig5.png"><img alt="_images/fig5.png" src="_images/fig5.png" style="width: 438.88px; height: 384.28000000000003px;" />
+</a>
 </section>
 <section id="latitude-pressure-plots">
-<h3>Latitude - Pressure Plots<a class="headerlink" href="#latitude-pressure-plots" title="Link to this heading">¶</a></h3>
+<h3>Latitude - Pressure Plots<a class="headerlink" href="#latitude-pressure-plots" title="Link to this heading">#</a></h3>
 <p>The latitude-pressure plot below is made by using the cf subspace method to select the temperature at longitude=0 degrees.  Again this data has two dimensions with multiple values in.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 </pre></div>
@@ -178,7 +463,8 @@
 <span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/fig6.png"><img alt="_images/fig6.png" src="_images/fig6.png" style="width: 530.9200000000001px; height: 346.84000000000003px;" /></a>
+<a class="reference internal image-reference" href="_images/fig6.png"><img alt="_images/fig6.png" src="_images/fig6.png" style="width: 530.9200000000001px; height: 346.84000000000003px;" />
+</a>
 <p>A mean of the data along the longitude (zonal mean) is made using the cf.collapse method.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
 <span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
@@ -186,7 +472,8 @@
 <span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span><span class="s1">&#39;longitude&#39;</span><span class="p">))</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/fig7.png"><img alt="_images/fig7.png" src="_images/fig7.png" style="width: 530.9200000000001px; height: 346.84000000000003px;" /></a>
+<a class="reference internal image-reference" href="_images/fig7.png"><img alt="_images/fig7.png" src="_images/fig7.png" style="width: 530.9200000000001px; height: 346.84000000000003px;" />
+</a>
 <p>To make a log pressure on the y axis use the ylog=True flag to the con routine.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
 <span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
@@ -194,10 +481,11 @@
 <span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span><span class="s1">&#39;longitude&#39;</span><span class="p">),</span> <span class="n">ylog</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/fig8.png"><img alt="_images/fig8.png" src="_images/fig8.png" style="width: 530.9200000000001px; height: 346.84000000000003px;" /></a>
+<a class="reference internal image-reference" href="_images/fig8.png"><img alt="_images/fig8.png" src="_images/fig8.png" style="width: 530.9200000000001px; height: 346.84000000000003px;" />
+</a>
 </section>
 <section id="hovmuller-plots">
-<h3>Hovmuller plots<a class="headerlink" href="#hovmuller-plots" title="Link to this heading">¶</a></h3>
+<h3>Hovmuller plots<a class="headerlink" href="#hovmuller-plots" title="Link to this heading">#</a></h3>
 <p>A Hovmuller plot is one of longitude or latitude versus time as in the following examples.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
 <span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
@@ -206,7 +494,8 @@
 <span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">lines</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/fig10.png"><img alt="_images/fig10.png" src="_images/fig10.png" style="width: 530.9200000000001px; height: 344.76px;" /></a>
+<a class="reference internal image-reference" href="_images/fig10.png"><img alt="_images/fig10.png" src="_images/fig10.png" style="width: 530.9200000000001px; height: 344.76px;" />
+</a>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
 <span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
 <span class="n">f</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/tas_A1.nc&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
@@ -216,10 +505,11 @@
 <span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">lines</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/fig11.png"><img alt="_images/fig11.png" src="_images/fig11.png" style="width: 530.4px; height: 345.28000000000003px;" /></a>
+<a class="reference internal image-reference" href="_images/fig11.png"><img alt="_images/fig11.png" src="_images/fig11.png" style="width: 530.4px; height: 345.28000000000003px;" />
+</a>
 </section>
 <section id="vector-and-stream-plots">
-<span id="vectors"></span><h3>Vector and stream Plots<a class="headerlink" href="#vector-and-stream-plots" title="Link to this heading">¶</a></h3>
+<span id="vectors"></span><h3>Vector and stream Plots<a class="headerlink" href="#vector-and-stream-plots" title="Link to this heading">#</a></h3>
 <p>Vector plots are made using the <strong>cfp.vect</strong> routine.  The u and v data must have two dimensions with matching multiple values in as below.</p>
 <div class="line-block">
 <div class="line">&lt;CF Field: eastward_wind(time(1), pressure(1), latitude(160), longitude(320)) m s**-1&gt;</div>
@@ -233,7 +523,8 @@
 <span class="n">cfp</span><span class="o">.</span><span class="n">vect</span><span class="p">(</span><span class="n">u</span><span class="o">=</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="o">=</span><span class="n">v</span><span class="p">,</span> <span class="n">key_length</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/fig13.png"><img alt="_images/fig13.png" src="_images/fig13.png" style="width: 514.28px; height: 264.68px;" /></a>
+<a class="reference internal image-reference" href="_images/fig13.png"><img alt="_images/fig13.png" src="_images/fig13.png" style="width: 514.28px; height: 264.68px;" />
+</a>
 <div class="line-block">
 <div class="line"><br /></div>
 <div class="line"><br /></div>
@@ -254,7 +545,8 @@
 <span class="n">cfp</span><span class="o">.</span><span class="n">gclose</span><span class="p">()</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/fig14.png"><img alt="_images/fig14.png" src="_images/fig14.png" style="width: 516.88px; height: 325.0px;" /></a>
+<a class="reference internal image-reference" href="_images/fig14.png"><img alt="_images/fig14.png" src="_images/fig14.png" style="width: 516.88px; height: 325.0px;" />
+</a>
 <p>Here we make a zonal mean vector plot with different vector keys and scaling factors for the X and Y directions.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
 <span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
@@ -275,7 +567,8 @@
          <span class="n">key_location</span><span class="o">=</span><span class="p">[</span><span class="mf">0.95</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.05</span><span class="p">])</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/fig16.png"><img alt="_images/fig16.png" src="_images/fig16.png" style="width: 456.72px; height: 352.44px;" /></a>
+<a class="reference internal image-reference" href="_images/fig16.png"><img alt="_images/fig16.png" src="_images/fig16.png" style="width: 456.72px; height: 352.44px;" />
+</a>
 <p>A streamplot is used to show fluid flow and 2D field gradients.  In this first example the data goes from 0 to 358.875 in longitude.  The cartopy / matplotlib interface seems to need the data to be inside the data window in longitude so we anchor the data in cf-python using the anchor method to start at -180 in longitude.  If we didn't do this any longitudes less than zero would have no streams drawn.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
 <span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
@@ -290,7 +583,8 @@
 <span class="n">cfp</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="n">u</span><span class="o">=</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="o">=</span><span class="n">v</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/fig16b.png"><img alt="_images/fig16b.png" src="_images/fig16b.png" style="width: 435.16px; height: 218.68px;" /></a>
+<a class="reference internal image-reference" href="_images/fig16b.png"><img alt="_images/fig16b.png" src="_images/fig16b.png" style="width: 435.16px; height: 218.68px;" />
+</a>
 <p>In the second streamplot example a colorbar showing the intensity of the wind is drawn.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">magnitude</span> <span class="o">=</span> <span class="p">(</span><span class="n">u</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">v</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span>
 <span class="n">mag</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">magnitude</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
@@ -303,10 +597,11 @@
 <span class="n">cfp</span><span class="o">.</span><span class="n">gclose</span><span class="p">()</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/fig16c.png"><img alt="_images/fig16c.png" src="_images/fig16c.png" style="width: 435.16px; height: 270.6px;" /></a>
+<a class="reference internal image-reference" href="_images/fig16c.png"><img alt="_images/fig16c.png" src="_images/fig16c.png" style="width: 435.16px; height: 270.6px;" />
+</a>
 </section>
 <section id="multiple-plots-on-a-page-and-plot-positioning">
-<span id="multiple"></span><h3>Multiple plots on a page and plot positioning<a class="headerlink" href="#multiple-plots-on-a-page-and-plot-positioning" title="Link to this heading">¶</a></h3>
+<span id="multiple"></span><h3>Multiple plots on a page and plot positioning<a class="headerlink" href="#multiple-plots-on-a-page-and-plot-positioning" title="Link to this heading">#</a></h3>
 <p>To make multiple plots on the page open a graphic file with <strong>cfp.gopen</strong> and pass the rows and columns parameters. Make each plot in turn first selecting the position with <strong>cfp.gpos()</strong>.  The first position is the top left plot and increases by one for one plot to the right until the final plot is made in the bottom right. When all the plots have been made close the plot with <strong>cfp.gclose()</strong>.  A combined colour bar is also made as all the plots have the same contour levels and colour scale helping to reduce the plot complexity.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
 <span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
@@ -328,7 +623,8 @@
 <span class="n">cfp</span><span class="o">.</span><span class="n">gclose</span><span class="p">()</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/fig19.png"><img alt="_images/fig19.png" src="_images/fig19.png" style="width: 508.04px; height: 367.64px;" /></a>
+<a class="reference internal image-reference" href="_images/fig19.png"><img alt="_images/fig19.png" src="_images/fig19.png" style="width: 508.04px; height: 367.64px;" />
+</a>
 <p>Plot spacing options are located in <strong>cfp.gopen</strong></p>
 <div class="line-block">
 <div class="line">orientation='landscape' - orientation - also takes 'portrait'</div>
@@ -341,21 +637,29 @@
 <div class="line">hspace=None - height reserved for white space between subplots - default=0.2</div>
 <div class="line"><br /></div>
 <div class="line"><br /></div>
+<div class="line">and color bar spacings in <strong>cfp.cbar</strong>.</div>
+<div class="line"><br /></div>
+<div class="line">orientation - orientation 'horizontal' or 'vertical'</div>
+<div class="line">position - user specified colorbar position in normalised</div>
+<div class="line-block">
+<div class="line">plot coordinates [left, bottom, width, height]</div>
 </div>
-<p><a href="#id2"><span class="problematic" id="id3">|</span></a>and color bar spacings in <strong>cfp.cbar</strong>.
-|
-| orientation - orientation 'horizontal' or 'vertical'
-| position - user specified colorbar position in normalised
-|            plot coordinates [left, bottom, width, height]
-| shrink - default=1.0 - scale colorbar along length
-| fraction - default = 0.21 - space for the colorbar in
-|            normalised plot coordinates
-| thick - set height of colorbar - default = 0.015,
-|         in normalised plot coordinates
-| anchor - default=0.3 - anchor point of colorbar within the fraction space.
-|                        0.0 = close to plot, 1.0 = further away
-|
-|</p>
+<div class="line">shrink - default=1.0 - scale colorbar along length</div>
+<div class="line">fraction - default = 0.21 - space for the colorbar in</div>
+<div class="line-block">
+<div class="line">normalised plot coordinates</div>
+</div>
+<div class="line">thick - set height of colorbar - default = 0.015,</div>
+<div class="line-block">
+<div class="line">in normalised plot coordinates</div>
+</div>
+<div class="line">anchor - default=0.3 - anchor point of colorbar within the fraction space.</div>
+<div class="line-block">
+<div class="line">0.0 = close to plot, 1.0 = further away</div>
+<div class="line"><br /></div>
+<div class="line"><br /></div>
+</div>
+</div>
 <p>When making map plots the default setting is for one degree of longitude to be the same size as
 one degree of longitude on the plot.  This will make some plots smaller than the area allocated
 to them as the plot size will be changed to fit within the plot area.  The aspect option to
@@ -374,7 +678,8 @@ paramenters for the plot display area are in plot extent normalised coordinates.
 for bottom or left and 1.0 for top or right of the plot area.</p>
 <p>Cylidrical projection plots have an additional rider of having a degree in longitude and latitude
 being the same size so plots of this type might not fill the plot area specified as expected.</p>
-<a class="reference internal image-reference" href="_images/fig19a.png"><img alt="_images/fig19a.png" src="_images/fig19a.png" style="width: 430.32px; height: 289.96px;" /></a>
+<a class="reference internal image-reference" href="_images/fig19a.png"><img alt="_images/fig19a.png" src="_images/fig19a.png" style="width: 430.32px; height: 289.96px;" />
+</a>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
 <span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
 <span class="n">f</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/ggap.nc&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
@@ -396,7 +701,8 @@ being the same size so plots of this type might not fill the plot area specified
 <strong>user_position=True</strong> parameter to <strong>cfp.gopen</strong>. The required plot position is set in <strong>cfp.gpos</strong>
 with the <strong>xmin, xmax, ymin, ymax</strong> parameters.  Two calls to the <strong>cfp.cbar</strong> routine then place
 colour bars on the plot with different colour scales and contour levels.</p>
-<a class="reference internal image-reference" href="_images/fig19b.png"><img alt="_images/fig19b.png" src="_images/fig19b.png" style="width: 399.52px; height: 286.88px;" /></a>
+<a class="reference internal image-reference" href="_images/fig19b.png"><img alt="_images/fig19b.png" src="_images/fig19b.png" style="width: 399.52px; height: 286.88px;" />
+</a>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
 <span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -423,9 +729,10 @@ colour bars on the plot with different colour scales and contour levels.</p>
 </div>
 </section>
 <section id="trajectories">
-<span id="id4"></span><h3>Trajectories<a class="headerlink" href="#trajectories" title="Link to this heading">¶</a></h3>
+<span id="trajectoriesug"></span><h3>Trajectories<a class="headerlink" href="#trajectories" title="Link to this heading">#</a></h3>
 <p>Data stored in contiguous ragged array format, such as from Kevin Hodges's TRACK program, can be plotted using cf-plot using <strong>cfp.traj</strong>.</p>
-<a class="reference internal image-reference" href="_images/fig39.png"><img alt="_images/fig39.png" src="_images/fig39.png" style="width: 514.28px; height: 258.96000000000004px;" /></a>
+<a class="reference internal image-reference" href="_images/fig39.png"><img alt="_images/fig39.png" src="_images/fig39.png" style="width: 514.28px; height: 258.96000000000004px;" />
+</a>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
 <span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
 <span class="n">f</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/ff_trs_pos.nc&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
@@ -439,7 +746,7 @@ colour bars on the plot with different colour scales and contour levels.</p>
 </div>
 </section>
 <section id="stipple-plots">
-<span id="significance"></span><h3>Stipple plots<a class="headerlink" href="#stipple-plots" title="Link to this heading">¶</a></h3>
+<span id="significance"></span><h3>Stipple plots<a class="headerlink" href="#stipple-plots" title="Link to this heading">#</a></h3>
 <p>A stipple plot is usually used to show areas of significance such as 95% or greater confidence. These plots use the overlay technique as used in the previous contour/vector plot.  In these plots we show a coutour plot and a stipple plot between varous contour levels to show that the stippling works correctly.  For different significance levels such as confidences of 95% and 99% chosing a different sized or colour marker is a common plot technique.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
 <span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
@@ -453,7 +760,8 @@ colour bars on the plot with different colour scales and contour levels.</p>
 <span class="n">cfp</span><span class="o">.</span><span class="n">gclose</span><span class="p">()</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/fig17.png"><img alt="_images/fig17.png" src="_images/fig17.png" style="width: 514.28px; height: 313.56px;" /></a>
+<a class="reference internal image-reference" href="_images/fig17.png"><img alt="_images/fig17.png" src="_images/fig17.png" style="width: 514.28px; height: 313.56px;" />
+</a>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
 <span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
 <span class="n">f</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/tas_A1.nc&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
@@ -466,7 +774,8 @@ colour bars on the plot with different colour scales and contour levels.</p>
 <span class="n">cfp</span><span class="o">.</span><span class="n">gclose</span><span class="p">()</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/fig18.png"><img alt="_images/fig18.png" src="_images/fig18.png" style="width: 440.96000000000004px; height: 387.40000000000003px;" /></a>
+<a class="reference internal image-reference" href="_images/fig18.png"><img alt="_images/fig18.png" src="_images/fig18.png" style="width: 440.96000000000004px; height: 387.40000000000003px;" />
+</a>
 <div class="line-block">
 <div class="line"><br /></div>
 <div class="line"><br /></div>
@@ -474,7 +783,7 @@ colour bars on the plot with different colour scales and contour levels.</p>
 </div>
 </section>
 <section id="graph-plots">
-<span id="graphs"></span><h3>Graph plots<a class="headerlink" href="#graph-plots" title="Link to this heading">¶</a></h3>
+<span id="graphsug"></span><h3>Graph plots<a class="headerlink" href="#graph-plots" title="Link to this heading">#</a></h3>
 <p>To make a graph plot use the <strong>cfp.lineplot</strong> function as below on a single line of data in a field.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
 <span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
@@ -484,7 +793,8 @@ colour bars on the plot with different colour scales and contour levels.</p>
              <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Zonal mean zonal wind at 100mb&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/fig27.png"><img alt="_images/fig27.png" src="_images/fig27.png" style="width: 516.36px; height: 399.88px;" /></a>
+<a class="reference internal image-reference" href="_images/fig27.png"><img alt="_images/fig27.png" src="_images/fig27.png" style="width: 516.36px; height: 399.88px;" />
+</a>
 <div class="line-block">
 <div class="line">Other valid markers are:</div>
 <div class="line">'.' point</div>
@@ -549,10 +859,11 @@ colour bars on the plot with different colour scales and contour levels.</p>
 <span class="n">cfp</span><span class="o">.</span><span class="n">gclose</span><span class="p">()</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/fig28.png"><img alt="_images/fig28.png" src="_images/fig28.png" style="width: 524.16px; height: 399.88px;" /></a>
+<a class="reference internal image-reference" href="_images/fig28.png"><img alt="_images/fig28.png" src="_images/fig28.png" style="width: 524.16px; height: 399.88px;" />
+</a>
 </section>
 <section id="setting-contour-levels">
-<h3>Setting Contour Levels<a class="headerlink" href="#setting-contour-levels" title="Link to this heading">¶</a></h3>
+<h3>Setting Contour Levels<a class="headerlink" href="#setting-contour-levels" title="Link to this heading">#</a></h3>
 <p>cf-plot generally does a reasonable job of setting appropriate contour levels.  In the cases where it doesn't do this or you need a consistent set of levels between plots for comparison purposes use the levs routine.
 The <strong>cfp.levs</strong> command manually sets the contour levels.</p>
 <div class="line-block">
@@ -570,7 +881,7 @@ The <strong>cfp.levs</strong> command manually sets the contour levels.</p>
 Once the <strong>cfp.levs</strong> command is used you'll need to think about the associated colour scale.</p>
 </section>
 <section id="colour-scales">
-<span id="colour"></span><h3>Colour scales<a class="headerlink" href="#colour-scales" title="Link to this heading">¶</a></h3>
+<span id="colour"></span><h3>Colour scales<a class="headerlink" href="#colour-scales" title="Link to this heading">#</a></h3>
 <p>There are around 140 colour scales included with cf-plot. Colour scales are set with the cscale command. There are two default colour scales that suit differing types of data.</p>
 <p>A continuous scale <strong>cfp.scale('viridis')</strong> that goes from blue to green and then yellow and suits data that has no zero in it.  For example air temperature in Kelvin or geopotential height - see example 1 in the gallery plots.</p>
 <p>A diverging scale <strong>cfp.cscale('scale1')</strong> that goes from blue to red and suits data with a zero in it.  For example temperature in Celsius or zonal wind - see example 4 in the gallery plots.</p>
@@ -578,7 +889,8 @@ Once the <strong>cfp.levs</strong> command is used you'll need to think about th
 <span class="n">cfp</span><span class="o">.</span><span class="n">cscale</span><span class="p">(</span><span class="s1">&#39;scale1&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/cs1.png"><img alt="_images/cs1.png" src="_images/cs1.png" style="width: 502.32px; height: 26.0px;" /></a>
+<a class="reference internal image-reference" href="_images/cs1.png"><img alt="_images/cs1.png" src="_images/cs1.png" style="width: 502.32px; height: 26.0px;" />
+</a>
 <p>If no call has been made to adjust the colour scale then continuous and diverging colour scales are self adjusting to fit the number of levels automatically generated by cf-plot or specified by the user with the <strong>cfp.levs</strong> command.  This behaviour is also followed for a simple call to <strong>cfp.cscale</strong> specifying a different colour scale - for example <strong>cfp.cscale('radar')</strong> to select the radar colour scheme.</p>
 <p>If a call to <strong>cfp.cscale</strong> specifies additional parameters to the colour scale, then the automatic colour adjustment is turned off giving the user fine tuning of colours as below.</p>
 <p>To change the number of colours in a scale use the ncols parameters.</p>
@@ -586,24 +898,27 @@ Once the <strong>cfp.levs</strong> command is used you'll need to think about th
 <span class="n">cfp</span><span class="o">.</span><span class="n">levs</span><span class="p">(</span><span class="nb">min</span><span class="o">=-</span><span class="mi">5</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/cs2.png"><img alt="_images/cs2.png" src="_images/cs2.png" style="width: 502.32px; height: 26.0px;" /></a>
+<a class="reference internal image-reference" href="_images/cs2.png"><img alt="_images/cs2.png" src="_images/cs2.png" style="width: 502.32px; height: 26.0px;" />
+</a>
 <p>To change the number of colours above and below the mid-point of the scale use the above and below parameters. This is useful for fields where you have differing extents of data above and below the zero line.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cfp</span><span class="o">.</span><span class="n">cscale</span><span class="p">(</span><span class="s1">&#39;scale1&#39;</span><span class="p">,</span> <span class="n">below</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">above</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">levs</span><span class="p">(</span><span class="nb">min</span><span class="o">=-</span><span class="mi">30</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/cs3.png"><img alt="_images/cs3.png" src="_images/cs3.png" style="width: 502.32px; height: 26.0px;" /></a>
+<a class="reference internal image-reference" href="_images/cs3.png"><img alt="_images/cs3.png" src="_images/cs3.png" style="width: 502.32px; height: 26.0px;" />
+</a>
 <p>For data where you need white to indicate that this data region is insignificant use the white=white parameter. This can take single or multiple values.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cfp</span><span class="o">.</span><span class="n">cscale</span><span class="p">(</span><span class="s1">&#39;scale1&#39;</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span> <span class="n">white</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">levs</span><span class="p">(</span><span class="n">manual</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span><span class="o">-</span><span class="mi">8</span><span class="p">,</span> <span class="o">-</span><span class="mi">6</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">10</span><span class="p">])</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/cs4.png"><img alt="_images/cs4.png" src="_images/cs4.png" style="width: 502.32px; height: 26.0px;" /></a>
+<a class="reference internal image-reference" href="_images/cs4.png"><img alt="_images/cs4.png" src="_images/cs4.png" style="width: 502.32px; height: 26.0px;" />
+</a>
 <p>To reverse a colour scale use the <strong>reverse=True</strong> option to <strong>cfp.cscale</strong> and specify the number of colours required.</p>
 <p><strong>cfp.cscale('viridis', reverse=True, ncols=17)</strong></p>
 </section>
 <section id="producing-a-uniform-colour-scale">
-<h3>Producing a uniform colour scale<a class="headerlink" href="#producing-a-uniform-colour-scale" title="Link to this heading">¶</a></h3>
+<h3>Producing a uniform colour scale<a class="headerlink" href="#producing-a-uniform-colour-scale" title="Link to this heading">#</a></h3>
 <p>The uniform parameter may be of use when using a set of contour levels where there is wide mismatch between the
 above and below numbers.</p>
 <p><strong>uniform = False</strong> - produce a uniform colour scale.
@@ -612,7 +927,7 @@ colour scale is then cropped to use scale colours 6 to 19.  This produces a more
 scale than one where all the blues are compressed into 3 colours.</p>
 </section>
 <section id="user-defined-colour-scales">
-<h3>User defined colour scales<a class="headerlink" href="#user-defined-colour-scales" title="Link to this heading">¶</a></h3>
+<h3>User defined colour scales<a class="headerlink" href="#user-defined-colour-scales" title="Link to this heading">#</a></h3>
 <p>Colour scales are stored as red green blue values on a scale of 0 to 255. Put these in a file with one red green blue value per line. i.e.</p>
 <div class="line-block">
 <div class="line">255 0   0</div>
@@ -626,7 +941,7 @@ scale than one where all the blues are compressed into 3 colours.</p>
 <p>If the colour scale selected has too few colours for the number of contour levels then the colours will be used cyclically.</p>
 </section>
 <section id="changing-colours-in-a-colour-scale">
-<h3>Changing colours in a colour scale<a class="headerlink" href="#changing-colours-in-a-colour-scale" title="Link to this heading">¶</a></h3>
+<h3>Changing colours in a colour scale<a class="headerlink" href="#changing-colours-in-a-colour-scale" title="Link to this heading">#</a></h3>
 <p>The simplest way to do this without writing any code is to modify the internal colour scale before plotting.  The colours most people work with are stored as red green blue intensities on a scale of 0 to 255, with 0 being no intensity and 255 full intensity.</p>
 <p>White is represented as 255 255 255 and black as 0 0 0</p>
 <p>The internal colour scale is stored in cfp.plotvars.cs as hexadecimal code.  To convert from decimal to hexadecimal use the Python hex function i.e.</p>
@@ -646,13 +961,13 @@ scale than one where all the blues are compressed into 3 colours.</p>
 </div>
 </section>
 <section id="predefined-colour-scales">
-<h3>Predefined colour scales<a class="headerlink" href="#predefined-colour-scales" title="Link to this heading">¶</a></h3>
+<h3>Predefined colour scales<a class="headerlink" href="#predefined-colour-scales" title="Link to this heading">#</a></h3>
 <p>A lot of the following colour maps were downloaded from the NCAR Command Language web site. Users of the IDL guide colour maps can see these maps at the end of the colour scales.</p>
 </section>
 <section id="perceptually-uniform-colour-scales">
-<h3>Perceptually uniform colour scales<a class="headerlink" href="#perceptually-uniform-colour-scales" title="Link to this heading">¶</a></h3>
+<h3>Perceptually uniform colour scales<a class="headerlink" href="#perceptually-uniform-colour-scales" title="Link to this heading">#</a></h3>
 <p>A selection of perceptually uniform colour scales for contouring data without a zero in. See <a class="reference external" href="http://www.climate-lab-book.ac.uk/2014/end-of-the-rainbow">The end of the rainbow</a> and <a class="reference external" href="http://bids.github.io/colormap">Matplotlib colour maps</a> for a good discussion on colour scales, colour blindness and uniform colour scales.</p>
-<table class="docutils align-default">
+<div class="pst-scrollable-table-container"><table class="table">
 <thead>
 <tr class="row-odd"><th class="head"><p>Name</p></th>
 <th class="head"><p>Scale</p></th>
@@ -685,10 +1000,11 @@ scale than one where all the blues are compressed into 3 colours.</p>
 </tr>
 </tbody>
 </table>
+</div>
 </section>
 <section id="ncar-command-language-meteoswiss-colour-maps">
-<h3>NCAR Command Language - MeteoSwiss colour maps<a class="headerlink" href="#ncar-command-language-meteoswiss-colour-maps" title="Link to this heading">¶</a></h3>
-<table class="docutils align-default">
+<h3>NCAR Command Language - MeteoSwiss colour maps<a class="headerlink" href="#ncar-command-language-meteoswiss-colour-maps" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
 <thead>
 <tr class="row-odd"><th class="head"><p>Name</p></th>
 <th class="head"><p>Scale</p></th>
@@ -757,10 +1073,11 @@ scale than one where all the blues are compressed into 3 colours.</p>
 </tr>
 </tbody>
 </table>
+</div>
 </section>
 <section id="ncar-command-language-small-color-maps-50-colours">
-<h3>NCAR Command Language - small color maps (&lt;50 colours)<a class="headerlink" href="#ncar-command-language-small-color-maps-50-colours" title="Link to this heading">¶</a></h3>
-<table class="docutils align-default">
+<h3>NCAR Command Language - small color maps (&lt;50 colours)<a class="headerlink" href="#ncar-command-language-small-color-maps-50-colours" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
 <thead>
 <tr class="row-odd"><th class="head"><p>Name</p></th>
 <th class="head"><p>Scale</p></th>
@@ -957,10 +1274,11 @@ scale than one where all the blues are compressed into 3 colours.</p>
 </tr>
 </tbody>
 </table>
+</div>
 </section>
 <section id="ncar-command-language-large-colour-maps-50-colours">
-<h3>NCAR Command Language - large colour maps (&gt;50 colours)<a class="headerlink" href="#ncar-command-language-large-colour-maps-50-colours" title="Link to this heading">¶</a></h3>
-<table class="docutils align-default">
+<h3>NCAR Command Language - large colour maps (&gt;50 colours)<a class="headerlink" href="#ncar-command-language-large-colour-maps-50-colours" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
 <thead>
 <tr class="row-odd"><th class="head"><p>Name</p></th>
 <th class="head"><p>Scale</p></th>
@@ -1177,10 +1495,11 @@ scale than one where all the blues are compressed into 3 colours.</p>
 </tr>
 </tbody>
 </table>
+</div>
 </section>
 <section id="ncar-command-language-enhanced-to-help-with-colour-blindness">
-<h3>NCAR Command Language - Enhanced to help with colour blindness<a class="headerlink" href="#ncar-command-language-enhanced-to-help-with-colour-blindness" title="Link to this heading">¶</a></h3>
-<table class="docutils align-default">
+<h3>NCAR Command Language - Enhanced to help with colour blindness<a class="headerlink" href="#ncar-command-language-enhanced-to-help-with-colour-blindness" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
 <thead>
 <tr class="row-odd"><th class="head"><p>Name</p></th>
 <th class="head"><p>Scale</p></th>
@@ -1225,10 +1544,11 @@ scale than one where all the blues are compressed into 3 colours.</p>
 </tr>
 </tbody>
 </table>
+</div>
 </section>
 <section id="idl-guide-scales">
-<h3>IDL guide scales<a class="headerlink" href="#idl-guide-scales" title="Link to this heading">¶</a></h3>
-<table class="docutils align-default">
+<h3>IDL guide scales<a class="headerlink" href="#idl-guide-scales" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
 <thead>
 <tr class="row-odd"><th class="head"><p>Name</p></th>
 <th class="head"><p>Scale</p></th>
@@ -1413,12 +1733,14 @@ scale than one where all the blues are compressed into 3 colours.</p>
 </tr>
 </tbody>
 </table>
+</div>
 </section>
 <section id="colour-bars">
-<h3>Colour bars<a class="headerlink" href="#colour-bars" title="Link to this heading">¶</a></h3>
-<p>Colour bars are often associated with filled colour contour plots and the options for the colour bar are described in the <a class="reference internal" href="cbar.html#cbar"><span class="std std-ref">cbar</span></a> .  If the colour bar options are changed within the call to <strong>cfp.con</strong> then prepend <a href="#id6"><span class="problematic" id="id7">colorbar_</span></a> to the appropriate colour bar option.  cf-plot has used the American spelling for colorbar for compatability with the spelling and usage within the Matplotlib Python package.</p>
+<h3>Colour bars<a class="headerlink" href="#colour-bars" title="Link to this heading">#</a></h3>
+<p>Colour bars are often associated with filled colour contour plots and the options for the colour bar are described in the <a class="reference internal" href="cbar.html#cbar"><span class="std std-ref">cbar</span></a> .  If the colour bar options are changed within the call to <strong>cfp.con</strong> then prepend <code class="docutils literal notranslate"><span class="pre">colorbar</span></code> to the appropriate colour bar option.  cf-plot has used the American spelling for colorbar for compatability with the spelling and usage within the Matplotlib Python package.</p>
 <p>Below are some examples of calls to <strong>cfp.cbar</strong></p>
-<a class="reference internal image-reference" href="_images/cbar.png"><img alt="_images/cbar.png" src="_images/cbar.png" style="width: 520.52px; height: 288.08px;" /></a>
+<a class="reference internal image-reference" href="_images/cbar.png"><img alt="_images/cbar.png" src="_images/cbar.png" style="width: 520.52px; height: 288.08px;" />
+</a>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
 <span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -1464,7 +1786,7 @@ scale than one where all the blues are compressed into 3 colours.</p>
 </div>
 </section>
 <section id="labelling-time-axes">
-<h3>Labelling time axes<a class="headerlink" href="#labelling-time-axes" title="Link to this heading">¶</a></h3>
+<h3>Labelling time axes<a class="headerlink" href="#labelling-time-axes" title="Link to this heading">#</a></h3>
 <p>The default time axis labelling in cf-plot might not be what is required and here is some information on
 using cf-python to extract values for yourself.</p>
 <div class="line-block">
@@ -1542,12 +1864,13 @@ along the axis.  In this case we manually specify out tick labels using the xtic
              <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Air temperature at the equator in 1980&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/time_axis_labelling.png"><img alt="_images/time_axis_labelling.png" src="_images/time_axis_labelling.png" style="width: 441.32px; height: 347.16px;" /></a>
+<a class="reference internal image-reference" href="_images/time_axis_labelling.png"><img alt="_images/time_axis_labelling.png" src="_images/time_axis_labelling.png" style="width: 441.32px; height: 347.16px;" />
+</a>
 <p>Axis labels can also be placed at an angle which in the case of time axis labels is often a way of displaying more lengthy labels.
 <strong>cfp.setvars(xtick_label_rotation=30)</strong> or <strong>cfp.setvars(ytick_label_rotation=30)</strong> are examples of how to rotate axis labels.</p>
 </section>
 <section id="selecting-data-that-has-a-lot-of-decimal-places-in-the-axis-values">
-<h3>Selecting data that has a lot of decimal places in the axis values<a class="headerlink" href="#selecting-data-that-has-a-lot-of-decimal-places-in-the-axis-values" title="Link to this heading">¶</a></h3>
+<h3>Selecting data that has a lot of decimal places in the axis values<a class="headerlink" href="#selecting-data-that-has-a-lot-of-decimal-places-in-the-axis-values" title="Link to this heading">#</a></h3>
 <p>Axes with a lot of decimal places can cause issues with numeric representation and rounding,
 In one case</p>
 <div class="line-block">
@@ -1579,7 +1902,7 @@ In one case</p>
 </div>
 </section>
 <section id="axis-labelling">
-<h3>Axis labelling<a class="headerlink" href="#axis-labelling" title="Link to this heading">¶</a></h3>
+<h3>Axis labelling<a class="headerlink" href="#axis-labelling" title="Link to this heading">#</a></h3>
 <p>The priority order of axis labeling in order of preference is:</p>
 <div class="line-block">
 <div class="line">1) user passed to routine</div>
@@ -1597,12 +1920,12 @@ In one case</p>
 </div>
 <p>When specifying the xticklabels or yticklabels the supplied values must be a string or list of strings and match the number of corresponding tick marks.</p>
 </section>
-<section id="id5">
-<h3>Blockfill plots<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h3>
+<section id="id2">
+<h3>Blockfill plots<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
 <p>Blockfill plots used to use the pcolormesh method but this had the advantage of being fast but gave incorrect results with masked data or when the data range wasn't extended in both 'min' and 'max' directions.  The blockfill method now uses PolyCollection from matplotlib.collections to draw the polygons for each colour interval specified by the contour levels.  This also has the advantage that blockfill is now available in other projections such as polar stereographic.  When doing blockfill plots of larger numbers of points the new method is slower so trim down the data to the area being shown before passing to cfp.con to speed it up.</p>
 </section>
 <section id="making-postscript-or-png-pictures">
-<h3>Making postscript or PNG pictures<a class="headerlink" href="#making-postscript-or-png-pictures" title="Link to this heading">¶</a></h3>
+<h3>Making postscript or PNG pictures<a class="headerlink" href="#making-postscript-or-png-pictures" title="Link to this heading">#</a></h3>
 <p>There are various methods of producing a figure for use in an external package such as a web document or LaTeX, Word etc.</p>
 <div class="line-block">
 <div class="line"><strong>cfp.setvars(file='zonal.ps')</strong> write subsequent graphics output directly to a file called zonal.ps</div>
@@ -1617,12 +1940,12 @@ In one case</p>
 </div>
 </section>
 <section id="making-non-blocking-plots">
-<h3>Making non-blocking plots<a class="headerlink" href="#making-non-blocking-plots" title="Link to this heading">¶</a></h3>
+<h3>Making non-blocking plots<a class="headerlink" href="#making-non-blocking-plots" title="Link to this heading">#</a></h3>
 <p>Using the Python prompt cf-plot will try to use the ImageMagick display command to show the plots.  This is done with subprocess and plots will remain on the screen even if the user exits the Python session.  If the display command isn't installed then cf-plot will use the Matplotlib picture viewer which will block the command prompt until it is quit.  Use <strong>cfp.setvars(viewer='matplotlib')</strong> to set this to be the default for a session even if the display command is available.</p>
 <p>On Mac OSX the default is <strong>'matplotlib'</strong> but this can be changed by the user to <strong>'display'</strong> if the ImageMagick display command has been installed.</p>
 </section>
 <section id="using-cf-plot-in-batch-mode">
-<h3>Using cf-plot in batch mode<a class="headerlink" href="#using-cf-plot-in-batch-mode" title="Link to this heading">¶</a></h3>
+<h3>Using cf-plot in batch mode<a class="headerlink" href="#using-cf-plot-in-batch-mode" title="Link to this heading">#</a></h3>
 <p>The following method works in the Reading Meteorology department.
 In the file /home/swsheaps/ajh.sh:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/sh</span>
@@ -1644,7 +1967,7 @@ In the file /home/swsheaps/ajh.sh:</p>
 <p>The first two lines of the Python script enable cf-plot to run without requiring an X-server.</p>
 </section>
 <section id="changing-defaults-via-the-cfplot-defaults-file">
-<h3>Changing defaults via the ~/.cfplot_defaults file<a class="headerlink" href="#changing-defaults-via-the-cfplot-defaults-file" title="Link to this heading">¶</a></h3>
+<h3>Changing defaults via the ~/.cfplot_defaults file<a class="headerlink" href="#changing-defaults-via-the-cfplot-defaults-file" title="Link to this heading">#</a></h3>
 <p>A ~/.cfplot_defaults default overide file in the user home directory may contain three
 values affecting contour plots initially. Please contact <a class="reference external" href="mailto:andy&#46;heaps&#37;&#52;&#48;ncas&#46;ac&#46;uk">andy<span>&#46;</span>heaps<span>&#64;</span>ncas<span>&#46;</span>ac<span>&#46;</span>uk</a> if you would like any more defaults changed in this manner.</p>
 <div class="line-block">
@@ -1658,7 +1981,7 @@ options to the con routine override any of these preset values.  The delimter be
 option and the value must be a space.</p>
 </section>
 <section id="plotting-data-with-different-time-units">
-<h3>Plotting data with different time units<a class="headerlink" href="#plotting-data-with-different-time-units" title="Link to this heading">¶</a></h3>
+<h3>Plotting data with different time units<a class="headerlink" href="#plotting-data-with-different-time-units" title="Link to this heading">#</a></h3>
 <p>When plotting data with different time units users need to move their data to using a common set of units as below.</p>
 <div class="line-block">
 <div class="line"><strong>data1.construct('T').Units</strong></div>
@@ -1679,7 +2002,7 @@ option and the value must be a space.</p>
 different linear scales breaks the connection between the data.</p>
 </section>
 <section id="blockfill-contour-plots-with-a-time-mean">
-<h3>Blockfill contour plots with a time mean<a class="headerlink" href="#blockfill-contour-plots-with-a-time-mean" title="Link to this heading">¶</a></h3>
+<h3>Blockfill contour plots with a time mean<a class="headerlink" href="#blockfill-contour-plots-with-a-time-mean" title="Link to this heading">#</a></h3>
 <p>When plotting a blockfill contour plot of data with a time mean the plot can sometimes produce unexpected results.
 For example the following data has monthly data points but bounds of ten years for each point.</p>
 <div class="line-block">
@@ -1735,10 +2058,10 @@ For example the following data has monthly data points but bounds of ten years f
 </section>
 </section>
 <section id="appendix-a-introduction-to-cf-python">
-<span id="appendixa"></span><h2>Appendix A - Introduction to cf-python<a class="headerlink" href="#appendix-a-introduction-to-cf-python" title="Link to this heading">¶</a></h2>
+<span id="appendixa"></span><h2>Appendix A - Introduction to cf-python<a class="headerlink" href="#appendix-a-introduction-to-cf-python" title="Link to this heading">#</a></h2>
 <p>cf-python is very flexible and can be used to select fields, levels, times, means for both CF and non-CF compliant data.  CF data is data that follows the NetCDF Climate and Forecast (CF) Metadata Conventions.  The conventions define metadata that provide a definitive description of what the data in each variable represents, and of the spatial and temporal properties of the data.</p>
 <section id="reading-in-data-and-field-selection">
-<h3>Reading in data and field selection<a class="headerlink" href="#reading-in-data-and-field-selection" title="Link to this heading">¶</a></h3>
+<h3>Reading in data and field selection<a class="headerlink" href="#reading-in-data-and-field-selection" title="Link to this heading">#</a></h3>
 <div class="line-block">
 <div class="line"><strong>import cf</strong></div>
 <div class="line"><strong>fl = cf.read('cfplot_data/ggap.nc')</strong></div>
@@ -1771,7 +2094,7 @@ For example the following data has monthly data points but bounds of ten years f
 <p>If we wanted to select the geopotential height we could have used <strong>g = fl[3]</strong> or <strong>g = fl[-1]</strong>.  This normal Python notation for lists helps when selecting items from longer lists when using the index.</p>
 </section>
 <section id="looking-at-what-the-data-is-in-a-dimension">
-<h3>Looking at what the data is in a dimension<a class="headerlink" href="#looking-at-what-the-data-is-in-a-dimension" title="Link to this heading">¶</a></h3>
+<h3>Looking at what the data is in a dimension<a class="headerlink" href="#looking-at-what-the-data-is-in-a-dimension" title="Link to this heading">#</a></h3>
 <p>Reading in a new field</p>
 <div class="line-block">
 <div class="line"><strong>g = cf.read('cfplot_data/tas_A1.nc')[0]</strong></div>
@@ -1831,7 +2154,7 @@ For example the following data has monthly data points but bounds of ten years f
 </div>
 </section>
 <section id="selecting-a-single-dimension-value">
-<h3>Selecting a single dimension value<a class="headerlink" href="#selecting-a-single-dimension-value" title="Link to this heading">¶</a></h3>
+<h3>Selecting a single dimension value<a class="headerlink" href="#selecting-a-single-dimension-value" title="Link to this heading">#</a></h3>
 <p>In the case below we select the slice of data at longitude=0.0 with the subspace method.</p>
 <div class="line-block">
 <div class="line"><strong>g.subspace(longitude=0.0)</strong></div>
@@ -1852,7 +2175,7 @@ For example the following data has monthly data points but bounds of ten years f
 </div>
 </section>
 <section id="selecting-a-range-of-dimension-values">
-<h3>Selecting a range of dimension values<a class="headerlink" href="#selecting-a-range-of-dimension-values" title="Link to this heading">¶</a></h3>
+<h3>Selecting a range of dimension values<a class="headerlink" href="#selecting-a-range-of-dimension-values" title="Link to this heading">#</a></h3>
 <p>To select a range of values use the cf.wi cf.wi construct</p>
 <div class="line-block">
 <div class="line"><strong>g.subspace(longitude=cf.wi(0, 60))</strong></div>
@@ -1863,7 +2186,7 @@ For example the following data has monthly data points but bounds of ten years f
 </div>
 </section>
 <section id="collapsing-a-dimension">
-<h3>Collapsing a dimension<a class="headerlink" href="#collapsing-a-dimension" title="Link to this heading">¶</a></h3>
+<h3>Collapsing a dimension<a class="headerlink" href="#collapsing-a-dimension" title="Link to this heading">#</a></h3>
 <p>The collapse method allows a variety of statistical operators to be applied over a dimension - mean, min, max, standard_deviation.  The most commonly used one is mean.</p>
 <p>To do a time mean of the data</p>
 <div class="line-block">
@@ -1893,7 +2216,7 @@ For example the following data has monthly data points but bounds of ten years f
 </section>
 </section>
 <section id="appendix-b-passing-data-via-arrays">
-<span id="appendixb"></span><h2>Appendix B - Passing data via arrays<a class="headerlink" href="#appendix-b-passing-data-via-arrays" title="Link to this heading">¶</a></h2>
+<span id="appendixb"></span><h2>Appendix B - Passing data via arrays<a class="headerlink" href="#appendix-b-passing-data-via-arrays" title="Link to this heading">#</a></h2>
 <p>cf-plot can also make contour and vector plots by passing data arrays. In this example we read in a temperature field from a netCDF file and pass it to cf-plot for plotting.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
 <span class="kn">from</span> <span class="nn">netCDF4</span> <span class="kn">import</span> <span class="n">Dataset</span> <span class="k">as</span> <span class="n">ncfile</span>
@@ -1904,12 +2227,14 @@ For example the following data has monthly data points but bounds of ten years f
 <span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="o">=</span><span class="n">temp</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">lons</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">lats</span><span class="p">)</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/guide5.png"><img alt="_images/guide5.png" src="_images/guide5.png" style="width: 507.52000000000004px; height: 389.48px;" /></a>
+<a class="reference internal image-reference" href="_images/guide5.png"><img alt="_images/guide5.png" src="_images/guide5.png" style="width: 507.52000000000004px; height: 389.48px;" />
+</a>
 <p>The contouring routine doesn't know that the data passed is a map plot as the only information passed is data arrays. i.e. there is no metadata available to help cf-plot to know what type of plot is required.  The plot type can be explicitly set in this case with the <strong>ptype</strong> flag to <strong>cfp.con</strong>.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="o">=</span><span class="n">temp</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">lons</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">lats</span><span class="p">,</span> <span class="n">ptype</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/guide6.png"><img alt="_images/guide6.png" src="_images/guide6.png" style="width: 514.28px; height: 298.48px;" /></a>
+<a class="reference internal image-reference" href="_images/guide6.png"><img alt="_images/guide6.png" src="_images/guide6.png" style="width: 514.28px; height: 298.48px;" />
+</a>
 <p>Other types of plot are:</p>
 <div class="line-block">
 <div class="line"><strong>ptype=2</strong> - latitude - height plot</div>
@@ -1934,15 +2259,17 @@ For example the following data has monthly data points but bounds of ten years f
 <span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="o">=</span><span class="n">u_mean</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">lats</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">pressure</span><span class="p">)</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/guide7.png"><img alt="_images/guide7.png" src="_images/guide7.png" style="width: 514.28px; height: 389.48px;" /></a>
+<a class="reference internal image-reference" href="_images/guide7.png"><img alt="_images/guide7.png" src="_images/guide7.png" style="width: 514.28px; height: 389.48px;" />
+</a>
 <p>Adding <strong>ptype=4</strong> to the <strong>cfp.con</strong> allows cf-plot to recognise the data as having a pressure axis and plots the atmosphere the right way up.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="o">=</span><span class="n">u_mean</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">lats</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">pressure</span><span class="p">,</span> <span class="n">ptype</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/guide8.png"><img alt="_images/guide8.png" src="_images/guide8.png" style="width: 518.96px; height: 389.48px;" /></a>
+<a class="reference internal image-reference" href="_images/guide8.png"><img alt="_images/guide8.png" src="_images/guide8.png" style="width: 518.96px; height: 389.48px;" />
+</a>
 </section>
 <section id="appendix-c-map-projections-and-options">
-<span id="appendixc"></span><h2>Appendix C - map projections and options<a class="headerlink" href="#appendix-c-map-projections-and-options" title="Link to this heading">¶</a></h2>
+<span id="appendixc"></span><h2>Appendix C - map projections and options<a class="headerlink" href="#appendix-c-map-projections-and-options" title="Link to this heading">#</a></h2>
 <p>The default map plotting projection is the cyclindrical equidistant
 projection from -180 to 180 in longitude and -90 to 90 in latitude.
 To change the map view in this projection to over the United Kingdom,
@@ -1968,7 +2295,8 @@ In addition to these the <strong>boundinglat</strong> parameter sets the edge of
 viewable latitudes and <strong>lat_0</strong> sets the centre of desired map domain.</p>
 <p>Additional map projections via proj are: <strong>ortho</strong>, <strong>merc</strong>, <strong>moll</strong>, <strong>robin</strong> and <strong>lcc</strong>, <strong>ukcp</strong>,
 <strong>osgb</strong> and <strong>EuroPP</strong>.</p>
-<a class="reference internal image-reference" href="_images/fig31.png"><img alt="_images/fig31.png" src="_images/fig31.png" style="width: 487.24px; height: 324.48px;" /></a>
+<a class="reference internal image-reference" href="_images/fig31.png"><img alt="_images/fig31.png" src="_images/fig31.png" style="width: 487.24px; height: 324.48px;" />
+</a>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
 <span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
 <span class="n">f</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/ukcp_rcm_test.nc&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
@@ -1997,7 +2325,8 @@ viewable latitudes and <strong>lat_0</strong> sets the centre of desired map dom
 <div class="line">grid_thickness=1.0 - grid thickness</div>
 </div>
 <p>Here we change the plotted grid with <strong>grid_lons</strong> and <strong>grid_lats</strong> options to <strong>cfp.setvars</strong> and make a blockfill plot.</p>
-<a class="reference internal image-reference" href="_images/fig32.png"><img alt="_images/fig32.png" src="_images/fig32.png" style="width: 487.24px; height: 324.48px;" /></a>
+<a class="reference internal image-reference" href="_images/fig32.png"><img alt="_images/fig32.png" src="_images/fig32.png" style="width: 487.24px; height: 324.48px;" />
+</a>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
 <span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -2012,7 +2341,8 @@ viewable latitudes and <strong>lat_0</strong> sets the centre of desired map dom
 <div class="line"><br /></div>
 <div class="line"><br /></div>
 </div>
-<a class="reference internal image-reference" href="_images/fig33.png"><img alt="_images/fig33.png" src="_images/fig33.png" style="width: 487.76px; height: 324.48px;" /></a>
+<a class="reference internal image-reference" href="_images/fig33.png"><img alt="_images/fig33.png" src="_images/fig33.png" style="width: 487.76px; height: 324.48px;" />
+</a>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
 <span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
 <span class="n">f</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/ukcp_rcm_test.nc&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
@@ -2030,7 +2360,8 @@ viewable latitudes and <strong>lat_0</strong> sets the centre of desired map dom
 <div class="line"><br /></div>
 <div class="line"><br /></div>
 </div>
-<a class="reference internal image-reference" href="_images/fig34.png"><img alt="_images/fig34.png" src="_images/fig34.png" style="width: 487.24px; height: 325.0px;" /></a>
+<a class="reference internal image-reference" href="_images/fig34.png"><img alt="_images/fig34.png" src="_images/fig34.png" style="width: 487.24px; height: 325.0px;" />
+</a>
 <p>Lambert conformal projections can now be cropped as in the following code:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
 <span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
@@ -2043,7 +2374,8 @@ viewable latitudes and <strong>lat_0</strong> sets the centre of desired map dom
 <div class="line"><br /></div>
 <div class="line"><br /></div>
 </div>
-<a class="reference internal image-reference" href="_images/fig35.png"><img alt="_images/fig35.png" src="_images/fig35.png" style="width: 488.28000000000003px; height: 310.96000000000004px;" /></a>
+<a class="reference internal image-reference" href="_images/fig35.png"><img alt="_images/fig35.png" src="_images/fig35.png" style="width: 488.28000000000003px; height: 310.96000000000004px;" />
+</a>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
 <span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
 <span class="n">f</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/tas_A1.nc&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
@@ -2051,7 +2383,8 @@ viewable latitudes and <strong>lat_0</strong> sets the centre of desired map dom
 <span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">15</span><span class="p">))</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/fig36.png"><img alt="_images/fig36.png" src="_images/fig36.png" style="width: 487.24px; height: 339.56px;" /></a>
+<a class="reference internal image-reference" href="_images/fig36.png"><img alt="_images/fig36.png" src="_images/fig36.png" style="width: 487.24px; height: 339.56px;" />
+</a>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
 <span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
 <span class="n">f</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/tas_A1.nc&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
@@ -2063,7 +2396,8 @@ viewable latitudes and <strong>lat_0</strong> sets the centre of desired map dom
 <div class="line"><br /></div>
 <div class="line"><br /></div>
 </div>
-<a class="reference internal image-reference" href="_images/fig37.png"><img alt="_images/fig37.png" src="_images/fig37.png" style="width: 487.24px; height: 339.56px;" /></a>
+<a class="reference internal image-reference" href="_images/fig37.png"><img alt="_images/fig37.png" src="_images/fig37.png" style="width: 487.24px; height: 339.56px;" />
+</a>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
 <span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
 <span class="n">f</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/tas_A1.nc&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
@@ -2075,7 +2409,8 @@ viewable latitudes and <strong>lat_0</strong> sets the centre of desired map dom
 <div class="line"><br /></div>
 <div class="line"><br /></div>
 </div>
-<a class="reference internal image-reference" href="_images/fig38.png"><img alt="_images/fig38.png" src="_images/fig38.png" style="width: 488.28000000000003px; height: 318.76px;" /></a>
+<a class="reference internal image-reference" href="_images/fig38.png"><img alt="_images/fig38.png" src="_images/fig38.png" style="width: 488.28000000000003px; height: 318.76px;" />
+</a>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
 <span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
 <span class="n">f</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/tas_A1.nc&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
@@ -2091,7 +2426,7 @@ viewable latitudes and <strong>lat_0</strong> sets the centre of desired map dom
 </div>
 </section>
 <section id="appendix-d-modifying-data">
-<h2>Appendix D - Modifying data<a class="headerlink" href="#appendix-d-modifying-data" title="Link to this heading">¶</a></h2>
+<h2>Appendix D - Modifying data<a class="headerlink" href="#appendix-d-modifying-data" title="Link to this heading">#</a></h2>
 <p>For the list of <a class="reference external" href="http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#attribute-appendix">CF attributes</a> setting and changing can be done using:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">field</span><span class="o">.</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s1">&#39;new_name&#39;</span>
 </pre></div>
@@ -2106,7 +2441,7 @@ viewable latitudes and <strong>lat_0</strong> sets the centre of desired map dom
 </pre></div>
 </div>
 <section id="example-1-adding-a-standard-name-to-a-field-that-doesn-t-have-one">
-<h3>Example 1 - adding a standard_name to a field that doesn't have one<a class="headerlink" href="#example-1-adding-a-standard-name-to-a-field-that-doesn-t-have-one" title="Link to this heading">¶</a></h3>
+<h3>Example 1 - adding a standard_name to a field that doesn't have one<a class="headerlink" href="#example-1-adding-a-standard-name-to-a-field-that-doesn-t-have-one" title="Link to this heading">#</a></h3>
 <p>In this case we have a field with a long_name but no standard_name</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
 <span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/data1.nc&#39;</span><span class="p">)[</span><span class="mi">2</span><span class="p">]</span>
@@ -2126,7 +2461,7 @@ viewable latitudes and <strong>lat_0</strong> sets the centre of desired map dom
 </div>
 </section>
 <section id="example-2-change-the-field-data-to-something-else">
-<h3>Example 2 - change the field data to something else<a class="headerlink" href="#example-2-change-the-field-data-to-something-else" title="Link to this heading">¶</a></h3>
+<h3>Example 2 - change the field data to something else<a class="headerlink" href="#example-2-change-the-field-data-to-something-else" title="Link to this heading">#</a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
 <span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
 <span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/data1.nc&#39;</span><span class="p">)[</span><span class="mi">7</span><span class="p">]</span>
@@ -2171,7 +2506,7 @@ For the original data:</p>
 <p>Now when the data is written out it is correct.</p>
 </section>
 <section id="example-3-data-with-an-incorrect-valid-min-valid-max">
-<h3>Example 3 - Data with an incorrect valid_min / valid_max<a class="headerlink" href="#example-3-data-with-an-incorrect-valid-min-valid-max" title="Link to this heading">¶</a></h3>
+<h3>Example 3 - Data with an incorrect valid_min / valid_max<a class="headerlink" href="#example-3-data-with-an-incorrect-valid-min-valid-max" title="Link to this heading">#</a></h3>
 <p>Sometimes data has an invalid valid_min or valid_max due to a data creation mistake or processing error.</p>
 <p>Here we make some sample data where the maximum of the data is greater than the valid_max parameter.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
@@ -2194,7 +2529,8 @@ For the original data:</p>
 <span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/data_incorrect1.png"><img alt="_images/data_incorrect1.png" src="_images/data_incorrect1.png" style="width: 514.28px; height: 309.92px;" /></a>
+<a class="reference internal image-reference" href="_images/data_incorrect1.png"><img alt="_images/data_incorrect1.png" src="_images/data_incorrect1.png" style="width: 514.28px; height: 309.92px;" />
+</a>
 <p>To turn on the warning in the <strong>cf.read</strong> command use <strong>warn_valid=True</strong></p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">h</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;data_incorrect.nc&#39;</span><span class="p">,</span> <span class="n">warn_valid</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 </pre></div>
@@ -2207,49 +2543,160 @@ See <a class="reference external" href="https://ncas-cms.github.io/cf-python/tut
 </pre></div>
 </div>
 <p>Now the data plots as we expect and we can change the data valid_min or valid_max as in the second example above.</p>
-<a class="reference internal image-reference" href="_images/data_incorrect2.png"><img alt="_images/data_incorrect2.png" src="_images/data_incorrect2.png" style="width: 514.28px; height: 309.92px;" /></a>
+<a class="reference internal image-reference" href="_images/data_incorrect2.png"><img alt="_images/data_incorrect2.png" src="_images/data_incorrect2.png" style="width: 514.28px; height: 309.92px;" />
+</a>
 </section>
 </section>
 </section>
 
 
-            <div class="clearer"></div>
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#introduction">Introduction</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#where-cf-plot-is-installed-and-how-to-install-it">Where cf-plot is installed and how to install it</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#contour-plots">Contour plots</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cylindrical-projection">Cylindrical projection</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#blockfill-plots">Blockfill plots</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polar-stereographic-plots">Polar stereographic plots</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#latitude-pressure-plots">Latitude - Pressure Plots</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hovmuller-plots">Hovmuller plots</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#vector-and-stream-plots">Vector and stream Plots</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#multiple-plots-on-a-page-and-plot-positioning">Multiple plots on a page and plot positioning</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#trajectories">Trajectories</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#stipple-plots">Stipple plots</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#graph-plots">Graph plots</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#setting-contour-levels">Setting Contour Levels</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#colour-scales">Colour scales</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#producing-a-uniform-colour-scale">Producing a uniform colour scale</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#user-defined-colour-scales">User defined colour scales</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#changing-colours-in-a-colour-scale">Changing colours in a colour scale</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#predefined-colour-scales">Predefined colour scales</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#perceptually-uniform-colour-scales">Perceptually uniform colour scales</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ncar-command-language-meteoswiss-colour-maps">NCAR Command Language - MeteoSwiss colour maps</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ncar-command-language-small-color-maps-50-colours">NCAR Command Language - small color maps (&lt;50 colours)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ncar-command-language-large-colour-maps-50-colours">NCAR Command Language - large colour maps (&gt;50 colours)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ncar-command-language-enhanced-to-help-with-colour-blindness">NCAR Command Language - Enhanced to help with colour blindness</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#idl-guide-scales">IDL guide scales</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#colour-bars">Colour bars</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#labelling-time-axes">Labelling time axes</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#selecting-data-that-has-a-lot-of-decimal-places-in-the-axis-values">Selecting data that has a lot of decimal places in the axis values</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#axis-labelling">Axis labelling</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Blockfill plots</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#making-postscript-or-png-pictures">Making postscript or PNG pictures</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#making-non-blocking-plots">Making non-blocking plots</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#using-cf-plot-in-batch-mode">Using cf-plot in batch mode</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#changing-defaults-via-the-cfplot-defaults-file">Changing defaults via the ~/.cfplot_defaults file</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#plotting-data-with-different-time-units">Plotting data with different time units</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#blockfill-contour-plots-with-a-time-mean">Blockfill contour plots with a time mean</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#appendix-a-introduction-to-cf-python">Appendix A - Introduction to cf-python</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#reading-in-data-and-field-selection">Reading in data and field selection</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#looking-at-what-the-data-is-in-a-dimension">Looking at what the data is in a dimension</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#selecting-a-single-dimension-value">Selecting a single dimension value</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#selecting-a-range-of-dimension-values">Selecting a range of dimension values</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#collapsing-a-dimension">Collapsing a dimension</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#appendix-b-passing-data-via-arrays">Appendix B - Passing data via arrays</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#appendix-c-map-projections-and-options">Appendix C - map projections and options</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#appendix-d-modifying-data">Appendix D - Modifying data</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#example-1-adding-a-standard-name-to-a-field-that-doesn-t-have-one">Example 1 - adding a standard_name to a field that doesn't have one</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#example-2-change-the-field-data-to-something-else">Example 2 - change the field data to something else</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#example-3-data-with-an-incorrect-valid-min-valid-max">Example 3 - Data with an incorrect valid_min / valid_max</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="_sources/user_guide.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
           </div>
-        </div>
-      </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-<h3><a href="index.html">Homepage</a><p></h3>
-<h5><a href="gallery.html">Gallery</a><p></h5>
-<h5><a href="user_guide.html">User Guide</a><p></h5>
-<h5><a href="training.html">Training material</a><p></h5>
-<h5><a href="routines.html">Routines</a><p></h5>
-<h5><a href="internal_routines.html">Routines - internal</a><p></h5>
-<h5><a href="advanced.html">Advanced Use</a><p></h5>
-<h5><a href="versions.html">Versions</a><p></h5>
-<h5><a href="issues.html">Issues</a><p></h5>
-<h5><a href="download.html">Download/Install</a><p></h5>
-<h5><a href="license.html">License</a><p></h5>
-<h5><a href="older_documentation.html">Older documentation</a><p></h5>
-<h5><a href="search.html">Search</a><p></h5>
-        </div>
-      </div>
-      <div class="clearer"></div>
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Sadie Bartholomew.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.0.2.
+    <br/>
+  </p>
+</div>
+      
     </div>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
-             >index</a></li>
-        <li class="nav-item nav-item-0"><a href="index.html">cf-plot 3.3.0 documentation</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">cf-plot user guide</a></li> 
-      </ul>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.4.
+</p></div>
+      
     </div>
-    <div class="footer" role="contentinfo">
-    &#169; Copyright 2024, Sadie Bartholomew.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
-    </div>
+  
+</div>
+
+  </footer>
   </body>
 </html>
