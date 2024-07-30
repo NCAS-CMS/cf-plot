@@ -28,9 +28,9 @@ Code didn't check for no points returned from a where statement causing a crash 
 ::
 
    Fixed
-   
-   
-   
+
+
+
 2. cfp.bfill_ugrid - update for shapely 2.0
 ===========================================
 
@@ -41,12 +41,12 @@ Update shapely polygon coordinate extraction so code will work with shapely 2.0 
 # New method for shapely 2.0 +
 poly_mapped = sgeom.mapping(geom_cyl.geoms[0])
 coords = list(poly_mapped['coordinates'][0])
- 
+
 
 ::
 
-   Fixed  
-   
+   Fixed
+
 
 
 3. cfp.con - line_labels not honoured
@@ -61,18 +61,18 @@ cfp.con : line_labels were not honoured.
 
 
 
-4. cfp.levs - need all of min, max and step to define a set of contour levels 
+4. cfp.levs - need all of min, max and step to define a set of contour levels
 =============================================================================
 
-cfp.levs - need all of min, max and step to define a set of contour levels 
+cfp.levs - need all of min, max and step to define a set of contour levels
 
 
 ::
 
    Fixed
-   
-   
-   
+
+
+
 5.  cfp.cbar : error when position is specified
 ===============================================
 
@@ -82,9 +82,9 @@ cfp.cbar : error when position is specified
 ::
 
    Fixed
-   
-  
-  
+
+
+
 6. cfp.dim_titles - titles and plot positioning issues fixed
 ============================================================
 
@@ -99,14 +99,14 @@ cfp.dim_titles - titles and plot positioning issues were fixed.
 
 7. cfp.stipple - not working for Robinson projection
 ====================================================
-   
+
 cfp.stipple wasn't working for the Robinson projection.
 
 
 ::
 
    Fixed
-   
+
 
 
 8. cfp.titles - auxiliary axes sometimes caused an issue
@@ -121,18 +121,18 @@ cfp-titles - auxiliary axes sometimes caused an issue.
 
 
 
-9. cfp.mapset - when a cyl mapset is done the colour scale should be relevant for the area selected 
+9. cfp.mapset - when a cyl mapset is done the colour scale should be relevant for the area selected
 ===================================================================================================
 
 cfp.mapset - when a cyl mapset is done the colour scale should be relevant for the area selected.
- 
- 
+
+
 ::
 
   Changed
-   
-   
-   
+
+
+
 10. cfp.levs - need all of min, max and step to define a set of contour levels
 ==============================================================================
 
@@ -201,13 +201,13 @@ In cfp.bfill the map transform wasn;t passed through to the blockfill_fast code 
 ::
 
    Fixed
-   
-   
-16. cfp.con - new test for spatially irregular data points    
+
+
+16. cfp.con - new test for spatially irregular data points
 ==========================================================
 
-A new test was introduced to cfp.con to check whether the data points are spatially irregular.  This is done with the 
-x points comparing the size of x to the size of the unique x points.  User specified values of True or False override 
+A new test was introduced to cfp.con to check whether the data points are spatially irregular.  This is done with the
+x points comparing the size of x to the size of the unique x points.  User specified values of True or False override
 the new internal test.
 
 
@@ -266,8 +266,8 @@ cfp.setvars - grid=True doesn't work on a cylindrical projection map.  The grid 
 ::
 
    Fixed
-   
-   
+
+
 21. cfp.setvars - feature_zorder parameter added
 ================================================
 
@@ -277,8 +277,8 @@ In cfp.setvars the feature_zorder parameter was added.  This controls the plotti
 ::
 
    Changed
-   
-   
+
+
 22. cfp.con - blockfill and blockfill_fast for 2D data added
 ============================================================
 
@@ -288,9 +288,9 @@ cfp.con - blockfill and blockfill_fast for 2D data added.
 ::
 
    Added
-   
-   
-23. cfp.con - code to subspace field to user defined map removed 
+
+
+23. cfp.con - code to subspace field to user defined map removed
 ================================================================
 
 cfp-con - code to subspace field to user defined map removed as this was causing issues with blank plots.
@@ -299,10 +299,3 @@ cfp-con - code to subspace field to user defined map removed as this was causing
 ::
 
    Removed
-   
-   
-   
-   
-
-
-

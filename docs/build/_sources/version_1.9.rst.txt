@@ -53,7 +53,7 @@ Package renamed to cf-plot to fit in with cf-python and cf-view.
 5. Change web docs to github
 ============================
 
-Web documents location changed to http://ajheaps.github.io/cf-plot.  setup.py etc references changed accordingly. 
+Web documents location changed to http://ajheaps.github.io/cf-plot.  setup.py etc references changed accordingly.
 
 ::
 
@@ -80,7 +80,7 @@ Add options so that passing of non-CF data to lineplot works.
     Done
 
 
-8. vect - turn off vector key 
+8. vect - turn off vector key
 =============================
 
 Add show_key option to vect to allow turning off of vector key.
@@ -128,8 +128,8 @@ Add plot.close() to gclose routine to properly close each plot when it is finish
 12. levs - change in floating point levels calculation
 ======================================================
 
-Floating point levels were calculated using numpy.arange and this can sometimes give stange contour levels. 
-For example, 
+Floating point levels were calculated using numpy.arange and this can sometimes give stange contour levels.
+For example,
 
 |
 |    np.arange(-0.2,0.2,0.04)
@@ -139,7 +139,7 @@ For example,
 |         1.60000000e-01])
 
 
-Using np.linspace(-0.2,0.2,11) gives a much neater set of levels and the floating point calculation of levels was changed 
+Using np.linspace(-0.2,0.2,11) gives a much neater set of levels and the floating point calculation of levels was changed
 to adopt this method.
 
 ::
@@ -248,9 +248,9 @@ One of the colour scales had an incorrect extension and this caused an issue in 
 22. Plot blocking resolved
 ==========================
 
-If the display command from ImageMagick is available this is now used in conjunction with subprocess 
-in preference to build-in Matplotlib viewer. This gets around the problem of a plot blocking the command prompt 
-preventing further plots from being made.  Using cfp.setvars(viewer='matplotlib') will revert to using the 
+If the display command from ImageMagick is available this is now used in conjunction with subprocess
+in preference to build-in Matplotlib viewer. This gets around the problem of a plot blocking the command prompt
+preventing further plots from being made.  Using cfp.setvars(viewer='matplotlib') will revert to using the
 built-in matplotlib picture viewer.
 
 
@@ -354,8 +354,8 @@ not to pass f but to have x=x and y=y.  This allows x vs y plots and y vs x plot
 30. con - filled contours and irregular contour levels
 ======================================================
 
-Selecting irregular contour levels with cfp.levs(manual=manual) and filled contours gives a slight 
-colour scale mismatch.  This was resolved by calculating a normalization array: 
+Selecting irregular contour levels with cfp.levs(manual=manual) and filled contours gives a slight
+colour scale mismatch.  This was resolved by calculating a normalization array:
 plotvars.norm=matplotlib.colors.BoundaryNorm(boundaries=plotvars.levels, ncolors=ncolors)
 
 ::
@@ -415,16 +415,12 @@ levs = (((np.arange(min, max+step*1e-10, step, dtype=np.float64)*1e10)).astype(n
 
 gvals changed to use more sensible steps when step >= 1.
 
-steps are now 1, 2, 5, 10, 20, 25, 50, 100, 200, 250, 500, 1000, 2000, 2500, 5000, 10000, 20000, 25000, 50000, 100000, 
+steps are now 1, 2, 5, 10, 20, 25, 50, 100, 200, 250, 500, 1000, 2000, 2500, 5000, 10000, 20000, 25000, 50000, 100000,
 200000, 250000, 500000, 1000000.
-              
+
 If the number of steps from the above in (data max - data min) is greater than 12 then this step is used.
 
 
 ::
 
     Changed
-
-
-
-

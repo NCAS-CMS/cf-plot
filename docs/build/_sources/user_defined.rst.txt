@@ -9,7 +9,7 @@ Example 20 - User labelling of axes
 -----------------------------------
 
 .. image::  images/fig20a.png
-   :scale: 44% 
+   :scale: 44%
 
 ::
 
@@ -17,7 +17,7 @@ Example 20 - User labelling of axes
    import cf
    import cfplot as cfp
    f=cf.read('cfplot_data/Geostropic_Adjustment.nc')[0]
-   cfp.con(f.subspace[9]) 
+   cfp.con(f.subspace[9])
 
 
 
@@ -25,7 +25,7 @@ Example 20 - User labelling of axes
 In the following plot the axes were labelled with the axes command before making a contour map of the data.  The xticklabels and yticklabels options can be used to fine tune the axis labels.
 
 .. image::  images/fig20.png
-   :scale: 44% 
+   :scale: 44%
 
 ::
 
@@ -34,9 +34,5 @@ In the following plot the axes were labelled with the axes command before making
    import cfplot as cfp
    import numpy as np
    f=cf.read('cfplot_data/Geostropic_Adjustment.nc')[0]
-   cfp.con(f.subspace[9], title='test data', xticks=np.arange(5)*100000+100000, 
-           yticks=np.arange(7)*2000+2000, xlabel='x-axis', ylabel='z-axis') 
-
-
-
-
+   cfp.con(f.subspace[9], title='test data', xticks=np.arange(5)*100000+100000,
+           yticks=np.arange(7)*2000+2000, xlabel='x-axis', ylabel='z-axis')

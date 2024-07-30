@@ -12,7 +12,7 @@ UKCP grid plotting
 
 Support has been added for the UKCP grid which is an instance of the tranveverse mercator projection.
 
-cfp.mapset(proj='UKCP') will give a transverse mercator projection with the limts of lonmin = -11, 
+cfp.mapset(proj='UKCP') will give a transverse mercator projection with the limts of lonmin = -11,
 lonmax = 3, latmin = 49 and latmax = 61.
 
 Some examples of this and other pavailable projections have been added at :ref:`projections<projections>`
@@ -92,18 +92,3 @@ incorrect.
 ::
 
     Fixed
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
