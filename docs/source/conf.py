@@ -146,13 +146,13 @@ smartquotes = False
 html_sidebars = {"**": ["sidebar.html"]}
 
 html_theme_options = {
-    "stickysidebar": "true",
     "sidebarwidth": 150,
-    #                      "externalrefs"  : "false",
-    #                      "relbarbgcolor" : "#5c85d6",
-    #                      "headbgcolor"   : "#5c85d6", #"#85a3e0", ##333399",
-    #                      "sidebarbgcolor": "#85a3e0",
-    #                      "headtextcolor" :  "#ffffff", #"#333399",
+    "show_version_warning_banner": True,
+    "announcement": (
+        "This is the new permanent home of the cf-plot documentation: please "
+        "consult this and not the old frozen version under "
+        "'http://ajheaps.github.io'."
+    )
 }
 
 
