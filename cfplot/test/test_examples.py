@@ -563,7 +563,7 @@ class ExamplesTest(unittest.TestCase):
         # IndexError: Indices [slice(None, None, None), slice(None, None, None),
         # array([], dtype=int64), slice(None, None, None)] result in a
         # subspaced shape of (1, 23, 0, 320), but can't create a subspace
-        #of Field that has a size 0 axis
+        # of Field that has a size 0 axis
 
         cfp.setvars(file="fig9.png")
         f = cf.read(f"{self.data_dir}/ggap.nc")[0]
@@ -825,8 +825,10 @@ class ExamplesTest(unittest.TestCase):
         lats_new = np.arange(140) * 0.1 + 49.0
         # TODO SLB needs fixing, fails on an IndexError
         temp_new = griddata(
-            points=(lons, lats), values=temp, xi=(lons_new, lats_new),
-            method="linear"
+            points=(lons, lats),
+            values=temp,
+            xi=(lons_new, lats_new),
+            method="linear",
         )
 
         cfp.cscale("parula")
@@ -861,8 +863,10 @@ class ExamplesTest(unittest.TestCase):
         lats_new = np.arange(140) * 0.1 + 49.0
         # TODO SLB needs fixing, fails on an IndexError
         temp_new = griddata(
-            points=(lons, lats), values=temp, xi=(lons_new, lats_new),
-            method="linear"
+            points=(lons, lats),
+            values=temp,
+            xi=(lons_new, lats_new),
+            method="linear",
         )
         # ---
 
@@ -911,8 +915,10 @@ class ExamplesTest(unittest.TestCase):
         lats_new = np.arange(91 * 8) * 0.25 - 90.0
         # TODO SLB needs fixing, fails on a ValueError
         temp_new = griddata(
-            points=(lons, lats), values=temp, xi=(lons_new, lats_new),
-            method="linear"
+            points=(lons, lats),
+            values=temp,
+            xi=(lons_new, lats_new),
+            method="linear",
         )
 
         cfp.con(x=lons_new, y=lats_new, f=temp_new, ptype=1)
@@ -1006,25 +1012,25 @@ class ExamplesTest(unittest.TestCase):
     def test_example_30(self):
         """Test Example 30."""
         # cfp.setvars(file="fig30.png")  # TODO
-        tol=cf.RTOL(1e-5)
-        f=cf.read('cfplot_data/ggap.nc')[1]
+        tol = cf.RTOL(1e-5)
+        f = cf.read("cfplot_data/ggap.nc")[1]
 
-        u=f.collapse('X: mean')
-        u1=u.subspace(Y=-61.12099075)
-        u2=u.subspace(Y=0.56074494)
+        u = f.collapse("X: mean")
+        u1 = u.subspace(Y=-61.12099075)
+        u2 = u.subspace(Y=0.56074494)
 
-        g=cf.read('cfplot_data/ggap.nc')[0]
-        t=g.collapse('X: mean')
-        t1=t.subspace(Y=-61.12099075)
-        t2=t.subspace(Y=0.56074494)
+        g = cf.read("cfplot_data/ggap.nc")[0]
+        t = g.collapse("X: mean")
+        t1 = t.subspace(Y=-61.12099075)
+        t2 = t.subspace(Y=0.56074494)
 
         cfp.gopen()
         cfp.gset(-30, 30, 1000, 0)
-        cfp.lineplot(u1,color='r')
-        cfp.lineplot(u2, color='r')
+        cfp.lineplot(u1, color="r")
+        cfp.lineplot(u2, color="r")
         cfp.gset(190, 300, 1000, 0, twiny=True)
-        cfp.lineplot(t1,color='b')
-        cfp.lineplot(t2, color='b')
+        cfp.lineplot(t1, color="b")
+        cfp.lineplot(t2, color="b")
         cfp.gclose()
 
         compare_images(30)
@@ -1049,6 +1055,151 @@ class ExamplesTest(unittest.TestCase):
         # This can fail with 'UnboundLocalError', see Issue #60
         cfp.con(f, lines=False)
         compare_images(31)
+
+    def test_example_32(self):
+        """Test Example 32."""
+        # cfp.setvars(file="figX.png")  # TODO
+        f = cf.read("cfplot_data/ukcp_rcm_test.nc")[0]
+
+        cfp.mapset(proj="UKCP", resolution="50m")
+        cfp.levs(-3, 7, 0.5)
+        cfp.setvars(grid_colour="grey")
+
+        cfp.con(
+            f,
+            lines=False,
+            blockfill=True,
+            xticks=np.arange(14) - 11,
+            yticks=np.arange(13) + 49,
+        )
+        compare_images(32)
+
+    def test_example_33(self):
+        """Test Example 33."""
+        # cfp.setvars(file="figX.png")  # TODO
+        f = cf.read("cfplot_data/ukcp_rcm_test.nc")[0]
+        cfp.levs(-3, 7, 0.5)
+
+        cfp.gopen(columns=2)
+        cfp.mapset(proj="OSGB", resolution="50m")
+        cfp.con(f, lines=False, colorbar_label_skip=2)
+        cfp.gpos(2)
+        cfp.mapset(proj="EuroPP", resolution="50m")
+        cfp.con(f, lines=False, colorbar_label_skip=2)
+        cfp.gclose()
+
+        compare_images(33)
+
+    def test_example_34(self):
+        """Test Example 34."""
+        # cfp.setvars(file="figX.png")  # TODO
+        f = cf.read("cfplot_data/tas_A1.nc")[0]
+        cfp.mapset(proj="lcc", lonmin=-50, lonmax=50, latmin=20, latmax=85)
+
+        cfp.con(f.subspace(time=15))
+        compare_images(34)
+
+    def test_example_35(self):
+        """Test Example 35."""
+        # cfp.setvars(file="figX.png")  # TODO
+        f = cf.read("cfplot_data/tas_A1.nc")[0]
+        cfp.mapset(proj="moll")
+
+        cfp.con(f.subspace(time=15))
+        compare_images(35)
+
+    def test_example_36(self):
+        """Test Example 36."""
+        # cfp.setvars(file="figX.png")  # TODO
+        f = cf.read("cfplot_data/tas_A1.nc")[0]
+        cfp.mapset(proj="merc")
+
+        cfp.con(f.subspace(time=15))
+        compare_images(36)
+
+    def test_example_37(self):
+        """Test Example 37."""
+        # cfp.setvars(file="figX.png")  # TODO
+        f = cf.read("cfplot_data/tas_A1.nc")[0]
+        cfp.mapset(proj="ortho")
+
+        cfp.con(f.subspace(time=15))
+        compare_images(37)
+
+    def test_example_38(self):
+        """Test Example 38."""
+        # cfp.setvars(file="figX.png")  # TODO
+        f = cf.read("cfplot_data/tas_A1.nc")[0]
+        cfp.mapset(proj="robin")
+
+        cfp.con(f.subspace(time=15))
+        compare_images(38)
+
+    def test_example_39(self):
+        """Test Example 39."""
+        # cfp.setvars(file="figX.png")  # TODO
+        pass
+
+    def test_example_40(self):
+        """Test Example 40."""
+        # cfp.setvars(file="figX.png")  # TODO
+        pass
+
+    def test_example_41(self):
+        """Test Example 41."""
+        # cfp.setvars(file="fig41.png")  # TODO
+        pass
+
+    def test_example_42a(self):
+        """Test Example 42a."""
+        # cfp.setvars(file="fig42a.png")  # TODO
+        f = cf.read("cfplot_data/ff_trs_pos.nc")[0]
+
+        cfp.mapset(lonmin=-50, lonmax=50, latmin=20, latmax=80)
+        g = f.subspace(time=cf.wi(cf.dt("1979-12-01"), cf.dt("1979-12-10")))
+        g = g * 1e5
+        cfp.levs(0, 12, 1, extend="max")
+        cfp.cscale("scale1", below=0, above=13)
+
+        cfp.traj(
+            g,
+            legend=True,
+            linewidth=2,
+            colorbar_title="Relative Vorticity (Hz) * 1e5",
+        )
+        compare_images(42)
+
+    def test_example_42b(self):
+        """Test Example 42b.
+
+        TODO combine with 42a?
+        """
+        # cfp.setvars(file="fig42b.png")  # TODO
+        f = cf.read("cfplot_data/ff_trs_pos.nc")[0]
+
+        cfp.mapset(lonmin=-50, lonmax=50, latmin=20, latmax=80)
+        g = f.subspace(time=cf.wi(cf.dt("1979-12-01"), cf.dt("1979-12-10")))
+        g = g * 1e5
+        cfp.levs(0, 12, 1, extend="max")
+        cfp.cscale("scale1", below=0, above=13)
+        cfp.traj(
+            g,
+            legend_lines=True,
+            linewidth=2,
+            colorbar_title="Relative Vorticity (Hz) * 1e5",
+        )
+        compare_images(42.5)  # TODO amend numbering
+
+    def test_example_43(self):
+        """Test Example 43."""
+        # cfp.setvars(file="fig43.png")  # TODO
+        f = cf.read("wrf2.nc")[0]
+
+        t2 = f.subspace(time=cf.dt("2016-12-25"))
+        t2.units = "degC"
+
+        cfp.con(t2, lines=False)
+        compare_images(43)
 
     # TODO SLB: add rest of examples from current documentation here
 
