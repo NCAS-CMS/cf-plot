@@ -1005,8 +1005,29 @@ class ExamplesTest(unittest.TestCase):
 
     def test_example_30(self):
         """Test Example 30."""
-        # TODO SLB missing example 30.
-        pass
+        # cfp.setvars(file="fig30.png")  # TODO
+        tol=cf.RTOL(1e-5)
+        f=cf.read('cfplot_data/ggap.nc')[1]
+
+        u=f.collapse('X: mean')
+        u1=u.subspace(Y=-61.12099075)
+        u2=u.subspace(Y=0.56074494)
+
+        g=cf.read('cfplot_data/ggap.nc')[0]
+        t=g.collapse('X: mean')
+        t1=t.subspace(Y=-61.12099075)
+        t2=t.subspace(Y=0.56074494)
+
+        cfp.gopen()
+        cfp.gset(-30, 30, 1000, 0)
+        cfp.lineplot(u1,color='r')
+        cfp.lineplot(u2, color='r')
+        cfp.gset(190, 300, 1000, 0, twiny=True)
+        cfp.lineplot(t1,color='b')
+        cfp.lineplot(t2, color='b')
+        cfp.gclose()
+
+        compare_images(30)
 
     @unittest.expectedFailure  # errors due to 1 of 2 x bugs, see #59 and #60
     def test_example_31(self):
