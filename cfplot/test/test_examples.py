@@ -738,6 +738,59 @@ class ExamplesTest(unittest.TestCase):
         cfp.gclose()
         compare_images(19)
 
+    def test_example_19a(self):
+        """Test Example 19a."""
+        cfp.setvars(file="fig19a.png")
+        f = cf.read(f"{self.data_dir}/ggap.nc")[1]
+
+        cfp.gopen(user_position=True)
+
+        cfp.gpos(xmin=0.1, xmax=0.5, ymin=0.55, ymax=1.0)
+        cfp.con(f.subspace(Z=500), title="500mb", lines=False)
+
+        cfp.gpos(xmin=0.55, xmax=0.95, ymin=0.55, ymax=1.0)
+        cfp.con(f.subspace(Z=100), title="100mb", lines=False)
+
+        cfp.gpos(xmin=0.3, xmax=0.7, ymin=0.1, ymax=0.55)
+        cfp.con(f.subspace(Z=10), title="10mb", lines=False)
+
+        cfp.gclose()
+
+        compare_images(19.1)
+
+    def test_example_19b(self):
+        """Test Example 19b."""
+        cfp.setvars(file="fig19b.png")
+        f = cf.read(f"{self.data_dir}/ggap.nc")[1]
+        g = f.collapse("X: mean")
+
+        cfp.gopen(user_position=True)
+
+        cfp.gpos(xmin=0.2, ymin=0.2, xmax=0.8, ymax=0.8)
+        cfp.lineplot(
+            g.subspace(pressure=100),
+            marker="o",
+            color="blue",
+            title="Zonal mean zonal wind at 100mb",
+        )
+
+        cfp.cscale("seaice_2", ncols=20)
+        levs = np.arange(282, 320, 2)
+        cfp.cbar(levs=levs, position=[0.2, 0.1, 0.6, 0.02], title="seaice_2")
+
+        cfp.cscale("topo_15lev", ncols=22)
+        levs = np.arange(-100, 2000, 100)
+        cfp.cbar(
+            levs=levs,
+            position=[0.03, 0.2, 0.04, 0.6],
+            orientation="vertical",
+            title="topo_15lev",
+        )
+
+        cfp.gclose()
+
+        compare_images(19.2)
+
     @unittest.expectedFailure  # works standalone, test suite gives ValueError
     def test_example_20(self):
         """Test Example 20."""
@@ -763,6 +816,16 @@ class ExamplesTest(unittest.TestCase):
         )
         compare_images(21)
 
+    def test_example_21other(self):
+        """Test Example 21 (other, due to duplicate label of 21)."""
+        cfp.setvars(file="fig21o.png")
+        f = cf.read(f"{self.data_dir}/rgp.nc")[0]
+
+        cfp.cscale("plasma")
+        cfp.con(f)
+
+        compare_images(21.5)
+
     @unittest.expectedFailure  # works standalone, test suite gives ValueError
     def test_example_22(self):
         """Test Example 22."""
@@ -773,6 +836,17 @@ class ExamplesTest(unittest.TestCase):
 
         cfp.con(f)
         compare_images(22)
+
+    def test_example_22other(self):
+        """Test Example 22 (other, due to duplicate label of 22)."""
+        cfp.setvars(file="fig22o.png")
+        f = cf.read(f"{self.data_dir}/rgp.nc")[0]
+
+        cfp.cscale("plasma")
+        cfp.mapset(proj="rotated")
+
+        cfp.con(f)
+        compare_images(22.5)
 
     def test_example_23(self):
         """Test Example 23."""
@@ -798,6 +872,22 @@ class ExamplesTest(unittest.TestCase):
         cfp.gclose()
 
         compare_images(23)
+
+    def test_example_23other(self):
+        """Test Example 23 (other, due to duplicate label of 23)."""
+        cfp.setvars(file="fig23o.png")
+        f = cf.read(
+            f"{self.data_dir}/20160601-05T0000Z_INCOMPASS_km4p4_uv_RH_500.nc"
+        )
+        cfp.mapset(50, 100, 5, 35)
+        cfp.levs(0, 90, 15, extend="neither")
+
+        cfp.gopen()
+        cfp.con(f[0], lines=False)
+        cfp.vect(u=f[1], v=f[2], stride=40, key_length=10)
+        cfp.gclose()
+
+        compare_images(23.5)
 
     @unittest.expectedFailure  # IndexError after griddata API conformance
     def test_example_24(self):
@@ -1138,7 +1228,7 @@ class ExamplesTest(unittest.TestCase):
     def test_example_39(self):
         """Test Example 39."""
         # cfp.setvars(file="figX.png")  # TODO
-        pass
+        compare_images(39)
 
     def test_example_40(self):
         """Test Example 40."""
