@@ -685,6 +685,44 @@ class ExamplesTest(unittest.TestCase):
 
         compare_images(16)
 
+    def test_example_16b(self):
+        """Test Example 16b: basic stream plot."""
+        # cfp.setvars(file="fig16b.png")  # TODO
+        f = cf.read(f"{self.data_dir}/ggap.nc")
+        u = f[1].subspace(pressure=500)
+        v = f[2].subspace(pressure=500)
+
+        u = u.anchor("X", -180)
+        v = v.anchor("X", -180)
+
+        cfp.stream(u=u, v=v, density=2)
+        compare_images(16.3)
+
+    def test_example_16c(self):
+        """Test Example 16c: enhanced stream plot."""
+        # cfp.setvars(file="fig16c.png")  # TODO
+        f = cf.read(f"{self.data_dir}/ggap.nc")
+
+        u = f[1].subspace(pressure=500)
+        v = f[2].subspace(pressure=500)
+        u = u.anchor("X", -180)
+        v = v.anchor("X", -180)
+
+        magnitude = (u**2 + v**2) ** 0.5
+        mag = np.squeeze(magnitude.array)
+
+        cfp.levs(0, 60, 5, extend="max")
+        cfp.cscale("viridis", ncols=13)
+        cfp.gopen()
+        cfp.stream(u=u, v=v, density=2, color=mag)
+        cfp.cbar(
+            levs=cfp.plotvars.levels,
+            position=[0.12, 0.12, 0.8, 0.02],
+            title="Wind magnitude",
+        )
+        cfp.gclose()
+        compare_images(16.6)
+
     def test_example_17(self):
         """Test Example 17: basic stipple plot."""
         cfp.setvars(file="fig17.png")
