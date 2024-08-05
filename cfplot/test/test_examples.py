@@ -1103,13 +1103,13 @@ class ExamplesTest(unittest.TestCase):
         """Test Example 30."""
         # cfp.setvars(file="fig30.png")  # TODO
         tol = cf.RTOL(1e-5)
-        f = cf.read("cfplot_data/ggap.nc")[1]
+        f = cf.read(f"{self.data_dir}/ggap.nc")[1]
 
         u = f.collapse("X: mean")
         u1 = u.subspace(Y=-61.12099075)
         u2 = u.subspace(Y=0.56074494)
 
-        g = cf.read("cfplot_data/ggap.nc")[0]
+        g = cf.read(f"{self.data_dir}/ggap.nc")[0]
         t = g.collapse("X: mean")
         t1 = t.subspace(Y=-61.12099075)
         t2 = t.subspace(Y=0.56074494)
@@ -1128,6 +1128,8 @@ class ExamplesTest(unittest.TestCase):
     @unittest.expectedFailure  # errors due to 1 of 2 x bugs, see #59 and #60
     def test_example_31(self):
         """Test Example 31."""
+        # cfp.setvars(file="fig31.png")  # TODO
+
         # TODO SLB this test errors
         f = cf.read(f"{self.data_dir}/ukcp_rcm_test.nc")[0]
 
@@ -1148,8 +1150,8 @@ class ExamplesTest(unittest.TestCase):
 
     def test_example_32(self):
         """Test Example 32."""
-        # cfp.setvars(file="figX.png")  # TODO
-        f = cf.read("cfplot_data/ukcp_rcm_test.nc")[0]
+        # cfp.setvars(file="fig32.png")  # TODO
+        f = cf.read(f"{self.data_dir}/ukcp_rcm_test.nc")[0]
 
         cfp.mapset(proj="UKCP", resolution="50m")
         cfp.levs(-3, 7, 0.5)
@@ -1166,8 +1168,8 @@ class ExamplesTest(unittest.TestCase):
 
     def test_example_33(self):
         """Test Example 33."""
-        # cfp.setvars(file="figX.png")  # TODO
-        f = cf.read("cfplot_data/ukcp_rcm_test.nc")[0]
+        # cfp.setvars(file="fig33.png")  # TODO
+        f = cf.read(f"{self.data_dir}/ukcp_rcm_test.nc")[0]
         cfp.levs(-3, 7, 0.5)
 
         cfp.gopen(columns=2)
@@ -1182,8 +1184,8 @@ class ExamplesTest(unittest.TestCase):
 
     def test_example_34(self):
         """Test Example 34."""
-        # cfp.setvars(file="figX.png")  # TODO
-        f = cf.read("cfplot_data/tas_A1.nc")[0]
+        # cfp.setvars(file="fig34.png")  # TODO
+        f = cf.read(f"{self.data_dir}/tas_A1.nc")[0]
         cfp.mapset(proj="lcc", lonmin=-50, lonmax=50, latmin=20, latmax=85)
 
         cfp.con(f.subspace(time=15))
@@ -1191,8 +1193,8 @@ class ExamplesTest(unittest.TestCase):
 
     def test_example_35(self):
         """Test Example 35."""
-        # cfp.setvars(file="figX.png")  # TODO
-        f = cf.read("cfplot_data/tas_A1.nc")[0]
+        # cfp.setvars(file="fig35.png")  # TODO
+        f = cf.read(f"{self.data_dir}/tas_A1.nc")[0]
         cfp.mapset(proj="moll")
 
         cfp.con(f.subspace(time=15))
@@ -1200,8 +1202,8 @@ class ExamplesTest(unittest.TestCase):
 
     def test_example_36(self):
         """Test Example 36."""
-        # cfp.setvars(file="figX.png")  # TODO
-        f = cf.read("cfplot_data/tas_A1.nc")[0]
+        # cfp.setvars(file="fig36.png")  # TODO
+        f = cf.read(f"{self.data_dir}/tas_A1.nc")[0]
         cfp.mapset(proj="merc")
 
         cfp.con(f.subspace(time=15))
@@ -1209,8 +1211,8 @@ class ExamplesTest(unittest.TestCase):
 
     def test_example_37(self):
         """Test Example 37."""
-        # cfp.setvars(file="figX.png")  # TODO
-        f = cf.read("cfplot_data/tas_A1.nc")[0]
+        # cfp.setvars(file="fig37.png")  # TODO
+        f = cf.read(f"{self.data_dir}/tas_A1.nc")[0]
         cfp.mapset(proj="ortho")
 
         cfp.con(f.subspace(time=15))
@@ -1218,8 +1220,8 @@ class ExamplesTest(unittest.TestCase):
 
     def test_example_38(self):
         """Test Example 38."""
-        # cfp.setvars(file="figX.png")  # TODO
-        f = cf.read("cfplot_data/tas_A1.nc")[0]
+        # cfp.setvars(file="fig38.png")  # TODO
+        f = cf.read(f"{self.data_dir}/tas_A1.nc")[0]
         cfp.mapset(proj="robin")
 
         cfp.con(f.subspace(time=15))
@@ -1227,18 +1229,18 @@ class ExamplesTest(unittest.TestCase):
 
     def test_example_39(self):
         """Test Example 39."""
-        cfp.setvars(file="figX.png")  # TODO
-        f=cf.read('cfplot_data/ff_trs_pos.nc')[0]
+        # cfp.setvars(file="fig39.png")  # TODO
+        f = cf.read(f"{self.data_dir}/ff_trs_pos.nc")[0]
 
         cfp.traj(f)
         compare_images(39)
 
     def test_example_40(self):
         """Test Example 40."""
-        # cfp.setvars(file="figX.png")  # TODO
-        f=cf.read('cfplot_data/ff_trs_pos.nc')[0]
+        # cfp.setvars(file="fig40.png")  # TODO
+        f = cf.read(f"{self.data_dir}/ff_trs_pos.nc")[0]
 
-        cfp.mapset(proj='npstere')
+        cfp.mapset(proj="npstere")
 
         cfp.traj(f)
         compare_images(40)
@@ -1246,27 +1248,29 @@ class ExamplesTest(unittest.TestCase):
     def test_example_41(self):
         """Test Example 41."""
         # cfp.setvars(file="fig41.png")  # TODO
-        f=cf.read('cfplot_data/ff_trs_pos.nc')[0]
+        f = cf.read(f"{self.data_dir}/ff_trs_pos.nc")[0]
 
         cfp.mapset(lonmin=-20, lonmax=20, latmin=30, latmax=70)
 
-        cfp.traj(f, vector=True, markersize=0.0, fc='b', ec='b')
+        cfp.traj(f, vector=True, markersize=0.0, fc="b", ec="b")
         compare_images(41)
 
     def test_example_42(self):
         """Test Example 42."""
         # cfp.setvars(file="fig42.png")  # TODO
-        f=cf.read('cfplot_data/ff_trs_pos.nc')[0]
+        f = cf.read(f"{self.data_dir}/ff_trs_pos.nc")[0]
 
         cfp.mapset(lonmin=-50, lonmax=50, latmin=20, latmax=80)
-        g=f.subspace(time=cf.wi(cf.dt('1979-12-01'), cf.dt('1979-12-10')))
-        g=g*1e5
-        cfp.levs(0, 12, 1, extend='max')
-        cfp.cscale('scale1', below=0, above=13)
+        g = f.subspace(time=cf.wi(cf.dt("1979-12-01"), cf.dt("1979-12-10")))
+        g = g * 1e5
+        cfp.levs(0, 12, 1, extend="max")
+        cfp.cscale("scale1", below=0, above=13)
 
         cfp.traj(
-            g, legend=True,  linewidth=2,
-            colorbar_title='Relative Vorticity (Hz) * 1e5'
+            g,
+            legend=True,
+            linewidth=2,
+            colorbar_title="Relative Vorticity (Hz) * 1e5",
         )
         compare_images(42)
 
@@ -1276,7 +1280,7 @@ class ExamplesTest(unittest.TestCase):
         TODO combine with 42?
         """
         # cfp.setvars(file="fig42a.png")  # TODO
-        f = cf.read("cfplot_data/ff_trs_pos.nc")[0]
+        f = cf.read(f"{self.data_dir}/ff_trs_pos.nc")[0]
 
         cfp.mapset(lonmin=-50, lonmax=50, latmin=20, latmax=80)
         g = f.subspace(time=cf.wi(cf.dt("1979-12-01"), cf.dt("1979-12-10")))
@@ -1294,7 +1298,7 @@ class ExamplesTest(unittest.TestCase):
     def test_example_43(self):
         """Test Example 43."""
         # cfp.setvars(file="fig43.png")  # TODO
-        f = cf.read("wrf2.nc")[0]
+        f = cf.read(f"{self.data_dir}/wrf2.nc")[0]
 
         t2 = f.subspace(time=cf.dt("2016-12-25"))
         t2.units = "degC"
