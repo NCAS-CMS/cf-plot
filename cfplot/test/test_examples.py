@@ -1227,44 +1227,55 @@ class ExamplesTest(unittest.TestCase):
 
     def test_example_39(self):
         """Test Example 39."""
-        # cfp.setvars(file="figX.png")  # TODO
+        cfp.setvars(file="figX.png")  # TODO
+        f=cf.read('cfplot_data/ff_trs_pos.nc')[0]
+
+        cfp.traj(f)
         compare_images(39)
 
     def test_example_40(self):
         """Test Example 40."""
         # cfp.setvars(file="figX.png")  # TODO
-        pass
+        f=cf.read('cfplot_data/ff_trs_pos.nc')[0]
+
+        cfp.mapset(proj='npstere')
+
+        cfp.traj(f)
+        compare_images(40)
 
     def test_example_41(self):
         """Test Example 41."""
         # cfp.setvars(file="fig41.png")  # TODO
-        pass
+        f=cf.read('cfplot_data/ff_trs_pos.nc')[0]
 
-    def test_example_42a(self):
-        """Test Example 42a."""
-        # cfp.setvars(file="fig42a.png")  # TODO
-        f = cf.read("cfplot_data/ff_trs_pos.nc")[0]
+        cfp.mapset(lonmin=-20, lonmax=20, latmin=30, latmax=70)
+
+        cfp.traj(f, vector=True, markersize=0.0, fc='b', ec='b')
+        compare_images(41)
+
+    def test_example_42(self):
+        """Test Example 42."""
+        # cfp.setvars(file="fig42.png")  # TODO
+        f=cf.read('cfplot_data/ff_trs_pos.nc')[0]
 
         cfp.mapset(lonmin=-50, lonmax=50, latmin=20, latmax=80)
-        g = f.subspace(time=cf.wi(cf.dt("1979-12-01"), cf.dt("1979-12-10")))
-        g = g * 1e5
-        cfp.levs(0, 12, 1, extend="max")
-        cfp.cscale("scale1", below=0, above=13)
+        g=f.subspace(time=cf.wi(cf.dt('1979-12-01'), cf.dt('1979-12-10')))
+        g=g*1e5
+        cfp.levs(0, 12, 1, extend='max')
+        cfp.cscale('scale1', below=0, above=13)
 
         cfp.traj(
-            g,
-            legend=True,
-            linewidth=2,
-            colorbar_title="Relative Vorticity (Hz) * 1e5",
+            g, legend=True,  linewidth=2,
+            colorbar_title='Relative Vorticity (Hz) * 1e5'
         )
         compare_images(42)
 
-    def test_example_42b(self):
-        """Test Example 42b.
+    def test_example_42a(self):
+        """Test Example 42a.
 
-        TODO combine with 42a?
+        TODO combine with 42?
         """
-        # cfp.setvars(file="fig42b.png")  # TODO
+        # cfp.setvars(file="fig42a.png")  # TODO
         f = cf.read("cfplot_data/ff_trs_pos.nc")[0]
 
         cfp.mapset(lonmin=-50, lonmax=50, latmin=20, latmax=80)
