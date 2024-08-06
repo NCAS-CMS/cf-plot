@@ -28,6 +28,23 @@ TEST_GEN_DIR = "./generated-example-images"
 TEST_REF_DIR = "./reference-example-images"
 
 
+# Keep track of number of examples including sub-numbering (a, b, etc.)
+# as used across the docs and for the ExamplesTest.
+NAMED_EXAMPLES = [str(n) for n in range(1, 43)]  # no lettering
+# Al lettered examples e.g. 16b
+NAMED_EXAMPLES += [
+    "16b",
+    "16c",
+    "19a",
+    "19b",
+    "21other",
+    "22other",
+    "23other",
+    "42a",
+]
+# Note: failing so no comparison plots for 16, 24, 25, 26.
+
+
 def compare_images(example=None):
     """
     Compare images and return an error string if they don't match.
@@ -479,8 +496,20 @@ class ExamplesTest(unittest.TestCase):
         cfp.con(f.subspace(time=15))
         compare_images(1)
 
+    @unittest.expectedFailure  # plots in scrpit but in test errors as below
     def test_example_2(self):
         """Test Example 2: a cylindrical projection with blockfill."""
+        # Traceback (most recent call last):
+        #   File "/home/slb93/git-repos/cf-plot/cfplot/test/test_examples.py", line 498, in test_example_2
+        #     cfp.con(f.subspace(time=15), blockfill=True, lines=False)
+        #   File "/home/slb93/git-repos/cf-plot/cfplot/cfplot.py", line 3349, in con
+        #     raise TypeError(errstr)
+        # TypeError:
+
+        # cfp.con - blockfill error
+        # need to match number of colours and contour intervals
+        # Don't forget to take account of the colorbar extensions
+
         cfp.setvars(file="fig2.png")
         f = cf.read(f"{self.data_dir}/tas_A1.nc")[0]
 
@@ -640,8 +669,10 @@ class ExamplesTest(unittest.TestCase):
         """Test Example 15: polar vector plot."""
         cfp.setvars(file="fig15.png")
 
-        u = cf.read(f"{self.data_dir}/ggap.nc")[1]
-        v = cf.read(f"{self.data_dir}/ggap.nc")[3]
+        # TODO avoiding repeated reads, incorporate into docs too
+        f = cf.read(f"{self.data_dir}/ggap.nc")
+        u = f[1]
+        v = f[3]
         u = u.subspace(Z=500)
         v = v.subspace(Z=500)
 
@@ -861,8 +892,26 @@ class ExamplesTest(unittest.TestCase):
         )
         compare_images(21)
 
+    @unittest.expectedFailure  # ValueError, see below failure report
     def test_example_21other(self):
         """Test Example 21 (other, due to duplicate label of 21)."""
+        # Traceback (most recent call last):
+        # File "/home/slb93/git-repos/cf-plot/cfplot/test/test_examples.py", line 883, in test_example_21other
+        #   cfp.con(f)
+        # File "/home/slb93/git-repos/cf-plot/cfplot/cfplot.py", line 3262, in con
+        #   f = f.subspace(Y=cf.wi(-90.0, plotvars.boundinglat))
+        #       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        # File "/home/slb93/git-repos/cf-python/cf/subspacefield.py", line 353, in __call__
+        #   raise error
+        # File "/home/slb93/git-repos/cf-python/cf/subspacefield.py", line 347, in __call__
+        #   indices = field.indices(*config, **kwargs)
+        #             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        # File "/home/slb93/git-repos/cf-python/cf/field.py", line 9118, in indices
+        #   domain_indices = self._indices(config, data_axes, True, kwargs)
+        #                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        # File "/home/slb93/git-repos/cf-python/cf/mixin/fielddomain.py", line 320, in _indices
+        #   raise ValueError(
+        # ValueError: Can't find indices. Ambiguous axis or axes defined by 'Y'
         cfp.setvars(file="fig21o.png")
         f = cf.read(f"{self.data_dir}/rgp.nc")[0]
 
@@ -1148,13 +1197,16 @@ class ExamplesTest(unittest.TestCase):
         """Test Example 30: two axis plotting."""
         # cfp.setvars(file="fig30.png")  # TODO
         tol = cf.RTOL(1e-5)
-        f = cf.read(f"{self.data_dir}/ggap.nc")[1]
+
+        # TODO avoiding repeated reads, incorporate into docs too
+        f_list = cf.read(f"{self.data_dir}/ggap.nc")
+        f = f_list[1]
 
         u = f.collapse("X: mean")
         u1 = u.subspace(Y=-61.12099075)
         u2 = u.subspace(Y=0.56074494)
 
-        g = cf.read(f"{self.data_dir}/ggap.nc")[0]
+        g = f_list[0]
         t = g.collapse("X: mean")
         t1 = t.subspace(Y=-61.12099075)
         t2 = t.subspace(Y=0.56074494)
@@ -1193,9 +1245,20 @@ class ExamplesTest(unittest.TestCase):
         cfp.con(f, lines=False)
         compare_images(31)
 
+    @unittest.expectedFailure  # errors, issue TBC
     def test_example_32(self):
         """Test Example 32: UKCP projection with blockfill."""
         # cfp.setvars(file="fig32.png")  # TODO
+
+        # Traceback (most recent call last):
+        #   File "/home/slb93/git-repos/cf-plot/cfplot/test/gen-plot.py", line 25, in <module>
+        #     cfp.con(
+        #   File "/home/slb93/git-repos/cf-plot/cfplot/cfplot.py", line 3871, in con
+        #     _bfill(
+        #   File "/home/slb93/git-repos/cf-plot/cfplot/cfplot.py", line 1833, in _bfill
+        #     colarr[pts] = int(i)
+        #     ~~~~~~^^^^^
+        # IndexError: too many indices for array: array is 2-dimensional, but 4 were indexed
         f = cf.read(f"{self.data_dir}/ukcp_rcm_test.nc")[0]
 
         cfp.mapset(proj="UKCP", resolution="50m")
@@ -1211,9 +1274,20 @@ class ExamplesTest(unittest.TestCase):
         )
         compare_images(32)
 
+    @unittest.expectedFailure  # errors, issue TBC
     def test_example_33(self):
         """Test Example 33: OSGB and EuroPP projections."""
         # cfp.setvars(file="fig33.png")  # TODO
+
+        # Traceback (most recent call last):
+        #   File "/home/slb93/git-repos/cf-plot/cfplot/test/gen-plot.py", line 23, in <module>
+        #     cfp.con(f, lines=False, colorbar_label_skip=2)
+        #   File "/home/slb93/git-repos/cf-plot/cfplot/cfplot.py", line 4100, in con
+        #     cbar(
+        #   File "/home/slb93/git-repos/cf-plot/cfplot/cfplot.py", line 10056, in cbar
+        #     ax1,
+        #     ^^^
+        # UnboundLocalError: cannot access local variable 'ax1' where it is not associated with a value
         f = cf.read(f"{self.data_dir}/ukcp_rcm_test.nc")[0]
         cfp.levs(-3, 7, 0.5)
 
@@ -1247,6 +1321,9 @@ class ExamplesTest(unittest.TestCase):
 
     def test_example_36(self):
         """Test Example 36: Mercator projection."""
+        # TODO note plot is generated but exposes bug, see:
+        # https://github.com/NCAS-CMS/cf-plot/issues/65
+
         # cfp.setvars(file="fig36.png")  # TODO
         f = cf.read(f"{self.data_dir}/tas_A1.nc")[0]
         cfp.mapset(proj="merc")
@@ -1290,8 +1367,16 @@ class ExamplesTest(unittest.TestCase):
         cfp.traj(f)
         compare_images(40)
 
+    @unittest.expectedFailure  # RuntimeError, see below failure report
     def test_example_41(self):
         """Test Example 41: feature propagation over Europe."""
+        # Fails with:
+        # File "/home/slb93/git-repos/cf-plot/cfplot/cfplot.py", line 5954, in axes_plot
+        #    plot.set_xticks(xticks_new, **plotargs)
+        # File "/home/slb93/miniconda3/envs/cf-env-312/lib/python3.12/site-packages/cartopy/mpl/geoaxes.py", line 941, in set_xticks
+        #    raise RuntimeError('Cannot handle non-rectangular coordinate '
+        # RuntimeError: Cannot handle non-rectangular coordinate systems.
+
         # cfp.setvars(file="fig41.png")  # TODO
         f = cf.read(f"{self.data_dir}/ff_trs_pos.nc")[0]
 
@@ -1300,8 +1385,16 @@ class ExamplesTest(unittest.TestCase):
         cfp.traj(f, vector=True, markersize=0.0, fc="b", ec="b")
         compare_images(41)
 
+    @unittest.expectedFailure  # RuntimeError, see below failure report
     def test_example_42(self):
         """Test Example 42: intensity legend."""
+        # Fails with:
+        # File "/home/slb93/git-repos/cf-plot/cfplot/cfplot.py", line 5954, in axes_plot
+        #    plot.set_xticks(xticks_new, **plotargs)
+        # File "/home/slb93/miniconda3/envs/cf-env-312/lib/python3.12/site-packages/cartopy/mpl/geoaxes.py", line 941, in set_xticks
+        #    raise RuntimeError('Cannot handle non-rectangular coordinate '
+        # RuntimeError: Cannot handle non-rectangular coordinate systems.
+
         # cfp.setvars(file="fig42.png")  # TODO
         f = cf.read(f"{self.data_dir}/ff_trs_pos.nc")[0]
 
@@ -1319,8 +1412,16 @@ class ExamplesTest(unittest.TestCase):
         )
         compare_images(42)
 
+    @unittest.expectedFailure  # RuntimeError, see below failure report
     def test_example_42a(self):
         """Test Example 42a: intensity legend with lines."""
+        # Fails with:
+        # File "/home/slb93/git-repos/cf-plot/cfplot/cfplot.py", line 5954, in axes_plot
+        #    plot.set_xticks(xticks_new, **plotargs)
+        # File "/home/slb93/miniconda3/envs/cf-env-312/lib/python3.12/site-packages/cartopy/mpl/geoaxes.py", line 941, in set_xticks
+        #    raise RuntimeError('Cannot handle non-rectangular coordinate '
+        # RuntimeError: Cannot handle non-rectangular coordinate systems.
+
         # TODO combine with 42?
         # cfp.setvars(file="fig42a.png")  # TODO
         f = cf.read(f"{self.data_dir}/ff_trs_pos.nc")[0]
@@ -1338,10 +1439,11 @@ class ExamplesTest(unittest.TestCase):
         )
         compare_images(42.5)  # TODO amend numbering
 
+    @unittest.expectedFailure  # needs data file adding to datasets
     def test_example_43(self):
         """Test Example 43: plotting WRF data."""
         # cfp.setvars(file="fig43.png")  # TODO
-        f = cf.read(f"{self.data_dir}/wrf2.nc")[0]
+        f = cf.read(f"{self.data_dir}/wrf2.nc")[0]  # TODO missing dataset
 
         t2 = f.subspace(time=cf.dt("2016-12-25"))
         t2.units = "degC"
