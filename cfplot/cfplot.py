@@ -2203,14 +2203,16 @@ def _set_map():
 
     vproj = plotvars.proj
 
+    # Cartopy treats values as cyclic on the globe, so in order to avoid
+    # errors where it thinks we are inputting the same value, e.g:
+    #     UserWarning: Attempting to set identical low and high ylims makes
+    #     transformation singular; automatically expanding.
+    if vproj in ("cyl", "merc") and lon_diff == 360.0:
+        lonmax += 0.01  # ask to plot a tiny extra increment to distinguish
+
     # Start of projection-specific logic
     if vproj == "cyl":
         proj = ccrs.PlateCarree(central_longitude=lon_mid)
-
-        # Cartopy line plotting and identical left == right fix
-        if lon_diff == 360.0:
-            lonmax =+ 0.01
-
     elif vproj == "merc":
         min_latitude = -80.0
         if lonmin > min_latitude:
@@ -2218,13 +2220,11 @@ def _set_map():
         max_latitude = 84.0
         if lonmax < max_latitude:
             max_latitude = plotvars.lonmax
-
         proj = ccrs.Mercator(
             central_longitude=plotvars.lon_0,
             min_latitude=min_latitude,
             max_latitude=max_latitude,
         )
-
     elif vproj == "npstere":
         proj = ccrs.NorthPolarStereo(central_longitude=plotvars.lon_0)
         # **cartopy 0.16 fix
@@ -2234,7 +2234,6 @@ def _set_map():
         lonmax = plotvars.lon_0 + 180.01
         latmin = plotvars.boundinglat
         latmax = 90
-
     elif vproj == "spstere":
         proj = ccrs.SouthPolarStereo(central_longitude=plotvars.lon_0)
         # **cartopy 0.16 fix
@@ -2244,7 +2243,6 @@ def _set_map():
         lonmax = plotvars.lonmax + 180.01
         latmin = -90
         latmax = plotvars.boundinglat
-
     elif vproj == "ortho":
         proj = ccrs.Orthographic(
             central_longitude=plotvars.lon_0, central_latitude=plotvars.lat_0
@@ -2252,16 +2250,13 @@ def _set_map():
         lonmin = plotvars.lon_0 - 180.0
         lonmax = plotvars.lon_0 + 180.01
         extent = False
-
     elif vproj == "moll":
         proj = ccrs.Mollweide(central_longitude=plotvars.lon_0)
         lonmin = plotvars.lon_0 - 180.0
         lonmax = plotvars.lon_0 + 180.01
         extent = False
-
     elif vproj == "robin":
         proj = ccrs.Robinson(central_longitude=plotvars.lon_0)
-
     elif vproj == "lcc":
         latmin = plotvars.latmin
         latmax = plotvars.latmax
@@ -2272,7 +2267,6 @@ def _set_map():
         cutoff = -40
         if lat_0 <= 0:
             cutoff = 40
-
         standard_parallels = [33, 45]
         if latmin <= 0 and latmax <= 0:
             standard_parallels = [-45, -33]
@@ -2282,33 +2276,26 @@ def _set_map():
             cutoff=cutoff,
             standard_parallels=standard_parallels,
         )
-
     elif vproj == "rotated":
         proj = ccrs.PlateCarree(central_longitude=lon_mid)
-
     elif vproj == "OSGB":
         proj = ccrs.OSGB()
-
     elif vproj == "EuroPP":
         proj = ccrs.EuroPP()
-
     elif vproj == "UKCP":
         # Special case of TransverseMercator for UKCP
         proj = ccrs.TransverseMercator()
-
     elif vproj == "TransverseMercator":
         proj = ccrs.TransverseMercator()
         lonmin = plotvars.lon_0 - 180.0
         lonmax = plotvars.lon_0 + 180.01
         extent = False
-
     elif vproj == "LambertCylindrical":
         proj = ccrs.LambertCylindrical()
         lonmin = plotvars.lonmin
         lonmax = plotvars.lonmax
         latmin = plotvars.latmin
         latmax = plotvars.latmax
-        extent = True
     # End of projection-specific logic
 
     # Add a plot containing the projection
