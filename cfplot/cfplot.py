@@ -9906,18 +9906,22 @@ def cbar(
 
         left, bottom, width, height = this_plot.get_position().bounds
 
-        exclude_vprojs = ["cyl", "lcc", "moll", "merc", "ortho", "robin"]
         if orientation == "horizontal":
-            if (
-                plotvars.plot_type > 1
-                or plotvars.plot == 0
-                or plotvars.proj not in exclude_vprojs
-            ):
+            if plotvars.plot_type > 1 or plotvars.plot == 0:
                 this_plot.set_position(
                     [left, bottom + fraction, width, height - fraction]
                 )
-
-            if plotvars.plot_type == 1 and plotvars.proj in exclude_vprojs:
+                ax1 = plotvars.master_plot.add_axes(
+                    [
+                        left + width * (1.0 - shrink) / 2.0,
+                        bottom,
+                        width * shrink,
+                        thick,
+                    ]
+                )
+            if plotvars.plot_type == 1 and plotvars.proj in [
+                "cyl", "lcc", "moll", "merc", "ortho", "robin"
+            ]:
                 # Move plot up if aspect ratio is < 1.5
                 lonrange = plotvars.lonmax - plotvars.lonmin
                 latrange = plotvars.latmax - plotvars.latmin
@@ -9938,22 +9942,6 @@ def cbar(
                         thick,
                     ]
                 )
-
-            if plotvars.plot_type > 1 or plotvars.plot_type == 0:
-                this_plot.set_position(
-                    [left, bottom + fraction, width, height - fraction]
-                )
-
-                ax1 = plotvars.master_plot.add_axes(
-                    [
-                        left + width * (1.0 - shrink) / 2.0,
-                        # b - fraction * (1.0 - anchor),
-                        bottom,
-                        width * shrink,
-                        thick,
-                    ]
-                )
-
         else:
             ax1 = plotvars.master_plot.add_axes(
                 [
