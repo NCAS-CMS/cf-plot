@@ -1321,9 +1321,6 @@ class ExamplesTest(unittest.TestCase):
 
     def test_example_36(self):
         """Test Example 36: Mercator projection."""
-        # TODO note plot is generated but exposes bug, see:
-        # https://github.com/NCAS-CMS/cf-plot/issues/65
-
         # cfp.setvars(file="fig36.png")  # TODO
         f = cf.read(f"{self.data_dir}/tas_A1.nc")[0]
         cfp.mapset(proj="merc")
