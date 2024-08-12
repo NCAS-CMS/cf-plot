@@ -479,18 +479,25 @@ class ExamplesTest(unittest.TestCase):
 
     data_dir = DATA_DIR
 
-    def setup(self):
+    def setUp(self):
         """Preparations called immediately before each test method."""
-        cfp.reset()
+        fname = f"gen_fig_{unittest.TestCase.id()}.png"
+        cfp.setvars(
+            file=fname,
+            viewer="matplotlib",
+        )
         print(
             "------------------------------\n"
             "Testing gallery example plots.\n"
             "------------------------------\n"
         )
 
+    def tearDown(self):
+        """Preparations called immediately after each test method."""
+        cfp.reset()
+
     def test_example_1(self):
         """Test Example 1: a basic cylindrical projection."""
-        cfp.setvars(file="fig1.png")
         f = cf.read(f"{self.data_dir}/tas_A1.nc")[0]
 
         cfp.con(f.subspace(time=15))
@@ -510,7 +517,6 @@ class ExamplesTest(unittest.TestCase):
         # need to match number of colours and contour intervals
         # Don't forget to take account of the colorbar extensions
 
-        cfp.setvars(file="fig2.png")
         f = cf.read(f"{self.data_dir}/tas_A1.nc")[0]
 
         cfp.con(f.subspace(time=15), blockfill=True, lines=False)
@@ -518,7 +524,6 @@ class ExamplesTest(unittest.TestCase):
 
     def test_example_3(self):
         """Test Example 3: altering the map limits and contour levels."""
-        cfp.setvars(file="fig3.png")
         f = cf.read(f"{self.data_dir}/tas_A1.nc")[0]
 
         cfp.mapset(lonmin=-15, lonmax=3, latmin=48, latmax=60)
@@ -529,7 +534,6 @@ class ExamplesTest(unittest.TestCase):
 
     def test_example_4(self):
         """Test Example 4: north pole polar stereographic projection."""
-        cfp.setvars(file="fig4.png")
         f = cf.read(f"{self.data_dir}/ggap.nc")[1]
 
         cfp.mapset(proj="npstere")
@@ -543,7 +547,6 @@ class ExamplesTest(unittest.TestCase):
         South pole polar stereographic projection with 30 degrees
         south being the latitude plot limit.
         """
-        cfp.setvars(file="fig5.png")
         f = cf.read(f"{self.data_dir}/ggap.nc")[1]
 
         cfp.mapset(proj="spstere", boundinglat=-30, lon_0=180)
@@ -553,7 +556,6 @@ class ExamplesTest(unittest.TestCase):
 
     def test_example_6(self):
         """Test Example 6: latitude-pressure plot."""
-        cfp.setvars(file="fig6.png")
         f = cf.read(f"{self.data_dir}/ggap.nc")[3]
 
         cfp.con(f.subspace(longitude=0))
@@ -561,7 +563,6 @@ class ExamplesTest(unittest.TestCase):
 
     def test_example_7(self):
         """Test Example 7: latitude-pressure plot of a zonal mean."""
-        cfp.setvars(file="fig7.png")
         f = cf.read(f"{self.data_dir}/ggap.nc")[1]
 
         cfp.con(f.collapse("mean", "longitude"))
@@ -569,7 +570,6 @@ class ExamplesTest(unittest.TestCase):
 
     def test_example_8(self):
         """Test Example 8: plot showing latitude against log-scale pressure."""
-        cfp.setvars(file="fig8.png")
         f = cf.read(f"{self.data_dir}/ggap.nc")[1]
 
         cfp.con(f.collapse("mean", "longitude"), ylog=1)
@@ -598,7 +598,6 @@ class ExamplesTest(unittest.TestCase):
         # subspaced shape of (1, 23, 0, 320), but can't create a subspace
         # of Field that has a size 0 axis
 
-        cfp.setvars(file="fig9.png")
         f = cf.read(f"{self.data_dir}/ggap.nc")[0]
 
         cfp.con(f.collapse("mean", "latitude"))
@@ -606,7 +605,6 @@ class ExamplesTest(unittest.TestCase):
 
     def test_example_10(self):
         """Test Example 10: latitude-time Hovmuller plot."""
-        cfp.setvars(file="fig10.png")
         f = cf.read(f"{self.data_dir}/tas_A1.nc")[0]
 
         cfp.cscale("plasma")
@@ -616,7 +614,6 @@ class ExamplesTest(unittest.TestCase):
 
     def test_example_11(self):
         """Test Example 11: latitude-time subset Hovmuller plot."""
-        cfp.setvars(file="fig11.png")
         f = cf.read(f"{self.data_dir}/tas_A1.nc")[0]
 
         cfp.gset(-30, 30, "1960-1-1", "1980-1-1")
@@ -628,7 +625,6 @@ class ExamplesTest(unittest.TestCase):
 
     def test_example_12(self):
         """Test Example 12: longitude-time Hovmuller plot."""
-        cfp.setvars(file="fig12.png")
         f = cf.read(f"{self.data_dir}/tas_A1.nc")[0]
 
         cfp.cscale("plasma")
@@ -638,7 +634,6 @@ class ExamplesTest(unittest.TestCase):
 
     def test_example_13(self):
         """Test Example 13: basic vector plot."""
-        cfp.setvars(file="fig13.png")
         f = cf.read(f"{self.data_dir}/ggap.nc")
 
         u = f[1].subspace(pressure=500)
@@ -649,7 +644,6 @@ class ExamplesTest(unittest.TestCase):
 
     def test_example_14(self):
         """Test Example 14: vector plot with colour contour map."""
-        cfp.setvars(file="fig14.png")
         f = cf.read(f"{self.data_dir}/ggap.nc")
 
         u = f[1].subspace(pressure=500)
@@ -667,8 +661,6 @@ class ExamplesTest(unittest.TestCase):
 
     def test_example_15(self):
         """Test Example 15: polar vector plot."""
-        cfp.setvars(file="fig15.png")
-
         # TODO avoiding repeated reads, incorporate into docs too
         f = cf.read(f"{self.data_dir}/ggap.nc")
         u = f[1]
@@ -691,8 +683,6 @@ class ExamplesTest(unittest.TestCase):
     @unittest.expectedFailure  # errors due to cf-python Issue #797
     def test_example_16(self):
         """Test Example 16: zonal vector plot."""
-        cfp.setvars(file="fig16.png")
-
         c = cf.read(f"{self.data_dir}/vaAMIPlcd_DJF.nc")[0]
         c = c.subspace(Y=cf.wi(-60, 60))
         c = c.subspace(X=cf.wi(80, 160))
@@ -718,7 +708,6 @@ class ExamplesTest(unittest.TestCase):
 
     def test_example_16b(self):
         """Test Example 16b: basic stream plot."""
-        # cfp.setvars(file="fig16b.png")  # TODO
         f = cf.read(f"{self.data_dir}/ggap.nc")
         u = f[1].subspace(pressure=500)
         v = f[2].subspace(pressure=500)
@@ -731,7 +720,6 @@ class ExamplesTest(unittest.TestCase):
 
     def test_example_16c(self):
         """Test Example 16c: enhanced stream plot."""
-        # cfp.setvars(file="fig16c.png")  # TODO
         f = cf.read(f"{self.data_dir}/ggap.nc")
 
         u = f[1].subspace(pressure=500)
@@ -756,7 +744,6 @@ class ExamplesTest(unittest.TestCase):
 
     def test_example_17(self):
         """Test Example 17: basic stipple plot."""
-        cfp.setvars(file="fig17.png")
         f = cf.read(f"{self.data_dir}/tas_A1.nc")[0]
 
         g = f.subspace(time=15)
@@ -774,7 +761,6 @@ class ExamplesTest(unittest.TestCase):
 
     def test_example_18(self):
         """Test Example 18: polar stipple plot."""
-        cfp.setvars(file="fig18.png")
         f = cf.read(f"{self.data_dir}/tas_A1.nc")[0]
 
         g = f.subspace(time=15)
@@ -790,7 +776,6 @@ class ExamplesTest(unittest.TestCase):
 
     def test_example_19(self):
         """Test Example 19: multiple plots as subplots."""
-        cfp.setvars(file="fig19.png")
         f = cf.read(f"{self.data_dir}/ggap.nc")[1]
         cfp.gopen(rows=2, columns=2, bottom=0.2)
         cfp.gpos(1)
@@ -813,7 +798,6 @@ class ExamplesTest(unittest.TestCase):
 
     def test_example_19a(self):
         """Test Example 19a: multiple plots with user specified positions."""
-        cfp.setvars(file="fig19a.png")
         f = cf.read(f"{self.data_dir}/ggap.nc")[1]
 
         cfp.gopen(user_position=True)
@@ -836,7 +820,6 @@ class ExamplesTest(unittest.TestCase):
 
         User specified plot position to accomodate more than one color bar.
         """
-        cfp.setvars(file="fig19b.png")
         f = cf.read(f"{self.data_dir}/ggap.nc")[1]
         g = f.collapse("X: mean")
 
@@ -870,7 +853,6 @@ class ExamplesTest(unittest.TestCase):
     @unittest.expectedFailure  # works standalone, test suite gives ValueError
     def test_example_20(self):
         """Test Example 20: user labelling of axes."""
-        cfp.setvars(file="fig20.png")
         f = cf.read(f"{self.data_dir}/Geostropic_Adjustment.nc")[0]
 
         cfp.con(f.subspace[9])
@@ -879,7 +861,6 @@ class ExamplesTest(unittest.TestCase):
     @unittest.expectedFailure  # works standalone, test suite gives ValueError
     def test_example_21(self):
         """Test Example 21: rotated pole data plot."""
-        cfp.setvars(file="fig21.png")
         f = cf.read(f"{self.data_dir}/Geostropic_Adjustment.nc")[0]
 
         cfp.con(
@@ -912,7 +893,6 @@ class ExamplesTest(unittest.TestCase):
         # File "/home/slb93/git-repos/cf-python/cf/mixin/fielddomain.py", line 320, in _indices
         #   raise ValueError(
         # ValueError: Can't find indices. Ambiguous axis or axes defined by 'Y'
-        cfp.setvars(file="fig21o.png")
         f = cf.read(f"{self.data_dir}/rgp.nc")[0]
 
         cfp.cscale("plasma")
@@ -923,7 +903,6 @@ class ExamplesTest(unittest.TestCase):
     @unittest.expectedFailure  # works standalone, test suite gives ValueError
     def test_example_22(self):
         """Test Example 22:"""
-        cfp.setvars(file="fig22.png")
         f = cf.read(f"{self.data_dir}/rgp.nc")[0]
 
         cfp.cscale("gray")
@@ -933,7 +912,6 @@ class ExamplesTest(unittest.TestCase):
 
     def test_example_22other(self):
         """Test Example 22 (other, due to duplicate label of 22)."""
-        cfp.setvars(file="fig22o.png")
         f = cf.read(f"{self.data_dir}/rgp.nc")[0]
 
         cfp.cscale("plasma")
@@ -944,7 +922,6 @@ class ExamplesTest(unittest.TestCase):
 
     def test_example_23(self):
         """Test Example 23."""
-        cfp.setvars(file="fig23.png")
         f = cf.read(f"{self.data_dir}/rgp.nc")[0]
 
         data = f.array
@@ -969,7 +946,6 @@ class ExamplesTest(unittest.TestCase):
 
     def test_example_23other(self):
         """Test Example 23 (other, due to duplicate label of 23)."""
-        cfp.setvars(file="fig23o.png")
         f = cf.read(
             f"{self.data_dir}/20160601-05T0000Z_INCOMPASS_km4p4_uv_RH_500.nc"
         )
@@ -986,8 +962,6 @@ class ExamplesTest(unittest.TestCase):
     @unittest.expectedFailure  # IndexError after griddata API conformance
     def test_example_24(self):
         """Test Example 24."""
-        cfp.setvars(file="fig24.png")
-
         # Arrays for data
         lons = []
         lats = []
@@ -1023,8 +997,6 @@ class ExamplesTest(unittest.TestCase):
     @unittest.expectedFailure  # IndexError after griddata API conformance
     def test_example_25(self):
         """Test Example 25."""
-        cfp.setvars(file="fig25.png")
-
         # Note the block of code until '---' is shared with example 24.
         # Arrays for data
         lons = []
@@ -1073,8 +1045,6 @@ class ExamplesTest(unittest.TestCase):
     @unittest.expectedFailure  # ValueError after griddata API conformance
     def test_example_26(self):
         """Test Example 26."""
-        cfp.setvars(file="fig26.png")
-
         # Get an Orca grid and flatten the arrays
         nc = ncfile(f"{self.data_dir}/orca2.nc")
         lons = np.array(nc.variables["longitude"])
@@ -1110,7 +1080,6 @@ class ExamplesTest(unittest.TestCase):
 
     def test_example_27(self):
         """Test Example 27: basic graph plot."""
-        cfp.setvars(file="fig27.png")
         f = cf.read(f"{self.data_dir}/ggap.nc")[1]
 
         g = f.collapse("X: mean")
@@ -1125,7 +1094,6 @@ class ExamplesTest(unittest.TestCase):
 
     def test_example_28(self):
         """Test Example 28: line and legend plot."""
-        cfp.setvars(file="fig28.png")
         f = cf.read(f"{self.data_dir}/ggap.nc")[1]
 
         g = f.collapse("X: mean")
@@ -1178,7 +1146,6 @@ class ExamplesTest(unittest.TestCase):
 
     def test_example_29(self):
         """Test Example 29: global average annual temperature."""
-        cfp.setvars(file="fig29.png")
         f = cf.read(f"{self.data_dir}/tas_A1.nc")[0]
 
         temp = f.subspace(time=cf.wi(cf.dt("1900-01-01"), cf.dt("1980-01-01")))
@@ -1195,7 +1162,6 @@ class ExamplesTest(unittest.TestCase):
 
     def test_example_30(self):
         """Test Example 30: two axis plotting."""
-        # cfp.setvars(file="fig30.png")  # TODO
         tol = cf.RTOL(1e-5)
 
         # TODO avoiding repeated reads, incorporate into docs too
@@ -1225,8 +1191,6 @@ class ExamplesTest(unittest.TestCase):
     @unittest.expectedFailure  # errors due to 1 of 2 x bugs, see #59 and #60
     def test_example_31(self):
         """Test Example 31: UKCP projection."""
-        # cfp.setvars(file="fig31.png")  # TODO
-
         # TODO SLB this test errors
         f = cf.read(f"{self.data_dir}/ukcp_rcm_test.nc")[0]
 
@@ -1248,8 +1212,6 @@ class ExamplesTest(unittest.TestCase):
     @unittest.expectedFailure  # errors, issue TBC
     def test_example_32(self):
         """Test Example 32: UKCP projection with blockfill."""
-        # cfp.setvars(file="fig32.png")  # TODO
-
         # Traceback (most recent call last):
         #   File "/home/slb93/git-repos/cf-plot/cfplot/test/gen-plot.py", line 25, in <module>
         #     cfp.con(
@@ -1277,8 +1239,6 @@ class ExamplesTest(unittest.TestCase):
     @unittest.expectedFailure  # errors, issue TBC
     def test_example_33(self):
         """Test Example 33: OSGB and EuroPP projections."""
-        # cfp.setvars(file="fig33.png")  # TODO
-
         # Traceback (most recent call last):
         #   File "/home/slb93/git-repos/cf-plot/cfplot/test/gen-plot.py", line 23, in <module>
         #     cfp.con(f, lines=False, colorbar_label_skip=2)
@@ -1303,7 +1263,6 @@ class ExamplesTest(unittest.TestCase):
 
     def test_example_34(self):
         """Test Example 34: Cropped Lambert conformal projection."""
-        # cfp.setvars(file="fig34.png")  # TODO
         f = cf.read(f"{self.data_dir}/tas_A1.nc")[0]
         cfp.mapset(proj="lcc", lonmin=-50, lonmax=50, latmin=20, latmax=85)
 
@@ -1312,7 +1271,6 @@ class ExamplesTest(unittest.TestCase):
 
     def test_example_35(self):
         """Test Example 35: Mollweide projection."""
-        # cfp.setvars(file="fig35.png")  # TODO
         f = cf.read(f"{self.data_dir}/tas_A1.nc")[0]
         cfp.mapset(proj="moll")
 
@@ -1321,7 +1279,6 @@ class ExamplesTest(unittest.TestCase):
 
     def test_example_36(self):
         """Test Example 36: Mercator projection."""
-        # cfp.setvars(file="fig36.png")  # TODO
         f = cf.read(f"{self.data_dir}/tas_A1.nc")[0]
         cfp.mapset(proj="merc")
 
@@ -1330,7 +1287,6 @@ class ExamplesTest(unittest.TestCase):
 
     def test_example_37(self):
         """Test Example 37: Orthographic projection."""
-        # cfp.setvars(file="fig37.png")  # TODO
         f = cf.read(f"{self.data_dir}/tas_A1.nc")[0]
         cfp.mapset(proj="ortho")
 
@@ -1339,7 +1295,6 @@ class ExamplesTest(unittest.TestCase):
 
     def test_example_38(self):
         """Test Example 38: Robinson projection."""
-        # cfp.setvars(file="fig38.png")  # TODO
         f = cf.read(f"{self.data_dir}/tas_A1.nc")[0]
         cfp.mapset(proj="robin")
 
@@ -1348,7 +1303,6 @@ class ExamplesTest(unittest.TestCase):
 
     def test_example_39(self):
         """Test Example 39: basic track plotting trajectory."""
-        # cfp.setvars(file="fig39.png")  # TODO
         f = cf.read(f"{self.data_dir}/ff_trs_pos.nc")[0]
 
         cfp.traj(f)
@@ -1356,7 +1310,6 @@ class ExamplesTest(unittest.TestCase):
 
     def test_example_40(self):
         """Test Example 40: tracks in the polar stereographic projection."""
-        # cfp.setvars(file="fig40.png")  # TODO
         f = cf.read(f"{self.data_dir}/ff_trs_pos.nc")[0]
 
         cfp.mapset(proj="npstere")
@@ -1374,7 +1327,6 @@ class ExamplesTest(unittest.TestCase):
         #    raise RuntimeError('Cannot handle non-rectangular coordinate '
         # RuntimeError: Cannot handle non-rectangular coordinate systems.
 
-        # cfp.setvars(file="fig41.png")  # TODO
         f = cf.read(f"{self.data_dir}/ff_trs_pos.nc")[0]
 
         cfp.mapset(lonmin=-20, lonmax=20, latmin=30, latmax=70)
@@ -1392,7 +1344,6 @@ class ExamplesTest(unittest.TestCase):
         #    raise RuntimeError('Cannot handle non-rectangular coordinate '
         # RuntimeError: Cannot handle non-rectangular coordinate systems.
 
-        # cfp.setvars(file="fig42.png")  # TODO
         f = cf.read(f"{self.data_dir}/ff_trs_pos.nc")[0]
 
         cfp.mapset(lonmin=-50, lonmax=50, latmin=20, latmax=80)
@@ -1420,7 +1371,6 @@ class ExamplesTest(unittest.TestCase):
         # RuntimeError: Cannot handle non-rectangular coordinate systems.
 
         # TODO combine with 42?
-        # cfp.setvars(file="fig42a.png")  # TODO
         f = cf.read(f"{self.data_dir}/ff_trs_pos.nc")[0]
 
         cfp.mapset(lonmin=-50, lonmax=50, latmin=20, latmax=80)
@@ -1439,7 +1389,6 @@ class ExamplesTest(unittest.TestCase):
     @unittest.expectedFailure  # needs data file adding to datasets
     def test_example_43(self):
         """Test Example 43: plotting WRF data."""
-        # cfp.setvars(file="fig43.png")  # TODO
         f = cf.read(f"{self.data_dir}/wrf2.nc")[0]  # TODO missing dataset
 
         t2 = f.subspace(time=cf.dt("2016-12-25"))
