@@ -2201,14 +2201,17 @@ def _set_map():
     lon_diff = lonmax - lonmin
     lon_mid = lonmax / 2.0
 
-    if plotvars.proj == "cyl":
+    vproj = plotvars.proj
+
+    # Start of projection-specific logic
+    if vproj == "cyl":
         proj = ccrs.PlateCarree(central_longitude=lon_mid)
 
         # Cartopy line plotting and identical left == right fix
         if lon_diff == 360.0:
-            lonmax = lonmax + 0.01
+            lonmax =+ 0.01
 
-    if plotvars.proj == "merc":
+    elif vproj == "merc":
         min_latitude = -80.0
         if lonmin > min_latitude:
             min_latitude = plotvars.lonmin
@@ -2222,7 +2225,7 @@ def _set_map():
             max_latitude=max_latitude,
         )
 
-    if plotvars.proj == "npstere":
+    elif vproj == "npstere":
         proj = ccrs.NorthPolarStereo(central_longitude=plotvars.lon_0)
         # **cartopy 0.16 fix
         # Here we add in 0.01 to the longitude extent as this helps with
@@ -2232,7 +2235,7 @@ def _set_map():
         latmin = plotvars.boundinglat
         latmax = 90
 
-    if plotvars.proj == "spstere":
+    elif vproj == "spstere":
         proj = ccrs.SouthPolarStereo(central_longitude=plotvars.lon_0)
         # **cartopy 0.16 fix
         # Here we add in 0.01 to the longitude extent as this helps with
@@ -2242,7 +2245,7 @@ def _set_map():
         latmin = -90
         latmax = plotvars.boundinglat
 
-    if plotvars.proj == "ortho":
+    elif vproj == "ortho":
         proj = ccrs.Orthographic(
             central_longitude=plotvars.lon_0, central_latitude=plotvars.lat_0
         )
@@ -2250,16 +2253,16 @@ def _set_map():
         lonmax = plotvars.lon_0 + 180.01
         extent = False
 
-    if plotvars.proj == "moll":
+    elif vproj == "moll":
         proj = ccrs.Mollweide(central_longitude=plotvars.lon_0)
         lonmin = plotvars.lon_0 - 180.0
         lonmax = plotvars.lon_0 + 180.01
         extent = False
 
-    if plotvars.proj == "robin":
+    elif vproj == "robin":
         proj = ccrs.Robinson(central_longitude=plotvars.lon_0)
 
-    if plotvars.proj == "lcc":
+    elif vproj == "lcc":
         latmin = plotvars.latmin
         latmax = plotvars.latmax
         lonmin = plotvars.lonmin
@@ -2280,32 +2283,33 @@ def _set_map():
             standard_parallels=standard_parallels,
         )
 
-    if plotvars.proj == "rotated":
+    elif vproj == "rotated":
         proj = ccrs.PlateCarree(central_longitude=lon_mid)
 
-    if plotvars.proj == "OSGB":
+    elif vproj == "OSGB":
         proj = ccrs.OSGB()
 
-    if plotvars.proj == "EuroPP":
+    elif vproj == "EuroPP":
         proj = ccrs.EuroPP()
 
-    if plotvars.proj == "UKCP":
+    elif vproj == "UKCP":
         # Special case of TransverseMercator for UKCP
         proj = ccrs.TransverseMercator()
 
-    if plotvars.proj == "TransverseMercator":
+    elif vproj == "TransverseMercator":
         proj = ccrs.TransverseMercator()
         lonmin = plotvars.lon_0 - 180.0
         lonmax = plotvars.lon_0 + 180.01
         extent = False
 
-    if plotvars.proj == "LambertCylindrical":
+    elif vproj == "LambertCylindrical":
         proj = ccrs.LambertCylindrical()
         lonmin = plotvars.lonmin
         lonmax = plotvars.lonmax
         latmin = plotvars.latmin
         latmax = plotvars.latmax
         extent = True
+    # End of projection-specific logic
 
     # Add a plot containing the projection
     if plotvars.plot_xmin:
@@ -2316,36 +2320,31 @@ def _set_map():
             projection=proj,
         )
     else:
-
         mymap = plotvars.master_plot.add_subplot(
             plotvars.rows, plotvars.columns, plotvars.pos, projection=proj
         )
 
     # Set map extent
     set_extent = True
-    if plotvars.proj in ["OSGB", "EuroPP", "UKCP", "robin", "lcc"]:
+    if vproj in ["OSGB", "EuroPP", "UKCP", "robin", "lcc"]:
         set_extent = False
-
     if extent and set_extent:
         mymap.set_extent(
             [lonmin, lonmax, latmin, latmax], crs=ccrs.PlateCarree()
         )
 
-    # Set the scaling for PlateCarree
-    if plotvars.proj == "cyl":
+    # Update the scaling for certain projections
+    if vproj == "cyl":
         mymap.set_aspect(plotvars.aspect)
-
-    if plotvars.proj == "lcc":
+    elif vproj == "lcc":
         # Special case of lcc
         mymap.set_extent(
             [lonmin, lonmax, latmin, latmax], crs=ccrs.PlateCarree()
         )
-
-    if plotvars.proj == "UKCP":
+    elif vproj == "UKCP":
         # Special case of TransverseMercator for UKCP
         mymap.set_extent([-11, 3, 49, 61], crs=ccrs.PlateCarree())
-
-    if plotvars.proj == "EuroPP":
+    elif vproj == "EuroPP":
         # EuroPP somehow needs some limits setting.
         mymap.set_extent([-12, 25, 30, 75], crs=ccrs.PlateCarree())
 
