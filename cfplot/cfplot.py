@@ -39,6 +39,7 @@ except ImportError:
 
 class pvars:
     """Stores plotting variables in `cfp.plotvars`."""
+
     def __init__(self, **kwargs):
         """Initialize a new Pvars instance."""
         for attr, value in kwargs.items():
@@ -513,8 +514,10 @@ if sys.platform == "darwin":
 # INTERNAL-INTENT FUNCTIONS
 # ===================================
 
+
 def _which(program):
     """Check if the ImageMagick display command is available."""
+
     def is_exe(fpath):
         """TODO DOCS."""
         return os.path.exists(fpath) and os.access(fpath, os.X_OK)
@@ -751,7 +754,7 @@ def _bfill_ugrid(
             edgecolors=None,
             alpha=alpha,
             zorder=zorder,
-            **plotargs
+            **plotargs,
         )
     )
 
@@ -1331,30 +1334,30 @@ def _cf_data_assign(
     for mycoord in f.coords():
         c = f.coord(mycoord)
         if c.X:
-            if verbose:
-                print("lons -", mydim)
             lons = np.squeeze(f.construct(mycoord).array)
+            if verbose:
+                print("lons -", lons)
             if np.size(lons) > 1:
                 has_lons = True
 
         if c.Y:
-            if verbose:
-                print("lats -", mydim)
             lats = np.squeeze(f.construct(mycoord).array)
+            if verbose:
+                print("lats -", lats)
             if np.size(lats) > 1:
                 has_lats = True
 
         if c.Z:
-            if verbose:
-                print("height -", mydim)
             height = np.squeeze(f.construct(mycoord).array)
+            if verbose:
+                print("height -", height)
             if np.size(height) > 1:
                 has_height = True
 
         if c.T:
-            if verbose:
-                print("time -", mydim)
             time = np.squeeze(f.construct(mycoord).array)
+            if verbose:
+                print("time -", time)
             if np.size(time) > 1:
                 has_time = True
 
@@ -1632,9 +1635,7 @@ def _cf_data_assign(
             if str(f.Units) == "":
                 colorbar_title = colorbar_title
             else:
-                colorbar_title = (
-                    f"{colorbar_title}({_supscr(str(f.Units))})"
-                )
+                colorbar_title = f"{colorbar_title}({_supscr(str(f.Units))})"
 
     # Return data
     return (field, x, y, ptype, colorbar_title, xlabel, ylabel, xpole, ypole)
@@ -1729,7 +1730,7 @@ def _cscale_get_map():
     """
     cscale_ncols = np.size(plotvars.cs)
     if plotvars.levels_extend == "both":
-        colmap = plotvars.cs[1: cscale_ncols - 1]
+        colmap = plotvars.cs[1 : cscale_ncols - 1]
     if plotvars.levels_extend == "min":
         colmap = plotvars.cs[1:]
     if plotvars.levels_extend == "max":
@@ -2011,7 +2012,7 @@ def _bfill(
             for i, start in enumerate(
                 np.argmax(np.abs(np.diff(x)) > 180, axis=1)
             ):
-                fixed_x[i, start + 1:] += 360
+                fixed_x[i, start + 1 :] += 360
             plotvars.image = plotvars.mymap.pcolormesh(
                 fixed_x, y, field, cmap=cmap, transform=transform, norm=norm
             )
@@ -2095,7 +2096,7 @@ def _bfill(
                     edgecolors=color,
                     alpha=alpha,
                     zorder=zorder,
-                    **plotargs
+                    **plotargs,
                 )
 
                 if lonlat:
@@ -2132,7 +2133,7 @@ def _bfill(
                     edgecolors=color,
                     alpha=alpha,
                     zorder=zorder,
-                    **plotargs
+                    **plotargs,
                 )
 
                 if lonlat:
@@ -2166,7 +2167,7 @@ def _bfill(
                 edgecolors="#ffffff",
                 alpha=alpha,
                 zorder=zorder,
-                **plotargs
+                **plotargs,
             )
 
             if lonlat:
@@ -2194,34 +2195,38 @@ def _set_map():
 
     # Set up mapping
     extent = True
-    lon_mid = plotvars.lonmin + (plotvars.lonmax - plotvars.lonmin) / 2.0
     lonmin = plotvars.lonmin
     lonmax = plotvars.lonmax
     latmin = plotvars.latmin
     latmax = plotvars.latmax
+    lon_diff = lonmax - lonmin
+    lon_mid = lonmax / 2.0
 
-    if plotvars.proj == "cyl":
+    vproj = plotvars.proj
+
+    # Cartopy treats values as cyclic on the globe, so in order to avoid
+    # errors where it thinks we are inputting the same value, e.g:
+    #     UserWarning: Attempting to set identical low and high ylims makes
+    #     transformation singular; automatically expanding.
+    if vproj in ("cyl", "merc") and lon_diff == 360.0:
+        lonmax += 0.01  # ask to plot a tiny extra increment to distinguish
+
+    # Start of projection-specific logic
+    if vproj == "cyl":
         proj = ccrs.PlateCarree(central_longitude=lon_mid)
-
-        # Cartopy line plotting and identical left == right fix
-
-        if lonmax - lonmin == 360.0:
-            lonmax = lonmax + 0.01
-
-    if plotvars.proj == "merc":
+    elif vproj == "merc":
         min_latitude = -80.0
-        if plotvars.lonmin > min_latitude:
+        if lonmin > min_latitude:
             min_latitude = plotvars.lonmin
         max_latitude = 84.0
-        if plotvars.lonmax < max_latitude:
+        if lonmax < max_latitude:
             max_latitude = plotvars.lonmax
         proj = ccrs.Mercator(
             central_longitude=plotvars.lon_0,
             min_latitude=min_latitude,
             max_latitude=max_latitude,
         )
-
-    if plotvars.proj == "npstere":
+    elif vproj == "npstere":
         proj = ccrs.NorthPolarStereo(central_longitude=plotvars.lon_0)
         # **cartopy 0.16 fix
         # Here we add in 0.01 to the longitude extent as this helps with
@@ -2230,8 +2235,7 @@ def _set_map():
         lonmax = plotvars.lon_0 + 180.01
         latmin = plotvars.boundinglat
         latmax = 90
-
-    if plotvars.proj == "spstere":
+    elif vproj == "spstere":
         proj = ccrs.SouthPolarStereo(central_longitude=plotvars.lon_0)
         # **cartopy 0.16 fix
         # Here we add in 0.01 to the longitude extent as this helps with
@@ -2240,25 +2244,21 @@ def _set_map():
         lonmax = plotvars.lonmax + 180.01
         latmin = -90
         latmax = plotvars.boundinglat
-
-    if plotvars.proj == "ortho":
+    elif vproj == "ortho":
         proj = ccrs.Orthographic(
             central_longitude=plotvars.lon_0, central_latitude=plotvars.lat_0
         )
         lonmin = plotvars.lon_0 - 180.0
         lonmax = plotvars.lon_0 + 180.01
         extent = False
-
-    if plotvars.proj == "moll":
+    elif vproj == "moll":
         proj = ccrs.Mollweide(central_longitude=plotvars.lon_0)
         lonmin = plotvars.lon_0 - 180.0
         lonmax = plotvars.lon_0 + 180.01
         extent = False
-
-    if plotvars.proj == "robin":
+    elif vproj == "robin":
         proj = ccrs.Robinson(central_longitude=plotvars.lon_0)
-
-    if plotvars.proj == "lcc":
+    elif vproj == "lcc":
         latmin = plotvars.latmin
         latmax = plotvars.latmax
         lonmin = plotvars.lonmin
@@ -2268,7 +2268,6 @@ def _set_map():
         cutoff = -40
         if lat_0 <= 0:
             cutoff = 40
-
         standard_parallels = [33, 45]
         if latmin <= 0 and latmax <= 0:
             standard_parallels = [-45, -33]
@@ -2278,33 +2277,27 @@ def _set_map():
             cutoff=cutoff,
             standard_parallels=standard_parallels,
         )
-
-    if plotvars.proj == "rotated":
+    elif vproj == "rotated":
         proj = ccrs.PlateCarree(central_longitude=lon_mid)
-
-    if plotvars.proj == "OSGB":
+    elif vproj == "OSGB":
         proj = ccrs.OSGB()
-
-    if plotvars.proj == "EuroPP":
+    elif vproj == "EuroPP":
         proj = ccrs.EuroPP()
-
-    if plotvars.proj == "UKCP":
+    elif vproj == "UKCP":
         # Special case of TransverseMercator for UKCP
         proj = ccrs.TransverseMercator()
-
-    if plotvars.proj == "TransverseMercator":
+    elif vproj == "TransverseMercator":
         proj = ccrs.TransverseMercator()
         lonmin = plotvars.lon_0 - 180.0
         lonmax = plotvars.lon_0 + 180.01
         extent = False
-
-    if plotvars.proj == "LambertCylindrical":
+    elif vproj == "LambertCylindrical":
         proj = ccrs.LambertCylindrical()
         lonmin = plotvars.lonmin
         lonmax = plotvars.lonmax
         latmin = plotvars.latmin
         latmax = plotvars.latmax
-        extent = True
+    # End of projection-specific logic
 
     # Add a plot containing the projection
     if plotvars.plot_xmin:
@@ -2315,36 +2308,31 @@ def _set_map():
             projection=proj,
         )
     else:
-
         mymap = plotvars.master_plot.add_subplot(
             plotvars.rows, plotvars.columns, plotvars.pos, projection=proj
         )
 
     # Set map extent
     set_extent = True
-    if plotvars.proj in ["OSGB", "EuroPP", "UKCP", "robin", "lcc"]:
+    if vproj in ["OSGB", "EuroPP", "UKCP", "robin", "lcc"]:
         set_extent = False
-
     if extent and set_extent:
         mymap.set_extent(
             [lonmin, lonmax, latmin, latmax], crs=ccrs.PlateCarree()
         )
 
-    # Set the scaling for PlateCarree
-    if plotvars.proj == "cyl":
+    # Update the scaling for certain projections
+    if vproj == "cyl":
         mymap.set_aspect(plotvars.aspect)
-
-    if plotvars.proj == "lcc":
+    elif vproj == "lcc":
         # Special case of lcc
         mymap.set_extent(
             [lonmin, lonmax, latmin, latmax], crs=ccrs.PlateCarree()
         )
-
-    if plotvars.proj == "UKCP":
+    elif vproj == "UKCP":
         # Special case of TransverseMercator for UKCP
         mymap.set_extent([-11, 3, 49, 61], crs=ccrs.PlateCarree())
-
-    if plotvars.proj == "EuroPP":
+    elif vproj == "EuroPP":
         # EuroPP somehow needs some limits setting.
         mymap.set_extent([-12, 25, 30, 75], crs=ccrs.PlateCarree())
 
@@ -3005,6 +2993,7 @@ def _plot_map_axes(
 # USER-FACING FUNCTIONS
 # ===================================
 
+
 def con(
     f=None,
     x=None,
@@ -3312,7 +3301,7 @@ def con(
                     for i, start in enumerate(
                         np.argmax(np.abs(np.diff(x)) > 180, axis=1)
                     ):
-                        fixed_x[i, start + 1:] += 360
+                        fixed_x[i, start + 1 :] += 360
                     x = fixed_x
 
     if np.ndim(x) == 2:
@@ -3745,8 +3734,8 @@ def con(
                         vals=y, val=plotvars.boundinglat, above=True
                     )
                     if myypos != -1:
-                        y = y[0: myypos + 1]
-                        field = field[0: myypos + 1, :]
+                        y = y[0 : myypos + 1]
+                        field = field[0 : myypos + 1, :]
 
         # Set the longitudes and latitudes
         lons, lats = x, y
@@ -4991,7 +4980,7 @@ def con(
                 norm=plotvars.norm,
                 alpha=alpha,
                 zorder=zorder,
-                **plotargs
+                **plotargs,
             )
 
         # Block fill
@@ -5020,7 +5009,7 @@ def con(
                 linewidths=linewidths,
                 linestyles=linestyles,
                 zorder=zorder,
-                **plotargs
+                **plotargs,
             )
             if line_labels and not isinstance(clevs, int):
                 nd = ndecs(clevs)
@@ -5047,7 +5036,7 @@ def con(
                     linestyles=linestyles,
                     alpha=alpha,
                     zorder=zorder,
-                    **plotargs
+                    **plotargs,
                 )
 
         # Titles for dimensions
@@ -6280,7 +6269,7 @@ def gclose(view=True):
             file,
             orientation=plotvars.orientation,
             dpi=plotvars.dpi,
-            **saveargs
+            **saveargs,
         )
         plot.close()
     else:
@@ -6293,7 +6282,7 @@ def gclose(view=True):
                     tfile,
                     orientation=plotvars.orientation,
                     dpi=plotvars.dpi,
-                    **saveargs
+                    **saveargs,
                 )
                 matplotlib.pyplot.ioff()
                 subprocess.Popen([disp, tfile])
@@ -6507,7 +6496,7 @@ def cscale(
             myhex = myhex.lstrip("#")
             mylen = len(myhex)
             rgb = tuple(
-                int(myhex[i: i + mylen // 3], 16)
+                int(myhex[i : i + mylen // 3], 16)
                 for i in range(0, mylen, mylen // 3)
             )
             r.append(rgb[0])
@@ -6608,15 +6597,14 @@ def cscale(
         # Reset colours if uniform is set
         if uniform:
             mid_pt = max(below, above)
-            r = r[mid_pt - below: mid_pt + above]
-            g = g[mid_pt - below: mid_pt + above]
-            b = b[mid_pt - below: mid_pt + above]
+            r = r[mid_pt - below : mid_pt + above]
+            g = g[mid_pt - below : mid_pt + above]
+            b = b[mid_pt - below : mid_pt + above]
 
     # Convert to hex
     hexarr = []
     for col in np.arange(np.size(r)):
-        hexarr.append(
-            f"#{int(r[col]):02x}{int(g[col]):02x}{int(b[col]):02x}")
+        hexarr.append(f"#{int(r[col]):02x}{int(g[col]):02x}{int(b[col]):02x}")
 
     # White requested colour positions
     if white is not None:
@@ -7578,9 +7566,9 @@ def vect(
                 lltype = 2
             llticks, lllabels = _mapaxis(min=xmin, max=xmax, type=lltype)
 
-            heightticks = _gvals(dmin=ymin, dmax=ymax, mystep=ystep, mod=False)[
-                0
-            ]
+            heightticks = _gvals(
+                dmin=ymin, dmax=ymax, mystep=ystep, mod=False
+            )[0]
             heightlabels = heightticks
 
             if axes:
@@ -9233,7 +9221,7 @@ def lineplot(
         markeredgecolor=markeredgecolor,
         markeredgewidth=markeredgewidth,
         label=label,
-        zorder=zorder
+        zorder=zorder,
     )
 
     # Set axis width if required
@@ -9593,8 +9581,8 @@ def traj(
 
                     col = plotvars.cs[np.max(np.where(val > plotvars.levels))]
                     mymap.plot(
-                        line_xpts[i: i + 2],
-                        line_ypts[i: i + 2],
+                        line_xpts[i : i + 2],
+                        line_ypts[i : i + 2],
                         color=col,
                         linewidth=plot_linewidth,
                         linestyle=linestyle,
@@ -9820,7 +9808,7 @@ def cbar(
     | position - user specified colorbar position in normalised
     |            plot coordinates [left, bottom, width, height]
     | shrink - default=1.0 - scale colorbar along length
-    | fraction - default = 0.21 - space for the colorbar in
+    | fraction - default = 0.12 - space for the colorbar in
     |            normalised plot coordinates
     | title - title for the colorbar
     | fontsize - font size for the colorbar text
@@ -9867,10 +9855,8 @@ def cbar(
             fraction = 0.06
         if plotvars.rows >= 4:
             fraction = 0.04
-
     if shrink is None:
         shrink = 1.0
-
     if anchor is None:
         anchor = 0.3
         if plotvars.plot_type > 1:
@@ -9920,34 +9906,29 @@ def cbar(
 
         left, bottom, width, height = this_plot.get_position().bounds
 
+        exclude_vprojs = ["cyl", "lcc", "moll", "merc", "ortho", "robin"]
         if orientation == "horizontal":
             if (
                 plotvars.plot_type > 1
                 or plotvars.plot == 0
-                or plotvars.proj
-                not in ["cyl", "lcc", "moll", "merc", "ortho", "robin"]
+                or plotvars.proj not in exclude_vprojs
             ):
                 this_plot.set_position(
-                    [left, bottom + fraction, width, height - fraction])
+                    [left, bottom + fraction, width, height - fraction]
+                )
 
-            # if plotvars.plot_type == 1 and plotvars.proj == 'cyl':
-            if plotvars.plot_type == 1 and plotvars.proj in [
-                "cyl",
-                "lcc",
-                "moll",
-                "merc",
-                "ortho",
-                "robin",
-            ]:
+            if plotvars.plot_type == 1 and plotvars.proj in exclude_vprojs:
                 # Move plot up if aspect ratio is < 1.5
                 lonrange = plotvars.lonmax - plotvars.lonmin
                 latrange = plotvars.latmax - plotvars.latmin
 
                 if (lonrange / latrange) <= 1.5:
                     this_plot.set_position(
-                        [left, bottom + 0.08, width, height - 0.12])
+                        [left, bottom + 0.08, width, height - 0.12]
+                    )
                     left, bottom, width, height = (
-                        this_plot.get_position().bounds)
+                        this_plot.get_position().bounds
+                    )
 
                 ax1 = plotvars.master_plot.add_axes(
                     [
@@ -9960,7 +9941,8 @@ def cbar(
 
             if plotvars.plot_type > 1 or plotvars.plot_type == 0:
                 this_plot.set_position(
-                    [left, bottom + fraction, width, height - fraction])
+                    [left, bottom + fraction, width, height - fraction]
+                )
 
                 ax1 = plotvars.master_plot.add_axes(
                     [
@@ -9981,8 +9963,7 @@ def cbar(
                     height * shrink,
                 ]
             )
-            this_plot.set_position(
-                [left, bottom, width - fraction, height])
+            this_plot.set_position([left, bottom, width - fraction, height])
 
     else:
         # Set axes position on coords supplied by the user
@@ -10006,7 +9987,6 @@ def cbar(
     if text_up_down:
         lbot = levs[1:][::2]
         ltop = levs[::2]
-
     if text_down_up:
         lbot = levs[::2]
         ltop = levs[1:][::2]
@@ -10019,8 +9999,14 @@ def cbar(
 
     ncolors = np.size(levs)
 
-    if extend == "both" or extend == "max":
-        ncolors = ncolors - 1
+    if extend in ("both", "max"):
+        ncolors -= 1
+
+    if mid is not None:
+        lbot = [
+            (lbot[i + 1] - lbot[i]) / 2.0 + lbot[i]
+            for i in np.arange(len(labels))
+        ]
 
     if not isinstance(levs, int):
         plotvars.norm = matplotlib.colors.BoundaryNorm(
@@ -10033,21 +10019,14 @@ def cbar(
         # Add colorbar extensions if definded by levs.  Using boundaries[0]-1
         # for the lower and boundaries[-1]+1 is just for the colorbar and
         # has no meaning for the plot.
-        if extend == "min" or extend == "both":
+        if extend in ("both", "min"):
             cmap.set_under(plotvars.cs[0])
             boundaries = np.insert(boundaries, 0, boundaries[0] - 1)
-        if extend == "max" or extend == "both":
+        if extend in ("both", "max"):
             cmap.set_over(plotvars.cs[-1])
             boundaries = np.insert(
                 boundaries, len(boundaries), boundaries[-1] + 1
             )
-
-        if mid is not None:
-            lbot_new = []
-            for i in np.arange(len(labels)):
-                mid_point = (lbot[i + 1] - lbot[i]) / 2.0 + lbot[i]
-                lbot_new.append(mid_point)
-            lbot = lbot_new
 
         if not isinstance(levs, list):
             lbot = None
@@ -10066,14 +10045,6 @@ def cbar(
         )
 
     else:
-
-        if mid is not None:
-            lbot_new = []
-            for i in np.arange(len(labels)):
-                mid_point = (lbot[i + 1] - lbot[i]) / 2.0 + lbot[i]
-                lbot_new.append(mid_point)
-            lbot = lbot_new
-
         ax1 = plotvars.master_plot.add_axes(position)
         colorbar = matplotlib.colorbar.ColorbarBase(
             ax1,
@@ -10122,13 +10093,14 @@ def cbar(
         vmin = colorbar.norm.vmin
         vmax = colorbar.norm.vmax
 
-        if colorbar.extend == "min":
+        cbar_extend = colorbar.extend
+        if cbar_extend == "min":
             shift_l = 0.05
             scaling = 0.95
-        elif colorbar.extend == "max":
+        elif cbar_extend == "max":
             shift_l = 0.0
             scaling = 0.95
-        elif colorbar.extend == "both":
+        elif cbar_extend == "both":
             shift_l = 0.05
             scaling = 0.9
         else:
@@ -11080,6 +11052,7 @@ def map_grid():
 # ======================================================
 # MISC. - TODO move these out of functional library code
 # ======================================================
+
 
 def _process_color_scales():
     """
