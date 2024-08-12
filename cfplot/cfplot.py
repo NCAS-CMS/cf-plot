@@ -9808,7 +9808,7 @@ def cbar(
     | position - user specified colorbar position in normalised
     |            plot coordinates [left, bottom, width, height]
     | shrink - default=1.0 - scale colorbar along length
-    | fraction - default = 0.21 - space for the colorbar in
+    | fraction - default = 0.12 - space for the colorbar in
     |            normalised plot coordinates
     | title - title for the colorbar
     | fontsize - font size for the colorbar text
