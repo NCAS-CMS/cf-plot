@@ -2194,27 +2194,28 @@ def _set_map():
 
     # Set up mapping
     extent = True
-    lon_mid = plotvars.lonmin + (plotvars.lonmax - plotvars.lonmin) / 2.0
     lonmin = plotvars.lonmin
     lonmax = plotvars.lonmax
     latmin = plotvars.latmin
     latmax = plotvars.latmax
+    lon_diff = lonmax - lonmin
+    lon_mid = lonmax / 2.0
 
     if plotvars.proj == "cyl":
         proj = ccrs.PlateCarree(central_longitude=lon_mid)
 
         # Cartopy line plotting and identical left == right fix
-
-        if lonmax - lonmin == 360.0:
+        if lon_diff == 360.0:
             lonmax = lonmax + 0.01
 
     if plotvars.proj == "merc":
         min_latitude = -80.0
-        if plotvars.lonmin > min_latitude:
+        if lonmin > min_latitude:
             min_latitude = plotvars.lonmin
         max_latitude = 84.0
-        if plotvars.lonmax < max_latitude:
+        if lonmax < max_latitude:
             max_latitude = plotvars.lonmax
+
         proj = ccrs.Mercator(
             central_longitude=plotvars.lon_0,
             min_latitude=min_latitude,
