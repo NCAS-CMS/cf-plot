@@ -1331,30 +1331,30 @@ def _cf_data_assign(
     for mycoord in f.coords():
         c = f.coord(mycoord)
         if c.X:
-            if verbose:
-                print("lons -", mydim)
             lons = np.squeeze(f.construct(mycoord).array)
+            if verbose:
+                print("lons -", lons)
             if np.size(lons) > 1:
                 has_lons = True
 
         if c.Y:
-            if verbose:
-                print("lats -", mydim)
             lats = np.squeeze(f.construct(mycoord).array)
+            if verbose:
+                print("lats -", lats)
             if np.size(lats) > 1:
                 has_lats = True
 
         if c.Z:
-            if verbose:
-                print("height -", mydim)
             height = np.squeeze(f.construct(mycoord).array)
+            if verbose:
+                print("height -", height)
             if np.size(height) > 1:
                 has_height = True
 
         if c.T:
-            if verbose:
-                print("time -", mydim)
             time = np.squeeze(f.construct(mycoord).array)
+            if verbose:
+                print("time -", time)
             if np.size(time) > 1:
                 has_time = True
 
