@@ -11,6 +11,7 @@ import coverage
 import faulthandler
 import hashlib
 import numpy as np
+import os
 import unittest
 
 from netCDF4 import Dataset as ncfile
@@ -24,8 +25,10 @@ faulthandler.enable()  # to debug seg faults and timeouts
 
 
 DATA_DIR = "cfplot_data"
-TEST_GEN_DIR = "./generated-example-images"
 TEST_REF_DIR = "./reference-example-images"
+TEST_GEN_DIR = "./generated-example-images"
+if not os.path.exists(TEST_GEN_DIR):
+   os.makedirs(TEST_GEN_DIR)
 
 
 # Keep track of number of examples including sub-numbering (a, b, etc.)
@@ -478,23 +481,25 @@ class ExamplesTest(unittest.TestCase):
     """Run through gallery examples and compare to reference plots."""
 
     data_dir = DATA_DIR
+    save_gen_dir = TEST_GEN_DIR
 
     def setUp(self):
         """Preparations called immediately before each test method."""
-        fname = f"gen_fig_{unittest.TestCase.id()}.png"
+        # Get a filename fname with the ID of test_example_X component X
+        test_method_name = unittest.TestCase.id(self).split(".")[-1]
+        fname = (
+            f"{self.save_gen_dir}/"
+            f"gen_fig_{test_method_name.rsplit('test_example_')[1]}.png"
+        )
         cfp.setvars(
             file=fname,
             viewer="matplotlib",
-        )
-        print(
-            "------------------------------\n"
-            "Testing gallery example plots.\n"
-            "------------------------------\n"
         )
 
     def tearDown(self):
         """Preparations called immediately after each test method."""
         cfp.reset()
+        
 
     def test_example_1(self):
         """Test Example 1: a basic cylindrical projection."""
