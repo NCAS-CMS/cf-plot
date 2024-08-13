@@ -32,7 +32,7 @@ DATA_DIR = "cfplot_data"
 TEST_REF_DIR = "./reference-example-images"
 TEST_GEN_DIR = "./generated-example-images"
 if not os.path.exists(TEST_GEN_DIR):
-   os.makedirs(TEST_GEN_DIR)
+    os.makedirs(TEST_GEN_DIR)
 
 # Keep track of number of examples including sub-numbering (a, b, etc.)
 # as used across the docs and for the ExamplesTest.
@@ -51,37 +51,37 @@ NAMED_EXAMPLES += [
 # Note: failing so no comparison plots for 16, 24, 25, 26.
 
 
-def visual_plot_cmp_test(test_method):
+def compare_plot_results(test_method):
     """
     Decorator to compare images and cause a test error if they don't match.
 
     This logic uses 'matplotlib.testing.compare' to handle under-the-hood
     plot image comparison.
     """
+
     @functools.wraps(test_method)
     def wrapper(_self):
         tid = _self.test_id
         test_name = f"test_example_{tid}"
 
         # Part A: functional test i.e. does the code run OK
-        print(f"___Running code for {test_name}___")
+        print(f"\n___Running code for {test_name}___")
         test_method(_self)
 
         # Part B: plot image comparison test i.e. is the plot output correct
         print(f"___Comparing output images for {test_name}___")
         # TODO add underscore to ref_figX names for consistency
         image_cmp_result = mpl_compare.compare_images(
-            f"{TEST_REF_DIR}/ref_fig{tid}.png",  # expected (reference) plot
+            f"{TEST_REF_DIR}/ref_fig_{tid}.png",  # expected (reference) plot
             f"{TEST_GEN_DIR}/gen_fig_{tid}.png",  # actual (generated) plot
-            tol=0.001, in_decorator=True
-        )  # TODO tweak for appropriate tolerance
+            tol=0.001,
+            in_decorator=True,
+        )
 
         # If the plot image comparison passed, image_cmp_result will be None
         # (see https://matplotlib.org/stable/api/
         # testing_api.html#matplotlib.testing.compare.compare_images)
-        msg = (
-           f"\nPlot comparison shows differences, see result dict for details."
-        )
+        msg = f"\nPlot comparison shows differences, see result dict for details."
         _self.assertIsNone(image_cmp_result, msg=msg)
 
     return wrapper
@@ -493,9 +493,8 @@ class ExamplesTest(unittest.TestCase):
         """Preparations called immediately before each test method."""
         # Get a filename fname with the ID of test_example_X component X
         test_method_name = unittest.TestCase.id(self).split(".")[-1]
-        self.test_id = test_method_name.rsplit('test_example_')[1]
-        fname = (
-            f"{self.save_gen_dir}/"f"gen_fig_{self.test_id}.png")
+        self.test_id = test_method_name.rsplit("test_example_")[1]
+        fname = f"{self.save_gen_dir}/" f"gen_fig_{self.test_id}.png"
         cfp.setvars(
             file=fname,
             viewer="matplotlib",
@@ -505,6 +504,7 @@ class ExamplesTest(unittest.TestCase):
         """Preparations called immediately after each test method."""
         cfp.reset()
 
+    @compare_plot_results
     def test_example_1(self):
         """Test Example 1: a basic cylindrical projection."""
         f = cf.read(f"{self.data_dir}/tas_A1.nc")[0]
@@ -512,6 +512,7 @@ class ExamplesTest(unittest.TestCase):
         cfp.con(f.subspace(time=15))
 
     @unittest.expectedFailure  # plots in scrpit but in test errors as below
+    @compare_plot_results
     def test_example_2(self):
         """Test Example 2: a cylindrical projection with blockfill."""
         # Traceback (most recent call last):
@@ -529,6 +530,7 @@ class ExamplesTest(unittest.TestCase):
 
         cfp.con(f.subspace(time=15), blockfill=True, lines=False)
 
+    @compare_plot_results
     def test_example_3(self):
         """Test Example 3: altering the map limits and contour levels."""
         f = cf.read(f"{self.data_dir}/tas_A1.nc")[0]
@@ -538,6 +540,7 @@ class ExamplesTest(unittest.TestCase):
 
         cfp.con(f.subspace(time=15))
 
+    @compare_plot_results
     def test_example_4(self):
         """Test Example 4: north pole polar stereographic projection."""
         f = cf.read(f"{self.data_dir}/ggap.nc")[1]
@@ -546,6 +549,7 @@ class ExamplesTest(unittest.TestCase):
 
         cfp.con(f.subspace(pressure=500))
 
+    @compare_plot_results
     def test_example_5(self):
         """Test Example 5: south pole with a set latitude plot limit.
 
@@ -558,18 +562,21 @@ class ExamplesTest(unittest.TestCase):
 
         cfp.con(f.subspace(pressure=500))
 
+    @compare_plot_results
     def test_example_6(self):
         """Test Example 6: latitude-pressure plot."""
         f = cf.read(f"{self.data_dir}/ggap.nc")[3]
 
         cfp.con(f.subspace(longitude=0))
 
+    @compare_plot_results
     def test_example_7(self):
         """Test Example 7: latitude-pressure plot of a zonal mean."""
         f = cf.read(f"{self.data_dir}/ggap.nc")[1]
 
         cfp.con(f.collapse("mean", "longitude"))
 
+    @compare_plot_results
     def test_example_8(self):
         """Test Example 8: plot showing latitude against log-scale pressure."""
         f = cf.read(f"{self.data_dir}/ggap.nc")[1]
@@ -577,6 +584,7 @@ class ExamplesTest(unittest.TestCase):
         cfp.con(f.collapse("mean", "longitude"), ylog=1)
 
     @unittest.expectedFailure  # works standalone, test suite gives IndexError
+    @compare_plot_results
     def test_example_9(self):
         """Test Example 9: longitude-pressure plot."""
         # TODO SLB, flaky/bad test alert! This works in interactive Python
@@ -603,6 +611,7 @@ class ExamplesTest(unittest.TestCase):
 
         cfp.con(f.collapse("mean", "latitude"))
 
+    @compare_plot_results
     def test_example_10(self):
         """Test Example 10: latitude-time Hovmuller plot."""
         f = cf.read(f"{self.data_dir}/tas_A1.nc")[0]
@@ -611,6 +620,7 @@ class ExamplesTest(unittest.TestCase):
 
         cfp.con(f.subspace(longitude=0), lines=0)
 
+    @compare_plot_results
     def test_example_11(self):
         """Test Example 11: latitude-time subset Hovmuller plot."""
         f = cf.read(f"{self.data_dir}/tas_A1.nc")[0]
@@ -621,6 +631,7 @@ class ExamplesTest(unittest.TestCase):
 
         cfp.con(f.subspace(longitude=0), lines=0)
 
+    @compare_plot_results
     def test_example_12(self):
         """Test Example 12: longitude-time Hovmuller plot."""
         f = cf.read(f"{self.data_dir}/tas_A1.nc")[0]
@@ -629,6 +640,7 @@ class ExamplesTest(unittest.TestCase):
 
         cfp.con(f.subspace(latitude=0), lines=0)
 
+    @compare_plot_results
     def test_example_13(self):
         """Test Example 13: basic vector plot."""
         f = cf.read(f"{self.data_dir}/ggap.nc")
@@ -638,6 +650,7 @@ class ExamplesTest(unittest.TestCase):
 
         cfp.vect(u=u, v=v, key_length=10, scale=100, stride=5)
 
+    @compare_plot_results
     def test_example_14(self):
         """Test Example 14: vector plot with colour contour map."""
         f = cf.read(f"{self.data_dir}/ggap.nc")
@@ -653,6 +666,7 @@ class ExamplesTest(unittest.TestCase):
         cfp.vect(u=u, v=v, key_length=10, scale=50, stride=2)
         cfp.gclose()
 
+    @compare_plot_results
     def test_example_15(self):
         """Test Example 15: polar vector plot."""
         # TODO avoiding repeated reads, incorporate into docs too
@@ -674,6 +688,7 @@ class ExamplesTest(unittest.TestCase):
         )
 
     @unittest.expectedFailure  # errors due to cf-python Issue #797
+    @compare_plot_results
     def test_example_16(self):
         """Test Example 16: zonal vector plot."""
         c = cf.read(f"{self.data_dir}/vaAMIPlcd_DJF.nc")[0]
@@ -697,6 +712,7 @@ class ExamplesTest(unittest.TestCase):
             key_location=[0.95, -0.05],
         )
 
+    @compare_plot_results
     def test_example_16b(self):
         """Test Example 16b: basic stream plot."""
         f = cf.read(f"{self.data_dir}/ggap.nc")
@@ -708,6 +724,7 @@ class ExamplesTest(unittest.TestCase):
 
         cfp.stream(u=u, v=v, density=2)
 
+    @compare_plot_results
     def test_example_16c(self):
         """Test Example 16c: enhanced stream plot."""
         f = cf.read(f"{self.data_dir}/ggap.nc")
@@ -731,6 +748,7 @@ class ExamplesTest(unittest.TestCase):
         )
         cfp.gclose()
 
+    @compare_plot_results
     def test_example_17(self):
         """Test Example 17: basic stipple plot."""
         f = cf.read(f"{self.data_dir}/tas_A1.nc")[0]
@@ -746,6 +764,7 @@ class ExamplesTest(unittest.TestCase):
         )
         cfp.gclose()
 
+    @compare_plot_results
     def test_example_18(self):
         """Test Example 18: polar stipple plot."""
         f = cf.read(f"{self.data_dir}/tas_A1.nc")[0]
@@ -759,6 +778,7 @@ class ExamplesTest(unittest.TestCase):
         cfp.stipple(f=g, min=265, max=295, size=100, color="#00ff00")
         cfp.gclose()
 
+    @compare_plot_results
     def test_example_19(self):
         """Test Example 19: multiple plots as subplots."""
         f = cf.read(f"{self.data_dir}/ggap.nc")[1]
@@ -780,6 +800,7 @@ class ExamplesTest(unittest.TestCase):
         )
         cfp.gclose()
 
+    @compare_plot_results
     def test_example_19a(self):
         """Test Example 19a: multiple plots with user specified positions."""
         f = cf.read(f"{self.data_dir}/ggap.nc")[1]
@@ -797,6 +818,7 @@ class ExamplesTest(unittest.TestCase):
 
         cfp.gclose()
 
+    @compare_plot_results
     def test_example_19b(self):
         """Test Example 19b: user-specified plot positioning.
 
@@ -831,6 +853,7 @@ class ExamplesTest(unittest.TestCase):
         cfp.gclose()
 
     @unittest.expectedFailure  # works standalone, test suite gives ValueError
+    @compare_plot_results
     def test_example_20(self):
         """Test Example 20: user labelling of axes."""
         f = cf.read(f"{self.data_dir}/Geostropic_Adjustment.nc")[0]
@@ -852,6 +875,7 @@ class ExamplesTest(unittest.TestCase):
         )
 
     @unittest.expectedFailure  # ValueError, see below failure report
+    @compare_plot_results
     def test_example_21other(self):
         """Test Example 21 (other, due to duplicate label of 21)."""
         # Traceback (most recent call last):
@@ -877,6 +901,7 @@ class ExamplesTest(unittest.TestCase):
         cfp.con(f)
 
     @unittest.expectedFailure  # works standalone, test suite gives ValueError
+    @compare_plot_results
     def test_example_22(self):
         """Test Example 22:"""
         f = cf.read(f"{self.data_dir}/rgp.nc")[0]
@@ -885,6 +910,7 @@ class ExamplesTest(unittest.TestCase):
 
         cfp.con(f)
 
+    @compare_plot_results
     def test_example_22other(self):
         """Test Example 22 (other, due to duplicate label of 22)."""
         f = cf.read(f"{self.data_dir}/rgp.nc")[0]
@@ -894,6 +920,7 @@ class ExamplesTest(unittest.TestCase):
 
         cfp.con(f)
 
+    @compare_plot_results
     def test_example_23(self):
         """Test Example 23."""
         f = cf.read(f"{self.data_dir}/rgp.nc")[0]
@@ -916,6 +943,7 @@ class ExamplesTest(unittest.TestCase):
         cfp.rgaxes(xpole=xpole, ypole=ypole, xvec=xvec, yvec=yvec)
         cfp.gclose()
 
+    @compare_plot_results
     def test_example_23other(self):
         """Test Example 23 (other, due to duplicate label of 23)."""
         f = cf.read(
@@ -964,6 +992,7 @@ class ExamplesTest(unittest.TestCase):
         cfp.con(x=lons_new, y=lats_new, f=temp_new, ptype=1)
 
     @unittest.expectedFailure  # IndexError after griddata API conformance
+    @compare_plot_results
     def test_example_25(self):
         """Test Example 25."""
         # Note the block of code until '---' is shared with example 24.
@@ -1010,6 +1039,7 @@ class ExamplesTest(unittest.TestCase):
         cfp.gclose()
 
     @unittest.expectedFailure  # ValueError after griddata API conformance
+    @compare_plot_results
     def test_example_26(self):
         """Test Example 26."""
         # Get an Orca grid and flatten the arrays
@@ -1044,6 +1074,7 @@ class ExamplesTest(unittest.TestCase):
 
         cfp.con(x=lons_new, y=lats_new, f=temp_new, ptype=1)
 
+    @compare_plot_results
     def test_example_27(self):
         """Test Example 27: basic graph plot."""
         f = cf.read(f"{self.data_dir}/ggap.nc")[1]
@@ -1057,6 +1088,7 @@ class ExamplesTest(unittest.TestCase):
             title="Zonal mean zonal wind at 100mb",
         )
 
+    @compare_plot_results
     def test_example_28(self):
         """Test Example 28: line and legend plot."""
         f = cf.read(f"{self.data_dir}/ggap.nc")[1]
@@ -1107,6 +1139,7 @@ class ExamplesTest(unittest.TestCase):
         )
         cfp.gclose()
 
+    @compare_plot_results
     def test_example_29(self):
         """Test Example 29: global average annual temperature."""
         f = cf.read(f"{self.data_dir}/tas_A1.nc")[0]
@@ -1122,6 +1155,7 @@ class ExamplesTest(unittest.TestCase):
             color="blue",
         )
 
+    @compare_plot_results
     def test_example_30(self):
         """Test Example 30: two axis plotting."""
         tol = cf.RTOL(1e-5)
@@ -1149,6 +1183,7 @@ class ExamplesTest(unittest.TestCase):
         cfp.gclose()
 
     @unittest.expectedFailure  # errors due to 1 of 2 x bugs, see #59 and #60
+    @compare_plot_results
     def test_example_31(self):
         """Test Example 31: UKCP projection."""
         # TODO SLB this test errors
@@ -1169,6 +1204,7 @@ class ExamplesTest(unittest.TestCase):
         cfp.con(f, lines=False)
 
     @unittest.expectedFailure  # errors, issue TBC
+    @compare_plot_results
     def test_example_32(self):
         """Test Example 32: UKCP projection with blockfill."""
         # Traceback (most recent call last):
@@ -1195,6 +1231,7 @@ class ExamplesTest(unittest.TestCase):
         )
 
     @unittest.expectedFailure  # errors, issue TBC
+    @compare_plot_results
     def test_example_33(self):
         """Test Example 33: OSGB and EuroPP projections."""
         # Traceback (most recent call last):
@@ -1217,6 +1254,7 @@ class ExamplesTest(unittest.TestCase):
         cfp.con(f, lines=False, colorbar_label_skip=2)
         cfp.gclose()
 
+    @compare_plot_results
     def test_example_34(self):
         """Test Example 34: Cropped Lambert conformal projection."""
         f = cf.read(f"{self.data_dir}/tas_A1.nc")[0]
@@ -1224,6 +1262,7 @@ class ExamplesTest(unittest.TestCase):
 
         cfp.con(f.subspace(time=15))
 
+    @compare_plot_results
     def test_example_35(self):
         """Test Example 35: Mollweide projection."""
         f = cf.read(f"{self.data_dir}/tas_A1.nc")[0]
@@ -1231,6 +1270,7 @@ class ExamplesTest(unittest.TestCase):
 
         cfp.con(f.subspace(time=15))
 
+    @compare_plot_results
     def test_example_36(self):
         """Test Example 36: Mercator projection."""
         f = cf.read(f"{self.data_dir}/tas_A1.nc")[0]
@@ -1238,6 +1278,7 @@ class ExamplesTest(unittest.TestCase):
 
         cfp.con(f.subspace(time=15))
 
+    @compare_plot_results
     def test_example_37(self):
         """Test Example 37: Orthographic projection."""
         f = cf.read(f"{self.data_dir}/tas_A1.nc")[0]
@@ -1245,20 +1286,22 @@ class ExamplesTest(unittest.TestCase):
 
         cfp.con(f.subspace(time=15))
 
-    @visual_plot_cmp_test
+    @compare_plot_results
     def test_example_38(self):
         """Test Example 38: Robinson projection."""
         f = cf.read(f"{self.data_dir}/tas_A1.nc")[0]
-        cfp.mapset(proj="merc")  ###robin")
+        cfp.mapset(proj="robin")
 
         cfp.con(f.subspace(time=15))
 
+    @compare_plot_results
     def test_example_39(self):
         """Test Example 39: basic track plotting trajectory."""
         f = cf.read(f"{self.data_dir}/ff_trs_pos.nc")[0]
 
         cfp.traj(f)
 
+    @compare_plot_results
     def test_example_40(self):
         """Test Example 40: tracks in the polar stereographic projection."""
         f = cf.read(f"{self.data_dir}/ff_trs_pos.nc")[0]
@@ -1268,6 +1311,7 @@ class ExamplesTest(unittest.TestCase):
         cfp.traj(f)
 
     @unittest.expectedFailure  # RuntimeError, see below failure report
+    @compare_plot_results
     def test_example_41(self):
         """Test Example 41: feature propagation over Europe."""
         # Fails with:
@@ -1284,6 +1328,7 @@ class ExamplesTest(unittest.TestCase):
         cfp.traj(f, vector=True, markersize=0.0, fc="b", ec="b")
 
     @unittest.expectedFailure  # RuntimeError, see below failure report
+    @compare_plot_results
     def test_example_42(self):
         """Test Example 42: intensity legend."""
         # Fails with:
@@ -1309,6 +1354,7 @@ class ExamplesTest(unittest.TestCase):
         )
 
     @unittest.expectedFailure  # RuntimeError, see below failure report
+    @compare_plot_results
     def test_example_42a(self):
         """Test Example 42a: intensity legend with lines."""
         # Fails with:
@@ -1334,6 +1380,7 @@ class ExamplesTest(unittest.TestCase):
         )
 
     @unittest.expectedFailure  # needs data file adding to datasets
+    @compare_plot_results
     def test_example_43(self):
         """Test Example 43: plotting WRF data."""
         f = cf.read(f"{self.data_dir}/wrf2.nc")[0]  # TODO missing dataset
