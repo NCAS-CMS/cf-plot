@@ -9,13 +9,17 @@ alongside a reference plot.
 
 import coverage
 import faulthandler
+import functools
 import hashlib
+from pprint import pformat
 import numpy as np
 import os
 import unittest
 
 from netCDF4 import Dataset as ncfile
 from scipy.interpolate import griddata
+
+import matplotlib.testing.compare as mpl_compare
 
 import cfplot as cfp
 import cf
@@ -48,38 +52,41 @@ NAMED_EXAMPLES += [
 # Note: failing so no comparison plots for 16, 24, 25, 26.
 
 
-def compare_images(example=None):
+def visual_plot_cmp_test(test_method):
     """
-    Compare images and return an error string if they don't match.
-    """
-    # disp = cfp._which("display")
-    # conv = cfp._which("convert")
-    # comp = cfp._which("compare")
-    # file = f"fig{example}.png"
-    # file_gen = f"{TEST_GEN_DIR}/{file}"
-    # file_ref = f"{TEST_REF_DIR}/{file}"
+    Decorator to compare images and cause a test error if they don't match.
 
-    # # Check md5 checksums are the same and display files if not
-    # with open(file_gen, "rb") as gen_image:
-    #     with open(file_ref, "rb") as ref_image:
-    #         if (
-    #             hashlib.md5(gen_image).hexdigest()
-    #             != hashlib.md5(ref_image).hexdigest()
-    #         ):
-    #             print(f"***Failed example {example}***")
-    #             error_image = f"{TEST_HOME_DIR}/error_{file}"
-    #             diff_image = f"{TEST_HOME_DIR}/difference_{file}"
-    #             p = subprocess.Popen([comp, file_new, file_ref, diff_image])
-    #             (output, err) = p.communicate()
-    #             p.wait()
-    #             p = subprocess.Popen(
-    #                 [conv, "+append", file_new, file_ref, error_image]
-    #             )
-    #             (output, err) = p.communicate()
-    #             p.wait()
-    #             subprocess.Popen([disp, diff_image])
-    #         else:
-    #             print(f"Passed example {example}")
+    This logic uses 'matplotlib.testing.compare' to handle under-the-hood
+    plot image comparison.
+    """
+    @functools.wraps(test_method)
+    def wrapper(_self):
+        tid = _self.test_id
+        test_name = f"test_example_{tid}"
+
+        # Part A: functional test i.e. does the code run OK
+        print(f"    Running code for {test_name}.")
+        result = test_method(_self)
+
+        # Part B: plot image comparison test i.e. is the plot output correct
+        print(f"    Comparing images for {test_name}.")
+        # TODO add underscore to ref_figX names for consistency
+        r = mpl_compare.compare_images(
+            f"{TEST_REF_DIR}/ref_fig{tid}.png",  # expected (reference) plot
+            f"{TEST_GEN_DIR}/gen_fig_{tid}.png",  # actual (generated) plot
+            tol=0.001, in_decorator=True
+        )  # TODO tweak for appropriate tolerance
+        if r:
+            print(
+                "FAIL: Plot comparison shows differences, so test failed:\n"
+                f"{pformat(r)}\n"
+            )
+
+        return result
+    return wrapper
+
+
+def compare_images(self):
     pass
 
 
@@ -482,15 +489,16 @@ class ExamplesTest(unittest.TestCase):
 
     data_dir = DATA_DIR
     save_gen_dir = TEST_GEN_DIR
+    ref_dir = TEST_REF_DIR
+    test_id = None
 
     def setUp(self):
         """Preparations called immediately before each test method."""
         # Get a filename fname with the ID of test_example_X component X
         test_method_name = unittest.TestCase.id(self).split(".")[-1]
+        self.test_id = test_method_name.rsplit('test_example_')[1]
         fname = (
-            f"{self.save_gen_dir}/"
-            f"gen_fig_{test_method_name.rsplit('test_example_')[1]}.png"
-        )
+            f"{self.save_gen_dir}/"f"gen_fig_{self.test_id}.png")
         cfp.setvars(
             file=fname,
             viewer="matplotlib",
@@ -499,7 +507,6 @@ class ExamplesTest(unittest.TestCase):
     def tearDown(self):
         """Preparations called immediately after each test method."""
         cfp.reset()
-        
 
     def test_example_1(self):
         """Test Example 1: a basic cylindrical projection."""
@@ -1298,6 +1305,7 @@ class ExamplesTest(unittest.TestCase):
         cfp.con(f.subspace(time=15))
         compare_images(37)
 
+    @visual_plot_cmp_test
     def test_example_38(self):
         """Test Example 38: Robinson projection."""
         f = cf.read(f"{self.data_dir}/tas_A1.nc")[0]
