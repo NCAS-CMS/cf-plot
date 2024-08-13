@@ -9906,25 +9906,33 @@ def cbar(
 
         left, bottom, width, height = this_plot.get_position().bounds
 
-        exclude_vprojs = ["cyl", "lcc", "moll", "merc", "ortho", "robin"]
         if orientation == "horizontal":
-            if (
-                plotvars.plot_type > 1
-                or plotvars.plot == 0
-                or plotvars.proj not in exclude_vprojs
-            ):
+            if plotvars.plot_type > 1 or plotvars.plot == 0:
                 this_plot.set_position(
                     [left, bottom + fraction, width, height - fraction]
                 )
-
-            if plotvars.plot_type == 1 and plotvars.proj in exclude_vprojs:
-                # Move plot up if aspect ratio is < 1.5
-                lonrange = plotvars.lonmax - plotvars.lonmin
-                latrange = plotvars.latmax - plotvars.latmin
-
-                if (lonrange / latrange) <= 1.5:
+                ax1 = plotvars.master_plot.add_axes(
+                    [
+                        left + width * (1.0 - shrink) / 2.0,
+                        bottom,
+                        width * shrink,
+                        thick,
+                    ]
+                )
+            if plotvars.plot_type == 1:
+                # If the plot is too square in terms of aspect ratio, it
+                # will push the colour bar down and it can be cut off, so
+                # move the plot up in these cases. Use height and width
+                # ratio since this represents the matplotlib object
+                # position differences, so is the best way to measure.
+                left, bottom, width, height = (
+                    this_plot.get_position().bounds
+                )
+                # Empirical sweet spot: roughly where plot area is taller
+                # than it is wide, including when plot area is roughly square
+                if height / width >= 0.9:
                     this_plot.set_position(
-                        [left, bottom + 0.08, width, height - 0.12]
+                        [left, bottom + fraction, width, height - fraction]
                     )
                     left, bottom, width, height = (
                         this_plot.get_position().bounds
@@ -9933,27 +9941,11 @@ def cbar(
                 ax1 = plotvars.master_plot.add_axes(
                     [
                         left + width * (1.0 - shrink) / 2.0,
-                        bottom - fraction * (1.0 - anchor),
+                        bottom + fraction * (anchor - 1.0),
                         width * shrink,
                         thick,
                     ]
                 )
-
-            if plotvars.plot_type > 1 or plotvars.plot_type == 0:
-                this_plot.set_position(
-                    [left, bottom + fraction, width, height - fraction]
-                )
-
-                ax1 = plotvars.master_plot.add_axes(
-                    [
-                        left + width * (1.0 - shrink) / 2.0,
-                        # b - fraction * (1.0 - anchor),
-                        bottom,
-                        width * shrink,
-                        thick,
-                    ]
-                )
-
         else:
             ax1 = plotvars.master_plot.add_axes(
                 [
@@ -10215,7 +10207,7 @@ def irregular_window(field, lons, lats):
     lons_irregular = np.concatenate([lons_irregular, lons_new])
     lats_irregular = np.concatenate([lats_irregular, lats_new])
 
-    # Add to the right if a fiull globe is being plotted
+    # Add to the right if a full globe is being plotted
     # The 359.99 here is needed or Cartopy will map 360 back to 0
 
     if plotvars.lonmax - plotvars.lonmin == 360:
