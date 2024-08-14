@@ -8058,7 +8058,7 @@ def setvars(**kwargs):
     | land_color=None - land colour
     | ocean_color=None - ocean colour
     | lake_color=None - lake colour
-    | feature_zorder=None - plotting zorder for above three features
+    | feature_zorder - plotting zorder for above three features, default=999
     | rotated_grid_spacing=10 - rotated grid spacing in degrees
     | rotated_deg_spacing=0.75 - rotated grid spacing between graticule dots
     | rotated_deg_tkickness=1.0 - rotated grid thickness for longitude and
@@ -8088,6 +8088,7 @@ def setvars(**kwargs):
      name
     """
     defaults = {
+        # TODO check docstring defaults are correct to match these
         # TODO lavel to categorise these
         # TODO double check all appear here, some possibly missing!
         "file": None,
@@ -8120,7 +8121,7 @@ def setvars(**kwargs):
         "land_color": None,
         "ocean_color": None,
         "lake_color": None,
-        "feature_zorder": 100,
+        "feature_zorder": 999,
         "rotated_grid_spacing": 10,
         "rotated_deg_spacing": 0.75,
         "rotated_continents": True,
@@ -8162,11 +8163,6 @@ def setvars(**kwargs):
                     f"Unrecognised keyword argument for setvars: {set_var}")
 
             setattr(plotvars, set_var, set_value)
-
-    # Some special cases:
-    # TODO check these settings, have different values for unknonw reasons
-    plotvars.text_fontsize = plotvars.colorbar_fontsize
-    plotvars.feature_zorder = 999
 
     matplotlib.pyplot.ioff()
 
