@@ -6517,17 +6517,17 @@ def cscale(
                 file = scale
 
         # Read in rgb values and convert to hex
-        f = open(file)
-        lines = f.read()
-        lines = lines.splitlines()
-        r = []
-        g = []
-        b = []
-        for line in lines:
-            vals = line.split()
-            r.append(int(vals[0]))
-            g.append(int(vals[1]))
-            b.append(int(vals[2]))
+        with open(file, "r") as f:
+            lines = f.read()
+            lines = lines.splitlines()
+            r = []
+            g = []
+            b = []
+            for line in lines:
+                vals = line.split()
+                r.append(int(vals[0]))
+                g.append(int(vals[1]))
+                b.append(int(vals[2]))
 
     # Reverse the colour scale if requested
     if reverse:
