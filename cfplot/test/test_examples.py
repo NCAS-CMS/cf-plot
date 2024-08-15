@@ -1182,25 +1182,15 @@ class ExamplesTest(unittest.TestCase):
         cfp.lineplot(t2, color="b")
         cfp.gclose()
 
-    @unittest.expectedFailure  # errors due to 1 of 2 x bugs, see #59 and #60
     @compare_plot_results
     def test_example_31(self):
         """Test Example 31: UKCP projection."""
-        # TODO SLB this test errors
         f = cf.read(f"{self.data_dir}/ukcp_rcm_test.nc")[0]
 
-        # There is a bug such that this example fails here, see Issue #59,
-        # https://github.com/NCAS-CMS/cf-plot/issues/59:
-        #
-        #   File "/home/slb93/git-repos/cf-plot/cfplot/cfplot.py", line 2982, in _plot_map_axes
-        # if plotvars.proj == "UKCP" and plotvars.grid:
-        #                                ^^^^^^^^^^^^^
-        # AttributeError: 'pvars' object has no attribute 'grid'
         cfp.mapset(proj="UKCP", resolution="50m")
         cfp.levs(-3, 7, 0.5)
         cfp.setvars(grid_x_spacing=1, grid_y_spacing=1)
 
-        # This can fail with 'UnboundLocalError', see Issue #60
         cfp.con(f, lines=False)
 
     @unittest.expectedFailure  # errors, issue TBC
