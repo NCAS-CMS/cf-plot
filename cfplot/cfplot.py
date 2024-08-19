@@ -445,7 +445,6 @@ setvars_defaults = {
     "rotated_grid_thickness": 1.0,
     "rotated_labels": True,
     # Feature additions
-    # TODO set this default in usual place, shouldn't have been set here
     "feature_zorder": 999,
     "land_color": None,
     "ocean_color": None,
@@ -456,7 +455,7 @@ setvars_defaults = {
     "continent_linestyle": None,
     # Axis related
     "axis_width": None,
-    "degsym": False,  # degree symbol instead of E, N etc.
+    "degsym": global_degsym,
     # Contour plot only
     "level_spacing": None,
     # Misc.
@@ -541,12 +540,6 @@ plotvars_defaults = {
     # 13. General alignment
     "orientation": "landscape",
     "aspect": "equal",
-    # TODO misc overrides to remove.
-    # TODO make defaults consitent across library to remove these:
-    # Defaults that are different to setvars defaults, leave for now
-    "feature_zorder": 99,
-    "rotated_grid_thickness": 2.0,
-    "degsym": global_degsym,
 }
 allvars_defaults = {**setvars_defaults, **plotvars_defaults}
 plotvars = pvars(**allvars_defaults)
@@ -8120,6 +8113,7 @@ def setvars(**kwargs):
     |                             latitude lines
     | rotated_continents=True - draw rotated continents
     | rotated_grid=True - draw rotated grid
+    | rotated_grid=1.0 - TODO, default 1.0
     | rotated_labels=True - draw rotated grid labels
     | legend_frame=True - draw a frame around a lineplot legend
     | legend_frame_edge_color='k' - color for the legend frame
