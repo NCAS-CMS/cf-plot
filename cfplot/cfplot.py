@@ -386,52 +386,49 @@ if os.path.exists(defaults_file):
 # These are plotting variables that 'setvars' can adjust
 setvars_defaults = {
     # TODO check docstring defaults are correct to match these
-    # TODO lavel to categorise these
-    # TODO double check all appear here, some possibly missing!
+    #
+    # Output graphics file saving and viewing
+    "viewer": global_viewer,
     "file": None,
-    "title_fontsize": 15,
-    "text_fontsize": 11,
-    "axis_label_fontsize": 11,
-    "continent_thickness": None,
-    "title_fontweight": "normal",
-    "text_fontweight": "normal",
-    "axis_label_fontweight": "normal",
-    "fontweight": "normal",
-    "continent_color": None,
-    "continent_linestyle": None,
+    # Output graphics file general config.
+    "dpi": None,
+    "tight": False,
+    # 'tspace' related
+    # TODO clarify what tspace is
     "tspace_year": None,
     "tspace_month": None,
     "tspace_day": None,
     "tspace_hour": None,
+    # 2. Tick labelling
     "xtick_label_rotation": 0,
     "xtick_label_align": "center",
     "ytick_label_rotation": 0,
     "ytick_label_align": "right",
+    # Font sizes
+    "text_fontsize": 11,
+    "axis_label_fontsize": 11,
+    "colorbar_fontsize": 11,
+    "title_fontsize": 15,
+    "master_title_fontsize": 30,
+    # TODO change for consistent name with the above, text_size -> fontsize
     "legend_text_size": 11,
+    # Font weights
+    "fontweight": "normal",
+    "text_fontweight": "normal",
+    "axis_label_fontweight": "normal",
+    "colorbar_fontweight": "normal",
+    "title_fontweight": "normal",
+    "master_title_fontweight": "normal",
+    # TODO change for consistent name with the above, text_weight -> fontweight
     "legend_text_weight": "normal",
-    "cs_uniform": True,
+    # Master title
     "master_title": None,
     "master_title_location": [0.5, 0.95],
-    "master_title_fontsize": 30,
-    "master_title_fontweight": "normal",
-    "dpi": None,
-    "land_color": None,
-    "ocean_color": None,
-    "lake_color": None,
-    "feature_zorder": 999,
-    "rotated_grid_spacing": 10,
-    "rotated_deg_spacing": 0.75,
-    "rotated_continents": True,
-    "rotated_grid": True,
-    "rotated_grid_thickness": 1.0,
-    "rotated_labels": True,
-    "colorbar_fontsize": 11,
-    "colorbar_fontweight": "normal",
+    # Legend frame related
     "legend_frame": True,
     "legend_frame_edge_color": "k",
     "legend_frame_face_color": None,
-    "degsym": False,
-    "axis_width": None,
+    # Grid related
     "grid": True,
     "grid_x_spacing": 60,
     "grid_y_spacing": 30,
@@ -439,71 +436,112 @@ setvars_defaults = {
     "grid_colour": "k",  # TODO API -> American spelling for consistency
     "grid_linestyle": "--",
     "grid_thickness": 1.0,
-    "tight": False,
+    # Rotated grid related
+    # TODO SB why does rotated grid have separate config. like this?
+    "rotated_grid_spacing": 10,
+    "rotated_deg_spacing": 0.75,
+    "rotated_continents": True,
+    "rotated_grid": True,
+    "rotated_grid_thickness": 1.0,
+    "rotated_labels": True,
+    # Feature additions
+    # TODO set this default in usual place, shouldn't have been set here
+    "feature_zorder": 999,
+    "land_color": None,
+    "ocean_color": None,
+    "lake_color": None,
+    "continent_color": None,
+    # Continent feature related
+    "continent_thickness": None,
+    "continent_linestyle": None,
+    # Axis related
+    "axis_width": None,
+    "degsym": False,  # degree symbol instead of E, N etc.
+    # Contour plot only
     "level_spacing": None,
-    "viewer": global_viewer
+    # Misc.
+    "cs_uniform": True,  # make a uniform differential colour scale
 }
 # These are further plotting variables that are set globally and cannot
 # be set by 'setvars'.
 plotvars_defaults = {
+    # 0. Top-level plotting config. eg. type, projection,
+    "global_viewer": global_viewer,
+    "plot_type": 1,
+    "master_plot": None,
+    "plot": None,
+    "mymap": None,
+    "proj": "cyl",
+    "resolution": "110m",
+    "norm": None,
+    # 1. Maxima and minima
+    # 1a) For lat and lon
     "lonmin": -180,
     "lonmax": 180,
     "latmin": -90,
     "latmax": 90,
-    "proj": "cyl",
-    "resolution": "110m",
-    "plot_type": 1,
-    "boundinglat": 0,
-    "lon_0": 0,
-    "levels": None,
-    "levels_min": None,
-    "levels_max": None,
-    "levels_step": None,
-    "norm": None,
-    "levels_extend": "both",
+    # 1b) for x and y
     "xmin": None,
     "xmax": None,
     "ymin": None,
     "ymax": None,
-    "xlog": None,
-    "ylog": None,
-    "rows": 1,
-    "columns": 1,
-    "orientation": "landscape",
-    "user_mapset": 0,
-    "user_gset": 0,
-    "cscale_flag": 0,
-    "user_levs": 0,
-    "user_plot": 0,
-    "master_plot": None,
-    "plot": None,
-    "cs": cscale1,
-    "cs_user": "cscale1",
-    "mymap": None,
-    "xticks": None,
-    "yticks": None,
-    "xticklabels": None,
-    "yticklabels": None,
-    "xstep": None,
-    "ystep": None,
-    "xlabel": None,
-    "ylabel": None,
-    "title": None,
-    "pos": 1,
-    "global_viewer": global_viewer,
+    # 1c) for the plot x and y boundaries
     "plot_xmin": None,
     "plot_xmax": None,
     "plot_ymin": None,
     "plot_ymax": None,
-    "twinx": False,
-    "twiny": False,
-    "aspect": "equal",
+    # 1d) for the graph x and y boundaries
     "graph_xmin": None,
     "graph_xmax": None,
     "graph_ymin": None,
     "graph_ymax": None,
+    # 2. Levels related
+    "levels": None,
+    "levels_min": None,
+    "levels_max": None,
+    "levels_step": None,
+    "levels_extend": "both",
+    # 3. Ticks and labels related
+    "xticks": None,
+    "xticklabels": None,
+    "xlabel": None,
+    "yticks": None,
+    "yticklabels": None,
+    "ylabel": None,
+    # 4. Colour scale related
+    "cs": cscale1,
+    "cscale_flag": 0,
+    # 5. Position related
+    "pos": 1,
     "gpos_called": False,
+    # 6. Lat and lon boundaries and centering
+    "boundinglat": 0,
+    "lon_0": 0,
+    # 7. Log scale related
+    "xlog": None,
+    "ylog": None,
+    # 8. Twin related
+    "twinx": False,
+    "twiny": False,
+    # 9. Step related
+    "xstep": None,
+    "ystep": None,
+    # 10. 'User' settings
+    "user_mapset": 0,
+    "user_gset": 0,
+    "user_levs": 0,
+    "user_plot": 0,
+    "cs_user": "cscale1",  # TODO rename to 'user_cs' for consistency?
+    # 11. Rows and columns
+    "rows": 1,
+    "columns": 1,
+    # 12. Titles
+    "title": None,
     "titles_con_called": False,
+    # 13. General alignment
+    "orientation": "landscape",
+    "aspect": "equal",
+    # TODO misc overrides to remove.
     # TODO make defaults consitent across library to remove these:
     # Defaults that are different to setvars defaults, leave for now
     "feature_zorder": 99,
