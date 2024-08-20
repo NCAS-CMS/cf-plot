@@ -511,7 +511,6 @@ class ExamplesTest(unittest.TestCase):
 
         cfp.con(f.subspace(time=15))
 
-    @unittest.expectedFailure  # plots in scrpit but in test errors as below
     @compare_plot_results
     def test_example_2(self):
         """Test Example 2: a cylindrical projection with blockfill."""
@@ -1281,34 +1280,18 @@ class ExamplesTest(unittest.TestCase):
 
         cfp.traj(f)
 
-    @unittest.expectedFailure  # RuntimeError, see below failure report
     @compare_plot_results
     def test_example_41(self):
         """Test Example 41: feature propagation over Europe."""
-        # Fails with:
-        # File "/home/slb93/git-repos/cf-plot/cfplot/cfplot.py", line 5954, in axes_plot
-        #    plot.set_xticks(xticks_new, **plotargs)
-        # File "/home/slb93/miniconda3/envs/cf-env-312/lib/python3.12/site-packages/cartopy/mpl/geoaxes.py", line 941, in set_xticks
-        #    raise RuntimeError('Cannot handle non-rectangular coordinate '
-        # RuntimeError: Cannot handle non-rectangular coordinate systems.
-
         f = cf.read(f"{self.data_dir}/ff_trs_pos.nc")[0]
 
         cfp.mapset(lonmin=-20, lonmax=20, latmin=30, latmax=70)
 
         cfp.traj(f, vector=True, markersize=0.0, fc="b", ec="b")
 
-    @unittest.expectedFailure  # RuntimeError, see below failure report
     @compare_plot_results
     def test_example_42(self):
         """Test Example 42: intensity legend."""
-        # Fails with:
-        # File "/home/slb93/git-repos/cf-plot/cfplot/cfplot.py", line 5954, in axes_plot
-        #    plot.set_xticks(xticks_new, **plotargs)
-        # File "/home/slb93/miniconda3/envs/cf-env-312/lib/python3.12/site-packages/cartopy/mpl/geoaxes.py", line 941, in set_xticks
-        #    raise RuntimeError('Cannot handle non-rectangular coordinate '
-        # RuntimeError: Cannot handle non-rectangular coordinate systems.
-
         f = cf.read(f"{self.data_dir}/ff_trs_pos.nc")[0]
 
         cfp.mapset(lonmin=-50, lonmax=50, latmin=20, latmax=80)
@@ -1324,18 +1307,9 @@ class ExamplesTest(unittest.TestCase):
             colorbar_title="Relative Vorticity (Hz) * 1e5",
         )
 
-    @unittest.expectedFailure  # RuntimeError, see below failure report
     @compare_plot_results
     def test_example_42a(self):
         """Test Example 42a: intensity legend with lines."""
-        # Fails with:
-        # File "/home/slb93/git-repos/cf-plot/cfplot/cfplot.py", line 5954, in axes_plot
-        #    plot.set_xticks(xticks_new, **plotargs)
-        # File "/home/slb93/miniconda3/envs/cf-env-312/lib/python3.12/site-packages/cartopy/mpl/geoaxes.py", line 941, in set_xticks
-        #    raise RuntimeError('Cannot handle non-rectangular coordinate '
-        # RuntimeError: Cannot handle non-rectangular coordinate systems.
-
-        # TODO combine with 42?
         f = cf.read(f"{self.data_dir}/ff_trs_pos.nc")[0]
 
         cfp.mapset(lonmin=-50, lonmax=50, latmin=20, latmax=80)
