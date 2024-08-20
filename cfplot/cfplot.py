@@ -2248,7 +2248,7 @@ def _set_map():
     latmin = plotvars.latmin
     latmax = plotvars.latmax
     lon_diff = lonmax - lonmin
-    lon_mid = lonmax / 2.0
+    lon_mid = lonmin + lon_diff / 2.0
 
     vproj = plotvars.proj
 
