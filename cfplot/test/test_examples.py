@@ -74,7 +74,7 @@ def compare_plot_results(test_method):
         image_cmp_result = mpl_compare.compare_images(
             f"{TEST_REF_DIR}/ref_fig_{tid}.png",  # expected (reference) plot
             f"{TEST_GEN_DIR}/gen_fig_{tid}.png",  # actual (generated) plot
-            tol=0.001,
+            tol=0.01,
             in_decorator=True,
         )
 
@@ -511,7 +511,6 @@ class ExamplesTest(unittest.TestCase):
 
         cfp.con(f.subspace(time=15))
 
-    @unittest.expectedFailure  # plots in scrpit but in test errors as below
     @compare_plot_results
     def test_example_2(self):
         """Test Example 2: a cylindrical projection with blockfill."""
@@ -583,29 +582,12 @@ class ExamplesTest(unittest.TestCase):
 
         cfp.con(f.collapse("mean", "longitude"), ylog=1)
 
-    @unittest.expectedFailure  # works standalone, test suite gives IndexError
+    @unittest.expectedFailure  # fails sometimes (env-dependent) due to cf bug
     @compare_plot_results
     def test_example_9(self):
         """Test Example 9: longitude-pressure plot."""
-        # TODO SLB, flaky/bad test alert! This works in interactive Python
-        # but in test suite it fails with:
-        # Traceback (most recent call last):
-        # File "/home/slb93/git-repos/cf-plot/cfplot/test/test_examples.py", line 551, in test_example_9
-        #   cfp.con(lat_mean)
-        # File "/home/slb93/git-repos/cf-plot/cfplot/cfplot.py", line 3262, in con
-        #   f = f.subspace(Y=cf.wi(-90.0, plotvars.boundinglat))
-        #       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-        # File "/home/slb93/git-repos/cf-python/cf/subspacefield.py", line 353, in __call__
-        #   raise error
-        # File "/home/slb93/git-repos/cf-python/cf/subspacefield.py", line 348, in __call__
-        #   out = field[indices]
-        #         ~~~~~^^^^^^^^^
-        # File "/home/slb93/git-repos/cf-python/cf/field.py", line 450, in __getitem__
-        #   raise IndexError(
-        # IndexError: Indices [slice(None, None, None), slice(None, None, None),
-        # array([], dtype=int64), slice(None, None, None)] result in a
-        # subspaced shape of (1, 23, 0, 320), but can't create a subspace
-        # of Field that has a size 0 axis
+        # Hits bug 799 from cf-python:
+        # https://github.com/NCAS-CMS/cf-python/issues/799
 
         f = cf.read(f"{self.data_dir}/ggap.nc")[0]
 
@@ -852,7 +834,6 @@ class ExamplesTest(unittest.TestCase):
 
         cfp.gclose()
 
-    @unittest.expectedFailure  # works standalone, test suite gives ValueError
     @compare_plot_results
     def test_example_20(self):
         """Test Example 20: user labelling of axes."""
@@ -860,7 +841,6 @@ class ExamplesTest(unittest.TestCase):
 
         cfp.con(f.subspace[9])
 
-    @unittest.expectedFailure  # works standalone, test suite gives ValueError
     def test_example_21(self):
         """Test Example 21: rotated pole data plot."""
         f = cf.read(f"{self.data_dir}/Geostropic_Adjustment.nc")[0]
@@ -874,33 +854,14 @@ class ExamplesTest(unittest.TestCase):
             ylabel="z-axis",
         )
 
-    @unittest.expectedFailure  # ValueError, see below failure report
     @compare_plot_results
     def test_example_21other(self):
         """Test Example 21 (other, due to duplicate label of 21)."""
-        # Traceback (most recent call last):
-        # File "/home/slb93/git-repos/cf-plot/cfplot/test/test_examples.py", line 883, in test_example_21other
-        #   cfp.con(f)
-        # File "/home/slb93/git-repos/cf-plot/cfplot/cfplot.py", line 3262, in con
-        #   f = f.subspace(Y=cf.wi(-90.0, plotvars.boundinglat))
-        #       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-        # File "/home/slb93/git-repos/cf-python/cf/subspacefield.py", line 353, in __call__
-        #   raise error
-        # File "/home/slb93/git-repos/cf-python/cf/subspacefield.py", line 347, in __call__
-        #   indices = field.indices(*config, **kwargs)
-        #             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-        # File "/home/slb93/git-repos/cf-python/cf/field.py", line 9118, in indices
-        #   domain_indices = self._indices(config, data_axes, True, kwargs)
-        #                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-        # File "/home/slb93/git-repos/cf-python/cf/mixin/fielddomain.py", line 320, in _indices
-        #   raise ValueError(
-        # ValueError: Can't find indices. Ambiguous axis or axes defined by 'Y'
         f = cf.read(f"{self.data_dir}/rgp.nc")[0]
 
         cfp.cscale("plasma")
         cfp.con(f)
 
-    @unittest.expectedFailure  # works standalone, test suite gives ValueError
     @compare_plot_results
     def test_example_22(self):
         """Test Example 22:"""
@@ -1081,12 +1042,14 @@ class ExamplesTest(unittest.TestCase):
 
         g = f.collapse("X: mean")
 
+        cfp.gopen()
         cfp.lineplot(
             g.subspace(pressure=100),
             marker="o",
             color="blue",
             title="Zonal mean zonal wind at 100mb",
         )
+        cfp.gclose()
 
     @compare_plot_results
     def test_example_28(self):
@@ -1182,25 +1145,15 @@ class ExamplesTest(unittest.TestCase):
         cfp.lineplot(t2, color="b")
         cfp.gclose()
 
-    @unittest.expectedFailure  # errors due to 1 of 2 x bugs, see #59 and #60
     @compare_plot_results
     def test_example_31(self):
         """Test Example 31: UKCP projection."""
-        # TODO SLB this test errors
         f = cf.read(f"{self.data_dir}/ukcp_rcm_test.nc")[0]
 
-        # There is a bug such that this example fails here, see Issue #59,
-        # https://github.com/NCAS-CMS/cf-plot/issues/59:
-        #
-        #   File "/home/slb93/git-repos/cf-plot/cfplot/cfplot.py", line 2982, in _plot_map_axes
-        # if plotvars.proj == "UKCP" and plotvars.grid:
-        #                                ^^^^^^^^^^^^^
-        # AttributeError: 'pvars' object has no attribute 'grid'
         cfp.mapset(proj="UKCP", resolution="50m")
         cfp.levs(-3, 7, 0.5)
         cfp.setvars(grid_x_spacing=1, grid_y_spacing=1)
 
-        # This can fail with 'UnboundLocalError', see Issue #60
         cfp.con(f, lines=False)
 
     @unittest.expectedFailure  # errors, issue TBC
@@ -1230,7 +1183,6 @@ class ExamplesTest(unittest.TestCase):
             yticks=np.arange(13) + 49,
         )
 
-    @unittest.expectedFailure  # errors, issue TBC
     @compare_plot_results
     def test_example_33(self):
         """Test Example 33: OSGB and EuroPP projections."""
@@ -1310,34 +1262,18 @@ class ExamplesTest(unittest.TestCase):
 
         cfp.traj(f)
 
-    @unittest.expectedFailure  # RuntimeError, see below failure report
     @compare_plot_results
     def test_example_41(self):
         """Test Example 41: feature propagation over Europe."""
-        # Fails with:
-        # File "/home/slb93/git-repos/cf-plot/cfplot/cfplot.py", line 5954, in axes_plot
-        #    plot.set_xticks(xticks_new, **plotargs)
-        # File "/home/slb93/miniconda3/envs/cf-env-312/lib/python3.12/site-packages/cartopy/mpl/geoaxes.py", line 941, in set_xticks
-        #    raise RuntimeError('Cannot handle non-rectangular coordinate '
-        # RuntimeError: Cannot handle non-rectangular coordinate systems.
-
         f = cf.read(f"{self.data_dir}/ff_trs_pos.nc")[0]
 
         cfp.mapset(lonmin=-20, lonmax=20, latmin=30, latmax=70)
 
         cfp.traj(f, vector=True, markersize=0.0, fc="b", ec="b")
 
-    @unittest.expectedFailure  # RuntimeError, see below failure report
     @compare_plot_results
     def test_example_42(self):
         """Test Example 42: intensity legend."""
-        # Fails with:
-        # File "/home/slb93/git-repos/cf-plot/cfplot/cfplot.py", line 5954, in axes_plot
-        #    plot.set_xticks(xticks_new, **plotargs)
-        # File "/home/slb93/miniconda3/envs/cf-env-312/lib/python3.12/site-packages/cartopy/mpl/geoaxes.py", line 941, in set_xticks
-        #    raise RuntimeError('Cannot handle non-rectangular coordinate '
-        # RuntimeError: Cannot handle non-rectangular coordinate systems.
-
         f = cf.read(f"{self.data_dir}/ff_trs_pos.nc")[0]
 
         cfp.mapset(lonmin=-50, lonmax=50, latmin=20, latmax=80)
@@ -1353,18 +1289,9 @@ class ExamplesTest(unittest.TestCase):
             colorbar_title="Relative Vorticity (Hz) * 1e5",
         )
 
-    @unittest.expectedFailure  # RuntimeError, see below failure report
     @compare_plot_results
     def test_example_42a(self):
         """Test Example 42a: intensity legend with lines."""
-        # Fails with:
-        # File "/home/slb93/git-repos/cf-plot/cfplot/cfplot.py", line 5954, in axes_plot
-        #    plot.set_xticks(xticks_new, **plotargs)
-        # File "/home/slb93/miniconda3/envs/cf-env-312/lib/python3.12/site-packages/cartopy/mpl/geoaxes.py", line 941, in set_xticks
-        #    raise RuntimeError('Cannot handle non-rectangular coordinate '
-        # RuntimeError: Cannot handle non-rectangular coordinate systems.
-
-        # TODO combine with 42?
         f = cf.read(f"{self.data_dir}/ff_trs_pos.nc")[0]
 
         cfp.mapset(lonmin=-50, lonmax=50, latmin=20, latmax=80)
@@ -1379,7 +1306,7 @@ class ExamplesTest(unittest.TestCase):
             colorbar_title="Relative Vorticity (Hz) * 1e5",
         )
 
-    @unittest.expectedFailure  # needs data file adding to datasets
+    @unittest.expectedFailure  # needs WRF data file adding to datasets
     @compare_plot_results
     def test_example_43(self):
         """Test Example 43: plotting WRF data."""

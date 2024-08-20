@@ -383,118 +383,166 @@ if os.path.exists(defaults_file):
                 global_viewer = val.strip()
 
 """Global plotting variables."""
-plotvars = pvars(
-    lonmin=-180,
-    lonmax=180,
-    latmin=-90,
-    latmax=90,
-    proj="cyl",
-    resolution="110m",
-    plot_type=1,
-    boundinglat=0,
-    lon_0=0,
-    levels=None,
-    levels_min=None,
-    levels_max=None,
-    levels_step=None,
-    norm=None,
-    levels_extend="both",
-    xmin=None,
-    xmax=None,
-    ymin=None,
-    ymax=None,
-    xlog=None,
-    ylog=None,
-    rows=1,
-    columns=1,
-    file=None,
-    orientation="landscape",
-    user_mapset=0,
-    user_gset=0,
-    cscale_flag=0,
-    user_levs=0,
-    user_plot=0,
-    master_plot=None,
-    plot=None,
-    cs=cscale1,
-    cs_user="cscale1",
-    mymap=None,
-    xticks=None,
-    yticks=None,
-    xticklabels=None,
-    yticklabels=None,
-    xstep=None,
-    ystep=None,
-    xlabel=None,
-    ylabel=None,
-    title=None,
-    title_fontsize=15,
-    axis_label_fontsize=11,
-    text_fontsize=11,
-    text_fontweight="normal",
-    axis_label_fontweight="normal",
-    colorbar_fontsize=11,
-    colorbar_fontweight="normal",
-    title_fontweight="normal",
-    continent_thickness=None,
-    continent_color=None,
-    continent_linestyle=None,
-    pos=1,
-    viewer=global_viewer,
-    global_viewer=global_viewer,
-    tspace_year=None,
-    tspace_month=None,
-    tspace_day=None,
-    tspace_hour=None,
-    xtick_label_rotation=0,
-    xtick_label_align="center",
-    ytick_label_rotation=0,
-    ytick_label_align="right",
-    legend_text_size=11,
-    legend_text_weight="normal",
-    cs_uniform=True,
-    master_title=None,
-    master_title_location=[0.5, 0.95],
-    master_title_fontsize=30,
-    master_title_fontweight="normal",
-    dpi=None,
-    plot_xmin=None,
-    plot_xmax=None,
-    plot_ymin=None,
-    plot_ymax=None,
-    land_color=None,
-    ocean_color=None,
-    lake_color=None,
-    feature_zorder=99,
-    twinx=False,
-    twiny=False,
-    rotated_grid_thickness=2.0,
-    rotated_grid_spacing=10,
-    rotated_deg_spacing=0.75,
-    rotated_continents=True,
-    rotated_grid=True,
-    rotated_labels=True,
-    legend_frame=True,
-    legend_frame_edge_color="k",
-    legend_frame_face_color=None,
-    degsym=global_degsym,
-    axis_width=None,
-    grid_x_spacing=60,
-    grid_y_spacing=30,
-    grid_colour="k",
-    grid_linestyle="--",
-    grid_zorder=100,
-    grid_thickness=1.0,
-    aspect="equal",
-    graph_xmin=None,
-    graph_xmax=None,
-    graph_ymin=None,
-    graph_ymax=None,
-    level_spacing=None,
-    tight=False,
-    gpos_called=False,
-    titles_con_called=False,
-)
+# These are plotting variables that 'setvars' can adjust
+setvars_defaults = {
+    # TODO check docstring defaults are correct to match these
+    #
+    # Output graphics file saving and viewing
+    "viewer": global_viewer,
+    "file": None,
+    # Output graphics file general config.
+    "dpi": None,
+    "tight": False,
+    # 'tspace' related
+    # TODO clarify what tspace is
+    "tspace_year": None,
+    "tspace_month": None,
+    "tspace_day": None,
+    "tspace_hour": None,
+    # 2. Tick labelling
+    "xtick_label_rotation": 0,
+    "xtick_label_align": "center",
+    "ytick_label_rotation": 0,
+    "ytick_label_align": "right",
+    # Font sizes
+    "text_fontsize": 11,
+    "axis_label_fontsize": 11,
+    "colorbar_fontsize": 11,
+    "title_fontsize": 15,
+    "master_title_fontsize": 30,
+    # TODO change for consistent name with the above, text_size -> fontsize
+    "legend_text_size": 11,
+    # Font weights
+    "fontweight": "normal",
+    "text_fontweight": "normal",
+    "axis_label_fontweight": "normal",
+    "colorbar_fontweight": "normal",
+    "title_fontweight": "normal",
+    "master_title_fontweight": "normal",
+    # TODO change for consistent name with the above, text_weight -> fontweight
+    "legend_text_weight": "normal",
+    # Master title
+    "master_title": None,
+    "master_title_location": [0.5, 0.95],
+    # Legend frame related
+    "legend_frame": True,
+    "legend_frame_edge_color": "k",
+    "legend_frame_face_color": None,
+    # Grid related
+    "grid": True,
+    "grid_x_spacing": 60,
+    "grid_y_spacing": 30,
+    "grid_zorder": 100,
+    "grid_colour": "k",  # TODO API -> American spelling for consistency
+    "grid_linestyle": "--",
+    "grid_thickness": 1.0,
+    # Rotated grid related
+    # TODO SB why does rotated grid have separate config. like this?
+    "rotated_grid_spacing": 10,
+    "rotated_deg_spacing": 0.75,
+    "rotated_continents": True,
+    "rotated_grid": True,
+    "rotated_grid_thickness": 1.0,
+    "rotated_labels": True,
+    # Feature additions
+    "feature_zorder": 999,
+    "land_color": None,
+    "ocean_color": None,
+    "lake_color": None,
+    "continent_color": None,
+    # Continent feature related
+    "continent_thickness": None,
+    "continent_linestyle": None,
+    # Axis related
+    "axis_width": None,
+    "degsym": global_degsym,
+    # Contour plot only
+    "level_spacing": None,
+    # Misc.
+    "cs_uniform": True,  # make a uniform differential colour scale
+}
+# These are further plotting variables that are set globally and cannot
+# be set by 'setvars'.
+plotvars_defaults = {
+    # 0. Top-level plotting config. eg. type, projection,
+    "global_viewer": global_viewer,
+    "plot_type": 1,
+    "master_plot": None,
+    "plot": None,
+    "mymap": None,
+    "proj": "cyl",
+    "resolution": "110m",
+    "norm": None,
+    # 1. Maxima and minima
+    # 1a) For lat and lon
+    "lonmin": -180,
+    "lonmax": 180,
+    "latmin": -90,
+    "latmax": 90,
+    # 1b) for x and y
+    "xmin": None,
+    "xmax": None,
+    "ymin": None,
+    "ymax": None,
+    # 1c) for the plot x and y boundaries
+    "plot_xmin": None,
+    "plot_xmax": None,
+    "plot_ymin": None,
+    "plot_ymax": None,
+    # 1d) for the graph x and y boundaries
+    "graph_xmin": None,
+    "graph_xmax": None,
+    "graph_ymin": None,
+    "graph_ymax": None,
+    # 2. Levels related
+    "levels": None,
+    "levels_min": None,
+    "levels_max": None,
+    "levels_step": None,
+    "levels_extend": "both",
+    # 3. Ticks and labels related
+    "xticks": None,
+    "xticklabels": None,
+    "xlabel": None,
+    "yticks": None,
+    "yticklabels": None,
+    "ylabel": None,
+    # 4. Colour scale related
+    "cs": cscale1,
+    "cscale_flag": 0,
+    # 5. Position related
+    "pos": 1,
+    "gpos_called": False,
+    # 6. Lat and lon boundaries and centering
+    "boundinglat": 0,
+    "lon_0": 0,
+    # 7. Log scale related
+    "xlog": None,
+    "ylog": None,
+    # 8. Twin related
+    "twinx": False,
+    "twiny": False,
+    # 9. Step related
+    "xstep": None,
+    "ystep": None,
+    # 10. 'User' settings
+    "user_mapset": 0,
+    "user_gset": 0,
+    "user_levs": 0,
+    "user_plot": 0,
+    "cs_user": "cscale1",  # TODO rename to 'user_cs' for consistency?
+    # 11. Rows and columns
+    "rows": 1,
+    "columns": 1,
+    # 12. Titles
+    "title": None,
+    "titles_con_called": False,
+    # 13. General alignment
+    "orientation": "landscape",
+    "aspect": "equal",
+}
+allvars_defaults = {**setvars_defaults, **plotvars_defaults}
+plotvars = pvars(**allvars_defaults)
 
 # Check for iPython notebook inline
 # and set the viewer to None if found
@@ -2200,7 +2248,7 @@ def _set_map():
     latmin = plotvars.latmin
     latmax = plotvars.latmax
     lon_diff = lonmax - lonmin
-    lon_mid = lonmax / 2.0
+    lon_mid = lonmin + lon_diff / 2.0
 
     vproj = plotvars.proj
 
@@ -6517,17 +6565,17 @@ def cscale(
                 file = scale
 
         # Read in rgb values and convert to hex
-        f = open(file)
-        lines = f.read()
-        lines = lines.splitlines()
-        r = []
-        g = []
-        b = []
-        for line in lines:
-            vals = line.split()
-            r.append(int(vals[0]))
-            g.append(int(vals[1]))
-            b.append(int(vals[2]))
+        with open(file, "r") as f:
+            lines = f.read()
+            lines = lines.splitlines()
+            r = []
+            g = []
+            b = []
+            for line in lines:
+                vals = line.split()
+                r.append(int(vals[0]))
+                g.append(int(vals[1]))
+                b.append(int(vals[2]))
 
     # Reverse the colour scale if requested
     if reverse:
@@ -8019,62 +8067,7 @@ def reset():
     setvars()
 
 
-def setvars(
-    file=None,
-    title_fontsize=None,
-    text_fontsize=None,
-    colorbar_fontsize=None,
-    colorbar_fontweight=None,
-    axis_label_fontsize=None,
-    title_fontweight=None,
-    text_fontweight=None,
-    axis_label_fontweight=None,
-    fontweight=None,
-    continent_thickness=None,
-    continent_color=None,
-    continent_linestyle=None,
-    viewer=None,
-    tspace_year=None,
-    tspace_month=None,
-    tspace_day=None,
-    tspace_hour=None,
-    xtick_label_rotation=None,
-    xtick_label_align=None,
-    ytick_label_rotation=None,
-    ytick_label_align=None,
-    legend_text_weight=None,
-    legend_text_size=None,
-    cs_uniform=None,
-    master_title=None,
-    master_title_location=None,
-    master_title_fontsize=None,
-    master_title_fontweight=None,
-    dpi=None,
-    land_color=None,
-    ocean_color=None,
-    lake_color=None,
-    feature_zorder=None,
-    rotated_grid_spacing=None,
-    rotated_deg_spacing=None,
-    rotated_continents=None,
-    rotated_grid=None,
-    rotated_labels=None,
-    rotated_grid_thickness=None,
-    legend_frame=None,
-    legend_frame_edge_color=None,
-    legend_frame_face_color=None,
-    degsym=None,
-    axis_width=None,
-    grid=None,
-    grid_x_spacing=None,
-    grid_y_spacing=None,
-    grid_zorder=None,
-    grid_colour=None,
-    grid_linestyle=None,
-    grid_thickness=None,
-    tight=None,
-    level_spacing=None,
-):
+def setvars(**kwargs):
     """
     | Set plotting variables and their defaults.
     |
@@ -8113,13 +8106,14 @@ def setvars(
     | land_color=None - land colour
     | ocean_color=None - ocean colour
     | lake_color=None - lake colour
-    | feature_zorder=None - plotting zorder for above three features
+    | feature_zorder - plotting zorder for above three features, default=999
     | rotated_grid_spacing=10 - rotated grid spacing in degrees
     | rotated_deg_spacing=0.75 - rotated grid spacing between graticule dots
     | rotated_deg_tkickness=1.0 - rotated grid thickness for longitude and
     |                             latitude lines
     | rotated_continents=True - draw rotated continents
     | rotated_grid=True - draw rotated grid
+    | rotated_grid=1.0 - TODO, default 1.0
     | rotated_labels=True - draw rotated grid labels
     | legend_frame=True - draw a frame around a lineplot legend
     | legend_frame_edge_color='k' - color for the legend frame
@@ -8142,226 +8136,24 @@ def setvars(
     :Returns:
      name
     """
+    # Set defaults first to ensure everything is assigned a valid value
+    for def_var, def_value in setvars_defaults.items():
+        setattr(plotvars, def_var, def_value)
+    # Now override with anything the user specifies, which is unlikely to
+    # be a large listing relative to the amount set as defaults above
+    if kwargs:
+        # TODO eventually add kwarg value validation e.g. type checking?
+        for set_var, set_value in kwargs.items():
 
-    vals = [
-        file,
-        title_fontsize,
-        text_fontsize,
-        axis_label_fontsize,
-        continent_thickness,
-        title_fontweight,
-        text_fontweight,
-        axis_label_fontweight,
-        fontweight,
-        continent_color,
-        continent_linestyle,
-        tspace_year,
-        tspace_month,
-        tspace_day,
-        tspace_hour,
-        xtick_label_rotation,
-        xtick_label_align,
-        ytick_label_rotation,
-        ytick_label_align,
-        legend_text_size,
-        legend_text_weight,
-        cs_uniform,
-        master_title,
-        master_title_location,
-        master_title_fontsize,
-        master_title_fontweight,
-        dpi,
-        land_color,
-        ocean_color,
-        lake_color,
-        feature_zorder,
-        rotated_grid_spacing,
-        rotated_deg_spacing,
-        rotated_continents,
-        rotated_grid,
-        rotated_grid_thickness,
-        rotated_labels,
-        colorbar_fontsize,
-        colorbar_fontweight,
-        legend_frame,
-        legend_frame_edge_color,
-        legend_frame_face_color,
-        degsym,
-        axis_width,
-        grid,
-        grid_x_spacing,
-        grid_y_spacing,
-        grid_zorder,
-        grid_colour,
-        grid_linestyle,
-        grid_thickness,
-        tight,
-        level_spacing,
-    ]
-    if all(val is None for val in vals):
-        plotvars.file = None
-        plotvars.title_fontsize = 15
-        plotvars.text_fontsize = 11
-        plotvars.colorbar_fontsize = 11
-        plotvars.axis_label_fontsize = 11
-        plotvars.title_fontweight = "normal"
-        plotvars.text_fontweight = "normal"
-        plotvars.colorbar_fontweight = "normal"
-        plotvars.axis_label_fontweight = "normal"
-        plotvars.fontweight = "normal"
-        plotvars.continent_thickness = None
-        plotvars.continent_color = None
-        plotvars.continent_linestyle = None
-        plotvars.tspace_year = None
-        plotvars.tspace_month = None
-        plotvars.tspace_day = None
-        plotvars.tspace_hour = None
-        plotvars.xtick_label_rotation = 0
-        plotvars.xtick_label_align = "center"
-        plotvars.ytick_label_rotation = 0
-        plotvars.ytick_label_align = "right"
-        plotvars.legend_text_size = 11
-        plotvars.legend_text_weight = "normal"
-        plotvars.cs_uniform = True
-        plotvars.viewer = plotvars.global_viewer
-        plotvars.master_title = None
-        plotvars.master_title_location = [0.5, 0.95]
-        plotvars.master_title_fontsize = 30
-        plotvars.master_title_fontweight = "normal"
-        plotvars.dpi = None
-        plotvars.land_color = None
-        plotvars.ocean_color = None
-        plotvars.lake_color = None
-        plotvars.feature_zorder = 100
-        plotvars.rotated_grid_spacing = 10
-        plotvars.rotated_deg_spacing = 0.75
-        plotvars.rotated_grid_thickness = 1.0
-        plotvars.rotated_continents = True
-        plotvars.rotated_grid = True
-        plotvars.rotated_labels = True
-        plotvars.legend_frame = True
-        plotvars.legend_frame_edge_color = "k"
-        plotvars.legend_frame_face_color = None
-        plotvars.degsym = False
-        plotvars.axis_width = None
-        plotvars.grid = True
-        plotvars.grid_x_spacing = 60
-        plotvars.grid_y_spacing = 30
-        plotvars.grid_colour = "k"
-        plotvars.grid_linestyle = "--"
-        plotvars.grid_thickness = 1.0
-        plotvars.grid_zorder = 100
-        matplotlib.pyplot.ioff()
-        plotvars.tight = False
-        plotvars.level_spacing = None
+            # First ensure a given kwarg is a valid cf-plot setvars input i.e.
+            # OK and meaningful to set on plotvars
+            if set_var not in setvars_defaults:
+                raise ValueError(
+                    f"Unrecognised keyword argument for setvars: {set_var}")
 
-    if file is not None:
-        plotvars.file = file
-    # TODO SLB consolidate this long list of conditional setting!
-    if title_fontsize is not None:
-        plotvars.title_fontsize = title_fontsize
-    if axis_label_fontsize is not None:
-        plotvars.axis_label_fontsize = axis_label_fontsize
-    if continent_thickness is not None:
-        plotvars.continent_thickness = continent_thickness
-    if continent_color is not None:
-        plotvars.continent_color = continent_color
-    if continent_linestyle is not None:
-        plotvars.continent_linestyle = continent_linestyle
-    if text_fontsize is not None:
-        plotvars.text_fontsize = colorbar_fontsize
-    if colorbar_fontsize is not None:
-        plotvars.colorbar_fontsize = colorbar_fontsize
-    if text_fontweight is not None:
-        plotvars.text_fontweight = text_fontweight
-    if axis_label_fontweight is not None:
-        plotvars.axis_label_fontweight = axis_label_fontweight
-    if colorbar_fontweight is not None:
-        plotvars.colorbar_fontweight = colorbar_fontweight
-    if title_fontweight is not None:
-        plotvars.title_fontweight = title_fontweight
-    if viewer is not None:
-        plotvars.viewer = viewer
-    if tspace_year is not None:
-        plotvars.tspace_year = tspace_year
-    if tspace_month is not None:
-        plotvars.tspace_month = tspace_month
-    if tspace_day is not None:
-        plotvars.tspace_day = tspace_day
-    if tspace_hour is not None:
-        plotvars.tspace_hour = tspace_hour
-    if xtick_label_rotation is not None:
-        plotvars.xtick_label_rotation = xtick_label_rotation
-    if xtick_label_align is not None:
-        plotvars.xtick_label_align = xtick_label_align
-    if ytick_label_rotation is not None:
-        plotvars.ytick_label_rotation = ytick_label_rotation
-    if ytick_label_align is not None:
-        plotvars.ytick_label_align = ytick_label_align
-    if legend_text_size is not None:
-        plotvars.legend_text_size = legend_text_size
-    if legend_text_weight is not None:
-        plotvars.legend_text_weight = legend_text_weight
-    if cs_uniform is not None:
-        plotvars.cs_uniform = cs_uniform
-    if master_title is not None:
-        plotvars.master_title = master_title
-    if master_title_location is not None:
-        plotvars.master_title_location = master_title_location
-    if master_title_fontsize is not None:
-        plotvars.master_title_fontsize = master_title_fontsize
-    if master_title_fontweight is not None:
-        plotvars.master_title_fontweight = master_title_fontweight
-    if dpi is not None:
-        plotvars.dpi = dpi
-    if land_color is not None:
-        plotvars.land_color = land_color
-    if ocean_color is not None:
-        plotvars.ocean_color = ocean_color
-    if lake_color is not None:
-        plotvars.lake_color = lake_color
-    if feature_zorder is not None:
-        plotvars.feature_zorder = 999
-    if rotated_grid_spacing is not None:
-        plotvars.rotated_grid_spacing = rotated_grid_spacing
-    if rotated_deg_spacing is not None:
-        plotvars.rotated_deg_spacing = rotated_deg_spacing
-    if rotated_grid_thickness is not None:
-        plotvars.rotated_grid_thickness = rotated_grid_thickness
-    if rotated_continents is not None:
-        plotvars.rotated_continents = rotated_continents
-    if rotated_grid is not None:
-        plotvars.rotated_grid = rotated_grid
-    if rotated_labels is not None:
-        plotvars.rotated_labels = rotated_labels
-    if legend_frame is not None:
-        plotvars.legend_frame = legend_frame
-    if legend_frame_edge_color is not None:
-        plotvars.legend_frame_edge_color = legend_frame_edge_color
-    if legend_frame_face_color is not None:
-        plotvars.legend_frame_face_color = legend_frame_face_color
-    if degsym is not None:
-        plotvars.degsym = degsym
-    if axis_width is not None:
-        plotvars.axis_width = axis_width
-    if grid is not None:
-        plotvars.grid = grid
-    if grid_x_spacing is not None:
-        plotvars.grid_x_spacing = grid_x_spacing
-    if grid_y_spacing is not None:
-        plotvars.grid_y_spacing = grid_y_spacing
-    if grid_colour is not None:
-        plotvars.grid_colour = grid_colour
-    if grid_linestyle is not None:
-        plotvars.grid_linestyle = grid_linestyle
-    if grid_thickness is not None:
-        plotvars.grid_thickness = grid_thickness
-    if grid_zorder is not None:
-        plotvars.grid_zorder = grid_zorder
-    if tight is not None:
-        plotvars.tight = tight
-    if level_spacing is not None:
-        plotvars.level_spacing = level_spacing
+            setattr(plotvars, set_var, set_value)
+
+    matplotlib.pyplot.ioff()
 
 
 def vloc(xvec=None, yvec=None, lons=None, lats=None):
@@ -9892,6 +9684,7 @@ def cbar(
         return
 
     # Change plot position based on colorbar location
+    ax1 = None  # define next
     if position is None:
         # Work out whether the plot is a map plot or normal plot
         if plotvars.plot_type == 1 or plotvars.plot_type == 6:
@@ -9907,18 +9700,6 @@ def cbar(
         left, bottom, width, height = this_plot.get_position().bounds
 
         if orientation == "horizontal":
-            if plotvars.plot_type > 1 or plotvars.plot == 0:
-                this_plot.set_position(
-                    [left, bottom + fraction, width, height - fraction]
-                )
-                ax1 = plotvars.master_plot.add_axes(
-                    [
-                        left + width * (1.0 - shrink) / 2.0,
-                        bottom,
-                        width * shrink,
-                        thick,
-                    ]
-                )
             if plotvars.plot_type == 1:
                 # If the plot is too square in terms of aspect ratio, it
                 # will push the colour bar down and it can be cut off, so
@@ -9942,6 +9723,18 @@ def cbar(
                     [
                         left + width * (1.0 - shrink) / 2.0,
                         bottom + fraction * (anchor - 1.0),
+                        width * shrink,
+                        thick,
+                    ]
+                )
+            else:
+                this_plot.set_position(
+                    [left, bottom + fraction, width, height - fraction]
+                )
+                ax1 = plotvars.master_plot.add_axes(
+                    [
+                        left + width * (1.0 - shrink) / 2.0,
+                        bottom,
                         width * shrink,
                         thick,
                     ]
