@@ -9684,6 +9684,7 @@ def cbar(
         return
 
     # Change plot position based on colorbar location
+    ax1 = None  # define next
     if position is None:
         # Work out whether the plot is a map plot or normal plot
         if plotvars.plot_type == 1 or plotvars.plot_type == 6:
@@ -9699,18 +9700,6 @@ def cbar(
         left, bottom, width, height = this_plot.get_position().bounds
 
         if orientation == "horizontal":
-            if plotvars.plot_type > 1 or plotvars.plot == 0:
-                this_plot.set_position(
-                    [left, bottom + fraction, width, height - fraction]
-                )
-                ax1 = plotvars.master_plot.add_axes(
-                    [
-                        left + width * (1.0 - shrink) / 2.0,
-                        bottom,
-                        width * shrink,
-                        thick,
-                    ]
-                )
             if plotvars.plot_type == 1:
                 # If the plot is too square in terms of aspect ratio, it
                 # will push the colour bar down and it can be cut off, so
@@ -9734,6 +9723,18 @@ def cbar(
                     [
                         left + width * (1.0 - shrink) / 2.0,
                         bottom + fraction * (anchor - 1.0),
+                        width * shrink,
+                        thick,
+                    ]
+                )
+            else:
+                this_plot.set_position(
+                    [left, bottom + fraction, width, height - fraction]
+                )
+                ax1 = plotvars.master_plot.add_axes(
+                    [
+                        left + width * (1.0 - shrink) / 2.0,
+                        bottom,
                         width * shrink,
                         thick,
                     ]
