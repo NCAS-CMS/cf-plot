@@ -874,33 +874,14 @@ class ExamplesTest(unittest.TestCase):
             ylabel="z-axis",
         )
 
-    @unittest.expectedFailure  # ValueError, see below failure report
     @compare_plot_results
     def test_example_21other(self):
         """Test Example 21 (other, due to duplicate label of 21)."""
-        # Traceback (most recent call last):
-        # File "/home/slb93/git-repos/cf-plot/cfplot/test/test_examples.py", line 883, in test_example_21other
-        #   cfp.con(f)
-        # File "/home/slb93/git-repos/cf-plot/cfplot/cfplot.py", line 3262, in con
-        #   f = f.subspace(Y=cf.wi(-90.0, plotvars.boundinglat))
-        #       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-        # File "/home/slb93/git-repos/cf-python/cf/subspacefield.py", line 353, in __call__
-        #   raise error
-        # File "/home/slb93/git-repos/cf-python/cf/subspacefield.py", line 347, in __call__
-        #   indices = field.indices(*config, **kwargs)
-        #             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-        # File "/home/slb93/git-repos/cf-python/cf/field.py", line 9118, in indices
-        #   domain_indices = self._indices(config, data_axes, True, kwargs)
-        #                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-        # File "/home/slb93/git-repos/cf-python/cf/mixin/fielddomain.py", line 320, in _indices
-        #   raise ValueError(
-        # ValueError: Can't find indices. Ambiguous axis or axes defined by 'Y'
         f = cf.read(f"{self.data_dir}/rgp.nc")[0]
 
         cfp.cscale("plasma")
         cfp.con(f)
 
-    @unittest.expectedFailure  # works standalone, test suite gives ValueError
     @compare_plot_results
     def test_example_22(self):
         """Test Example 22:"""
