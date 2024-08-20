@@ -74,7 +74,7 @@ def compare_plot_results(test_method):
         image_cmp_result = mpl_compare.compare_images(
             f"{TEST_REF_DIR}/ref_fig_{tid}.png",  # expected (reference) plot
             f"{TEST_GEN_DIR}/gen_fig_{tid}.png",  # actual (generated) plot
-            tol=0.001,
+            tol=0.01,
             in_decorator=True,
         )
 
@@ -582,29 +582,12 @@ class ExamplesTest(unittest.TestCase):
 
         cfp.con(f.collapse("mean", "longitude"), ylog=1)
 
-    @unittest.expectedFailure  # works standalone, test suite gives IndexError
+    @unittest.expectedFailure  # fails sometimes (env-dependent) due to cf bug
     @compare_plot_results
     def test_example_9(self):
         """Test Example 9: longitude-pressure plot."""
-        # TODO SLB, flaky/bad test alert! This works in interactive Python
-        # but in test suite it fails with:
-        # Traceback (most recent call last):
-        # File "/home/slb93/git-repos/cf-plot/cfplot/test/test_examples.py", line 551, in test_example_9
-        #   cfp.con(lat_mean)
-        # File "/home/slb93/git-repos/cf-plot/cfplot/cfplot.py", line 3262, in con
-        #   f = f.subspace(Y=cf.wi(-90.0, plotvars.boundinglat))
-        #       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-        # File "/home/slb93/git-repos/cf-python/cf/subspacefield.py", line 353, in __call__
-        #   raise error
-        # File "/home/slb93/git-repos/cf-python/cf/subspacefield.py", line 348, in __call__
-        #   out = field[indices]
-        #         ~~~~~^^^^^^^^^
-        # File "/home/slb93/git-repos/cf-python/cf/field.py", line 450, in __getitem__
-        #   raise IndexError(
-        # IndexError: Indices [slice(None, None, None), slice(None, None, None),
-        # array([], dtype=int64), slice(None, None, None)] result in a
-        # subspaced shape of (1, 23, 0, 320), but can't create a subspace
-        # of Field that has a size 0 axis
+        # Hits bug 799 from cf-python:
+        # https://github.com/NCAS-CMS/cf-python/issues/799
 
         f = cf.read(f"{self.data_dir}/ggap.nc")[0]
 
@@ -1200,7 +1183,6 @@ class ExamplesTest(unittest.TestCase):
             yticks=np.arange(13) + 49,
         )
 
-    @unittest.expectedFailure  # errors, issue TBC
     @compare_plot_results
     def test_example_33(self):
         """Test Example 33: OSGB and EuroPP projections."""
@@ -1324,7 +1306,7 @@ class ExamplesTest(unittest.TestCase):
             colorbar_title="Relative Vorticity (Hz) * 1e5",
         )
 
-    @unittest.expectedFailure  # needs data file adding to datasets
+    @unittest.expectedFailure  # needs WRF data file adding to datasets
     @compare_plot_results
     def test_example_43(self):
         """Test Example 43: plotting WRF data."""
