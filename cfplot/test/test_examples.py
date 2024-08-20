@@ -852,7 +852,6 @@ class ExamplesTest(unittest.TestCase):
 
         cfp.gclose()
 
-    @unittest.expectedFailure  # works standalone, test suite gives ValueError
     @compare_plot_results
     def test_example_20(self):
         """Test Example 20: user labelling of axes."""
@@ -860,7 +859,6 @@ class ExamplesTest(unittest.TestCase):
 
         cfp.con(f.subspace[9])
 
-    @unittest.expectedFailure  # works standalone, test suite gives ValueError
     def test_example_21(self):
         """Test Example 21: rotated pole data plot."""
         f = cf.read(f"{self.data_dir}/Geostropic_Adjustment.nc")[0]
@@ -1062,12 +1060,14 @@ class ExamplesTest(unittest.TestCase):
 
         g = f.collapse("X: mean")
 
+        cfp.gopen()
         cfp.lineplot(
             g.subspace(pressure=100),
             marker="o",
             color="blue",
             title="Zonal mean zonal wind at 100mb",
         )
+        cfp.gclose()
 
     @compare_plot_results
     def test_example_28(self):
