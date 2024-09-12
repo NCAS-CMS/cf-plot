@@ -9484,7 +9484,8 @@ def traj(
                         s=markersize * 15,
                         c=data_colours,
                         marker=marker,
-                        edgecolors=markeredgecolor,
+                        # edgecolors=markeredgecolor,  # TODO broken SLB fix
+                        linewidth=plot_linewidth,
                         transform=ccrs.PlateCarree(),
                         zorder=plot_zorder,
                     )
