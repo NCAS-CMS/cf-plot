@@ -22,14 +22,20 @@ netCDF and NumPy arrays of unstructured data.
 
 ::
 
-   import cf
    import cfplot as cfp
-   f=cf.read('cfplot_data/lfric_initial.nc')
+   import cf
 
-   pot=f[33][4,:]
-   lons = f[12]
-   lats = f[13]
-   faces = f[11]
+   f = cf.read("cfplot_data/lfric_initial.nc")
+
+   # Select the relevant fields for the objects required for the plot,
+   # taking the air potential temperature as a variable to choose to view.
+   pot = f.select_by_identity("air_potential_temperature")[0]
+   lats = f.select_by_identity("latitude")[0]
+   lons = f.select_by_identity("longitude")[0]
+   faces = f.select_by_identity("cf_role=face_edge_connectivity")[0]
+
+   # Reduce the variable to match the shapes
+   pot = pot[4,:]
 
    cfp.levs(240, 310, 5)
 
@@ -45,17 +51,25 @@ Here we identify the fields in the data that have the longitudes and latitudes f
 
 ::
 
-   import cf
    import cfplot as cfp
-   f=cf.read('cfplot_data/lfric_initial.nc')
+   import cf
 
-   pot=f[33][4,:]
-   lons = f[12]
-   lats = f[13]
-   faces = f[11]
+   f = cf.read("cfplot_data/lfric_initial.nc")
+
+   # Select the relevant fields for the objects required for the plot,
+   # taking the air potential temperature as a variable to choose to view.
+   pot = f.select_by_identity("air_potential_temperature")[0]
+   lats = f.select_by_identity("latitude")[0]
+   lons = f.select_by_identity("longitude")[0]
+   faces = f.select_by_identity("cf_role=face_edge_connectivity")[0]
+
+   # Reduce the variable to match the shapes
+   pot = pot[4,:]
 
    cfp.levs(240, 310, 5)
-   cfp.mapset(proj='npstere')
+
+   # This time set the projection to a polar one for a different view
+   cfp.mapset(proj="npstere")
    cfp.con(f=pot, face_lons=lons, face_lats=lats, face_connectivity=faces, lines=False)
 
 
