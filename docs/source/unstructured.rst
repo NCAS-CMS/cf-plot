@@ -22,14 +22,17 @@ netCDF and NumPy arrays of unstructured data.
 
 ::
 
-   import cf
-   import cfplot as cfp
-   f=cf.read('cfplot_data/lfric_initial.nc')
+   f = cf.read("cfplot_data/lfric_initial.nc")
 
-   pot=f[33][4,:]
-   lons = f[12]
-   lats = f[13]
-   faces = f[11]
+   # Select the relevant fields for the objects required for the plot,
+   # taking the air potential temperature as a variable to choose to view.
+   pot = f.select_by_identity("air_potential_temperature")[0]
+   lats = f.select_by_identity("latitude")[0]
+   lons = f.select_by_identity("longitude")[0]
+   faces = f.select_by_identity("cf_role=face_edge_connectivity")[0]
+
+   # Reduce the variable to match the shapes
+   pot = pot[4,:]
 
    cfp.levs(240, 310, 5)
 
@@ -45,17 +48,22 @@ Here we identify the fields in the data that have the longitudes and latitudes f
 
 ::
 
-   import cf
-   import cfplot as cfp
-   f=cf.read('cfplot_data/lfric_initial.nc')
+   f = cf.read("cfplot_data/lfric_initial.nc")
 
-   pot=f[33][4,:]
-   lons = f[12]
-   lats = f[13]
-   faces = f[11]
+   # Select the relevant fields for the objects required for the plot,
+   # taking the air potential temperature as a variable to choose to view.
+   pot = f.select_by_identity("air_potential_temperature")[0]
+   lats = f.select_by_identity("latitude")[0]
+   lons = f.select_by_identity("longitude")[0]
+   faces = f.select_by_identity("cf_role=face_edge_connectivity")[0]
+
+   # Reduce the variable to match the shapes
+   pot = pot[4,:]
 
    cfp.levs(240, 310, 5)
-   cfp.mapset(proj='npstere')
+
+   # This time set the projection to a polar one for a different view
+   cfp.mapset(proj="npstere")
    cfp.con(f=pot, face_lons=lons, face_lats=lats, face_connectivity=faces, lines=False)
 
 
@@ -67,12 +75,12 @@ Here the projection is changed to show the north pole.
 
 ::
 
-   import cf
-   import cfplot as cfp
-   f=cf.read('cfplot_data/lfric_initial.nc')[33]
-   g=f[0,:]
+   f = cf.read("cfplot_data/lfric_initial.nc")
+   pot = f.select_by_identity("air_potential_temperature")[0]
 
-   cfp.con(g, lines=False )
+   g = pot[0, :]
+   cfp.con(g, lines=False)
+
 
 The data in the field has auxiliary longitudes and latitudes that can be contoured as normal.  Internally in cf-plot this is made using the Matplotlib tricontourf command as the data points are spatially irregular.
 
@@ -85,21 +93,19 @@ Orca2 grid
 
 ::
 
-   import cf
-   import cfplot as cfp
-   import numpy as np
-   from netCDF4 import Dataset as ncfile
+   f = cf.read("cfplot_data/orca2.nc")
 
-   #Get an Orca grid and flatten the arrays
-   nc = ncfile('cfplot_data/orca2.nc')
-   lons=np.array(nc.variables['longitude'])
-   lats=np.array(nc.variables['latitude'])
-   temp=np.array(nc.variables['sst'])
-   lons=lons.flatten()
-   lats=lats.flatten()
-   temp=temp.flatten()
+   # Get an Orca grid and flatten the arrays
+   lons = f.select_by_identity("ncvar%longitude")[0]
+   lats = f.select_by_identity("ncvar%latitude")[0]
+   temp = f.select_by_identity("ncvar%sst")[0]
 
+   lons.flatten(inplace=True)
+   lats.flatten(inplace=True)
+   temp.flatten(inplace=True)
+   
    cfp.con(x=lons, y=lats, f=temp, ptype=1)
+
 
 
 The ORCA2 grid is an ocean grid with missing values over the land points.  The data in this file is from before the UGRID convention was started and has no face connectivity or corner coordinates.  In this case we can only plot a normal contour plot.
