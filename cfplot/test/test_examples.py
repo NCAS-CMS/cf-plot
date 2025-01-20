@@ -21,6 +21,8 @@ from scipy.interpolate import griddata
 
 import matplotlib.testing.compare as mpl_compare
 
+import cartopy.crs as ccrs
+
 import cfplot as cfp
 import cf
 
@@ -1345,6 +1347,117 @@ class UnnumberedExamplesTest(unittest.TestCase):
     def tearDown(self):
         """Preparations called immediately after each test method."""
         cfp.reset()
+
+    # @compare_plot_results  # SLB TODO add expected plot
+    def test_example_unstructured_lfric_1(self):
+        """Test example for unstructured grids: LFRic example 1."""
+        f = cf.read("cfplot_data/lfric_initial.nc")
+
+        # Select the relevant fields for the objects required for the plot,
+        # taking the air potential temperature as a variable to choose to view.
+        pot = f.select_by_identity("air_potential_temperature")[0]
+        lats = f.select_by_identity("latitude")[0]
+        lons = f.select_by_identity("longitude")[0]
+        faces = f.select_by_identity("cf_role=face_edge_connectivity")[0]
+
+        # Reduce the variable to match the shapes
+        pot = pot[4,:]
+
+        cfp.levs(240, 310, 5)
+
+        cfp.con(
+            f=pot, face_lons=lons, face_lats=lats,
+            face_connectivity=faces, lines=False
+        )
+
+    # @compare_plot_results  # SLB TODO add expected plot
+    def test_example_unstructured_lfric_2(self):
+        """Test example for unstructured grids: LFRic example 2."""
+        f = cf.read("cfplot_data/lfric_initial.nc")
+
+        # Select the relevant fields for the objects required for the plot,
+        # taking the air potential temperature as a variable to choose to view.
+        pot = f.select_by_identity("air_potential_temperature")[0]
+        lats = f.select_by_identity("latitude")[0]
+        lons = f.select_by_identity("longitude")[0]
+        faces = f.select_by_identity("cf_role=face_edge_connectivity")[0]
+
+        # Reduce the variable to match the shapes
+        pot = pot[4,:]
+
+        cfp.levs(240, 310, 5)
+
+        # This time set the projection to a polar one for a different view
+        cfp.mapset(proj="npstere")
+        cfp.con(
+            f=pot, face_lons=lons,
+            face_lats=lats, face_connectivity=faces, lines=False
+        )
+
+    # @compare_plot_results  # SLB TODO add expected plot
+    def test_example_unstructured_lfric_3(self):
+        """Test example for unstructured grids: LFRic example 3."""
+        f = cf.read("cfplot_data/lfric_initial.nc")
+        pot = f.select_by_identity("air_potential_temperature")[0]
+
+        g = pot[0, :]
+        cfp.con(g, lines=False)
+
+    @unittest.expectedFailure  # suspected cf-plot bug, needs investigating
+    def test_example_unstructured_orca_1(self):
+        """Test example for unstructured grids: ORCA grid example 1."""
+        # NOTE: this is taken from the 'unstructured.rst/html' page, but
+        # is very similar to 'test_example_26', so coordinate with that.
+        f = cf.read("cfplot_data/orca2.nc")
+
+        # Get an Orca grid and flatten the arrays
+        lons = f.select_by_identity("ncvar%longitude")[0]
+        lats = f.select_by_identity("ncvar%latitude")[0]
+        temp = f.select_by_identity("ncvar%sst")[0]
+
+        lons.flatten(inplace=True)
+        lats.flatten(inplace=True)
+        temp.flatten(inplace=True)
+
+        cfp.con(x=lons, y=lats, f=temp, ptype=1)
+
+    @unittest.expectedFailure  # text input based, needs investigating
+    def test_example_unstructured_station_data_1(self):
+        """Test example for unstructured grids: station data example 1."""
+        # NOTE: this is taken from the 'unstructured.rst/html' page, but
+        # is very similar to 'test_example_24/25', so coordinate with that.
+
+        # Part 1: docs title 'Station data'
+
+        # Arrays for data
+        lons=[]
+        lats=[]
+        pressure=[]
+        temp=[]
+
+        # Read data and make the contour plot
+        f = open('cfplot_data/synop_data.txt')
+        lines = f.readlines()
+        for line in lines:
+           mysplit=line.split()
+           lons=np.append(lons, float(mysplit[1]))
+           lats=np.append(lats, float(mysplit[2]))
+           pressure=np.append(pressure, float(mysplit[3]))
+           temp=np.append(temp, float(mysplit[4]))
+
+        cfp.con(
+            x=lons, y=lats, f=temp, ptype=1, colorbar_orientation='vertical')
+
+        # Part 2: docs title 'Station data - check of data values'
+        cfp.gopen()
+        for i in np.arange(len(lines)):
+            cfp.plotvars.mymap.text(
+                float(lons[i]), float(lats[i]), str(temp[i]),
+                horizontalalignment='center',verticalalignment='center',
+                transform=ccrs.PlateCarree()
+            )
+
+        cfp.gclose()
 
 
 if __name__ == "__main__":
