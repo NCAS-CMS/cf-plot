@@ -93,21 +93,19 @@ Orca2 grid
 
 ::
 
-   import cfplot as cfp
-   import cf
-   import numpy as np
-   from netCDF4 import Dataset as ncfile
+   f = cf.read("cfplot_data/orca2.nc")
 
    # Get an Orca grid and flatten the arrays
-   nc = ncfile('cfplot_data/orca2.nc')
-   lons=np.array(nc.variables['longitude'])
-   lats=np.array(nc.variables['latitude'])
-   temp=np.array(nc.variables['sst'])
-   lons=lons.flatten()
-   lats=lats.flatten()
-   temp=temp.flatten()
+   lons = f.select_by_identity("ncvar%longitude")[0]
+   lats = f.select_by_identity("ncvar%latitude")[0]
+   temp = f.select_by_identity("ncvar%sst")[0]
 
+   lons.flatten(inplace=True)
+   lats.flatten(inplace=True)
+   temp.flatten(inplace=True)
+   
    cfp.con(x=lons, y=lats, f=temp, ptype=1)
+
 
 
 The ORCA2 grid is an ocean grid with missing values over the land points.  The data in this file is from before the UGRID convention was started and has no face connectivity or corner coordinates.  In this case we can only plot a normal contour plot.
