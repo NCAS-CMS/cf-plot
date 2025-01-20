@@ -1323,6 +1323,30 @@ class ExamplesTest(unittest.TestCase):
     # https://ncas-cms.github.io/cf-plot/build/unstructured.html#unstructured)
 
 
+class UnnumberedExamplesTest(unittest.TestCase):
+    """Run all other documentation examples and compare to reference plots."""
+
+    data_dir = DATA_DIR
+    save_gen_dir = TEST_GEN_DIR
+    ref_dir = TEST_REF_DIR
+    test_id = None
+
+    def setUp(self):
+        """Preparations called immediately before each test method."""
+        # Get a filename fname with the ID of test_example_X component X
+        test_method_name = unittest.TestCase.id(self).split(".")[-1]
+        self.test_id = test_method_name.rsplit("test_example_")[1]
+        fname = f"{self.save_gen_dir}/" f"gen_fig_{self.test_id}.png"
+        cfp.setvars(
+            file=fname,
+            viewer="matplotlib",
+        )
+
+    def tearDown(self):
+        """Preparations called immediately after each test method."""
+        cfp.reset()
+
+
 if __name__ == "__main__":
     print("==================\n" "Regression testing\n" "==================\n")
     cov = coverage.Coverage()
