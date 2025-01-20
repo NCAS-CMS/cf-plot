@@ -22,9 +22,6 @@ netCDF and NumPy arrays of unstructured data.
 
 ::
 
-   import cfplot as cfp
-   import cf
-
    f = cf.read("cfplot_data/lfric_initial.nc")
 
    # Select the relevant fields for the objects required for the plot,
@@ -50,9 +47,6 @@ Here we identify the fields in the data that have the longitudes and latitudes f
    :scale: 52%
 
 ::
-
-   import cfplot as cfp
-   import cf
 
    f = cf.read("cfplot_data/lfric_initial.nc")
 
@@ -81,12 +75,12 @@ Here the projection is changed to show the north pole.
 
 ::
 
-   import cf
-   import cfplot as cfp
-   f=cf.read('cfplot_data/lfric_initial.nc')[33]
-   g=f[0,:]
+   f = cf.read("cfplot_data/lfric_initial.nc")
+   pot = f.select_by_identity("air_potential_temperature")[0]
 
-   cfp.con(g, lines=False )
+   g = pot[0, :]
+   cfp.con(g, lines=False)
+
 
 The data in the field has auxiliary longitudes and latitudes that can be contoured as normal.  Internally in cf-plot this is made using the Matplotlib tricontourf command as the data points are spatially irregular.
 
@@ -99,12 +93,12 @@ Orca2 grid
 
 ::
 
-   import cf
    import cfplot as cfp
+   import cf
    import numpy as np
    from netCDF4 import Dataset as ncfile
 
-   #Get an Orca grid and flatten the arrays
+   # Get an Orca grid and flatten the arrays
    nc = ncfile('cfplot_data/orca2.nc')
    lons=np.array(nc.variables['longitude'])
    lats=np.array(nc.variables['latitude'])
