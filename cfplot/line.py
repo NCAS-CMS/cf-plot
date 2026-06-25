@@ -1,18 +1,15 @@
 import cf
 import numpy as np
 
-from .graphic import gclose, gopen, gpos
-from .mapping import _mapaxis
-from .parameters import plotvars
-from .utils import (
-    _dim_titles,
-    _gvals,
-    _timeaxis,
-    cf_var_name,
-    find_z,
-    fix_floats,
-    generate_titles,
+from .map_runtime import _apply_dim_titles
+from .layout_runtime import (
+    ensure_runtime_session,
+    finalize_runtime_session,
+    set_axis_visibility,
 )
+from .state import plotvars
+from . import utility
+from .utility import mapaxis
 
 
 def lineplot(
@@ -127,15 +124,9 @@ def lineplot(
         return
 
     ##################
-    # Open a new plot is necessary
+    # Open a new plot if necessary
     ##################
-    if plotvars.user_plot == 0:
-        gopen(user_plot=0)
-
-    # Call gpos(1) if not already called
-    if plotvars.rows > 1 or plotvars.columns > 1:
-        if plotvars.gpos_called is False:
-            gpos(1)
+    auto_session = ensure_runtime_session(pos=1)
 
     ##################
     # Extract required data
@@ -192,7 +183,7 @@ def lineplot(
                 # x label
                 xlabel_units = str(getattr(f.construct(mydim), "Units", ""))
                 plot_xlabel = (
-                    f"{cf_var_name(field=f, dim=mydim)} ({xlabel_units})"
+                    f"{utility.cf_var_name(field=f, dim=mydim)} ({xlabel_units})"
                 )
                 y = np.squeeze(f.array)
 
@@ -262,7 +253,7 @@ def lineplot(
     if xlabel_units in ["meter", "metre", "m", "kilometer", "kilometre", "km"]:
         ztype = 2
 
-    myz = find_z(f)
+    myz = utility.find_z(f)
     if cf_field and f.has_construct(myz):
         z_coord = f.construct(myz)
         if len(z_coord.array) > 1:
@@ -402,19 +393,39 @@ def lineplot(
 
     if xticks is None:
         if plot_xlabel[0:3].lower() == "lon":
-            xticks, xticklabels = _mapaxis(minx, maxx, type=1)
+            xticks, xticklabels = mapaxis(
+                min_val=minx,
+                max_val=maxx,
+                axis_type=1,
+                degsym=bool(plotvars.degsym),
+            )
         if plot_xlabel[0:3].lower() == "lat":
-            xticks, xticklabels = _mapaxis(minx, maxx, type=2)
+            xticks, xticklabels = mapaxis(
+                min_val=minx,
+                max_val=maxx,
+                axis_type=2,
+                degsym=bool(plotvars.degsym),
+            )
     if cf_field:
         if xticks is None:
             if f.has_construct("T"):
                 if np.size(f.construct("T").array) > 1:
-                    xticks, xticklabels, plot_xlabel = _timeaxis(taxis)
+                    xticks, xticklabels, plot_xlabel = utility.timeaxis(
+                        taxis,
+                        user_gset=plotvars.user_gset,
+                        xmin=plotvars.xmin,
+                        xmax=plotvars.xmax,
+                        ymin=plotvars.ymin,
+                        ymax=plotvars.ymax,
+                        tspace_year=plotvars.tspace_year,
+                        tspace_hour=plotvars.tspace_hour,
+                        tspace_day=plotvars.tspace_day,
+                    )
     if xticks is None:
-        xticks, ymult = _gvals(dmin=minx, dmax=maxx, mod=mod)
+        xticks, ymult = utility.gvals(dmin=minx, dmax=maxx, mod=mod)
 
         # Fix long floating point numbers if necessary
-        fix_floats(xticks)
+        utility.fix_floats(xticks)
         xticklabels = xticks
     else:
         if xticklabels is None:
@@ -425,15 +436,15 @@ def lineplot(
     if yticks is None:
         if abs(maxy - miny) > 1:
             if miny < maxy:
-                yticks, ymult = _gvals(dmin=miny, dmax=maxy, mod=mod)
+                yticks, ymult = utility.gvals(dmin=miny, dmax=maxy, mod=mod)
             if maxy < miny:
-                yticks, ymult = _gvals(dmin=maxy, dmax=miny, mod=mod)
+                yticks, ymult = utility.gvals(dmin=maxy, dmax=miny, mod=mod)
 
         else:
-            yticks, ymult = _gvals(dmin=miny, dmax=maxy, mod=mod)
+            yticks, ymult = utility.gvals(dmin=miny, dmax=maxy, mod=mod)
 
             # Fix long floating point numbers if necessary
-            fix_floats(yticks)
+            utility.fix_floats(yticks)
 
     if yticklabels is None:
         yticklabels = []
@@ -469,28 +480,18 @@ def lineplot(
             miny = plotvars.ymin
             maxy = plotvars.ymax
 
-    if axes:
-        if xaxis is not True:
-            xticks = [100000000]
-            xticklabels = xticks
-            plot_xlabel = ""
-
-        if yaxis is not True:
-            yticks = [100000000]
-            yticklabels = yticks
-            plot_ylabel = ""
-
-    else:
-        xticks = [100000000]
-        xticklabels = xticks
-        yticks = [100000000]
-        yticklabels = yticks
+    if not axes:
         plot_xlabel = ""
         plot_ylabel = ""
+    else:
+        if xaxis is not True:
+            plot_xlabel = ""
+        if yaxis is not True:
+            plot_ylabel = ""
 
     # Generate titles if requested
     if titles:
-        title_dims = generate_titles(f)
+        title_dims = utility.generate_titles(f)
 
     # Make graph
     if verbose:
@@ -558,6 +559,8 @@ def lineplot(
             fontweight=plotvars.axis_label_fontweight,
         )
 
+    set_axis_visibility(graph, axes=axes, xaxis=xaxis, yaxis=yaxis)
+
     graph.plot(
         xpts,
         ypts,
@@ -603,12 +606,23 @@ def lineplot(
     if titles:
         plotvars.plot = graph
         plotvars.plot_type = 0
-        _dim_titles(title=title_dims)
+        _apply_dim_titles(
+            plot=plotvars.plot,
+            mymap=plotvars.mymap,
+            plot_type=plotvars.plot_type,
+            proj=plotvars.proj,
+            lonmin=plotvars.lonmin,
+            lonmax=plotvars.lonmax,
+            latmin=plotvars.latmin,
+            latmax=plotvars.latmax,
+            axis_label_fontsize=plotvars.axis_label_fontsize,
+            axis_label_fontweight=plotvars.axis_label_fontweight,
+            title=title_dims,
+        )
 
     ##################
     # Save or view plot
     ##################
-    if plotvars.user_plot == 0:
-        if verbose:
-            print("Saving or viewing plot")
-        gclose()
+    if auto_session and verbose:
+        print("Saving or viewing plot")
+    finalize_runtime_session(auto_session=auto_session, view=True)

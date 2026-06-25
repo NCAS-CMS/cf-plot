@@ -1,15 +1,20 @@
 from copy import deepcopy
 
 import cartopy.crs as ccrs
-import cartopy.feature as cfeature
 import cf
 import numpy as np
 
 from .colour import cbar
-from .graphic import gclose, gopen, gpos
-from .mapping import _map_title, _plot_map_axes, _set_map
-from .parameters import cscale, gset, plotvars
-from .utils import _gvals, _supscr, cf_var_name
+from .colour import cscale
+from .layout_runtime import ensure_runtime_session, finalize_runtime_session, gset
+from .map_runtime import (
+    _apply_current_map_title,
+    _apply_map_axes_with_toggles,
+    _apply_map_features,
+    _ensure_map_axes,
+)
+from .state import plotvars
+from . import utility
 
 
 def traj(
@@ -146,7 +151,7 @@ def traj(
     has_lons = False
     has_lats = False
     for mydim in list(f.auxiliary_coordinates()):
-        name = cf_var_name(field=f, dim=mydim)
+        name = utility.cf_var_name(field=f, dim=mydim)
         if name in ["longitude"]:
             lons = np.squeeze(f.construct(mydim).array)
             has_lons = True
@@ -182,33 +187,13 @@ def traj(
     user_xlabel = xlabel
     user_ylabel = ylabel
 
-    user_xlabel = ""
-    user_ylabel = ""
-
     # Set plotting parameters
-    continent_thickness = 1.5
-    continent_color = "k"
-    continent_linestyle = "-"
-    if plotvars.continent_thickness is not None:
-        continent_thickness = plotvars.continent_thickness
-    if plotvars.continent_color is not None:
-        continent_color = plotvars.continent_color
-    if plotvars.continent_linestyle is not None:
-        continent_linestyle = plotvars.continent_linestyle
-    land_color = plotvars.land_color
-    ocean_color = plotvars.ocean_color
-    lake_color = plotvars.lake_color
+    continent_linestyle = plotvars.continent_linestyle or "-"
 
     ##################
-    # Open a new plot is necessary
+    # Open a new plot if necessary
     ##################
-    if plotvars.user_plot == 0:
-        gopen(user_plot=0)
-
-    # Call gpos(1) if not already called
-    if plotvars.rows > 1 or plotvars.columns > 1:
-        if plotvars.gpos_called is False:
-            gpos(1)
+    auto_session = ensure_runtime_session(pos=1)
 
     # Set up mapping
     if plotvars.user_mapset == 0:
@@ -217,7 +202,7 @@ def traj(
         plotvars.latmin = -90
         plotvars.latmax = 90
 
-    _set_map()
+    _ensure_map_axes()
     mymap = plotvars.mymap
 
     # Set the plot limits
@@ -256,7 +241,7 @@ def traj(
                 print("traj - generating automatic legend levels")
             dmin = np.nanmin(data)
             dmax = np.nanmax(data)
-            levs, mult = _gvals(dmin=dmin, dmax=dmax, mod=False)
+            levs, mult = utility.gvals(dmin=dmin, dmax=dmax, mod=False)
 
         # Add extend options to the levels if set
         if plotvars.levels_extend == "min" or plotvars.levels_extend == "both":
@@ -441,7 +426,7 @@ def traj(
                     )
 
     # Axes
-    _plot_map_axes(
+    _apply_map_axes_with_toggles(
         axes=axes,
         xaxis=xaxis,
         yaxis=yaxis,
@@ -451,49 +436,18 @@ def traj(
         yticklabels=yticklabels,
         user_xlabel=user_xlabel,
         user_ylabel=user_ylabel,
-        verbose=verbose,
     )
 
-    # Coastlines
-    feature = cfeature.NaturalEarthFeature(
-        name="land",
-        category="physical",
-        scale=plotvars.resolution,
-        facecolor="none",
+    _apply_map_features(
+        mymap=mymap,
+        continent_color=plotvars.continent_color,
+        continent_thickness=plotvars.continent_thickness,
+        continent_linestyle=continent_linestyle,
     )
-
-    mymap.add_feature(
-        feature,
-        edgecolor=continent_color,
-        linewidth=continent_thickness,
-        linestyle=continent_linestyle,
-    )
-
-    if ocean_color is not None:
-        mymap.add_feature(
-            cfeature.OCEAN,
-            edgecolor="face",
-            facecolor=ocean_color,
-            zorder=plotvars.feature_zorder,
-        )
-    if land_color is not None:
-        mymap.add_feature(
-            cfeature.LAND,
-            edgecolor="face",
-            facecolor=land_color,
-            zorder=plotvars.feature_zorder,
-        )
-    if lake_color is not None:
-        mymap.add_feature(
-            cfeature.LAKES,
-            edgecolor="face",
-            facecolor=lake_color,
-            zorder=plotvars.feature_zorder,
-        )
 
     # Title
     if title is not None:
-        _map_title(title)
+        _apply_current_map_title(title)
 
     # Color bar
     plot_colorbar = False
@@ -523,7 +477,7 @@ def traj(
                 if str(f.Units) == "":
                     colorbar_title += ""
                 else:
-                    colorbar_title += f"({_supscr(str(f.Units))})"
+                    colorbar_title += f"({utility._supscr(str(f.Units))})"
 
         levs = plotvars.levels
         if colorbar_labels is not None:
@@ -547,5 +501,4 @@ def traj(
     ##########
     # Save plot
     ##########
-    if plotvars.user_plot == 0:
-        gclose()
+    finalize_runtime_session(auto_session=auto_session, view=True)

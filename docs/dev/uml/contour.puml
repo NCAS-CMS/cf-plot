@@ -1,0 +1,107 @@
+@startuml contour_module
+
+skinparam classAttributeIconSize 0
+hide empty members
+
+title cfplot.contour module - class diagram
+
+class ContourData <<dataclass,frozen>> {
+  +field: ndarray
+  +x: ndarray | None
+  +y: ndarray | None
+  +ptype: int
+  +colorbar_title: str
+  +xlabel: str
+  +ylabel: str
+  +levels: ndarray | None
+  +fmult: float
+  +fill: bool
+  +lines: bool
+  +blockfill: bool
+  +xpole: float | None
+  +ypole: float | None
+  +x_is_cyclic: bool
+  --
+  +from_cf_field(f, colorbar_title, verbose, proj): ContourData
+  +from_arrays(field, x, y): ContourData
+}
+
+class ContourLayout {
+  -_plotvars: Any
+  +viewport: Axes | None
+  +colorbar_ax: Axes | None
+  +title_ax: Axes | None
+  +colorbar_orientation: str
+  +colorbar_position: list[float] | None
+  --
+  +allocate_xy_viewport(colorbar_orientation, colorbar_position): ContourLayout
+  +allocate_map_viewport(colorbar_orientation, colorbar_position): ContourLayout
+  +allocate(colorbar_orientation, colorbar_position): ContourLayout
+  +apply_title(title, dims_title, fontsize, fontweight): None
+  +apply_axis_labels(xlabel, ylabel, xticks, yticks, xticklabels, yticklabels): None
+}
+
+class ColourScale {
+  -_plotvars: Any
+  -_levels: ndarray | None
+  -_includes_zero: bool
+  -_levels_extend: str
+  --
+  +fit_to_levels(levels, includes_zero, levels_extend): ColourScale
+  +get_cmap(): ListedColormap
+  +colourbar_labels(levels, orientation, n_columns, label_skip, custom_labels): list[str]
+  {_static} +_expand_skipped_labels(labels, label_skip): list[str]
+}
+
+class ContourRenderer {
+  +layout: ContourLayout
+  +data: ContourData
+  +cs: ColourScale
+  +frame_artists: list[Any]
+  --
+  +render_filled(alpha, zorder, transform_first): None
+  +render_blockfill(fast, alpha, zorder): None
+  +render_lines(colors, linewidths, linestyles, line_labels, zero_thick, zorder): None
+  +render_colorbar(orientation, shrink, position, fraction, thick, anchor, fontsize, fontweight, text_up_down, text_down_up, drawedges, labels, title): None
+}
+
+class MapContourRenderer {
+  +render_filled(alpha, zorder, transform_first): None
+  +render_blockfill(fast, alpha, zorder): None
+  +render_lines(colors, linewidths, linestyles, line_labels, zero_thick, zorder): None
+  +render_colorbar(orientation, shrink, position, fraction, thick, anchor, fontsize, fontweight, text_up_down, text_down_up, drawedges, labels, title): None
+}
+
+class XYContourRenderer {
+  +render_filled(alpha, zorder, transform_first): None
+  +render_blockfill(fast, alpha, zorder): None
+  +render_lines(colors, linewidths, linestyles, line_labels, zero_thick, zorder): None
+  +render_colorbar(orientation, shrink, position, fraction, thick, anchor, fontsize, fontweight, text_up_down, text_down_up, drawedges, labels, title): None
+}
+
+MapContourRenderer --|> ContourRenderer
+XYContourRenderer --|> ContourRenderer
+
+ContourRenderer *-- ContourLayout : layout
+ContourRenderer *-- ContourData : data
+ContourRenderer *-- ColourScale : colour scale
+
+note right of ContourData
+Read-only plotting inputs and metadata,
+created from CF field extraction or raw arrays.
+end note
+
+note bottom of ContourRenderer
+Strategy base class. Concrete subclasses specialize
+map and Cartesian plotting paths.
+end note
+
+class PlotState <<external>>
+class Utility <<module>>
+class RuntimeHelpers <<module>>
+
+ContourData ..> Utility : cf_data_assign(), to_float_or_none()
+ContourLayout ..> RuntimeHelpers : ensure_*_viewport(), apply_axes()
+ContourRenderer ..> PlotState : plotvars runtime/scale/decoration
+
+@enduml

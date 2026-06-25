@@ -1,25 +1,78 @@
 from copy import deepcopy
 
 import cartopy.crs as ccrs
-import cartopy.feature as cfeature
 import cf
 import numpy as np
 
-from .graphic import gclose, gopen, gpos
-from .mapping import _map_title, _mapaxis, _plot_map_axes, _set_map, axes_plot
-from .parameters import cscale, gset, mapset, plotvars
-from .utils import (
-    _cf_data_assign,
-    _dim_titles,
-    _gvals,
-    _supscr,
-    add_cyclic,
-    generate_titles,
-    regrid,
-    rgaxes,
-    stipple_points,
+from .layout_runtime import (
+    apply_axes,
+    ensure_runtime_session,
+    finalize_runtime_session,
+    gset,
+    set_axis_visibility,
 )
+from .map_runtime import (
+    _apply_current_map_title,
+    _apply_dim_titles,
+    _apply_map_axes_with_toggles,
+    _apply_map_features,
+    _ensure_map_axes,
+    mapset,
+)
+from .rotated_runtime import _render_rotated_grid_axes
+from .state import plotvars
+from . import utility
+from .utility import mapaxis
 from .validate import _check_data
+
+
+def _mapaxis(min=None, max=None, type=None):
+    return mapaxis(
+        min_val=min,
+        max_val=max,
+        axis_type=type,
+        degsym=bool(plotvars.degsym),
+    )
+
+
+
+
+def axes_plot(
+    xticks=None,
+    xticklabels=None,
+    yticks=None,
+    yticklabels=None,
+    xlabel=None,
+    ylabel=None,
+    title=None,
+    axes=True,
+    xaxis=True,
+    yaxis=True,
+):
+    apply_axes(
+        plot_type=plotvars.plot_type,
+        xticks=xticks,
+        yticks=yticks,
+        xlabel=xlabel,
+        ylabel=ylabel,
+        xticklabels=xticklabels,
+        yticklabels=yticklabels,
+    )
+
+    if title is not None and plotvars.plot is not None:
+        plotvars.plot.set_title(
+            title,
+            y=1.03,
+            fontsize=plotvars.title_fontsize,
+            fontweight=plotvars.title_fontweight,
+        )
+
+    set_axis_visibility(
+        plotvars.plot,
+        axes=axes,
+        xaxis=xaxis,
+        yaxis=yaxis,
+    )
 
 
 def vect(
@@ -184,7 +237,9 @@ def vect(
             ylabel,
             xpole,
             ypole,
-        ) = _cf_data_assign(u, colorbar_title, rotated_vect=rotated_vect)
+        ) = utility.cf_data_assign(
+            u, colorbar_title, proj=("rotated" if rotated_vect else plotvars.proj)
+        )
     elif isinstance(u, cf.FieldList):
         raise TypeError("Can't plot a field list")
     else:
@@ -222,7 +277,9 @@ def vect(
             ylabel,
             xpole,
             ypole,
-        ) = _cf_data_assign(v, colorbar_title, rotated_vect=rotated_vect)
+        ) = utility.cf_data_assign(
+            v, colorbar_title, proj=("rotated" if rotated_vect else plotvars.proj)
+        )
     elif isinstance(v, cf.FieldList):
         raise TypeError("Can't plot a field list")
     else:
@@ -273,19 +330,13 @@ def vect(
 
     # Calculate a set of dimension titles if requested
     if titles:
-        title_dims = generate_titles(u)
+        title_dims = utility.generate_titles(u)
         title_dims = f"u\n{title_dims}"
-        title_dims2 = generate_titles(v)
+        title_dims2 = utility.generate_titles(v)
         title_dims2 = f"v\n{title_dims2}"
 
     # Open a new plot if necessary
-    if plotvars.user_plot == 0:
-        gopen(user_plot=0)
-
-    # Call gpos(1) if not already called
-    if plotvars.rows > 1 or plotvars.columns > 1:
-        if plotvars.gpos_called is False:
-            gpos(1)
+    auto_session = ensure_runtime_session(pos=1)
 
     # Set plot type if user specified
     if ptype is not None:
@@ -297,7 +348,7 @@ def vect(
     if plotvars.plot_type == 1:
         # Set up mapping
         if (lonrange > 350 and latrange > 170) or plotvars.user_mapset == 1:
-            _set_map()
+            _ensure_map_axes()
         else:
             mapset(
                 lonmin=np.nanmin(u_x),
@@ -307,14 +358,14 @@ def vect(
                 user_mapset=0,
                 resolution=resolution_orig,
             )
-            _set_map()
+            _ensure_map_axes()
 
         mymap = plotvars.mymap
 
         # u_data, u_x = cartopy_util.add_cyclic_point(u_data, u_x)
-        u_data, u_x = add_cyclic(u_data, u_x)
+        u_data, u_x = utility.add_cyclic(u_data, u_x)
         # v_data, v_x = cartopy_util.add_cyclic_point(v_data, v_x)
-        v_data, v_x = add_cyclic(v_data, v_x)
+        v_data, v_x = utility.add_cyclic(v_data, v_x)
 
     # stride data points to reduce vector density
     if stride is not None:
@@ -396,7 +447,7 @@ def vect(
         if key_label is None:
             key_label = str(key_length)
         if isinstance(u, cf.Field):
-            key_label = _supscr(key_label + u.units)
+            key_label = utility._supscr(key_label + u.units)
         if key_show:
             plotvars.mymap.quiverkey(
                 quiv,
@@ -411,7 +462,7 @@ def vect(
             )
 
         # axes
-        _plot_map_axes(
+        _apply_map_axes_with_toggles(
             axes=axes,
             xaxis=xaxis,
             yaxis=yaxis,
@@ -421,43 +472,51 @@ def vect(
             yticklabels=yticklabels,
             user_xlabel=user_xlabel,
             user_ylabel=user_ylabel,
-            verbose=False,
         )
 
-        # Coastlines
-        continent_thickness = plotvars.continent_thickness
-        continent_color = plotvars.continent_color
-        continent_linestyle = plotvars.continent_linestyle
-        if continent_thickness is None:
-            continent_thickness = 1.5
-        if continent_color is None:
-            continent_color = "k"
-        if continent_linestyle is None:
-            continent_linestyle = "solid"
-
-        feature = cfeature.NaturalEarthFeature(
-            name="land",
-            category="physical",
-            scale=plotvars.resolution,
-            facecolor="none",
-        )
-        mymap.add_feature(
-            feature,
-            edgecolor=continent_color,
-            linewidth=continent_thickness,
-            linestyle=continent_linestyle,
+        _apply_map_features(
+            mymap=mymap,
+            continent_color=plotvars.continent_color,
+            continent_thickness=plotvars.continent_thickness,
+            continent_linestyle=plotvars.continent_linestyle,
         )
 
         # Title
         if title is not None:
-            _map_title(title)
+            _apply_current_map_title(title)
 
         # Titles for dimensions
         if titles:
             if plotvars.titles_con_called is False:
-                _dim_titles(title=title_dims, title2=title_dims2)
+                _apply_dim_titles(
+                    plot=plotvars.plot,
+                    mymap=plotvars.mymap,
+                    plot_type=plotvars.plot_type,
+                    proj=plotvars.proj,
+                    lonmin=plotvars.lonmin,
+                    lonmax=plotvars.lonmax,
+                    latmin=plotvars.latmin,
+                    latmax=plotvars.latmax,
+                    axis_label_fontsize=plotvars.axis_label_fontsize,
+                    axis_label_fontweight=plotvars.axis_label_fontweight,
+                    title=title_dims,
+                    title2=title_dims2,
+                )
             else:
-                _dim_titles(title2=title_dims, title3=title_dims2)
+                _apply_dim_titles(
+                    plot=plotvars.plot,
+                    mymap=plotvars.mymap,
+                    plot_type=plotvars.plot_type,
+                    proj=plotvars.proj,
+                    lonmin=plotvars.lonmin,
+                    lonmax=plotvars.lonmax,
+                    latmin=plotvars.latmin,
+                    latmax=plotvars.latmax,
+                    axis_label_fontsize=plotvars.axis_label_fontsize,
+                    axis_label_fontweight=plotvars.axis_label_fontweight,
+                    title2=title_dims,
+                    title3=title_dims2,
+                )
 
     if plotvars.plot_type == 6:
         if u.ref("grid_mapping_name:rotated_latitude_longitude", False):
@@ -467,7 +526,7 @@ def vect(
             if (
                 lonrange > 350 and latrange > 170
             ) or plotvars.user_mapset == 1:
-                _set_map()
+                _ensure_map_axes()
 
             else:
                 mapset(
@@ -478,7 +537,7 @@ def vect(
                     user_mapset=0,
                     resolution=resolution_orig,
                 )
-                _set_map()
+                _ensure_map_axes()
 
             quiv = plotvars.mymap.quiver(
                 u_x,
@@ -502,7 +561,7 @@ def vect(
             if key_label is None:
                 key_label = str(key_length)
             if isinstance(u, cf.Field):
-                key_label = _supscr(key_label + u.units)
+                key_label = utility._supscr(key_label + u.units)
 
             if key_show:
                 plotvars.mymap.quiverkey(
@@ -519,11 +578,11 @@ def vect(
 
             # Axes on the native grid
             if plotvars.plot == "rotated":
-                rgaxes(
+                _render_rotated_grid_axes(
                     xpole=xpole,
                     ypole=ypole,
-                    xvec=x,
-                    yvec=y,
+                    xvec=u_x,
+                    yvec=u_y,
                     xticks=xticks,
                     xticklabels=xticklabels,
                     yticks=yticks,
@@ -536,7 +595,7 @@ def vect(
                 )
 
             if plotvars.plot == "cyl":
-                _plot_map_axes(
+                _apply_map_axes_with_toggles(
                     axes=axes,
                     xaxis=xaxis,
                     yaxis=yaxis,
@@ -546,16 +605,28 @@ def vect(
                     yticklabels=yticklabels,
                     user_xlabel=user_xlabel,
                     user_ylabel=user_ylabel,
-                    verbose=False,
                 )
 
             # Title
             if title is not None:
-                _map_title(title)
+                _apply_current_map_title(title)
 
             # Titles for dimensions
             if titles:
-                _dim_titles(title=title_dims, titles2=title_dims2)
+                _apply_dim_titles(
+                    plot=plotvars.plot,
+                    mymap=plotvars.mymap,
+                    plot_type=plotvars.plot_type,
+                    proj=plotvars.proj,
+                    lonmin=plotvars.lonmin,
+                    lonmax=plotvars.lonmax,
+                    latmin=plotvars.latmin,
+                    latmax=plotvars.latmax,
+                    axis_label_fontsize=plotvars.axis_label_fontsize,
+                    axis_label_fontweight=plotvars.axis_label_fontweight,
+                    title=title_dims,
+                    title2=title_dims2,
+                )
 
     ######################################
     # Latitude or longitude vs height plot
@@ -631,7 +702,7 @@ def vect(
                 lltype = 2
             llticks, lllabels = _mapaxis(min=xmin, max=xmax, type=lltype)
 
-            heightticks = _gvals(
+            heightticks = utility.gvals(
                 dmin=ymin, dmax=ymax, mystep=ystep, mod=False
             )[0]
             heightlabels = heightticks
@@ -644,7 +715,6 @@ def vect(
                         if xticklabels is not None:
                             lllabels = xticklabels
                 else:
-                    llticks = [100000000]
                     xlabel = ""
 
                 if yaxis:
@@ -654,12 +724,9 @@ def vect(
                         if yticklabels is not None:
                             heightlabels = yticklabels
                 else:
-                    heightticks = [100000000]
                     ylabel = ""
 
             else:
-                llticks = [100000000]
-                heightticks = [100000000]
                 xlabel = ""
                 ylabel = ""
 
@@ -670,6 +737,9 @@ def vect(
                 yticklabels=heightlabels,
                 xlabel=xlabel,
                 ylabel=ylabel,
+                axes=axes,
+                xaxis=xaxis,
+                yaxis=yaxis,
             )
 
         # Log y axis
@@ -696,7 +766,6 @@ def vect(
                         if xticklabels is not None:
                             lllabels = xticklabels
                 else:
-                    llticks = [100000000]
                     xlabel = ""
 
                 if yaxis:
@@ -706,7 +775,6 @@ def vect(
                         if yticklabels is not None:
                             heightlabels = yticklabels
                 else:
-                    heightticks = [100000000]
                     ylabel = ""
 
                 if yticks is None:
@@ -715,6 +783,9 @@ def vect(
                         xticklabels=lllabels,
                         xlabel=xlabel,
                         ylabel=ylabel,
+                        axes=axes,
+                        xaxis=xaxis,
+                        yaxis=yaxis,
                     )
                 else:
                     axes_plot(
@@ -724,12 +795,15 @@ def vect(
                         yticklabels=heightlabels,
                         xlabel=xlabel,
                         ylabel=ylabel,
+                        axes=axes,
+                        xaxis=xaxis,
+                        yaxis=yaxis,
                     )
 
         # Regrid the data if requested
         if pts is not None:
 
-            xnew, ynew = stipple_points(
+            xnew, ynew = utility.stipple_points(
                 xmin=np.min(u_x),
                 xmax=np.max(u_x),
                 ymin=np.min(u_y),
@@ -741,14 +815,14 @@ def vect(
             if ytype == 0:
                 # Make y interpolation in log space as we have a pressure
                 # coordinate
-                u_vals = regrid(
+                u_vals = utility.regrid(
                     f=u_data,
                     x=u_x,
                     y=np.log10(u_y),
                     xnew=xnew,
                     ynew=np.log10(ynew),
                 )
-                v_vals = regrid(
+                v_vals = utility.regrid(
                     f=v_data,
                     x=u_x,
                     y=np.log10(u_y),
@@ -756,8 +830,12 @@ def vect(
                     ynew=np.log10(ynew),
                 )
             else:
-                u_vals = regrid(f=u_data, x=u_x, y=u_y, xnew=xnew, ynew=ynew)
-                v_vals = regrid(f=v_data, x=u_x, y=u_y, xnew=xnew, ynew=ynew)
+                u_vals = utility.regrid(
+                    f=u_data, x=u_x, y=u_y, xnew=xnew, ynew=ynew
+                )
+                v_vals = utility.regrid(
+                    f=v_data, x=u_x, y=u_y, xnew=xnew, ynew=ynew
+                )
 
             u_x = xnew
             u_y = ynew
@@ -804,7 +882,7 @@ def vect(
             if key_label is None:
                 key_label_u = str(key_length_u)
                 if isinstance(u, cf.Field):
-                    key_label_u = _supscr(f"{key_label_u} ({u.units})")
+                    key_label_u = utility._supscr(f"{key_label_u} ({u.units})")
             else:
                 key_label_u = key_label[0]
             if key_show:
@@ -841,12 +919,12 @@ def vect(
                 key_label_u = str(key_length_u)
                 key_label_v = str(key_length_v)
                 if isinstance(u, cf.Field):
-                    key_label_u = _supscr(f"{key_label_u} ({u.units})")
+                    key_label_u = utility._supscr(f"{key_label_u} ({u.units})")
                 if isinstance(v, cf.Field):
-                    key_label_v = _supscr(f"{key_label_v} ({v.units})")
+                    key_label_v = utility._supscr(f"{key_label_v} ({v.units})")
             else:
-                key_label_u = _supscr(key_label[0])
-                key_label_v = _supscr(key_label[1])
+                key_label_u = utility._supscr(key_label[0])
+                key_label_v = utility._supscr(key_label[1])
 
             # Plot reference vectors and keys
             if key_show:
@@ -907,15 +985,30 @@ def vect(
 
             # Titles for dimensions
             if titles:
-                _dim_titles(title=title_dims, titles2=title_dims2)
+                _apply_dim_titles(
+                    plot=plotvars.plot,
+                    mymap=plotvars.mymap,
+                    plot_type=plotvars.plot_type,
+                    proj=plotvars.proj,
+                    lonmin=plotvars.lonmin,
+                    lonmax=plotvars.lonmax,
+                    latmin=plotvars.latmin,
+                    latmax=plotvars.latmax,
+                    axis_label_fontsize=plotvars.axis_label_fontsize,
+                    axis_label_fontweight=plotvars.axis_label_fontweight,
+                    title=title_dims,
+                    title2=title_dims2,
+                )
 
     ##########
     # Save plot
     ##########
-    if plotvars.user_plot == 0:
-        gset()
-        cscale()
-        gclose()
+    finalize_runtime_session(
+        auto_session=auto_session,
+        reset_limits=True,
+        reset_colour_scale=True,
+        view=True,
+    )
 
     if plotvars.user_mapset == 0:
         mapset()

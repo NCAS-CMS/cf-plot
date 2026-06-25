@@ -2,14 +2,8 @@ import cartopy.crs as ccrs
 import cf
 import numpy as np
 
-from .parameters import plotvars
-from .utils import (
-    _cf_data_assign,
-    add_cyclic,
-    polar_regular_grid,
-    regrid,
-    stipple_points,
-)
+from .state import plotvars
+from . import utility
 from .validate import _check_data
 
 
@@ -73,7 +67,7 @@ def stipple(
             ylabel,
             xpole,
             ypole,
-        ) = _cf_data_assign(f, colorbar_title)
+        ) = utility.cf_data_assign(f, colorbar_title, proj=plotvars.proj)
     elif isinstance(f, cf.FieldList):
         raise TypeError("Can't plot a field list")
     else:
@@ -88,12 +82,12 @@ def stipple(
         lonrange = np.nanmax(xpts) - np.nanmin(xpts)
         if lonrange < 360:
             # field, xpts = cartopy_util.add_cyclic_point(field, xpts)
-            field, xpts = add_cyclic(field, xpts)
+            field, xpts = utility.add_cyclic(field, xpts)
 
         # if plotvars.proj == 'cyl':
         if plotvars.proj in ["cyl", "robin", "merc", "ortho", "moll"]:
             # Calculate interpolation points
-            xnew, ynew = stipple_points(
+            xnew, ynew = utility.stipple_points(
                 xmin=np.nanmin(xpts),
                 xmax=np.nanmax(xpts),
                 ymin=np.nanmin(ypts),
@@ -108,7 +102,12 @@ def stipple(
 
         if plotvars.proj == "npstere" or plotvars.proj == "spstere":
             # Calculate interpolation points
-            xnew, ynew, xnew_map, ynew_map = polar_regular_grid()
+            xnew, ynew, xnew_map, ynew_map = utility.polar_regular_grid(
+                pts=pts,
+                proj=plotvars.proj,
+                boundinglat=plotvars.boundinglat,
+                lon_0=plotvars.lon_0,
+            )
             # Convert longitudes to be 0 to 360
             # negative longitudes are incorrectly regridded in polar
             # stereographic projection
@@ -129,7 +128,7 @@ def stipple(
             ymin = np.log10(ymin)
             ymax = np.log10(ymax)
 
-        xnew, ynew = stipple_points(
+        xnew, ynew = utility.stipple_points(
             xmin=np.nanmin(xpts),
             xmax=np.nanmax(xpts),
             ymin=ymin,
@@ -142,7 +141,7 @@ def stipple(
             ynew = 10**ynew
 
     # Get values at the new points
-    vals = regrid(f=field, x=xpts, y=ypts, xnew=xnew, ynew=ynew)
+    vals = utility.regrid(f=field, x=xpts, y=ypts, xnew=xnew, ynew=ynew)
 
     # Work out which of the points are valid
     valid_points = np.array([], dtype="int64")

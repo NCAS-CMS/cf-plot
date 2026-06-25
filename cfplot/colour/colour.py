@@ -1,10 +1,131 @@
 import subprocess
+from typing import Any
 
 import matplotlib
 import matplotlib.pyplot as plot
 import numpy as np
 
-from ..parameters import cscale, plotvars
+from .. import utility
+from ..state import plotvars
+
+
+def get_colour_scale_map() -> list[str]:
+    """Return the active colour scale trimmed for extend settings."""
+    cscale_ncols = len(plotvars.cs)
+    if plotvars.levels_extend == "both":
+        return plotvars.cs[1 : cscale_ncols - 1]
+    if plotvars.levels_extend == "min":
+        return plotvars.cs[1:]
+    if plotvars.levels_extend == "max":
+        return plotvars.cs[: cscale_ncols - 1]
+    return plotvars.cs
+
+
+def apply_colour_scale(
+    scale: str | None = None,
+    ncols: int | None = None,
+    white: Any = None,
+    below: int | None = None,
+    above: int | None = None,
+    reverse: bool = False,
+    uniform: bool = False,
+) -> None:
+    """Apply a colour scale to shared plotting state."""
+    if scale is None or scale == "":
+        scale = "scale1"
+
+    red, green, blue = utility.load_colour_scale_rgb(scale)
+
+    if reverse:
+        red = red[::-1]
+        green = green[::-1]
+        blue = blue[::-1]
+
+    if ncols is not None:
+        positions = np.linspace(0, np.size(red) - 1, num=ncols, endpoint=True)
+        red, green, blue = utility.interpolate_colour_channels(
+            red, green, blue, positions
+        )
+
+    if below is not None or above is not None:
+        npoints = np.size(red) // 2
+
+        x_below: np.ndarray | float | list[float] = []
+        lower = npoints if below is None else below
+        if below is not None and uniform:
+            lower = max(above, below)
+        if below == 1:
+            x_below = 0
+        if lower > 1:
+            x_below = ((npoints - 1) / float(lower - 1)) * np.arange(lower)
+
+        x_above: np.ndarray | float | list[float] = []
+        upper = npoints if above is None else above
+        if above is not None and uniform:
+            upper = max(above, below)
+        if above == 1:
+            x_above = npoints * 2 - 1
+        if upper > 1:
+            x_above = ((npoints - 1) / float(upper - 1)) * np.arange(upper) + npoints
+
+        positions = np.append(x_below, x_above)
+        red, green, blue = utility.interpolate_colour_channels(
+            red, green, blue, positions
+        )
+
+        if uniform:
+            midpoint = max(below, above)
+            red = red[midpoint - below : midpoint + above]
+            green = green[midpoint - below : midpoint + above]
+            blue = blue[midpoint - below : midpoint + above]
+
+    hexarr = [
+        f"#{int(red[idx]):02x}{int(green[idx]):02x}{int(blue[idx]):02x}"
+        for idx in np.arange(np.size(red))
+    ]
+
+    if white is not None:
+        if np.size(white) == 1:
+            hexarr[white] = "#ffffff"
+        else:
+            for col in white:
+                hexarr[col] = "#ffffff"
+
+    plotvars.cs = hexarr
+
+
+def cscale(
+    scale: str | None = None,
+    ncols: int | None = None,
+    white: Any = None,
+    below: int | None = None,
+    above: int | None = None,
+    reverse: bool = False,
+    uniform: bool = False,
+) -> None:
+    """Choose and manipulate colour maps in shared plotting state."""
+    if scale is None:
+        plotvars.cscale_flag = 0
+        return
+
+    plotvars.cs_user = scale
+    plotvars.cscale_flag = 1
+
+    vals = [ncols, white, below, above]
+    if any(val is not None for val in vals):
+        plotvars.cscale_flag = 2
+    if reverse is not False or uniform is not False:
+        plotvars.cscale_flag = 2
+
+    apply_colour_scale(
+        scale=scale,
+        ncols=ncols,
+        white=white,
+        below=below,
+        above=above,
+        reverse=reverse,
+        uniform=uniform,
+    )
 
 
 def _cscale_get_map():
@@ -18,16 +139,7 @@ def _cscale_get_map():
          colour map
     |
     """
-    cscale_ncols = np.size(plotvars.cs)
-    if plotvars.levels_extend == "both":
-        colmap = plotvars.cs[1 : cscale_ncols - 1]
-    if plotvars.levels_extend == "min":
-        colmap = plotvars.cs[1:]
-    if plotvars.levels_extend == "max":
-        colmap = plotvars.cs[: cscale_ncols - 1]
-    if plotvars.levels_extend == "neither":
-        colmap = plotvars.cs
-    return colmap
+    return get_colour_scale_map()
 
 
 def _process_color_scales():

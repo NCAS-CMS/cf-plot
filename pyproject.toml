@@ -1,7 +1,38 @@
-# This file is currently used only to configure the black Python code
-# formatter, rather than provide project metadata (see
-# https://www.python.org/dev/peps/pep-0621/) which can be found instead
-# in the setup.py file.
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cf-plot"
+version = "3.5.0"
+description = "Climate contour, vector and line plots in Python"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { file = "LICENSE.txt" }
+authors = [{ name = "Andy Heaps", email = "andy.heaps@ncas.ac.uk" }]
+maintainers = [
+	{ name = "Sadie Bartholomew", email = "sadie.bartholomew@ncas.ac.uk" },
+]
+dependencies = [
+	"matplotlib>=3.1.0",
+	"cf-python>=3.9.0",
+	"scipy>=1.4.0",
+	"cartopy>=0.17.0",
+	"packaging>=21",
+]
+
+[project.urls]
+Homepage = "http://ajheaps.github.io/cf-plot"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["cfplot*"]
+
+[tool.setuptools.package-data]
+cfplot = ["colour/colourmaps/*"]
 
 # To run the black checker with this configuration, execute 'black .' in the
 # root of this repository. See https://black.readthedocs.io/en/stable/ for

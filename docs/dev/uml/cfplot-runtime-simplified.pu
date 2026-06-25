@@ -1,0 +1,25 @@
+@startuml cfplot-runtime-simplified
+skinparam packageStyle rectangle
+skinparam ArrowColor #444444
+skinparam componentStyle uml2
+
+rectangle "API Facade\n(__init__.py)" as API
+rectangle "Plot APIs\n(contour, line, vector, stream, trajectory, stipple)" as PlotAPIs
+rectangle "Runtime\n(layout_runtime, map_runtime, rotated_runtime)" as Runtime
+rectangle "Shared Core\n(state, utility, validate)" as Core
+rectangle "Render Helpers\n(colorbar, blockfill)" as Helpers
+rectangle "External Libs\n(cf, numpy, matplotlib, cartopy)" as External
+
+API --> PlotAPIs
+PlotAPIs --> Runtime
+PlotAPIs --> Core
+PlotAPIs --> Helpers
+
+Runtime --> Core
+Helpers --> Core
+
+PlotAPIs --> External
+Runtime --> External
+Helpers --> External
+Core --> External
+@enduml

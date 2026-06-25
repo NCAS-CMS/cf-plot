@@ -4,114 +4,126 @@ cf-plot: code-light plotting for earth science and aligned research
 Documentation is hosted and found at: https://ncas-cms.github.io/cf-plot/
 """
 
-__author__ = "Andy Heaps"
-__maintainer__ = "Sadie Bartholomew"
-__date__ = "28th April 2025"
-__version__ = "3.4.0"
+from importlib.metadata import PackageNotFoundError, version as pkg_version
+from pathlib import Path
+
+__author__ = "Andy Heaps, Sadie Bartholomew, Bryan Lawrence"
+__date__ = "16th May, 2026"
 
 
-import os
-from distutils.version import StrictVersion
+def _version_from_pyproject():
+    pyproject = Path(__file__).resolve().parent.parent / "pyproject.toml"
+    if not pyproject.exists():
+        return None
 
-import cartopy
-import cf
-import matplotlib
+    in_project = False
+    for raw_line in pyproject.read_text(encoding="utf-8").splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("#"):
+            continue
+        if line.startswith("[") and line.endswith("]"):
+            in_project = line == "[project]"
+            continue
+        if in_project and line.startswith("version"):
+            _, _, value = line.partition("=")
+            return value.strip().strip('"').strip("'")
 
-# Import module functionality -------------------------------------------
-# Imports to export functions: cfp.<module>.<function> -> cfp.<function>
-# either as intended going forward or to preserve existing API.
-# TODO review what should be available at module level.
+    return None
 
-from .calculate import calculate_levels
-from .colour import (
-    # Internal fuctions: don't expose, but leave commented here to track:
-    # _cscale_get_map,; _process_color_scales,
-    cbar,
-)
 
+def _resolve_version():
+    # In a source checkout, pyproject.toml is the version source of truth.
+    pyproject_version = _version_from_pyproject()
+    if pyproject_version:
+        return pyproject_version
+
+    # In installed-package contexts, use distribution metadata.
+    try:
+        return pkg_version("cf-plot")
+    except PackageNotFoundError:
+        return "0+unknown"
+
+
+__version__ = _resolve_version()
+
+from .colorbar import cbar
+from .colour import cscale
 from .contour import con
-from .graphic import (
-    # Internal fuctions: don't expose, but leave commented here to track:
-    # _which,
-    gclose,
-    gopen,
-    gpos,
-)
+from .contour import levs
+from .layout_runtime import gclose, gopen, gset
+from .layout_runtime import gpos
 from .line import lineplot
-from .mapping import (
-    # Internal fuctions: don't expose, but leave commented here to track:
-    # _mapaxis,; _map_title,; _plot_map_axes,; _set_map,
-    axes_plot,
-    map_grid,
-)
-from .parameters import (
-    allvars_defaults,
-    axes,
-    cscale,
-    cscale1,
-    global_blockfill,
-    global_fill,
-    global_lines,
-    gset,
-    levs,
-    mapset,
-    plotvars,
-    plotvars_defaults,
-    pvars,
-    reset,
-    setvars,
-    setvars_defaults,
-    viridis,
-)
+from .map_runtime import mapset
+from .state import plotvars, setvars
 from .stipple import stipple
 from .stream import stream
 from .trajectory import traj
-from .utils import (
-    # Internal fuctions: don't expose, but leave commented here to track:;
-    # _bfill,; _bfill_ugrid,; _cf_data_assign,; _dim_titles,; _gvals,; _supscr,;
-    # _timeaxis,
-    add_cyclic,
-    cf_var_name,
-    cf_var_name_titles,
-    find_dim_names,
-    find_pos_in_array,
-    find_z,
-    fix_floats,
-    generate_titles,
-    irregular_window,
-    max_ndecs_data,
-    ndecs,
-    pcon,
-    polar_regular_grid,
-    regrid,
-    rgaxes,
-    stipple_points,
-    vloc,
-)
-from .validate import check_well_formed, orca_check  # _check_data internal
+from .state import reset_runtime_state
+from .utility import gvals as _gvals_impl, mapaxis as _mapaxis_impl, regrid
 from .vector import vect
+from .rotated_runtime import _render_rotated_grid_axes
 
-# Process versions and display ------------------------------------------
 
-# Check for the minimum cf-python version
-cf_version_min = "3.17.0"
-errstr = f"cf-python >= {cf_version_min} needs to be installed to use cf-plot"
-if StrictVersion(cf.__version__) < StrictVersion(cf_version_min):
-    raise Warning(errstr)
-# TODO add these checks for all other dependencies too?
+def reset():
+    gset()
+    cscale()
+    levs()
+    mapset()
+    setvars()
+    reset_runtime_state()
 
-# Check for a display and use the Agg backing store if none is present
-# This is for batch mode processing
-try:
-    disp = os.environ["DISPLAY"]
-except Exception:
-    matplotlib.use("Agg")
 
-# Check for user setting of pre_existing_data_dir pointing to central
-# cartopy setup
-# This is used in the cfview simple setup process
-try:
-    pre_existing_data_dir = os.environ["pre_existing_data_dir"]
-    cartopy.config["pre_existing_data_dir"] = pre_existing_data_dir
-except KeyError:
-    pass
+def _gvals(*args, **kwargs):
+    return _gvals_impl(*args, **kwargs)
+
+
+def rgaxes(*, xpole=None, ypole=None, xvec=None, yvec=None, xticks=None, xticklabels=None, yticks=None, yticklabels=None, axes=True, xaxis=True, yaxis=True, xlabel=None, ylabel=None):
+    return _render_rotated_grid_axes(
+        xpole=xpole,
+        ypole=ypole,
+        xvec=xvec,
+        yvec=yvec,
+        xticks=xticks,
+        xticklabels=xticklabels,
+        yticks=yticks,
+        yticklabels=yticklabels,
+        axes=axes,
+        xaxis=xaxis,
+        yaxis=yaxis,
+        xlabel=xlabel,
+        ylabel=ylabel,
+    )
+
+
+def _mapaxis(min=None, max=None, type=None):
+    return _mapaxis_impl(
+        min_val=min,
+        max_val=max,
+        axis_type=type,
+        degsym=bool(plotvars.degsym),
+    )
+
+
+__all__ = [
+    "cbar",
+    "con",
+    "cscale",
+    "gclose",
+    "gopen",
+    "gpos",
+    "gset",
+    "levs",
+    "lineplot",
+    "mapset",
+    "plotvars",
+    "regrid",
+    "reset",
+    "rgaxes",
+    "setvars",
+    "stipple",
+    "stream",
+    "traj",
+    "vect",
+    "_gvals",
+    "_mapaxis",
+]
