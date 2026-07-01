@@ -1761,16 +1761,15 @@ def _render_with_new_xy(f: Any, x: Any, y: Any, kwargs: dict[str, Any]) -> bool:
         renderer = XYContourRenderer(layout=layout, data=data, colour_scale=cs)
 
     transform_first = kwargs.get("transform_first", None)
-    if data.ptype == 1 and plotvars.proj in ("npstere", "spstere"):
-        # Polar stereographic can show longitude striping when Cartopy
-        # pre-transforms dense regular lon/lat grids in data space.
-        # Rendering in map space is robust for both cyclic and non-cyclic data.
-        transform_first = False
-    elif data.ptype == 1 and plotvars.proj == "ortho" and not data.x_is_cyclic:
-        # Non-cyclic grids on ortho are prone to clipping artefacts with
-        # transform_first=True on near-global dense grids, so force it off.
-        # Cyclic grids use the default (True for 1-D arrays) which avoids a
-        # visible seam at the 0°/360° boundary.
+    if (
+        data.ptype == 1
+        and transform_first is None
+        and plotvars.proj in ("ortho", "npstere", "spstere")
+    ):
+        # Azimuthal projections are prone to clipping/striping artefacts when
+        # Cartopy pre-transforms dense regular lon/lat grids in data space.
+        # Use map-space rendering by default; explicit user overrides are
+        # still respected via transform_first kwarg.
         transform_first = False
 
     if fill:
