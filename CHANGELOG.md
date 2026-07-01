@@ -32,6 +32,10 @@ of being developed elsewhere.
   a ``Fieldlist`` of length greater than one to use ``select_by_identity ``
   instead of indexing, for clarity
   (https://github.com/NCAS-CMS/cf-plot/issues/119)
+* Add optional animation hooks for external library integration on
+  `gopen` (`animation_session_id`, `animation_meta_callback`,
+  `animation_frame_callback`) and emit additive animation metadata/frame
+  callback payloads from the contour animation path.
 
 ### Version `3.4.X`, first released (`3.4.0`) `2025-04-28`
 
