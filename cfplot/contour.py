@@ -2066,7 +2066,8 @@ def _render_with_new_xy(f: Any, x: Any, y: Any, kwargs: dict[str, Any]) -> bool:
 
         if animation and clear_previous_frame:
             _clear_animation_title_artist(plotvars)
-            _clear_animation_colorbar(plotvars)
+            if not reuse_map_background:
+                _clear_animation_colorbar(plotvars)
 
         draw_features_each_frame = bool(animation and reuse_map_background)
 
@@ -2123,7 +2124,12 @@ def _render_with_new_xy(f: Any, x: Any, y: Any, kwargs: dict[str, Any]) -> bool:
         # Persist only dynamic contour artists for animation updates.
         pv_runtime._contour_animation_artists = list(renderer.frame_artists)
 
-    if colorbar:
+    render_colorbar_this_frame = True
+    if bool(kwargs.get("animation", False)) and bool(kwargs.get("reuse_map_background", False)):
+        frame_index = int(getattr(pv_runtime, "_animation_frame_index", 0))
+        render_colorbar_this_frame = frame_index == 0
+
+    if colorbar and render_colorbar_this_frame:
         colorbar_artist = renderer.render_colorbar(
             orientation=colorbar_orientation,
             shrink=kwargs.get("colorbar_shrink", None),
