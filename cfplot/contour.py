@@ -24,6 +24,8 @@ function-level cfplot imports.
 from __future__ import annotations
 
 from dataclasses import dataclass, replace
+import logging
+import time
 from typing import Any
 
 import cf
@@ -56,6 +58,49 @@ from .state import (
     global_lines,
     plotvars,
 )
+
+
+logger = logging.getLogger(__name__)
+
+
+def _animation_construct_logical_axis(construct: Any) -> str | None:
+    """Best-effort logical axis name for a construct."""
+    for axis_name in ("T", "Z", "Y", "X"):
+        if bool(getattr(construct, axis_name, False)):
+            return axis_name
+    return None
+
+
+def _resolve_animation_construct(f: Any, axis_spec: Any) -> tuple[str | None, Any, str | None]:
+    """Resolve an animation axis spec to construct key, construct, and logical axis."""
+    if not isinstance(f, cf.Field) or axis_spec is None:
+        return (None, None, None)
+
+    axis_text = str(axis_spec).strip()
+    if not axis_text:
+        return (None, None, None)
+
+    def _from_axis_key(axis_key: str, logical_axis: str | None = None) -> tuple[str | None, Any, str | None]:
+        resolved_key = axis_key
+        if logical_axis == "Z":
+            try:
+                resolved_key = utility.find_z(f)
+            except Exception:
+                resolved_key = axis_key
+
+        try:
+            construct = f.construct(resolved_key)
+        except Exception:
+            return (None, None, None)
+
+        resolved_logical = logical_axis or _animation_construct_logical_axis(construct)
+        return (str(resolved_key), construct, resolved_logical)
+
+    axis_upper = axis_text.upper()
+    if axis_upper in {"T", "Z", "Y", "X"}:
+        return _from_axis_key(axis_upper, logical_axis=axis_upper)
+
+    return _from_axis_key(axis_text)
 
 
 def _detect_lon_cyclic(f: "cf.Field", x: "np.ndarray | None") -> bool:
@@ -1032,15 +1077,28 @@ def _can_use_new_xy_path(f: Any, kwargs: dict[str, Any]) -> bool:
 def _clear_animation_artists(plotvars: Any) -> None:
     """Remove artists from previous animation frame if present."""
     artists = getattr(plotvars.runtime, "_contour_animation_artists", None)
-    if not artists:
+    if artists:
+        for artist in artists:
+            try:
+                artist.remove()
+            except Exception:
+                continue
+    plotvars.runtime._contour_animation_artists = []
+    _clear_animation_map_feature_artists(plotvars)
+    _clear_animation_title_artist(plotvars)
+
+
+def _clear_animation_map_feature_artists(plotvars: Any) -> None:
+    """Remove per-frame map feature artists from previous animation frame."""
+    feature_artists = getattr(plotvars.runtime, "_contour_animation_map_feature_artists", None)
+    if not feature_artists:
         return
-    for artist in artists:
+    for artist in feature_artists:
         try:
             artist.remove()
         except Exception:
             continue
-    plotvars.runtime._contour_animation_artists = []
-    _clear_animation_title_artist(plotvars)
+    plotvars.runtime._contour_animation_map_feature_artists = []
 
 
 def _clear_animation_title_artist(plotvars: Any) -> None:
@@ -1072,6 +1130,112 @@ def _clear_animation_colorbar(plotvars: Any) -> None:
                 pass
 
     plotvars.runtime._contour_animation_colorbar = None
+
+
+def _safe_animation_callback(callback: Any, payload: dict[str, Any]) -> None:
+    """Invoke an animation callback and log failures without interrupting render."""
+    if not callable(callback):
+        return
+    try:
+        callback(payload)
+    except Exception:
+        logger.exception("animation callback failed")
+
+
+def _infer_animation_total_frames(
+    reference: Any,
+    *,
+    animation_axis: Any,
+    ptype: int | None,
+) -> int | None:
+    """Best-effort frame count from animation reference input."""
+    if reference is None:
+        return None
+
+    if isinstance(reference, cf.Field):
+        axis = _infer_animation_axis(reference, animation_axis, ptype)
+        if axis is None:
+            return None
+        try:
+            values = np.asanyarray(reference.construct(axis).array)
+        except Exception:
+            return None
+        size = int(values.size)
+        return size if size > 0 else None
+
+    try:
+        arr = np.asanyarray(reference)
+    except Exception:
+        return None
+    if arr.ndim == 0:
+        return None
+    size = int(arr.shape[0])
+    return size if size > 0 else None
+
+
+def _animation_axis_value_object(f: Any, axis: str | None) -> Any:
+    """Return a frame-axis scalar value for callback payloads."""
+    if axis is None or not isinstance(f, cf.Field):
+        return None
+
+    axis_key, construct, logical_axis = _resolve_animation_construct(f, axis)
+    if axis_key is None or construct is None:
+        return None
+
+    try:
+        if logical_axis == "T" and getattr(construct, "dtarray", None) is not None:
+            values = np.asanyarray(construct.dtarray)
+        else:
+            values = np.asanyarray(construct.array)
+    except Exception:
+        return None
+
+    if values.size != 1:
+        return None
+    return values.reshape(-1)[0]
+
+
+def _emit_animation_meta_callback(
+    *,
+    kwargs: dict[str, Any],
+    ptype: int | None,
+    levels_locked: bool,
+) -> None:
+    """Emit one metadata callback for the active animation session."""
+    runtime = plotvars.runtime
+    if runtime._animation_meta_emitted:
+        return
+
+    payload = {
+        "session_id": runtime._animation_session_id,
+        "total_frames": _infer_animation_total_frames(
+            kwargs.get("animation_reference"),
+            animation_axis=kwargs.get("animation_axis", "auto"),
+            ptype=ptype,
+        ),
+        "fps_hint": None,
+        "title_template": kwargs.get("animation_title_template", None),
+        "plot_kind": "contour",
+        "levels_locked": bool(levels_locked),
+    }
+
+    _safe_animation_callback(runtime._animation_meta_callback, payload)
+    runtime._animation_meta_emitted = True
+
+
+def _emit_animation_frame_callback(*, f: Any, ptype: int | None, kwargs: dict[str, Any]) -> None:
+    """Emit a per-frame callback after drawing is complete."""
+    runtime = plotvars.runtime
+    axis = _infer_animation_axis(f, kwargs.get("animation_axis", "auto"), ptype)
+    payload = {
+        "session_id": runtime._animation_session_id,
+        "frame_index": int(runtime._animation_frame_index),
+        "frame_value": _animation_axis_value_object(f, axis),
+        "canvas_ready": True,
+        "timestamp": time.time(),
+    }
+    _safe_animation_callback(runtime._animation_frame_callback, payload)
+    runtime._animation_frame_index = int(runtime._animation_frame_index) + 1
 
 
 def _ptype_axes(ptype: int | None) -> set[str]:
@@ -1111,12 +1275,11 @@ def _infer_animation_axis(f: Any, axis_spec: Any, ptype: int | None) -> str | No
         return None
 
     axis_upper = axis_text.upper()
-    valid_axes = ("T", "Z", "Y", "X")
-
     if axis_upper != "AUTO":
-        if axis_upper in valid_axes and f.has_construct(axis_upper):
-            return axis_upper
-        return None
+        axis_key, construct, _logical_axis = _resolve_animation_construct(f, axis_text)
+        if axis_key is None or construct is None:
+            return None
+        return str(construct.identity(default=axis_key))
 
     try:
         dims = utility.find_dim_names(f)
@@ -1132,11 +1295,12 @@ def _infer_animation_axis(f: Any, axis_spec: Any, ptype: int | None) -> str | No
             if axis not in dims or axis in ptype_axes:
                 continue
             try:
-                values = np.asanyarray(f.construct(axis).array)
+                construct = f.construct(axis)
+                values = np.asanyarray(construct.array)
             except Exception:
                 continue
             if values.size == 1:
-                return axis
+                return str(construct.identity(default=axis.lower()))
         return None
 
     # ptype=0 fallback: prefer temporal slices first, then vertical,
@@ -1145,31 +1309,24 @@ def _infer_animation_axis(f: Any, axis_spec: Any, ptype: int | None) -> str | No
         if axis not in dims:
             continue
         try:
-            values = np.asanyarray(f.construct(axis).array)
+            construct = f.construct(axis)
+            values = np.asanyarray(construct.array)
         except Exception:
             continue
         if values.size == 1:
-            return axis
+            return str(construct.identity(default=axis.lower()))
 
     return None
 
 
 def _animation_axis_value_text(f: cf.Field, axis: str) -> str | None:
     """Return axis/value text used in animation titles."""
-    axis_key = axis
-    if axis == "Z":
-        try:
-            axis_key = utility.find_z(f)
-        except Exception:
-            axis_key = axis
-
-    try:
-        construct = f.construct(axis_key)
-    except Exception:
+    axis_key, construct, logical_axis = _resolve_animation_construct(f, axis)
+    if axis_key is None or construct is None:
         return None
 
     try:
-        if axis == "T" and getattr(construct, "dtarray", None) is not None:
+        if logical_axis == "T" and getattr(construct, "dtarray", None) is not None:
             values = np.asanyarray(construct.dtarray)
         else:
             values = np.asanyarray(construct.array)
@@ -1226,6 +1383,112 @@ def _resolve_animation_title(
     if base_title:
         return f"{base_title} | {frame_text}"
     return frame_text
+
+
+def _count_data_axes_gt_one(f: Any) -> int:
+    """Return the number of domain axes with size greater than one."""
+    if not isinstance(f, cf.Field):
+        return 0
+    try:
+        return len(f.domain_axes(filter_by_size=(cf.gt(1),)))
+    except Exception:
+        return 0
+
+
+def _animation_axis_size_gt_one(f: Any, axis: str | None) -> int:
+    """Return axis length when available and greater than one, else zero."""
+    if not isinstance(f, cf.Field) or axis is None:
+        return 0
+
+    axis_key, construct, _logical_axis = _resolve_animation_construct(f, axis)
+    if axis_key is None or construct is None:
+        return 0
+
+    try:
+        values = np.asanyarray(construct.array)
+    except Exception:
+        return 0
+
+    size = int(values.size)
+    return size if size > 1 else 0
+
+
+def _choose_animation_sequence_axis(f: Any, axis_spec: Any, ptype: int | None) -> str | None:
+    """Choose an axis for internal animation slicing when full field is >2D."""
+    if not isinstance(f, cf.Field):
+        return None
+
+    axis = _infer_animation_axis(f, axis_spec, ptype)
+    if _animation_axis_size_gt_one(f, axis) > 1:
+        return axis
+
+    # Auto fallback for non-singleton animation axes.
+    ptype_axes = _ptype_axes(ptype)
+    for candidate in ("T", "Z", "Y", "X"):
+        if candidate in ptype_axes:
+            continue
+        if _animation_axis_size_gt_one(f, candidate) > 1:
+            resolved = _infer_animation_axis(f, candidate, ptype)
+            return resolved or candidate
+
+    for candidate in ("T", "Z", "Y", "X"):
+        if _animation_axis_size_gt_one(f, candidate) > 1:
+            resolved = _infer_animation_axis(f, candidate, ptype)
+            return resolved or candidate
+
+    return None
+
+
+def _slice_animation_frame(f: cf.Field, axis: str, frame_value: Any) -> cf.Field:
+    """Return one frame slice for the chosen animation axis."""
+    axis_key, construct, _logical_axis = _resolve_animation_construct(f, axis)
+    coord_name = str(construct.identity(default=str(axis_key or axis).lower()))
+
+    try:
+        return f.subspace(**{coord_name: frame_value})
+    except Exception:
+        return f.subspace(**{axis: frame_value})
+
+
+def _render_animation_sequence(
+    *,
+    f: cf.Field,
+    x: Any,
+    y: Any,
+    kwargs: dict[str, Any],
+    animation_axis: str,
+) -> bool:
+    """Render an animation by slicing a >2D field into 2D frames."""
+    axis_key, construct, logical_axis = _resolve_animation_construct(f, animation_axis)
+    if axis_key is None or construct is None:
+        return False
+
+    try:
+        if logical_axis == "T" and getattr(construct, "dtarray", None) is not None:
+            frame_values = np.asanyarray(construct.dtarray).reshape(-1)
+        else:
+            frame_values = np.asanyarray(construct.array).reshape(-1)
+    except Exception:
+        return False
+
+    if frame_values.size <= 1:
+        return _render_with_new_xy(f=f, x=x, y=y, kwargs=kwargs)
+
+    base_kwargs = dict(kwargs)
+    base_kwargs["animation_axis"] = animation_axis
+    base_kwargs.setdefault("animation_reference", f)
+
+    for i, frame_value in enumerate(frame_values):
+        frame_field = _slice_animation_frame(f, animation_axis, frame_value)
+        frame_field = frame_field.squeeze()
+        frame_kwargs = dict(base_kwargs)
+        if i == 0 and bool(base_kwargs.get("reuse_map_background", False)):
+            frame_kwargs["reuse_map_background"] = False
+
+        if not _render_with_new_xy(f=frame_field, x=x, y=y, kwargs=frame_kwargs):
+            return False
+
+    return True
 
 
 def _field_has_ugrid_faces(f: cf.Field) -> bool:
@@ -1360,6 +1623,7 @@ def _render_with_new_xy(f: Any, x: Any, y: Any, kwargs: dict[str, Any]) -> bool:
     pv_scale = plotvars.scale
     pv_runtime = plotvars.runtime
     pv_output = plotvars.output
+    animation = bool(kwargs.get("animation", False))
 
     if isinstance(f, cf.Field) and (x is not None or y is not None):
         field_arr = np.asanyarray(f.array)
@@ -1496,6 +1760,13 @@ def _render_with_new_xy(f: Any, x: Any, y: Any, kwargs: dict[str, Any]) -> bool:
     # ptype 6 has its own rendering/axes flow and must bypass generic XY
     # layout to avoid non-map axes state assumptions.
     if data.ptype == 6:
+        if animation:
+            _emit_animation_meta_callback(
+                kwargs=kwargs,
+                ptype=data.ptype,
+                levels_locked=pv_scale.levels is not None,
+            )
+
         data = replace(
             data,
             levels=np.asarray(clevs),
@@ -1505,7 +1776,7 @@ def _render_with_new_xy(f: Any, x: Any, y: Any, kwargs: dict[str, Any]) -> bool:
             lines=lines,
             blockfill=blockfill,
         )
-        return _render_ptype6_rotated_pole(
+        rendered = _render_ptype6_rotated_pole(
             f=f,
             data=data,
             kwargs=kwargs,
@@ -1525,6 +1796,11 @@ def _render_with_new_xy(f: Any, x: Any, y: Any, kwargs: dict[str, Any]) -> bool:
             zorder=zorder,
             finalize_callback=maybe_autosave,
         )
+
+        if animation:
+            _emit_animation_frame_callback(f=f, ptype=data.ptype, kwargs=kwargs)
+
+        return rendered
 
     if pv_runtime.user_plot == 0:
         ensure_xy_viewport()
@@ -1609,7 +1885,6 @@ def _render_with_new_xy(f: Any, x: Any, y: Any, kwargs: dict[str, Any]) -> bool:
     if data.ptype == 1:
         map_runtime = MapSet(plotvars)
 
-        animation = bool(kwargs.get("animation", False))
         reuse_map_background = bool(kwargs.get("reuse_map_background", False))
         clear_previous_frame = bool(kwargs.get("clear_previous_frame", False))
         draw_static_map = not (animation and reuse_map_background)
@@ -1761,16 +2036,15 @@ def _render_with_new_xy(f: Any, x: Any, y: Any, kwargs: dict[str, Any]) -> bool:
         renderer = XYContourRenderer(layout=layout, data=data, colour_scale=cs)
 
     transform_first = kwargs.get("transform_first", None)
-    if data.ptype == 1 and plotvars.proj in ("npstere", "spstere"):
-        # Polar stereographic can show longitude striping when Cartopy
-        # pre-transforms dense regular lon/lat grids in data space.
-        # Rendering in map space is robust for both cyclic and non-cyclic data.
-        transform_first = False
-    elif data.ptype == 1 and plotvars.proj == "ortho" and not data.x_is_cyclic:
-        # Non-cyclic grids on ortho are prone to clipping artefacts with
-        # transform_first=True on near-global dense grids, so force it off.
-        # Cyclic grids use the default (True for 1-D arrays) which avoids a
-        # visible seam at the 0°/360° boundary.
+    if (
+        data.ptype == 1
+        and transform_first is None
+        and plotvars.proj in ("ortho", "npstere", "spstere")
+    ):
+        # Azimuthal projections are prone to clipping/striping artefacts when
+        # Cartopy pre-transforms dense regular lon/lat grids in data space.
+        # Use map-space rendering by default; explicit user overrides are
+        # still respected via transform_first kwarg.
         transform_first = False
 
     if fill:
@@ -1796,14 +2070,16 @@ def _render_with_new_xy(f: Any, x: Any, y: Any, kwargs: dict[str, Any]) -> bool:
     if data.ptype == 1:
         map_runtime = MapSet(plotvars)
 
-        animation = bool(kwargs.get("animation", False))
         reuse_map_background = bool(kwargs.get("reuse_map_background", False))
         clear_previous_frame = bool(kwargs.get("clear_previous_frame", False))
         draw_static_map = not (animation and reuse_map_background)
 
         if animation and clear_previous_frame:
             _clear_animation_title_artist(plotvars)
-            _clear_animation_colorbar(plotvars)
+            if not reuse_map_background:
+                _clear_animation_colorbar(plotvars)
+
+        draw_features_each_frame = bool(animation and reuse_map_background)
 
         if draw_static_map:
             apply_axes(
@@ -1816,22 +2092,54 @@ def _render_with_new_xy(f: Any, x: Any, y: Any, kwargs: dict[str, Any]) -> bool:
                 yticklabels=kwargs.get("yticklabels", None),
             )
 
-            _apply_map_features(
+            feature_kwargs = dict(kwargs)
+            if draw_features_each_frame:
+                raw_zorder = kwargs.get("zorder", 1)
+                try:
+                    contour_zorder = float(raw_zorder)
+                except (TypeError, ValueError):
+                    contour_zorder = 1.0
+                feature_kwargs["zorder"] = contour_zorder + 1.0
+
+            map_feature_artists = _apply_map_features(
                 mymap=pv_runtime.mymap,
                 continent_color=pv_dec.continent_color or "k",
                 continent_thickness=pv_dec.continent_thickness or 1.5,
                 continent_linestyle=pv_dec.continent_linestyle or "solid",
-                kwargs=kwargs,
+                kwargs=feature_kwargs,
             )
+            if draw_features_each_frame:
+                pv_runtime._contour_animation_map_feature_artists = map_feature_artists
             if kwargs.get("grid", pv_dec.grid):
                 map_runtime.draw_grid()
 
             map_runtime.draw_polar_axes()
 
+        elif draw_features_each_frame:
+            feature_kwargs = dict(kwargs)
+            raw_zorder = kwargs.get("zorder", 1)
+            try:
+                contour_zorder = float(raw_zorder)
+            except (TypeError, ValueError):
+                contour_zorder = 1.0
+            feature_kwargs["zorder"] = contour_zorder + 1.0
+            pv_runtime._contour_animation_map_feature_artists = _apply_map_features(
+                mymap=pv_runtime.mymap,
+                continent_color=pv_dec.continent_color or "k",
+                continent_thickness=pv_dec.continent_thickness or 1.5,
+                continent_linestyle=pv_dec.continent_linestyle or "solid",
+                kwargs=feature_kwargs,
+            )
+
         # Persist only dynamic contour artists for animation updates.
         pv_runtime._contour_animation_artists = list(renderer.frame_artists)
 
-    if colorbar:
+    render_colorbar_this_frame = True
+    if bool(kwargs.get("animation", False)) and bool(kwargs.get("reuse_map_background", False)):
+        frame_index = int(getattr(pv_runtime, "_animation_frame_index", 0))
+        render_colorbar_this_frame = frame_index == 0
+
+    if colorbar and render_colorbar_this_frame:
         colorbar_artist = renderer.render_colorbar(
             orientation=colorbar_orientation,
             shrink=kwargs.get("colorbar_shrink", None),
@@ -1878,7 +2186,17 @@ def _render_with_new_xy(f: Any, x: Any, y: Any, kwargs: dict[str, Any]) -> bool:
             fontweight=pv_dec.title_fontweight,
         )
 
+    if animation:
+        _emit_animation_meta_callback(
+            kwargs=kwargs,
+            ptype=data.ptype,
+            levels_locked=pv_scale.levels is not None,
+        )
+
     maybe_autosave()
+
+    if animation:
+        _emit_animation_frame_callback(f=f, ptype=data.ptype, kwargs=kwargs)
 
     return True
 
@@ -1922,6 +2240,25 @@ def con(f=None, x=None, y=None, **kwargs):
         raise NotImplementedError(
             "Contour case not implemented in refactored renderer yet"
         )
+
+    animation = bool(kwargs.get("animation", False))
+    if animation and isinstance(f, cf.Field):
+        ndim_gt_1 = _count_data_axes_gt_one(f)
+        if ndim_gt_1 > 2:
+            axis = _choose_animation_sequence_axis(
+                f,
+                kwargs.get("animation_axis", "auto"),
+                kwargs.get("ptype", None),
+            )
+            if axis is not None:
+                if _render_animation_sequence(
+                    f=f,
+                    x=x,
+                    y=y,
+                    kwargs=kwargs,
+                    animation_axis=axis,
+                ):
+                    return None
 
     if _render_with_new_xy(f=f, x=x, y=y, kwargs=kwargs):
         return None
