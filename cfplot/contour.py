@@ -63,6 +63,46 @@ from .state import (
 logger = logging.getLogger(__name__)
 
 
+def _animation_construct_logical_axis(construct: Any) -> str | None:
+    """Best-effort logical axis name for a construct."""
+    for axis_name in ("T", "Z", "Y", "X"):
+        if bool(getattr(construct, axis_name, False)):
+            return axis_name
+    return None
+
+
+def _resolve_animation_construct(f: Any, axis_spec: Any) -> tuple[str | None, Any, str | None]:
+    """Resolve an animation axis spec to construct key, construct, and logical axis."""
+    if not isinstance(f, cf.Field) or axis_spec is None:
+        return (None, None, None)
+
+    axis_text = str(axis_spec).strip()
+    if not axis_text:
+        return (None, None, None)
+
+    def _from_axis_key(axis_key: str, logical_axis: str | None = None) -> tuple[str | None, Any, str | None]:
+        resolved_key = axis_key
+        if logical_axis == "Z":
+            try:
+                resolved_key = utility.find_z(f)
+            except Exception:
+                resolved_key = axis_key
+
+        try:
+            construct = f.construct(resolved_key)
+        except Exception:
+            return (None, None, None)
+
+        resolved_logical = logical_axis or _animation_construct_logical_axis(construct)
+        return (str(resolved_key), construct, resolved_logical)
+
+    axis_upper = axis_text.upper()
+    if axis_upper in {"T", "Z", "Y", "X"}:
+        return _from_axis_key(axis_upper, logical_axis=axis_upper)
+
+    return _from_axis_key(axis_text)
+
+
 def _detect_lon_cyclic(f: "cf.Field", x: "np.ndarray | None") -> bool:
     """Return True when the longitude axis closes on itself at 360°.
 
@@ -1138,20 +1178,12 @@ def _animation_axis_value_object(f: Any, axis: str | None) -> Any:
     if axis is None or not isinstance(f, cf.Field):
         return None
 
-    axis_key = axis
-    if axis == "Z":
-        try:
-            axis_key = utility.find_z(f)
-        except Exception:
-            axis_key = axis
-
-    try:
-        construct = f.construct(axis_key)
-    except Exception:
+    axis_key, construct, logical_axis = _resolve_animation_construct(f, axis)
+    if axis_key is None or construct is None:
         return None
 
     try:
-        if axis == "T" and getattr(construct, "dtarray", None) is not None:
+        if logical_axis == "T" and getattr(construct, "dtarray", None) is not None:
             values = np.asanyarray(construct.dtarray)
         else:
             values = np.asanyarray(construct.array)
@@ -1243,12 +1275,11 @@ def _infer_animation_axis(f: Any, axis_spec: Any, ptype: int | None) -> str | No
         return None
 
     axis_upper = axis_text.upper()
-    valid_axes = ("T", "Z", "Y", "X")
-
     if axis_upper != "AUTO":
-        if axis_upper in valid_axes and f.has_construct(axis_upper):
-            return axis_upper
-        return None
+        axis_key, construct, _logical_axis = _resolve_animation_construct(f, axis_text)
+        if axis_key is None or construct is None:
+            return None
+        return str(construct.identity(default=axis_key))
 
     try:
         dims = utility.find_dim_names(f)
@@ -1264,11 +1295,12 @@ def _infer_animation_axis(f: Any, axis_spec: Any, ptype: int | None) -> str | No
             if axis not in dims or axis in ptype_axes:
                 continue
             try:
-                values = np.asanyarray(f.construct(axis).array)
+                construct = f.construct(axis)
+                values = np.asanyarray(construct.array)
             except Exception:
                 continue
             if values.size == 1:
-                return axis
+                return str(construct.identity(default=axis.lower()))
         return None
 
     # ptype=0 fallback: prefer temporal slices first, then vertical,
@@ -1277,31 +1309,24 @@ def _infer_animation_axis(f: Any, axis_spec: Any, ptype: int | None) -> str | No
         if axis not in dims:
             continue
         try:
-            values = np.asanyarray(f.construct(axis).array)
+            construct = f.construct(axis)
+            values = np.asanyarray(construct.array)
         except Exception:
             continue
         if values.size == 1:
-            return axis
+            return str(construct.identity(default=axis.lower()))
 
     return None
 
 
 def _animation_axis_value_text(f: cf.Field, axis: str) -> str | None:
     """Return axis/value text used in animation titles."""
-    axis_key = axis
-    if axis == "Z":
-        try:
-            axis_key = utility.find_z(f)
-        except Exception:
-            axis_key = axis
-
-    try:
-        construct = f.construct(axis_key)
-    except Exception:
+    axis_key, construct, logical_axis = _resolve_animation_construct(f, axis)
+    if axis_key is None or construct is None:
         return None
 
     try:
-        if axis == "T" and getattr(construct, "dtarray", None) is not None:
+        if logical_axis == "T" and getattr(construct, "dtarray", None) is not None:
             values = np.asanyarray(construct.dtarray)
         else:
             values = np.asanyarray(construct.array)
@@ -1375,15 +1400,12 @@ def _animation_axis_size_gt_one(f: Any, axis: str | None) -> int:
     if not isinstance(f, cf.Field) or axis is None:
         return 0
 
-    axis_key = axis
-    if axis == "Z":
-        try:
-            axis_key = utility.find_z(f)
-        except Exception:
-            axis_key = axis
+    axis_key, construct, _logical_axis = _resolve_animation_construct(f, axis)
+    if axis_key is None or construct is None:
+        return 0
 
     try:
-        values = np.asanyarray(f.construct(axis_key).array)
+        values = np.asanyarray(construct.array)
     except Exception:
         return 0
 
@@ -1406,29 +1428,21 @@ def _choose_animation_sequence_axis(f: Any, axis_spec: Any, ptype: int | None) -
         if candidate in ptype_axes:
             continue
         if _animation_axis_size_gt_one(f, candidate) > 1:
-            return candidate
+            resolved = _infer_animation_axis(f, candidate, ptype)
+            return resolved or candidate
 
     for candidate in ("T", "Z", "Y", "X"):
         if _animation_axis_size_gt_one(f, candidate) > 1:
-            return candidate
+            resolved = _infer_animation_axis(f, candidate, ptype)
+            return resolved or candidate
 
     return None
 
 
 def _slice_animation_frame(f: cf.Field, axis: str, frame_value: Any) -> cf.Field:
     """Return one frame slice for the chosen animation axis."""
-    axis_key = axis
-    if axis == "Z":
-        try:
-            axis_key = utility.find_z(f)
-        except Exception:
-            axis_key = axis
-
-    try:
-        construct = f.construct(axis_key)
-        coord_name = str(construct.identity(default=axis.lower()))
-    except Exception:
-        coord_name = axis
+    axis_key, construct, _logical_axis = _resolve_animation_construct(f, axis)
+    coord_name = str(construct.identity(default=str(axis_key or axis).lower()))
 
     try:
         return f.subspace(**{coord_name: frame_value})
@@ -1445,16 +1459,12 @@ def _render_animation_sequence(
     animation_axis: str,
 ) -> bool:
     """Render an animation by slicing a >2D field into 2D frames."""
-    axis_key = animation_axis
-    if animation_axis == "Z":
-        try:
-            axis_key = utility.find_z(f)
-        except Exception:
-            axis_key = animation_axis
+    axis_key, construct, logical_axis = _resolve_animation_construct(f, animation_axis)
+    if axis_key is None or construct is None:
+        return False
 
     try:
-        construct = f.construct(axis_key)
-        if animation_axis == "T" and getattr(construct, "dtarray", None) is not None:
+        if logical_axis == "T" and getattr(construct, "dtarray", None) is not None:
             frame_values = np.asanyarray(construct.dtarray).reshape(-1)
         else:
             frame_values = np.asanyarray(construct.array).reshape(-1)
