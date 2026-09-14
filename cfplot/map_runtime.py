@@ -670,16 +670,17 @@ def _apply_map_features(
     continent_thickness: float | None = None,
     continent_linestyle: str | None = None,
     kwargs: dict[str, Any] | None = None,
-) -> None:
+) -> list[Any]:
     """Apply coastlines and ocean/land/lake feature colors to a map axes.
     
     This centralizes the common map feature colouring logic.
     """
     if mymap is None:
-        return
+        return []
     
     if kwargs is None:
         kwargs = {}
+    artists: list[Any] = []
 
     import cartopy.feature as cfeature
 
@@ -689,35 +690,37 @@ def _apply_map_features(
         scale=plotvars.resolution,
         facecolor="none",
     )
-    mymap.add_feature(
+    artists.append(mymap.add_feature(
         feature,
         edgecolor=continent_color or "k",
         linewidth=continent_thickness or 1.5,
         linestyle=continent_linestyle or "solid",
         zorder=kwargs.get("zorder", 1),
-    )
+    ))
 
     if plotvars.ocean_color is not None:
-        mymap.add_feature(
+        artists.append(mymap.add_feature(
             cfeature.OCEAN,
             edgecolor="face",
             facecolor=plotvars.ocean_color,
             zorder=plotvars.feature_zorder,
-        )
+        ))
     if plotvars.land_color is not None:
-        mymap.add_feature(
+        artists.append(mymap.add_feature(
             cfeature.LAND,
             edgecolor="face",
             facecolor=plotvars.land_color,
             zorder=plotvars.feature_zorder,
-        )
+        ))
     if plotvars.lake_color is not None:
-        mymap.add_feature(
+        artists.append(mymap.add_feature(
             cfeature.LAKES,
             edgecolor="face",
             facecolor=plotvars.lake_color,
             zorder=plotvars.feature_zorder,
-        )
+        ))
+
+    return artists
 
 
 def _apply_map_axes(

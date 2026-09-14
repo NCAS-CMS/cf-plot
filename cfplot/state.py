@@ -143,8 +143,14 @@ class pvars:
         user_plot: int = 0
         _contour_session_open: bool = False
         _contour_animation_artists: list[Any] = field(default_factory=list)
+        _contour_animation_map_feature_artists: list[Any] = field(default_factory=list)
         _contour_animation_title_artist: Any = None
         _contour_animation_colorbar: Any = None
+        _animation_session_id: str = ""
+        _animation_meta_callback: Any = None
+        _animation_frame_callback: Any = None
+        _animation_meta_emitted: bool = False
+        _animation_frame_index: int = 0
 
     @dataclass
     class OutputState:
@@ -246,8 +252,14 @@ def reset_runtime_state() -> None:
     plotvars.user_plot = 0
     plotvars._contour_session_open = False
     plotvars._contour_animation_artists = []
+    plotvars._contour_animation_map_feature_artists = []
     plotvars._contour_animation_title_artist = None
     plotvars._contour_animation_colorbar = None
+    plotvars._animation_session_id = ""
+    plotvars._animation_meta_callback = None
+    plotvars._animation_frame_callback = None
+    plotvars._animation_meta_emitted = False
+    plotvars._animation_frame_index = 0
     plotvars.twinx = None
     plotvars.twiny = None
     plotvars.plot_xmin = None

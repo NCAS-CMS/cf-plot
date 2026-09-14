@@ -33,6 +33,9 @@ def gopen(
     hspace: float | None = None,
     dpi: float | None = None,
     user_position: bool = False,
+    animation_session_id: str | None = None,
+    animation_meta_callback: Any = None,
+    animation_frame_callback: Any = None,
 ) -> None:
     """Open a contour-runtime graphics session compatible with cfplot.gopen."""
     plotvars.rows = rows
@@ -54,6 +57,14 @@ def gopen(
         dpi=dpi,
         user_position=user_position,
     )
+
+    plotvars.runtime._animation_session_id = (
+        "" if animation_session_id is None else str(animation_session_id)
+    )
+    plotvars.runtime._animation_meta_callback = animation_meta_callback
+    plotvars.runtime._animation_frame_callback = animation_frame_callback
+    plotvars.runtime._animation_meta_emitted = False
+    plotvars.runtime._animation_frame_index = 0
 
     plotvars._contour_session_open = True
 

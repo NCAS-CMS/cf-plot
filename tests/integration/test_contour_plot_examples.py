@@ -22,6 +22,7 @@ DATA_DIR = Path(__file__).parent.parent.parent / "docs" / "source" / "example-da
 TEST_GEN_DIR = Path(__file__).parent.parent.parent / "generated-example-images"
 #REF_IMAGE_DIR = Path(__file__).parent.parent / "reference-example-images"
 REF_IMAGE_DIR = Path(__file__).parent.parent / "new_reference-example-images"
+LOCAL_DATA_DIR = Path(__file__).parent.parent / "data"
 TEST_GEN_DIR.mkdir(parents=True, exist_ok=True)
 
 
@@ -85,6 +86,23 @@ def _assert_reference_match(example_id: str) -> None:
     )
     if result is not None:
         pytest.fail(f"Image mismatch for example {example_id}: {result}")
+
+
+def _assert_reference_match_strict(generated: Path, reference: Path) -> None:
+    """Compare a generated image against a reference with zero tolerance."""
+    if not reference.exists():
+        pytest.skip(f"Missing reference image: {reference}")
+    if not generated.exists():
+        pytest.fail(f"Generated image missing: {generated}")
+
+    result = mpl_compare.compare_images(
+        str(reference),
+        str(generated),
+        tol=0.0,
+        in_decorator=True,
+    )
+    if result is not None:
+        pytest.fail(f"Image mismatch: {result}")
 
 
 @pytest.fixture(autouse=True)
@@ -188,6 +206,56 @@ def test_example_5_south_pole_with_boundary(ggap_file):
     cfp.mapset(proj="spstere", boundinglat=-30, lon_0=180)
     cfp.con(f.subspace(pressure=500))
     _assert_reference_match("5")
+
+
+@pytest.mark.integration
+def test_regression_seaice_ortho_bbox_image():
+    """Regression image test for sea-ice orthographic rendering with bbox."""
+    seaice_path = LOCAL_DATA_DIR / "example_seaice.nc"
+    if not seaice_path.exists():
+        pytest.skip(f"Missing test data: {seaice_path}")
+
+    f = cf.read(str(seaice_path))[0]
+    generated = TEST_GEN_DIR / "gen_fig_seaice_ortho_bbox.png"
+    reference = REF_IMAGE_DIR / "ref_fig_seaice_ortho_bbox.png"
+
+    cfp.setvars(file=str(generated), viewer="matplotlib")
+    cfp.mapset(
+        proj="ortho",
+        resolution="110m",
+        lonmin=-180.0,
+        lonmax=180.0,
+        latmin=-90.0,
+        latmax=90.0,
+        lon_0=0.0,
+        lat_0=0.0,
+    )
+    cfp.con(f, fill=True, lines=False, line_labels=False, title="seaice_ortho_bbox")
+
+    _assert_reference_match_strict(generated=generated, reference=reference)
+
+
+@pytest.mark.integration
+def test_regression_npstere_da193_image():
+    """Regression image test for npstere seam/striping behavior."""
+    da193_path = LOCAL_DATA_DIR / "da193_example.nc"
+    if not da193_path.exists():
+        pytest.skip(f"Missing test data: {da193_path}")
+
+    f = cf.read(str(da193_path))[0]
+    generated = TEST_GEN_DIR / "gen_fig_npstere_da193.png"
+    reference = REF_IMAGE_DIR / "ref_fig_npstere_da193.png"
+
+    cfp.setvars(file=str(generated), viewer="matplotlib")
+    cfp.mapset(
+        proj="npstere",
+        resolution="110m",
+        boundinglat=0.0,
+        lon_0=0.0,
+    )
+    cfp.con(f, fill=True, lines=False, line_labels=False, title="npstere_da193")
+
+    _assert_reference_match_strict(generated=generated, reference=reference)
 
 
 @pytest.mark.integration
