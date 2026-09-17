@@ -4,12 +4,29 @@ cf-plot: code-light plotting for earth science and aligned research
 Documentation is hosted and found at: https://ncas-cms.github.io/cf-plot/
 """
 
-from importlib.metadata import PackageNotFoundError
-from importlib.metadata import version as pkg_version
-from pathlib import Path
+from .colorbar import cbar
+from .colour import cscale
+from .contour import con, levs
+from .layout_runtime import gclose, gopen, gpos, gset
+from .line import lineplot
+from .map_runtime import mapset
+from .rotated_runtime import _render_rotated_grid_axes
+from .state import plotvars, reset_runtime_state, setvars
+from .stipple import stipple
+from .stream import stream
+from .trajectory import traj
+from .utility import gvals as _gvals_impl
+from .utility import mapaxis as _mapaxis_impl
+from .utility import regrid
+from .vector import vect
 
 __author__ = "Andy Heaps, Sadie Bartholomew, Bryan Lawrence"
 __date__ = "16th May, 2026"
+
+
+from importlib.metadata import PackageNotFoundError
+from importlib.metadata import version as pkg_version
+from pathlib import Path
 
 
 def _version_from_pyproject():
@@ -46,22 +63,6 @@ def _resolve_version():
 
 
 __version__ = _resolve_version()
-
-from .colorbar import cbar
-from .colour import cscale
-from .contour import con, levs
-from .layout_runtime import gclose, gopen, gpos, gset
-from .line import lineplot
-from .map_runtime import mapset
-from .rotated_runtime import _render_rotated_grid_axes
-from .state import plotvars, reset_runtime_state, setvars
-from .stipple import stipple
-from .stream import stream
-from .trajectory import traj
-from .utility import gvals as _gvals_impl
-from .utility import mapaxis as _mapaxis_impl
-from .utility import regrid
-from .vector import vect
 
 
 def reset():
