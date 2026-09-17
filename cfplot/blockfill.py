@@ -16,8 +16,8 @@ import numpy as np
 import shapely.geometry as sgeom
 from matplotlib.collections import PolyCollection
 
-from .colour import get_colour_scale_map
 from . import utility
+from .colour import get_colour_scale_map
 from .state import plotvars
 
 

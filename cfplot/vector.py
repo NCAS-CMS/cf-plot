@@ -4,6 +4,7 @@ import cartopy.crs as ccrs
 import cf
 import numpy as np
 
+from . import utility
 from .layout_runtime import (
     apply_axes,
     ensure_runtime_session,
@@ -21,7 +22,6 @@ from .map_runtime import (
 )
 from .rotated_runtime import _render_rotated_grid_axes
 from .state import plotvars
-from . import utility
 from .utility import mapaxis
 from .validate import _check_data
 

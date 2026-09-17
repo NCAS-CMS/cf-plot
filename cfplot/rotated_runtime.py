@@ -16,7 +16,7 @@ from . import utility
 from .blockfill import _bfill
 from .colorbar import cbar
 from .layout_runtime import apply_axes, ensure_xy_viewport, set_plot_limits
-from .map_runtime import MapSet, _apply_map_title, _apply_map_features
+from .map_runtime import MapSet, _apply_map_features, _apply_map_title
 from .state import plotvars
 
 

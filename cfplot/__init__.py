@@ -4,7 +4,8 @@ cf-plot: code-light plotting for earth science and aligned research
 Documentation is hosted and found at: https://ncas-cms.github.io/cf-plot/
 """
 
-from importlib.metadata import PackageNotFoundError, version as pkg_version
+from importlib.metadata import PackageNotFoundError
+from importlib.metadata import version as pkg_version
 from pathlib import Path
 
 __author__ = "Andy Heaps, Sadie Bartholomew, Bryan Lawrence"
@@ -48,20 +49,19 @@ __version__ = _resolve_version()
 
 from .colorbar import cbar
 from .colour import cscale
-from .contour import con
-from .contour import levs
-from .layout_runtime import gclose, gopen, gset
-from .layout_runtime import gpos
+from .contour import con, levs
+from .layout_runtime import gclose, gopen, gpos, gset
 from .line import lineplot
 from .map_runtime import mapset
-from .state import plotvars, setvars
+from .rotated_runtime import _render_rotated_grid_axes
+from .state import plotvars, reset_runtime_state, setvars
 from .stipple import stipple
 from .stream import stream
 from .trajectory import traj
-from .state import reset_runtime_state
-from .utility import gvals as _gvals_impl, mapaxis as _mapaxis_impl, regrid
+from .utility import gvals as _gvals_impl
+from .utility import mapaxis as _mapaxis_impl
+from .utility import regrid
 from .vector import vect
-from .rotated_runtime import _render_rotated_grid_axes
 
 
 def reset():

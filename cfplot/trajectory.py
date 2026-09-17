@@ -4,8 +4,8 @@ import cartopy.crs as ccrs
 import cf
 import numpy as np
 
-from .colour import cbar
-from .colour import cscale
+from . import utility
+from .colour import cbar, cscale
 from .layout_runtime import (
     ensure_runtime_session,
     finalize_runtime_session,
@@ -18,7 +18,6 @@ from .map_runtime import (
     _ensure_map_axes,
 )
 from .state import plotvars
-from . import utility
 
 
 def traj(

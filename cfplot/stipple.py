@@ -2,8 +2,8 @@ import cartopy.crs as ccrs
 import cf
 import numpy as np
 
-from .state import plotvars
 from . import utility
+from .state import plotvars
 from .validate import _check_data
 
 

@@ -1,14 +1,14 @@
 import cf
 import numpy as np
 
-from .map_runtime import _apply_dim_titles
+from . import utility
 from .layout_runtime import (
     ensure_runtime_session,
     finalize_runtime_session,
     set_axis_visibility,
 )
+from .map_runtime import _apply_dim_titles
 from .state import plotvars
-from . import utility
 from .utility import mapaxis
 
 

@@ -4,7 +4,8 @@ from __future__ import annotations
 
 import os
 import sys
-from dataclasses import MISSING, dataclass, field, fields as dc_fields
+from dataclasses import MISSING, dataclass, field
+from dataclasses import fields as dc_fields
 from typing import Any, ClassVar
 
 import cartopy

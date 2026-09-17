@@ -23,21 +23,21 @@ function-level cfplot imports.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, replace
 import logging
 import time
+from dataclasses import dataclass, replace
 from typing import Any
 
-import cf
 import cartopy.crs as ccrs
+import cf
 import matplotlib.colors
 import numpy as np
 from matplotlib.axes import Axes
 
 from . import utility
 from .blockfill import _bfill, _bfill_ugrid
-from .colour import apply_colour_scale, get_colour_scale_map
 from .colorbar import cbar
+from .colour import apply_colour_scale, get_colour_scale_map
 from .layout_runtime import (
     apply_axes,
     ensure_xy_viewport,
@@ -47,8 +47,8 @@ from .layout_runtime import (
 from .map_runtime import (
     MapSet,
     _apply_dim_titles,
-    _apply_map_title,
     _apply_map_features,
+    _apply_map_title,
     ensure_map_viewport,
 )
 from .rotated_runtime import _render_ptype6_rotated_pole

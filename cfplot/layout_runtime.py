@@ -14,8 +14,7 @@ from typing import Any
 import matplotlib
 import matplotlib.pyplot as plot
 
-from .state import plotvars
-from .state import reset_runtime_state
+from .state import plotvars, reset_runtime_state
 
 
 def gopen(

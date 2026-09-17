@@ -1164,8 +1164,8 @@ def cf_data_assign(
     -------
     field, x, y, ptype, colorbar_title, xlabel, ylabel, xpole, ypole
     """
-    import cf as _cf
     import cartopy.crs as _ccrs
+    import cf as _cf
 
     # Check input data has the correct number of dimensions.
     # Rotated-pole fields may legitimately have extra dimensions.
