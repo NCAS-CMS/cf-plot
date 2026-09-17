@@ -77,7 +77,22 @@ def _gvals(*args, **kwargs):
     return _gvals_impl(*args, **kwargs)
 
 
-def rgaxes(*, xpole=None, ypole=None, xvec=None, yvec=None, xticks=None, xticklabels=None, yticks=None, yticklabels=None, axes=True, xaxis=True, yaxis=True, xlabel=None, ylabel=None):
+def rgaxes(
+    *,
+    xpole=None,
+    ypole=None,
+    xvec=None,
+    yvec=None,
+    xticks=None,
+    xticklabels=None,
+    yticks=None,
+    yticklabels=None,
+    axes=True,
+    xaxis=True,
+    yaxis=True,
+    xlabel=None,
+    ylabel=None,
+):
     return _render_rotated_grid_axes(
         xpole=xpole,
         ypole=ypole,

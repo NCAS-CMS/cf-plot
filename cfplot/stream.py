@@ -98,7 +98,9 @@ def stream(
             xpole,
             ypole,
         ) = utility.cf_data_assign(
-            u, colorbar_title, proj=("rotated" if rotated_vect else plotvars.proj)
+            u,
+            colorbar_title,
+            proj=("rotated" if rotated_vect else plotvars.proj),
         )
         del xpole, ypole
     elif isinstance(u, cf.FieldList):
@@ -135,7 +137,9 @@ def stream(
             xpole,
             ypole,
         ) = utility.cf_data_assign(
-            v, colorbar_title, proj=("rotated" if rotated_vect else plotvars.proj)
+            v,
+            colorbar_title,
+            proj=("rotated" if rotated_vect else plotvars.proj),
         )
         del v_x, v_y, xpole, ypole
     elif isinstance(v, cf.FieldList):

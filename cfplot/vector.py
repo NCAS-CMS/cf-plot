@@ -35,8 +35,6 @@ def _mapaxis(min=None, max=None, type=None):
     )
 
 
-
-
 def axes_plot(
     xticks=None,
     xticklabels=None,
@@ -238,7 +236,9 @@ def vect(
             xpole,
             ypole,
         ) = utility.cf_data_assign(
-            u, colorbar_title, proj=("rotated" if rotated_vect else plotvars.proj)
+            u,
+            colorbar_title,
+            proj=("rotated" if rotated_vect else plotvars.proj),
         )
     elif isinstance(u, cf.FieldList):
         raise TypeError("Can't plot a field list")
@@ -278,7 +278,9 @@ def vect(
             xpole,
             ypole,
         ) = utility.cf_data_assign(
-            v, colorbar_title, proj=("rotated" if rotated_vect else plotvars.proj)
+            v,
+            colorbar_title,
+            proj=("rotated" if rotated_vect else plotvars.proj),
         )
     elif isinstance(v, cf.FieldList):
         raise TypeError("Can't plot a field list")

@@ -6,7 +6,11 @@ import numpy as np
 
 from .colour import cbar
 from .colour import cscale
-from .layout_runtime import ensure_runtime_session, finalize_runtime_session, gset
+from .layout_runtime import (
+    ensure_runtime_session,
+    finalize_runtime_session,
+    gset,
+)
 from .map_runtime import (
     _apply_current_map_title,
     _apply_map_axes_with_toggles,

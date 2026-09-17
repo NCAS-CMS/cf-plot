@@ -66,7 +66,9 @@ def apply_colour_scale(
         if above == 1:
             x_above = npoints * 2 - 1
         if upper > 1:
-            x_above = ((npoints - 1) / float(upper - 1)) * np.arange(upper) + npoints
+            x_above = ((npoints - 1) / float(upper - 1)) * np.arange(
+                upper
+            ) + npoints
 
         positions = np.append(x_below, x_above)
         red, green, blue = utility.interpolate_colour_channels(

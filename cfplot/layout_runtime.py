@@ -85,7 +85,12 @@ def gclose(view: bool = True) -> None:
     file = plotvars.file
     figure = plotvars.master_plot or getattr(plotvars.plot, "figure", None)
     if figure is not None and file is not None:
-        if os.path.splitext(file)[1].lower() not in (".ps", ".eps", ".png", ".pdf"):
+        if os.path.splitext(file)[1].lower() not in (
+            ".ps",
+            ".eps",
+            ".png",
+            ".pdf",
+        ):
             file = file + ".png"
         figure.savefig(
             file,
@@ -144,12 +149,16 @@ def set_axis_visibility(
     if not xaxis:
         axis.set_xticks([])
         axis.set_xticklabels([])
-        axis.tick_params(bottom=False, top=False, labelbottom=False, labeltop=False)
+        axis.tick_params(
+            bottom=False, top=False, labelbottom=False, labeltop=False
+        )
 
     if not yaxis:
         axis.set_yticks([])
         axis.set_yticklabels([])
-        axis.tick_params(left=False, right=False, labelleft=False, labelright=False)
+        axis.tick_params(
+            left=False, right=False, labelleft=False, labelright=False
+        )
 
 
 def ensure_runtime_session(pos: int = 1) -> bool:
@@ -505,7 +514,9 @@ def _select_position(pos: int) -> None:
             [plotvars.plot_xmin, plotvars.plot_ymin, delta_x, delta_y]
         )
 
-    plotvars.plot.tick_params(which="both", direction="out", right=True, top=True)
+    plotvars.plot.tick_params(
+        which="both", direction="out", right=True, top=True
+    )
     plotvars.pos = pos
     plotvars.gpos_called = True
     plotvars.mymap = None
@@ -609,4 +620,3 @@ def _apply_xy_axes(
     for label in plotvars.plot.yaxis.get_ticklabels():
         label.set_fontsize(plotvars.axis_label_fontsize)
         label.set_fontweight(plotvars.axis_label_fontweight)
-

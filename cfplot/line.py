@@ -182,9 +182,7 @@ def lineplot(
 
                 # x label
                 xlabel_units = str(getattr(f.construct(mydim), "Units", ""))
-                plot_xlabel = (
-                    f"{utility.cf_var_name(field=f, dim=mydim)} ({xlabel_units})"
-                )
+                plot_xlabel = f"{utility.cf_var_name(field=f, dim=mydim)} ({xlabel_units})"
                 y = np.squeeze(f.array)
 
                 # y label

@@ -143,7 +143,9 @@ class pvars:
         user_plot: int = 0
         _contour_session_open: bool = False
         _contour_animation_artists: list[Any] = field(default_factory=list)
-        _contour_animation_map_feature_artists: list[Any] = field(default_factory=list)
+        _contour_animation_map_feature_artists: list[Any] = field(
+            default_factory=list
+        )
         _contour_animation_title_artist: Any = None
         _contour_animation_colorbar: Any = None
         _animation_session_id: str = ""
