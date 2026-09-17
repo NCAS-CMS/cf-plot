@@ -4,7 +4,6 @@ Migrated from cfplot/test/test_examples.py::LonLatTest
 """
 
 import numpy as np
-import pytest
 
 import cfplot as cfp
 
