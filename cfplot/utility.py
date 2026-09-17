@@ -450,7 +450,6 @@ def calculate_levels(
 
         if level_spacing in ("outlier", "inspect"):
             hist = np.histogram(field, 100)[0]
-            pts_arr = np.size(field)
             rate = 0.01
 
             if sum(hist[1:-2]) == 0:
