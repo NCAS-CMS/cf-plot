@@ -1,6 +1,8 @@
-import cf
-import cfplot as cfp
 from pathlib import Path
+
+import cf
+
+import cfplot as cfp
 
 # Path to test data
 DATA_FILE1 = Path(__file__).parent / "data" / "da193_example.nc"

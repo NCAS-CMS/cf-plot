@@ -4,8 +4,8 @@ Migrated from cfplot/test/test_examples.py::ExamplesTest
 These tests verify that vect(), stipple(), traj(), and lineplot() functions work with real data.
 """
 
-from pathlib import Path
 import shutil
+from pathlib import Path
 
 import cf
 import matplotlib.pyplot as plt

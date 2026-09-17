@@ -3,9 +3,7 @@ import inspect
 import numpy as np
 import pytest
 
-from cfplot import blockfill
-from cfplot import contour
-from cfplot import layout_runtime
+from cfplot import blockfill, contour, layout_runtime
 
 
 def test_con_delegates_to_legacy(monkeypatch):

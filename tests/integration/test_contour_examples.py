@@ -6,6 +6,7 @@ import cf
 import matplotlib.pyplot as plt
 import pytest
 from netCDF4 import Dataset as ncfile
+
 import cfplot as cfp
 
 # Path to test data
