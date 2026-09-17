@@ -259,7 +259,7 @@ def _bfill(
             for i, start in enumerate(
                 np.argmax(np.abs(np.diff(x)) > 180, axis=1)
             ):
-                fixed_x[i, start + 1 :] += 360
+                fixed_x[i, start + 1:] += 360
             plotvars.image = plotvars.mymap.pcolormesh(
                 fixed_x, y, field, cmap=cmap, transform=transform, norm=norm
             )

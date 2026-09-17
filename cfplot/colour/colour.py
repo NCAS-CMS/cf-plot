@@ -13,7 +13,7 @@ def get_colour_scale_map() -> list[str]:
     """Return the active colour scale trimmed for extend settings."""
     cscale_ncols = len(plotvars.cs)
     if plotvars.levels_extend == "both":
-        return plotvars.cs[1 : cscale_ncols - 1]
+        return plotvars.cs[1: cscale_ncols - 1]
     if plotvars.levels_extend == "min":
         return plotvars.cs[1:]
     if plotvars.levels_extend == "max":
@@ -77,9 +77,9 @@ def apply_colour_scale(
 
         if uniform:
             midpoint = max(below, above)
-            red = red[midpoint - below : midpoint + above]
-            green = green[midpoint - below : midpoint + above]
-            blue = blue[midpoint - below : midpoint + above]
+            red = red[midpoint - below: midpoint + above]
+            green = green[midpoint - below: midpoint + above]
+            blue = blue[midpoint - below: midpoint + above]
 
     hexarr = [
         f"#{int(red[idx]):02x}{int(green[idx]):02x}{int(blue[idx]):02x}"
