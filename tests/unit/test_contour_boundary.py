@@ -9,7 +9,9 @@ from cfplot import layout_runtime
 
 
 def test_con_delegates_to_legacy(monkeypatch):
-    monkeypatch.setattr("cfplot.contour._can_use_new_xy_path", lambda f, kwargs: False)
+    monkeypatch.setattr(
+        "cfplot.contour._can_use_new_xy_path", lambda f, kwargs: False
+    )
 
     with pytest.raises(NotImplementedError, match="not implemented"):
         contour.con(f=np.array([[1.0, 2.0], [3.0, 4.0]]), lines=False)
@@ -30,7 +32,9 @@ def test_colour_scale_label_skip():
 
 
 def test_con_uses_new_path_when_available(monkeypatch):
-    monkeypatch.setattr("cfplot.contour._can_use_new_xy_path", lambda f, kwargs: True)
+    monkeypatch.setattr(
+        "cfplot.contour._can_use_new_xy_path", lambda f, kwargs: True
+    )
     monkeypatch.setattr(
         "cfplot.contour._render_with_new_xy",
         lambda f, x, y, kwargs: True,
@@ -42,7 +46,9 @@ def test_con_uses_new_path_when_available(monkeypatch):
 
 
 def test_con_falls_back_when_new_path_declines(monkeypatch):
-    monkeypatch.setattr("cfplot.contour._can_use_new_xy_path", lambda f, kwargs: True)
+    monkeypatch.setattr(
+        "cfplot.contour._can_use_new_xy_path", lambda f, kwargs: True
+    )
     monkeypatch.setattr(
         "cfplot.contour._render_with_new_xy",
         lambda f, x, y, kwargs: False,
@@ -55,8 +61,12 @@ def test_con_falls_back_when_new_path_declines(monkeypatch):
 def test_maybe_autosave_calls_gclose(monkeypatch):
     calls: list[bool] = []
 
-    monkeypatch.setattr(layout_runtime.plotvars, "_contour_session_open", False)
-    monkeypatch.setattr(layout_runtime, "gclose", lambda view=True: calls.append(view))
+    monkeypatch.setattr(
+        layout_runtime.plotvars, "_contour_session_open", False
+    )
+    monkeypatch.setattr(
+        layout_runtime, "gclose", lambda view=True: calls.append(view)
+    )
 
     layout_runtime.maybe_autosave()
 
@@ -67,7 +77,9 @@ def test_maybe_autosave_skips_when_session_open(monkeypatch):
     calls: list[bool] = []
 
     monkeypatch.setattr(layout_runtime.plotvars, "_contour_session_open", True)
-    monkeypatch.setattr(layout_runtime, "gclose", lambda view=True: calls.append(view))
+    monkeypatch.setattr(
+        layout_runtime, "gclose", lambda view=True: calls.append(view)
+    )
 
     layout_runtime.maybe_autosave()
 

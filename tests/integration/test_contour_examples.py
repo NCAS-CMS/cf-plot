@@ -8,9 +8,13 @@ import pytest
 from netCDF4 import Dataset as ncfile
 import cfplot as cfp
 
-
 # Path to test data
-DATA_DIR = Path(__file__).parent.parent.parent / "docs" / "source" / "example-datasets"
+DATA_DIR = (
+    Path(__file__).parent.parent.parent
+    / "docs"
+    / "source"
+    / "example-datasets"
+)
 REF_IMAGE_DIR = Path(__file__).parent.parent / "reference-example-images"
 
 
@@ -29,13 +33,13 @@ def test_contour_basic_tas():
     """Test basic contour plot with temperature data."""
     if not (DATA_DIR / "tas_A1.nc").exists():
         pytest.skip(f"Missing test data: {DATA_DIR / 'tas_A1.nc'}")
-    
+
     flds = cf.read(str(DATA_DIR / "tas_A1.nc"))
     f = flds[0]
-    
+
     # Match the known-good example slice for this dataset.
     f_2d = f.subspace(time=15)
-    
+
     # This should not raise
     cfp.con(f_2d)
 
@@ -45,9 +49,9 @@ def test_contour_ggap_data():
     """Test contour plot with GGAP dataset."""
     if not (DATA_DIR / "ggap.nc").exists():
         pytest.skip(f"Missing test data: {DATA_DIR / 'ggap.nc'}")
-    
+
     flds = cf.read(str(DATA_DIR / "ggap.nc"))
-    
+
     # The first two GGAP fields are pressure-level data; take a 2D slice.
     for idx in [0, 1]:
         if idx < len(flds):
@@ -76,7 +80,7 @@ def test_contour_orca_grid():
     """Test contour plot with ORCA grid (irregular/tripolar)."""
     if not (DATA_DIR / "orca2.nc").exists():
         pytest.skip(f"Missing test data: {DATA_DIR / 'orca2.nc'}")
-    
+
     flds = cf.read(str(DATA_DIR / "orca2.nc"))
     lons = flds.select_by_identity("ncvar%longitude")[0]
     lats = flds.select_by_identity("ncvar%latitude")[0]
@@ -119,6 +123,6 @@ def test_contour_rotated_pole():
     """Test contour plot with rotated pole grid."""
     if not (DATA_DIR / "rgp.nc").exists():
         pytest.skip(f"Missing test data: {DATA_DIR / 'rgp.nc'}")
-    
+
     f = cf.read(str(DATA_DIR / "rgp.nc"))[0]
     cfp.con(f)

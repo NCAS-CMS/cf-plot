@@ -16,9 +16,13 @@ import pytest
 import cfplot as cfp
 import cfplot.layout_runtime as layout_runtime
 
-
 # Path to test data
-DATA_DIR = Path(__file__).parent.parent.parent / "docs" / "source" / "example-datasets"
+DATA_DIR = (
+    Path(__file__).parent.parent.parent
+    / "docs"
+    / "source"
+    / "example-datasets"
+)
 TEST_GEN_DIR = Path(__file__).parent.parent.parent / "generated-example-images"
 REF_IMAGE_DIR = Path(__file__).parent.parent / "reference-example-images"
 LOCAL_DATA_DIR = Path(__file__).parent.parent / "data"
@@ -62,6 +66,7 @@ def ggap_file():
     flds = cf.read(str(DATA_DIR / "ggap.nc"))
     fdict = {f.identity(): f for f in flds}
     return fdict
+
 
 def _configure_example_output(example_id: str) -> None:
     """Route plot output to the expected generated example filename."""
@@ -229,7 +234,9 @@ def test_regression_seaice_ortho_bbox_image():
         lon_0=0.0,
         lat_0=0.0,
     )
-    cfp.con(f, fill=True, lines=False, line_labels=False, title="seaice_ortho_bbox")
+    cfp.con(
+        f, fill=True, lines=False, line_labels=False, title="seaice_ortho_bbox"
+    )
 
     _assert_reference_match_strict(generated=generated, reference=reference)
 
@@ -252,7 +259,9 @@ def test_regression_npstere_da193_image():
         boundinglat=0.0,
         lon_0=0.0,
     )
-    cfp.con(f, fill=True, lines=False, line_labels=False, title="npstere_da193")
+    cfp.con(
+        f, fill=True, lines=False, line_labels=False, title="npstere_da193"
+    )
 
     _assert_reference_match_strict(generated=generated, reference=reference)
 
@@ -295,7 +304,7 @@ def test_example_8_log_scale_pressure(ggap_file):
 
 
 @pytest.mark.integration
-#@pytest.mark.xfail(reason="cf-python issue #799")
+# @pytest.mark.xfail(reason="cf-python issue #799")
 def test_example_9_longitude_pressure_plot(ggap_file):
     """Test Example 9: longitude-pressure plot."""
 
@@ -403,7 +412,9 @@ def test_example_19a_user_positioned_subplots(ggap_file):
 def test_example_20_rotated_pole_data():
     """Test Example 20: user labelling of axes with rotated pole data."""
     if not (DATA_DIR / "Geostropic_Adjustment.nc").exists():
-        pytest.skip(f"Missing test data: {DATA_DIR / 'Geostropic_Adjustment.nc'}")
+        pytest.skip(
+            f"Missing test data: {DATA_DIR / 'Geostropic_Adjustment.nc'}"
+        )
 
     flds = cf.read(str(DATA_DIR / "Geostropic_Adjustment.nc"))
     f = {f.identity(): f for f in flds}["ncvar%v"]
@@ -418,7 +429,9 @@ def test_example_20_rotated_pole_data():
 def test_example_21_rotated_pole_custom_ticks():
     """Test Example 21: rotated pole data plot with custom ticks."""
     if not (DATA_DIR / "Geostropic_Adjustment.nc").exists():
-        pytest.skip(f"Missing test data: {DATA_DIR / 'Geostropic_Adjustment.nc'}")
+        pytest.skip(
+            f"Missing test data: {DATA_DIR / 'Geostropic_Adjustment.nc'}"
+        )
 
     flds = cf.read(str(DATA_DIR / "Geostropic_Adjustment.nc"))
     f = {f.identity(): f for f in flds}["ncvar%v"]
@@ -446,7 +459,6 @@ def test_example_21other_rgp_plasma():
     cfp.cscale("plasma")
     cfp.con(f)
     _assert_reference_match("21other")
-
 
 
 @pytest.mark.integration
@@ -494,7 +506,9 @@ def test_example_23_rotated_grid_axes_overlay():
 @pytest.mark.integration
 def test_example_23other_incompass_contour_vectors():
     """Test Example 23other: contour + vectors on INCOMPASS data."""
-    incompass_file = DATA_DIR / "20160601-05T0000Z_INCOMPASS_km4p4_uv_RH_500.nc"
+    incompass_file = (
+        DATA_DIR / "20160601-05T0000Z_INCOMPASS_km4p4_uv_RH_500.nc"
+    )
     if not incompass_file.exists():
         pytest.skip(f"Missing test data: {incompass_file}")
 
@@ -505,8 +519,13 @@ def test_example_23other_incompass_contour_vectors():
     cfp.mapset(50, 100, 5, 35)
     cfp.levs(0, 90, 15, extend="neither")
     cfp.gopen()
-    cfp.con(fdict['long_name=Relative humidity'], lines=False)
-    cfp.vect(u=fdict['eastward_wind'], v=fdict['northward_wind'], stride=40, key_length=10)
+    cfp.con(fdict["long_name=Relative humidity"], lines=False)
+    cfp.vect(
+        u=fdict["eastward_wind"],
+        v=fdict["northward_wind"],
+        stride=40,
+        key_length=10,
+    )
     cfp.gclose()
     _assert_reference_match("23other")
 
@@ -528,10 +547,10 @@ def test_example_31_ukcp_projection():
         grid_y_spacing=1,
     )
     cfp.mapset(proj="UKCP", resolution="50m")
-    #TODO The original test set the grid_x_ and _y_spacing to 1, 
-    # but this reset all the output, and stopped any output to 
+    # TODO The original test set the grid_x_ and _y_spacing to 1,
+    # but this reset all the output, and stopped any output to
     # file. We need to fix setvars so it doesn't just reset
-    # everything. 
+    # everything.
     cfp.levs(-3, 7, 0.5)
     cfp.con(f, lines=False)
     _assert_reference_match("31")
@@ -653,10 +672,14 @@ def test_example_37b_orthographic_full_globe():
         lon_0=0.0,
         lat_0=0.0,
     )
-    cfp.con(pfld, fill=True, lines=False, line_labels=False,
-            title="time=3080592000.0")
+    cfp.con(
+        pfld,
+        fill=True,
+        lines=False,
+        line_labels=False,
+        title="time=3080592000.0",
+    )
     _assert_reference_match("37b")
-
 
 
 @pytest.mark.integration

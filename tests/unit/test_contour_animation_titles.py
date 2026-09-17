@@ -6,7 +6,9 @@ from cfplot import contour
 class _FakeConstruct:
     def __init__(self, values, dtvalues=None, *, name=None, **flags):
         self.array = np.asarray(values)
-        self.dtarray = None if dtvalues is None else np.asarray(dtvalues, dtype=object)
+        self.dtarray = (
+            None if dtvalues is None else np.asarray(dtvalues, dtype=object)
+        )
         self.name = name
         self.T = bool(flags.get("T", False))
         self.Z = bool(flags.get("Z", False))
@@ -24,13 +26,19 @@ class _FakeField:
     def has_construct(self, key):
         if key in self._constructs:
             return True
-        return any(getattr(construct, "identity", lambda default=None: None)(None) == key for construct in self._constructs.values())
+        return any(
+            getattr(construct, "identity", lambda default=None: None)(None)
+            == key
+            for construct in self._constructs.values()
+        )
 
     def construct(self, key):
         if key in self._constructs:
             return self._constructs[key]
         for construct in self._constructs.values():
-            identity = getattr(construct, "identity", lambda default=None: None)(None)
+            identity = getattr(
+                construct, "identity", lambda default=None: None
+            )(None)
             if identity == key:
                 return construct
         return self._constructs[key]
@@ -38,12 +46,18 @@ class _FakeField:
 
 def test_infer_animation_axis_auto_uses_non_ptype_singleton(monkeypatch):
     monkeypatch.setattr(contour.cf, "Field", _FakeField)
-    monkeypatch.setattr(contour.utility, "find_dim_names", lambda f: ["X", "Y", "T"])
+    monkeypatch.setattr(
+        contour.utility, "find_dim_names", lambda f: ["X", "Y", "T"]
+    )
 
     f = _FakeField(
         {
-            "X": _FakeConstruct(np.linspace(0, 350, 36), name="longitude", X=True),
-            "Y": _FakeConstruct(np.linspace(-90, 90, 19), name="latitude", Y=True),
+            "X": _FakeConstruct(
+                np.linspace(0, 350, 36), name="longitude", X=True
+            ),
+            "Y": _FakeConstruct(
+                np.linspace(-90, 90, 19), name="latitude", Y=True
+            ),
             "T": _FakeConstruct([1], name="time", T=True),
         }
     )
@@ -53,15 +67,25 @@ def test_infer_animation_axis_auto_uses_non_ptype_singleton(monkeypatch):
     assert axis == "time"
 
 
-def test_infer_animation_axis_auto_none_when_non_ptype_not_singleton(monkeypatch):
+def test_infer_animation_axis_auto_none_when_non_ptype_not_singleton(
+    monkeypatch,
+):
     monkeypatch.setattr(contour.cf, "Field", _FakeField)
-    monkeypatch.setattr(contour.utility, "find_dim_names", lambda f: ["X", "Y", "Z"])
+    monkeypatch.setattr(
+        contour.utility, "find_dim_names", lambda f: ["X", "Y", "Z"]
+    )
 
     f = _FakeField(
         {
-            "X": _FakeConstruct(np.linspace(0, 350, 36), name="longitude", X=True),
-            "Y": _FakeConstruct(np.linspace(-90, 90, 19), name="latitude", Y=True),
-            "Z": _FakeConstruct([1000, 850, 500], name="model_level_number", Z=True),
+            "X": _FakeConstruct(
+                np.linspace(0, 350, 36), name="longitude", X=True
+            ),
+            "Y": _FakeConstruct(
+                np.linspace(-90, 90, 19), name="latitude", Y=True
+            ),
+            "Z": _FakeConstruct(
+                [1000, 850, 500], name="model_level_number", Z=True
+            ),
         }
     )
 
@@ -72,12 +96,18 @@ def test_infer_animation_axis_auto_none_when_non_ptype_not_singleton(monkeypatch
 
 def test_infer_animation_axis_ptype0_fallback_prefers_t(monkeypatch):
     monkeypatch.setattr(contour.cf, "Field", _FakeField)
-    monkeypatch.setattr(contour.utility, "find_dim_names", lambda f: ["X", "Y", "T"])
+    monkeypatch.setattr(
+        contour.utility, "find_dim_names", lambda f: ["X", "Y", "T"]
+    )
 
     f = _FakeField(
         {
-            "X": _FakeConstruct(np.linspace(0, 350, 36), name="longitude", X=True),
-            "Y": _FakeConstruct(np.linspace(-90, 90, 19), name="latitude", Y=True),
+            "X": _FakeConstruct(
+                np.linspace(0, 350, 36), name="longitude", X=True
+            ),
+            "Y": _FakeConstruct(
+                np.linspace(-90, 90, 19), name="latitude", Y=True
+            ),
             "T": _FakeConstruct([1], name="time", T=True),
         }
     )
@@ -89,14 +119,24 @@ def test_infer_animation_axis_ptype0_fallback_prefers_t(monkeypatch):
 
 def test_resolve_animation_title_uses_template(monkeypatch):
     monkeypatch.setattr(contour.cf, "Field", _FakeField)
-    monkeypatch.setattr(contour.utility, "find_dim_names", lambda f: ["X", "Y", "T"])
-    monkeypatch.setattr(contour.utility, "cf_var_name_titles", lambda f, dim: ("time", None))
+    monkeypatch.setattr(
+        contour.utility, "find_dim_names", lambda f: ["X", "Y", "T"]
+    )
+    monkeypatch.setattr(
+        contour.utility, "cf_var_name_titles", lambda f, dim: ("time", None)
+    )
 
     f = _FakeField(
         {
-            "X": _FakeConstruct(np.linspace(0, 350, 36), name="longitude", X=True),
-            "Y": _FakeConstruct(np.linspace(-90, 90, 19), name="latitude", Y=True),
-            "T": _FakeConstruct([1], dtvalues=["2001-01-15 00:00:00"], name="time", T=True),
+            "X": _FakeConstruct(
+                np.linspace(0, 350, 36), name="longitude", X=True
+            ),
+            "Y": _FakeConstruct(
+                np.linspace(-90, 90, 19), name="latitude", Y=True
+            ),
+            "T": _FakeConstruct(
+                [1], dtvalues=["2001-01-15 00:00:00"], name="time", T=True
+            ),
         }
     )
 
@@ -118,8 +158,12 @@ def test_infer_animation_axis_accepts_explicit_identity(monkeypatch):
     f = _FakeField(
         {
             "time": _FakeConstruct([1, 2, 3], name="time", T=True),
-            "latitude": _FakeConstruct(np.linspace(-90, 90, 19), name="latitude", Y=True),
-            "longitude": _FakeConstruct(np.linspace(0, 350, 36), name="longitude", X=True),
+            "latitude": _FakeConstruct(
+                np.linspace(-90, 90, 19), name="latitude", Y=True
+            ),
+            "longitude": _FakeConstruct(
+                np.linspace(0, 350, 36), name="longitude", X=True
+            ),
         }
     )
 
