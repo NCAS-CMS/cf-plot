@@ -204,10 +204,10 @@ def traj(
         plotvars.lonmax = 180
         plotvars.latmin = -90
         plotvars.latmax = 90
-
-    # TODO for v3.6.0 investigate if this is the best way to stop plot from
-    # being too small
-    plotvars.aspect = "auto"
+    else:
+        # TODO for v3.6.0 investigate if this is the best way to stop plot from
+        # being too small
+        plotvars.aspect = "auto"
 
     _ensure_map_axes()
     mymap = plotvars.mymap
