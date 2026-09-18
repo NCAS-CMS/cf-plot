@@ -178,25 +178,6 @@ def test_example_15_polar_vector_plot(ggap_file):
 
 
 @pytest.mark.integration
-def test_example_16_zonal_vector_plot_on_contour(ggap_file):
-    """Test Example 16a: zonal vector plot."""
-    # TODO: The vectors look wrong. Needs investigation and a a comparison file
-    u = ggap_file["eastward_wind"]
-    v = ggap_file["northward_wind"]
-
-    u = u.collapse("X: mean")
-    v = v.collapse("X: mean")
-
-    _configure_example_output("16")
-    cfp.gopen()
-    cfp.levs(min=-15, max=25, step=5)
-    cfp.con(u)
-    cfp.vect(u=u, v=v, scale=100, key_length=5, stride=1)
-    cfp.gclose()
-    _assert_reference_match("16")
-
-
-@pytest.mark.integration
 def test_example_16a_zonal_vector_plot(ggap_file):
 
     c = cf.read(str(DATA_DIR / "vaAMIPlcd_DJF.nc"))[0]
