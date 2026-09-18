@@ -206,7 +206,8 @@ def traj(
         plotvars.latmax = 90
     else:
         # TODO for v3.6.0 investigate if this is the best way to stop plot from
-        # being too small
+        # being too small. For these cases the top and right axes ticks also
+        # disappear, which may be related.
         plotvars.aspect = "auto"
 
     _ensure_map_axes()
