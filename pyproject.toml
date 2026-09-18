@@ -14,11 +14,9 @@ maintainers = [
     { name = "Sadie Bartholomew", email = "sadie.bartholomew@ncas.ac.uk" },
 ]
 dependencies = [
-    "matplotlib>=3.1.0",
-    "cf-python>=3.9.0",
+    "cf-python>=3.17.0",
     "scipy>=1.4.0",
-    "cartopy>=0.17.0",
-    "packaging>=21",
+    "cartopy>=0.22.0",
 ]
 
 [project.urls]
