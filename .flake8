@@ -5,9 +5,11 @@
 [flake8]
 ignore =
     # Incompatible with PEP8 which we want to abide by
-    W503
+    W503,
     # Line length which we cut-off to a different value with black linter
-    E501
+    E501,
+    # Space before e.g. indexing colon, contradicting black also
+    E203
 
 # Ignore certain rules for some files (can't do this via comments in the files)
 # per-file-ignores =

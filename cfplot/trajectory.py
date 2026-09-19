@@ -331,8 +331,8 @@ def traj(
 
                     col = plotvars.cs[np.max(np.where(val > plotvars.levels))]
                     mymap.plot(
-                        line_xpts[i: i + 2],
-                        line_ypts[i: i + 2],
+                        line_xpts[i : i + 2],
+                        line_ypts[i : i + 2],
                         color=col,
                         linewidth=plot_linewidth,
                         linestyle=linestyle,
