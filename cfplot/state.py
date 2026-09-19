@@ -4,7 +4,8 @@ from __future__ import annotations
 
 import os
 import sys
-from dataclasses import MISSING, dataclass, field, fields as dc_fields
+from dataclasses import MISSING, dataclass, field
+from dataclasses import fields as dc_fields
 from typing import Any, ClassVar
 
 import cartopy
@@ -143,7 +144,9 @@ class pvars:
         user_plot: int = 0
         _contour_session_open: bool = False
         _contour_animation_artists: list[Any] = field(default_factory=list)
-        _contour_animation_map_feature_artists: list[Any] = field(default_factory=list)
+        _contour_animation_map_feature_artists: list[Any] = field(
+            default_factory=list
+        )
         _contour_animation_title_artist: Any = None
         _contour_animation_colorbar: Any = None
         _animation_session_id: str = ""

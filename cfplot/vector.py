@@ -4,6 +4,7 @@ import cartopy.crs as ccrs
 import cf
 import numpy as np
 
+from . import utility
 from .layout_runtime import (
     apply_axes,
     ensure_runtime_session,
@@ -21,7 +22,6 @@ from .map_runtime import (
 )
 from .rotated_runtime import _render_rotated_grid_axes
 from .state import plotvars
-from . import utility
 from .utility import mapaxis
 from .validate import _check_data
 
@@ -33,8 +33,6 @@ def _mapaxis(min=None, max=None, type=None):
         axis_type=type,
         degsym=bool(plotvars.degsym),
     )
-
-
 
 
 def axes_plot(
@@ -238,7 +236,9 @@ def vect(
             xpole,
             ypole,
         ) = utility.cf_data_assign(
-            u, colorbar_title, proj=("rotated" if rotated_vect else plotvars.proj)
+            u,
+            colorbar_title,
+            proj=("rotated" if rotated_vect else plotvars.proj),
         )
     elif isinstance(u, cf.FieldList):
         raise TypeError("Can't plot a field list")
@@ -278,7 +278,9 @@ def vect(
             xpole,
             ypole,
         ) = utility.cf_data_assign(
-            v, colorbar_title, proj=("rotated" if rotated_vect else plotvars.proj)
+            v,
+            colorbar_title,
+            proj=("rotated" if rotated_vect else plotvars.proj),
         )
     elif isinstance(v, cf.FieldList):
         raise TypeError("Can't plot a field list")

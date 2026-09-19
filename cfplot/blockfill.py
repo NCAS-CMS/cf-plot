@@ -16,8 +16,8 @@ import numpy as np
 import shapely.geometry as sgeom
 from matplotlib.collections import PolyCollection
 
-from .colour import get_colour_scale_map
 from . import utility
+from .colour import get_colour_scale_map
 from .state import plotvars
 
 
@@ -256,7 +256,9 @@ def _bfill(
 
         if two_d:
             fixed_x = x.copy()
-            for i, start in enumerate(np.argmax(np.abs(np.diff(x)) > 180, axis=1)):
+            for i, start in enumerate(
+                np.argmax(np.abs(np.diff(x)) > 180, axis=1)
+            ):
                 fixed_x[i, start + 1 :] += 360
             plotvars.image = plotvars.mymap.pcolormesh(
                 fixed_x, y, field, cmap=cmap, transform=transform, norm=norm
@@ -285,7 +287,9 @@ def _bfill(
 
             else:
                 if isinstance(clevs, int):
-                    plotvars.image = plotvars.plot.pcolormesh(xpts, ypts, field, cmap=cmap)
+                    plotvars.image = plotvars.plot.pcolormesh(
+                        xpts, ypts, field, cmap=cmap
+                    )
                 else:
                     plotvars.image = plotvars.plot.pcolormesh(
                         xpts, ypts, field, cmap=cmap, norm=norm
@@ -300,8 +304,20 @@ def _bfill(
                 for pt in np.arange(np.shape(xy_stack)[0]):
                     ix = xy_stack[pt][1]
                     iy = xy_stack[pt][0]
-                    lons = [xpts[ix], xpts[ix + 1], xpts[ix + 1], xpts[ix], xpts[ix]]
-                    lats = [ypts[iy], ypts[iy], ypts[iy + 1], ypts[iy + 1], ypts[iy]]
+                    lons = [
+                        xpts[ix],
+                        xpts[ix + 1],
+                        xpts[ix + 1],
+                        xpts[ix],
+                        xpts[ix],
+                    ]
+                    lats = [
+                        ypts[iy],
+                        ypts[iy],
+                        ypts[iy + 1],
+                        ypts[iy + 1],
+                        ypts[iy],
+                    ]
 
                     verts = [
                         (lons[0], lats[0]),
@@ -471,8 +487,12 @@ def _bfill_ugrid(
 
         # Add extra vertices if any of the points are at the north or south pole.
         if np.max(lats) == 90 or np.min(lats) == -90:
-            geom = sgeom.Polygon([(lons[k], lats[k]) for k in np.arange(nverts)])
-            geom_cyl = ccrs.PlateCarree().project_geometry(geom, ccrs.Geodetic())
+            geom = sgeom.Polygon(
+                [(lons[k], lats[k]) for k in np.arange(nverts)]
+            )
+            geom_cyl = ccrs.PlateCarree().project_geometry(
+                geom, ccrs.Geodetic()
+            )
 
             # New method for shapely 2.0 +
             poly_mapped = sgeom.mapping(geom_cyl.geoms[0])

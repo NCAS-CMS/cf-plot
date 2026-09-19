@@ -4,7 +4,6 @@ Migrated from cfplot/test/test_examples.py::LonLatTest
 """
 
 import numpy as np
-import pytest
 
 import cfplot as cfp
 
@@ -35,7 +34,18 @@ class TestMapaxisLongitude:
     def test_mapaxis_lon_positive(self):
         """Test longitude labelling for positive eastern hemisphere."""
         expected_ticks = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90]
-        expected_labels = ["0", "10E", "20E", "30E", "40E", "50E", "60E", "70E", "80E", "90E"]
+        expected_labels = [
+            "0",
+            "10E",
+            "20E",
+            "30E",
+            "40E",
+            "50E",
+            "60E",
+            "70E",
+            "80E",
+            "90E",
+        ]
 
         ticks, labels = cfp._mapaxis(min=0, max=90, type=1)
 

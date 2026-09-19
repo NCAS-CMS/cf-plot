@@ -27,7 +27,9 @@ def to_float_or_none(value: Any) -> float | None:
 def resolve_colour_scale_file(scale: str) -> str:
     """Resolve a named colour scale or explicit file path."""
     package_path = os.path.dirname(__file__)
-    file_path = os.path.join(package_path, "colour", "colourmaps", f"{scale}.rgb")
+    file_path = os.path.join(
+        package_path, "colour", "colourmaps", f"{scale}.rgb"
+    )
     if os.path.isfile(file_path):
         return file_path
     if os.path.isfile(scale):
@@ -41,9 +43,13 @@ def resolve_colour_scale_file(scale: str) -> str:
     raise Warning(errstr)
 
 
-def load_colour_scale_rgb(scale: str) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+def load_colour_scale_rgb(
+    scale: str,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Load RGB channels for a colour scale."""
-    with open(resolve_colour_scale_file(scale), "r", encoding="ascii") as handle:
+    with open(
+        resolve_colour_scale_file(scale), "r", encoding="ascii"
+    ) as handle:
         lines = handle.read().splitlines()
 
     red: list[int] = []
@@ -79,15 +85,15 @@ def interpolate_colour_channels(
 
 def ndecs(data: np.ndarray | list) -> int:
     """Find the maximum number of decimal places in an array.
-    
+
     Data with more decimal places will determine the result.
     Used to format colorbar and line labels consistently.
-    
+
     Parameters
     ----------
     data : array-like
         Input array of numeric values
-        
+
     Returns
     -------
     int
@@ -110,11 +116,11 @@ def gvals(
     mod: bool = True,
 ) -> tuple[np.ndarray, int]:
     """Generate sensible tick values between two limits.
-    
+
     Works out appropriate step size and generates values,
     optionally scaling with a power-of-10 multiplier.
     Used for contour levels and axis labelling.
-    
+
     Parameters
     ----------
     dmin : float
@@ -125,7 +131,7 @@ def gvals(
         Use this step instead of auto-calculating
     mod : bool
         If True, apply multiplier for small/large ranges
-        
+
     Returns
     -------
     vals : ndarray
@@ -270,9 +276,9 @@ def mapaxis(
     degsym: bool = True,
 ) -> tuple[list, list]:
     """Generate longitude or latitude axis ticks and labels.
-    
+
     Works out sensible tick marks and labels for geographic axes.
-    
+
     Parameters
     ----------
     min_val : float
@@ -283,7 +289,7 @@ def mapaxis(
         1 = longitude, 2 = latitude
     degsym : bool
         If True, use degree symbol in labels
-        
+
     Returns
     -------
     ticks : list
@@ -444,7 +450,6 @@ def calculate_levels(
 
         if level_spacing in ("outlier", "inspect"):
             hist = np.histogram(field, 100)[0]
-            pts_arr = np.size(field)
             rate = 0.01
 
             if sum(hist[1:-2]) == 0:
@@ -462,9 +467,9 @@ def calculate_levels(
             tight = False
 
         if level_spacing == "linear":
-            if isinstance(np.ma.min(dmin), np.ma.core.MaskedConstant) or isinstance(
-                np.ma.min(dmax), np.ma.core.MaskedConstant
-            ):
+            if isinstance(
+                np.ma.min(dmin), np.ma.core.MaskedConstant
+            ) or isinstance(np.ma.min(dmax), np.ma.core.MaskedConstant):
                 if verbose:
                     print(
                         "calculate_levels warning - data is entirely masked; "
@@ -506,7 +511,9 @@ def calculate_levels(
                     clevs.append("{:.0e}".format(val * 5))
 
             clevs = np.float64(clevs)
-            pts = np.where(np.logical_and(clevs >= abs(dmin1), clevs <= abs(dmax1)))
+            pts = np.where(
+                np.logical_and(clevs >= abs(dmin1), clevs <= abs(dmax1))
+            )
             clevs = clevs[pts]
 
             if dmin < 0.0 and dmax < 0.0:
@@ -516,7 +523,9 @@ def calculate_levels(
 
     else:
         if verbose:
-            print("calculate_levels - using specified step to generate contour levels")
+            print(
+                "calculate_levels - using specified step to generate contour levels"
+            )
 
         step = levels_step
         if isinstance(step, int):
@@ -656,13 +665,27 @@ def timeaxis(
 
     # Months
     if yearmax - yearmin <= 4:
-        months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-                  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+        months = [
+            "Jan",
+            "Feb",
+            "Mar",
+            "Apr",
+            "May",
+            "Jun",
+            "Jul",
+            "Aug",
+            "Sep",
+            "Oct",
+            "Nov",
+            "Dec",
+        ]
 
         tsteps = 0
         for year in np.arange(yearmax - yearmin + 1) + yearmin:
             for month in np.arange(12):
-                mytime = _cf.dt(f"{year}-{month + 1}-01 00:00:00", calendar=calendar)
+                mytime = _cf.dt(
+                    f"{year}-{month + 1}-01 00:00:00", calendar=calendar
+                )
                 if mytime >= tmin and mytime <= tmax:
                     tsteps += 1
 
@@ -670,23 +693,33 @@ def timeaxis(
 
         for year in np.arange(yearmax - yearmin + 1) + yearmin:
             for month in mvals:
-                mytime = _cf.dt(f"{year}-{month + 1}-01 00:00:00", calendar=calendar)
+                mytime = _cf.dt(
+                    f"{year}-{month + 1}-01 00:00:00", calendar=calendar
+                )
                 if mytime >= tmin and mytime <= tmax:
                     time_ticks.append(
                         np.min(
-                            _cf.Data(mytime, units=time_units, calendar=calendar).array
+                            _cf.Data(
+                                mytime, units=time_units, calendar=calendar
+                            ).array
                         )
                     )
-                    time_labels.append(str(months[month]) + " " + str(int(year)))
+                    time_labels.append(
+                        str(months[month]) + " " + str(int(year))
+                    )
 
     # Days and hours
     if np.size(time_ticks) <= 2:
-        myday = _cf.dt(int(tmin.year), int(tmin.month), int(tmin.day), calendar=calendar)
+        myday = _cf.dt(
+            int(tmin.year), int(tmin.month), int(tmin.day), calendar=calendar
+        )
         not_found = 0
         hour_counter = 0
         span = 0
         while not_found <= 48:
-            mydate = _cf.Data(myday, dtimes.Units) + _cf.Data(hour_counter, "hour")
+            mydate = _cf.Data(myday, dtimes.Units) + _cf.Data(
+                hour_counter, "hour"
+            )
             if mydate >= tmin and mydate <= tmax:
                 span += 1
             else:
@@ -722,7 +755,9 @@ def timeaxis(
         time_labels = []
 
         while not_found <= 48:
-            mytime = _cf.Data(myday, dtimes.Units) + _cf.Data(hour_counter, "hour")
+            mytime = _cf.Data(myday, dtimes.Units) + _cf.Data(
+                hour_counter, "hour"
+            )
             if mytime >= tmin and mytime <= tmax:
                 time_ticks.append(np.min(mytime.array))
                 label = f"{mytime.year}-{mytime.month}-{mytime.day}"
@@ -736,7 +771,9 @@ def timeaxis(
     return (time_ticks, time_labels, axis_label)
 
 
-def _pressure_axis_ticks(ymin: float, ymax: float, ylog: bool) -> list[float] | np.ndarray:
+def _pressure_axis_ticks(
+    ymin: float, ymax: float, ylog: bool
+) -> list[float] | np.ndarray:
     """Generate pressure-like Y ticks used by ptypes 2 and 3."""
     if ylog:
         ylo = min(ymin, ymax)
@@ -814,7 +851,14 @@ def compute_xy_ticks(
             yticks = time_ticks
             yticklabels = time_labels
 
-        return xticks, yticks, xticklabels, yticklabels, default_xlabel, default_ylabel
+        return (
+            xticks,
+            yticks,
+            xticklabels,
+            yticklabels,
+            default_xlabel,
+            default_ylabel,
+        )
 
     if ptype == 2:
         if xticks is None:
@@ -842,12 +886,20 @@ def compute_xy_ticks(
         if yticks is None:
             yticks = gvals(dmin=ymax, dmax=ymin, mod=False)[0]
 
-    return xticks, yticks, xticklabels, yticklabels, default_xlabel, default_ylabel
+    return (
+        xticks,
+        yticks,
+        xticklabels,
+        yticklabels,
+        default_xlabel,
+        default_ylabel,
+    )
 
 
 # ---------------------------------------------------------------------------
 # CF field extraction helpers
 # ---------------------------------------------------------------------------
+
 
 def _supscr(text: str) -> str:
     """Format superscript notation for units strings (``**`` and ``^``)."""
@@ -1111,13 +1163,16 @@ def cf_data_assign(
     -------
     field, x, y, ptype, colorbar_title, xlabel, ylabel, xpole, ypole
     """
-    import cf as _cf
     import cartopy.crs as _ccrs
+    import cf as _cf
 
     # Check input data has the correct number of dimensions.
     # Rotated-pole fields may legitimately have extra dimensions.
     ndim = len(f.domain_axes().filter_by_size(_cf.gt(1)))
-    if f.ref("grid_mapping_name:rotated_latitude_longitude", default=False) is False:
+    if (
+        f.ref("grid_mapping_name:rotated_latitude_longitude", default=False)
+        is False
+    ):
         if ndim > 2 or ndim < 1:
             if ndim > 2:
                 errstr = "cf_data_assign error - data has too many dimensions"
@@ -1172,7 +1227,9 @@ def cf_data_assign(
     field = np.squeeze(f.array)
 
     if str(f.dtype) == "bool":
-        print("\n\n\n Warning - boolean data found - converting to integers\n\n\n")
+        print(
+            "\n\n\n Warning - boolean data found - converting to integers\n\n\n"
+        )
         g = deepcopy(f)
         g.dtype = int
         field = np.squeeze(g.array)
@@ -1310,7 +1367,9 @@ def cf_data_assign(
                 scale_factor=ref["scale_factor_at_central_meridian"],
             )
             xvals, yvals = np.meshgrid(xpts, ypts)
-            points = _ccrs.PlateCarree().transform_points(transform, xvals, yvals)
+            points = _ccrs.PlateCarree().transform_points(
+                transform, xvals, yvals
+            )
             x = np.array(points)[:, :, 0]
             y = np.array(points)[:, :, 1]
 
@@ -1365,9 +1424,11 @@ def cf_data_assign(
     return (field, x, y, ptype, colorbar_title, xlabel, ylabel, xpole, ypole)
 
 
-def add_cyclic(field: np.ndarray, lons: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+def add_cyclic(
+    field: np.ndarray, lons: np.ndarray
+) -> tuple[np.ndarray, np.ndarray]:
     """Add a cyclic longitude column if the grid doesn't span the full 360°.
-    
+
     Wraps cartopy_util.add_cyclic_point with float-rounding fallback for
     uneven longitude spacing due to numpy precision.
     """
@@ -1497,8 +1558,13 @@ def regrid(
         alpha_x = (xval - regrid_x[ix]) / (dx if dx != 0 else 1e-30)
         alpha_y = (yval - regrid_y[iy]) / (dy if dy != 0 else 1e-30)
 
-        v1 = regrid_f[iy, ix] - (regrid_f[iy, ix] - regrid_f[iy, ix2]) * alpha_x
-        v2 = regrid_f[iy2, ix] - (regrid_f[iy2, ix] - regrid_f[iy2, ix2]) * alpha_x
+        v1 = (
+            regrid_f[iy, ix] - (regrid_f[iy, ix] - regrid_f[iy, ix2]) * alpha_x
+        )
+        v2 = (
+            regrid_f[iy2, ix]
+            - (regrid_f[iy2, ix] - regrid_f[iy2, ix2]) * alpha_x
+        )
         newval = v1 - (v1 - v2) * alpha_y
 
         out = np.append(out, newval)

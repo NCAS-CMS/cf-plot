@@ -1,14 +1,14 @@
 import cf
 import numpy as np
 
-from .map_runtime import _apply_dim_titles
+from . import utility
 from .layout_runtime import (
     ensure_runtime_session,
     finalize_runtime_session,
     set_axis_visibility,
 )
+from .map_runtime import _apply_dim_titles
 from .state import plotvars
-from . import utility
 from .utility import mapaxis
 
 
@@ -182,9 +182,7 @@ def lineplot(
 
                 # x label
                 xlabel_units = str(getattr(f.construct(mydim), "Units", ""))
-                plot_xlabel = (
-                    f"{utility.cf_var_name(field=f, dim=mydim)} ({xlabel_units})"
-                )
+                plot_xlabel = f"{utility.cf_var_name(field=f, dim=mydim)} ({xlabel_units})"
                 y = np.squeeze(f.array)
 
                 # y label

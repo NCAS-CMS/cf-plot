@@ -4,9 +4,13 @@ import cartopy.crs as ccrs
 import cf
 import numpy as np
 
-from .colour import cbar
-from .colour import cscale
-from .layout_runtime import ensure_runtime_session, finalize_runtime_session, gset
+from . import utility
+from .colour import cbar, cscale
+from .layout_runtime import (
+    ensure_runtime_session,
+    finalize_runtime_session,
+    gset,
+)
 from .map_runtime import (
     _apply_current_map_title,
     _apply_map_axes_with_toggles,
@@ -14,7 +18,6 @@ from .map_runtime import (
     _ensure_map_axes,
 )
 from .state import plotvars
-from . import utility
 
 
 def traj(
@@ -201,6 +204,11 @@ def traj(
         plotvars.lonmax = 180
         plotvars.latmin = -90
         plotvars.latmax = 90
+    else:
+        # TODO for v3.6.0 investigate if this is the best way to stop plot from
+        # being too small. For these cases the top and right axes ticks also
+        # disappear, which may be related.
+        plotvars.aspect = "auto"
 
     _ensure_map_axes()
     mymap = plotvars.mymap

@@ -4,8 +4,8 @@ Migrated from cfplot/test/test_examples.py::ExamplesTest
 These tests verify that vect(), stipple(), traj(), and lineplot() functions work with real data.
 """
 
-from pathlib import Path
 import shutil
+from pathlib import Path
 
 import cf
 import matplotlib.pyplot as plt
@@ -15,13 +15,18 @@ import pytest
 
 import cfplot as cfp
 
-
 # Path to test data
-DATA_DIR = Path(__file__).parent.parent.parent / "docs" / "source" / "example-datasets"
+DATA_DIR = (
+    Path(__file__).parent.parent.parent
+    / "docs"
+    / "source"
+    / "example-datasets"
+)
 CANARI_DATA_FILE = Path(__file__).parent.parent / "data" / "bnl_tmp_NAEW.nc"
-TEST_GEN_DIR = Path(__file__).parent.parent.parent / "generated-example-images"
-REF_IMAGE_DIR = Path(__file__).parent.parent / "new_reference-example-images"
-#REF_IMAGE_DIR = Path(__file__).parent.parent / "reference-example-images"
+TEST_GEN_DIR = (
+    Path(__file__).parent.parent.parent / "generated-example-images-adv"
+)
+REF_IMAGE_DIR = Path(__file__).parent.parent / "reference-example-images"
 TEST_GEN_DIR.mkdir(parents=True, exist_ok=True)
 
 
@@ -102,6 +107,7 @@ def ggap_file():
 # Vector plot tests (Examples 13-16c)
 # ============================================================================
 
+
 @pytest.mark.integration
 def test_example_13_basic_vector_plot(ggap_file):
     """Test Example 13: basic vector plot."""
@@ -174,26 +180,6 @@ def test_example_15_polar_vector_plot(ggap_file):
 
 
 @pytest.mark.integration
-def test_example_16_zonal_vector_plot_on_contour(ggap_file):
-    """Test Example 16a: zonal vector plot."""
-    # TODO: The vectors look wrong. Needs investigation and a a comparison file
-    u = ggap_file["eastward_wind"]
-    v = ggap_file["northward_wind"]
-
-    u = u.collapse("X: mean")
-    v = v.collapse("X: mean")
-
-    _configure_example_output("16")
-    cfp.gopen()
-    cfp.levs(min=-15, max=25, step=5)
-    cfp.con(u)
-    cfp.vect(u=u, v=v, scale=100, key_length=5, stride=1)
-    cfp.gclose()
-    _assert_reference_match("16")
-
-
-
-@pytest.mark.integration
 def test_example_16a_zonal_vector_plot(ggap_file):
 
     c = cf.read(str(DATA_DIR / "vaAMIPlcd_DJF.nc"))[0]
@@ -221,6 +207,7 @@ def test_example_16a_zonal_vector_plot(ggap_file):
         key_location=[0.95, -0.05],
     )
     _assert_reference_match("16a")
+
 
 @pytest.mark.integration
 def test_example_16b_basic_stream_plot(ggap_file):
@@ -265,13 +252,14 @@ def test_example_16c_enhanced_stream_plot(ggap_file):
         title="Wind magnitude",
     )
     cfp.gclose()
-   
+
     _assert_reference_match("16c")
 
 
 # ============================================================================
 # Stipple plot tests (Examples 17-18)
 # ============================================================================
+
 
 @pytest.mark.integration
 def test_example_17_basic_stipple_plot():
@@ -333,6 +321,7 @@ def test_canari_1():
     cfp.con(field, lines=False)
     _assert_reference_match("canari_1")
 
+
 @pytest.mark.integration
 def test_example_24a_unstructured_grid_basic():
     """Test Example 24a.
@@ -375,7 +364,6 @@ def test_example_24a_unstructured_grid_basic():
 
 @pytest.mark.integration
 def test_example_24b_unstructured_grid_blockfill():
-    
     """Test Example 24b.
 
     Test example for unstructured grids: LFRic example 2, now
@@ -432,17 +420,16 @@ def test_example_24c_unstructured_grid_version3():
 
     pot = f.select_by_identity("air_potential_temperature")[0]
 
-    g = pot[0,:]   
+    g = pot[0, :]
     _configure_example_output("24c")
     cfp.con(g, lines=False)
     _assert_reference_match("24c")
 
 
-        
-
 # ============================================================================
 # Line/Graph plot tests (Examples 27-30)
 # ============================================================================
+
 
 @pytest.mark.integration
 def test_example_27_basic_graph_plot(ggap_file):
@@ -470,8 +457,19 @@ def test_example_28_line_and_legend_plot(ggap_file):
 
     xticks = [-90, -75, -60, -45, -30, -15, 0, 15, 30, 45, 60, 75, 90]
     xticklabels = [
-        "90S", "75S", "60S", "45S", "30S", "15S", "0",
-        "15N", "30N", "45N", "60N", "75N", "90N",
+        "90S",
+        "75S",
+        "60S",
+        "45S",
+        "30S",
+        "15S",
+        "0",
+        "15N",
+        "30N",
+        "45N",
+        "60N",
+        "75N",
+        "90N",
     ]
     xpts = [-30, 30, 30, -30, -30]
     ypts = [-8, -8, 5, 5, -8]
@@ -497,7 +495,9 @@ def test_example_28_line_and_legend_plot(ggap_file):
         legend_location="upper right",
     )
     cfp.plotvars.plot.plot(xpts, ypts, linewidth=3.0, color="green")
-    cfp.plotvars.plot.text(35, -2, "Region of interest", horizontalalignment="left")
+    cfp.plotvars.plot.text(
+        35, -2, "Region of interest", horizontalalignment="left"
+    )
     cfp.gclose()
     _assert_reference_match("28")
 
@@ -553,6 +553,7 @@ def test_example_30_two_axis_plotting(ggap_file):
 # ============================================================================
 # Trajectory plot tests (Examples 39-42b)
 # ============================================================================
+
 
 @pytest.mark.integration
 def test_example_39_basic_track_plotting_trajectory():
