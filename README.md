@@ -107,13 +107,16 @@ Note however this calls image comparison testing on plot outputs and exact
 image comparison depends on the environment (libraries and versions) used.
 So they may fail if your environment differs from that which was used to
 generate the reference images. Therefore, to allow like-for-like comparison,
-a specific testing conda environment is provided, ``cfplot-test-env.txt``.
-With this environment enabled, the image comparison should pass.
+a specific testing conda environment is provided, ``cfplot-test-env.yml``.
+With this environment enabled, the image comparison should pass. Note we
+recommend use of `mamba` for environment creation/solving, but `conda`
+will also work.
 
 ``` console
 $ # Deactivate all other environments present first
-$ conda env create --file cfplot-test-env.txt --name cfplot-test-env
+$ mamba env create --file cfplot-test-env.yml --name cfplot-test-env
 $ conda activate cfplot-test-env
+$ pytest tests
 ```
 
 However you can disable this aspect with ``no-img-cmp`` option, so that
