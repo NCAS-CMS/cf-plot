@@ -100,7 +100,7 @@ of the documentation.
 To run the full test suite, call from the repo root:
 
 ``` bash
-pytest tests
+$ pytest tests
 ```
 
 Note however this calls image comparison testing on plot outputs and exact
@@ -112,17 +112,22 @@ With this environment enabled, the image comparison should pass. Note we
 recommend use of `mamba` for environment creation/solving, but `conda`
 will also work.
 
-``` console
+```console
 $ # Deactivate all other environments present first
 $ mamba env create --file cfplot-test-env.yml --name cfplot-test-env
 $ conda activate cfplot-test-env
 $ pytest tests
 ```
 
-However you can disable this aspect with ``no-img-cmp`` option, so that
-only the functional tests run. This is advised when you use any environment
-other than the above, except where some library version differs for the
-purpose of regression testing on that versioning change.
+However you can disable this aspect with the ``--skip-image-comparison``
+or equivalently ``-I`` option to the cf-plot test suite run with `pytest`,
+so that only the functional tests run. This is advised when you use any
+environment other than the above, except where some library version
+differs for the purpose of regression testing on that versioning change.
+
+```console
+$ pytest tests -I
+```
 
 > [!NOTE]
 > More comprehensive testing across different environments is under development
