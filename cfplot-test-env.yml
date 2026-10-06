@@ -193,4 +193,3 @@ dependencies:
   - zipp=4.1.1
   - zlib=1.3.2
   - zstd=1.5.7
-prefix: /home/slb93/miniconda3/envs/cfplot-test-env
