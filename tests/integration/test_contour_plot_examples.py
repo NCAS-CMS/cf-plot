@@ -26,7 +26,7 @@ DATA_DIR = (
 TEST_GEN_DIR = (
     Path(__file__).parent.parent.parent / "generated-example-images-cont"
 )
-REF_IMAGE_DIR = Path(__file__).parent.parent / "reference-example-images"
+REF_IMAGE_DIR = Path(__file__).parent.parent / "v350-controlled-env-ref-images"
 LOCAL_DATA_DIR = Path(__file__).parent.parent / "data"
 TEST_GEN_DIR.mkdir(parents=True, exist_ok=True)
 

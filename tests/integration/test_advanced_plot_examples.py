@@ -26,7 +26,7 @@ CANARI_DATA_FILE = Path(__file__).parent.parent / "data" / "bnl_tmp_NAEW.nc"
 TEST_GEN_DIR = (
     Path(__file__).parent.parent.parent / "generated-example-images-adv"
 )
-REF_IMAGE_DIR = Path(__file__).parent.parent / "reference-example-images"
+REF_IMAGE_DIR = Path(__file__).parent.parent / "v350-controlled-env-ref-images"
 TEST_GEN_DIR.mkdir(parents=True, exist_ok=True)
 
 
