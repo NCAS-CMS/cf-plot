@@ -2,7 +2,7 @@
 
 ## cf-plot changelog
 
-**Current release: version `3.5.0`, released `2026-10-08`**
+**Current release: version `3.5.0`, released `2026-10-09`**
 
 *Note*: stated dates of releases correspond to the date a given
 version was tagged on GitHub. Up until 2024 some detail may
@@ -14,9 +14,9 @@ of being developed elsewhere.
 -----
 
 
-### Version `3.5.X`, first released 2026-10-08
+### Version `3.5.X`, first released 2026-10-09
 
-#### Version `3.5.0`, release 2026-10-08
+#### Version `3.5.0`, release 2026-10-09
 
 * Modularise and refactor the codebase, which has no user-facing implications
   except that functionality is available via sub-modules as well as at the top-level
