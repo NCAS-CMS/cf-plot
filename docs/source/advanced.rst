@@ -14,6 +14,9 @@ Advanced use
 Here are some hints and tips on the advanced use of cf-plot.
 
 
+.. include:: animation_support.rst
+
+
 Adding user defined lines and text to plots
 -------------------------------------------
 

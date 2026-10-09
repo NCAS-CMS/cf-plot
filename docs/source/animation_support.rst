@@ -4,8 +4,8 @@
 Animation Support
 *****************
 
-Animation support in cf-plot is TODO FLEDGLING STATE
-
+Animation support in cf-plot is in a preliminary state and therefore it is
+possible any animation-related API may change for future versions.
 
 
 Contour Animation Titles
