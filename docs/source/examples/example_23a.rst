@@ -30,4 +30,4 @@ Example 23a: Rotated pole plot from data which is not CF Compliant
    cfp.gclose()
 
 
-.. figure:: /../../cfplot/test/reference-example-images/ref_fig_23a.png
+.. figure:: /../../tests/reference-example-images/ref_fig_23a.png

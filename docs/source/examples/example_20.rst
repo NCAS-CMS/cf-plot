@@ -15,4 +15,4 @@ Example 20: Case where user-defined axis labels are required
    cfp.con(f.subspace[9])
 
 
-.. figure:: /../../cfplot/test/reference-example-images/ref_fig_20.png
+.. figure:: /../../tests/reference-example-images/ref_fig_20.png

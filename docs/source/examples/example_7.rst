@@ -14,4 +14,4 @@ Example 7: Latitude-pressure plot over zonal mean
    cfp.con(f.collapse("mean", "longitude"))
 
 
-.. figure:: /../../cfplot/test/reference-example-images/ref_fig_7.png
+.. figure:: /../../tests/reference-example-images/ref_fig_7.png

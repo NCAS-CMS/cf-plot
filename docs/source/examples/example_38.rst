@@ -14,4 +14,4 @@ Example 38: Robinson projection
    cfp.con(f.subspace(time=15))
 
 
-.. figure:: /../../cfplot/test/reference-example-images/ref_fig_38.png
+.. figure:: /../../tests/reference-example-images/ref_fig_38.png

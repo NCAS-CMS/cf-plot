@@ -14,4 +14,4 @@ Example 36: Mercator projection
    cfp.con(f.subspace(time=15))
 
 
-.. figure:: /../../cfplot/test/reference-example-images/ref_fig_36.png
+.. figure:: /../../tests/reference-example-images/ref_fig_36.png

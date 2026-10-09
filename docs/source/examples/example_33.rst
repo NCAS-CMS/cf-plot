@@ -20,4 +20,4 @@ Example 33: OSGB and EuroPP projections
    cfp.gclose()
 
 
-.. figure:: /../../cfplot/test/reference-example-images/ref_fig_33.png
+.. figure:: /../../tests/reference-example-images/ref_fig_33.png

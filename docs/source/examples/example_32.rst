@@ -23,4 +23,4 @@ Example 32: UKCP projection with blockfill
    )
 
 
-.. figure:: /../../cfplot/test/reference-example-images/ref_fig_32.png
+.. figure:: /../../tests/reference-example-images/ref_fig_32.png

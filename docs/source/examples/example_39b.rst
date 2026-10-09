@@ -15,4 +15,4 @@ Example 39b: plotting a single (1D) DSG trajectory
    cfp.traj(f)
 
 
-.. figure:: /../../cfplot/test/reference-example-images/ref_fig_39b.png
+.. figure:: /../../tests/reference-example-images/ref_fig_39b.png
