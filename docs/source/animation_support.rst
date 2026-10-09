@@ -1,6 +1,5 @@
-.. _intro:
+.. _animation:
 
-*****************
 Animation Support
 *****************
 

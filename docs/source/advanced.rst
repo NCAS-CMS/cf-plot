@@ -1,5 +1,6 @@
 .. _advanced:
 
+************
 Advanced use
 ************
 
@@ -18,7 +19,7 @@ Here are some hints and tips on the advanced use of cf-plot.
 
 
 Adding user defined lines and text to plots
--------------------------------------------
+*******************************************
 
 In cf-plot the plot is stored in a plot object with the name cfp.plotvars.plot.  If you are making a map plot the the map object is cfp.plotvars.mymap and this is the object you should operate on.  The page containing the plots is named cfp.plotvars.plot_master.
 
@@ -90,7 +91,7 @@ Adding country borders etc can be done using the normal Cartopy operations on th
 
 
 Plotting shape files
---------------------
+********************
 
 In this example we make a blank map plot and plot the UK rivers from a shapefile.  The shapefile used came from DIVA-GIS at http://www.diva-gis.org/gdata.  The pyshp Python package is needed for this program.
 
@@ -137,7 +138,7 @@ In this example we make a blank map plot and plot the UK rivers from a shapefile
 
 
 Making a transect plot
-----------------------
+**********************
 
 In this example we make a contour plot and plot a transect.  We use the cfp.regrid bilinear interpolation
 routine to interpolate the data.  Interpolation points for this routine must be **within** the data limits
@@ -200,7 +201,7 @@ of the original data.  Care is needed to ensure that the field coordinates go fr
 
 
 Manually changing colours in a colour scale
--------------------------------------------
+*******************************************
 
 The simplest way to do this without writing any code is to modify the internal colour scale before plotting.  The colours most people work with are stored as red green blue intensities on a scale of 0 to 255, with 0 being no intesity and 255 full intensity.
 
@@ -233,7 +234,7 @@ For example, to make one of the colours in the viridis colour scale grey use:
 
 
 Colouring land and lakes
-------------------------
+************************
 
 This is done by changing the land_color, ocean_color and lake_color variables in cfp.setvars.
 
@@ -252,7 +253,7 @@ This is done by changing the land_color, ocean_color and lake_color variables in
 
 
 Plotting missing data
----------------------
+*********************
 
 Masked data isn't plotted.
 
@@ -307,7 +308,7 @@ Masked data is plotted as blockfill in grey.
    :scale: 52%
 
 Blockfill with individual colours
----------------------------------
+*********************************
 
 |    If a plot needs to be built up as a series of blockfill plots then this is
 |    possible using the cf-plot internal blockfill routine.  A colour contour plot is
