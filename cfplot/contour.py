@@ -2320,38 +2320,161 @@ def _render_with_new_xy(
 
 
 def con(f=None, x=None, y=None, **kwargs):
-    """Contour entrypoint coordinating through new object architecture.
+    """The interface to contouring in cf-plot.
 
-    Gradually extracts logic from legacy _legacy_con into structured classes
-    while preserving behavior. Eventually rendering will be split into
-    MapContourRenderer and XYContourRenderer subclasses.
+    The minimum use is con(f)
+    where f is a 2 dimensional array. If a cf field is passed then an
+    appropriate plot will be produced i.e. a longitude-latitude or
+    latitude-height plot for example. If a 2d numeric array is passed then
+    the optional arrays x and y can be used to describe the x and y data
+    point locations.
 
-    For now, orchestration uses the new classes for data and styling,
-    then delegates to legacy renderer.
-
-        Animation title options (map and non-map):
-        - animation: bool, enables animation-aware rendering hooks.
-        - animation_reference: cf.Field or array-like, optional reference data
-            used for automatic level generation across animation frames.
-            When supplied and levels are automatic, contour levels are computed
-            from this full reference rather than the current frame slice.
-        - animation_axis: str, one of "auto", "T", "Z", "Y", "X".
-            When "auto" and ptype != 0, the frame axis is inferred as a singleton
-            axis not used by that ptype. For ptype == 0, fallback preference is
-            singleton T, then Z, then Y, then X.
-        - animation_title_template: str, optional template used to construct
-            per-frame titles. Available fields are {title}, {frame}, and {axis}.
-
-        Example:
-                cfp.con(
-                        f,
-                        animation=True,
-                        reuse_map_background=True,
-                        animation_axis="auto",
-                        animation_title_template="{title} [{frame}]",
-                        title="Air temperature",
-                )
+    | f - array to contour
+    | x - x locations of data in f (optional)
+    | y - y locations of data in f (optional)
+    | fill=True - colour fill contours
+    | lines=True - draw contour lines and labels
+    | line_labels=True - label contour lines
+    | title=title - title for the plot
+    | ptype=0 - plot type - not needed for cf fields.
+    |                       0 = no specific plot type,
+    |                       1 = longitude-latitude,
+    |                       2 = latitude - height,
+    |                       3 = longitude - height,
+    |                       4 = latitude - time,
+    |                       5 = longitude - time
+    |                       6 = rotated pole
+    | negative_linestyle='solid' - set to one of 'solid', 'dashed'
+    | zero_thick=False - add a thick zero contour line. Set to 3 for example.
+    | blockfill=False - set to True for a blockfill plot
+    | colorbar_title=colbar_title - title for the colour bar
+    | colorbar=True - add a colour bar if a filled contour plot
+    | colorbar_label_skip=None - skip colour bar labels. Set to 2 to skip
+    |                            every other label.
+    | colorbar_orientation=None - options are 'horizontal' and 'vertical'
+    |                      The default for most plots is horizontal but
+    |                      for polar stereographic plots this is vertical.
+    | colorbar_shrink=None - value to shrink the colorbar by.  If the colorbar
+    |                        exceeds the plot area then values of 1.0, 0.55
+    |                        or 0.5m may help it better fit the plot area.
+    | colorbar_position=None - position of colorbar
+    |                          [xmin, ymin, x_extent,y_extent] in normalised
+    |                          coordinates. Use when a common colorbar
+    |                          is required for a set of plots. A typical set
+    |                          of values would be [0.1, 0.05, 0.8, 0.02]
+    | colorbar_fontsize=None - text size for colorbar labels and title
+    | colorbar_fontweight=None - font weight for colorbar labels and title
+    | colorbar_text_up_down=False - if True horizontal colour bar labels
+    |                               alternate above (start) and below the
+    |                               colour bar
+    | colorbar_text_down_up=False - if True horizontal colour bar labels
+    |                               alternate below (start) and above the
+    |                               colour bar
+    | colorbar_drawedges=True - draw internal divisions in the colorbar
+    | colorbar_fraction=None - space for the colorbar - default = 0.21,
+    |                          in normalised
+    |                       coordinates
+    | colorbar_thick=None - thickness of the colorbar - default = 0.015,
+    |                       in normalised coordinates
+    | colorbar_anchor=None - default=0.5 - anchor point of colorbar within
+    |                        the fraction space.
+    |                        0.0 = close to plot, 1.0 = further away
+    | colorbar_labels=None - labels to use for colorbar. The default is to
+    |                        use the contour levels as labels
+    | colorbar_text_up_down=False - on a horizontal colorbar alternate the
+    |                               labels top and bottom starting in the
+    |                               up position
+    | colorbar_text_down_up=False - on a horizontal colorbar alternate the
+    |                               labels bottom and top starting in the
+    |                               bottom position
+    | colorbar_drawedges=True - draw internal delimeter lines in the colorbar
+    | colors='k' - contour line colors - takes one or many values.
+    | xlog=False - logarithmic x axis
+    | ylog=False - logarithmic y axis
+    | axes=True - plot x and y axes
+    | xaxis=True - plot xaxis
+    | yaxis=True - plot y axis
+    | xticks=None - xtick positions
+    | xticklabels=None - xtick labels
+    | yticks=None - y tick positions
+    | yticklabels=None - ytick labels
+    | xlabel=None - label for x axis
+    | ylabel=None - label for y axis
+    | swap_axes=False - swap plotted axes - only valid for X, Y, Z vs T plots
+    | verbose=None - change to 1 to get a verbose listing of what con
+    |                is doing
+    | linewidths=None - contour linewidths.  Either a single number for all
+    |                   lines or array of widths
+    | linestyles=None - takes 'solid', 'dashed', 'dashdot' or 'dotted'
+    | alpha=1.0 - transparency setting.  The default is no transparency.
+    | zorder=1 - order of drawing
+    | level_spacing=None - Default of 'linear' level spacing.  Also takes
+    |                      'log', 'loglike', 'outlier' and 'inspect'
+    | irregular=None - flag for contouring irregular data
+    | face_lons=None - longitude points for face vertices
+    | face_lats=None - latitude points for face verticies
+    | face_connectivity=None - connectivity for face verticies
+    | titles=False - set to True to have a dimensions title
+    | transform_first=None - Cartopy should transform the points before
+    |                        calling the contouring algorithm, which can have
+    |                        a significant impact on speed (it is much
+    |                        faster to transform points than it is to
+    |                        transform patches) If this is unset and the
+    |                        number of points in the x direction is > 400
+    |                        then it is set to True.
+    | blockfill_fast=None - Use pcolormesh blockfill. This is possibly less
+    |                       reliable that the usual code but is
+    |                       faster for higher resolution datasets
+    | nlevs=False - Let Matplotlib work out the levels for the contour plot
+    | orca=None - User specifies this is an orca tripolar grid. Internally
+    |             cf-plot tries to detect this by looking for a single
+    |             discontinuity in the logitude 2D array. If found a fix
+    |             it make to the longitudes so that they are no longer
+    |             discontinuous.
+    | orca_skip=None - Only plot every nth grid point in the 2D longitude
+    |                  and latitude arrays.  This is useful for when
+    |                  plotting his resolution data over the whole globe
+    |                  which would otherwise be very slow to visualize.
+    | grid=False - Draw a grid on the map using the parameters set by
+    |              cfp.setvars. Defaults are grid_x_spacing=60,
+    |              grid_y_spacing=30, grid_colour='k',
+    |              grid_linestyle = '--', grid_thickness=1.0
+    |
+    :Returns:
+     None
     """
+    # Contour entrypoint coordinating through new object architecture.
+
+    # Gradually extracts logic from legacy _legacy_con into structured classes
+    # while preserving behavior. Eventually rendering will be split into
+    # MapContourRenderer and XYContourRenderer subclasses.
+
+    # For now, orchestration uses the new classes for data and styling,
+    # then delegates to legacy renderer.
+
+    #     Animation title options (map and non-map):
+    #     - animation: bool, enables animation-aware rendering hooks.
+    #     - animation_reference: cf.Field or array-like, optional reference data
+    #         used for automatic level generation across animation frames.
+    #         When supplied and levels are automatic, contour levels are computed
+    #         from this full reference rather than the current frame slice.
+    #     - animation_axis: str, one of "auto", "T", "Z", "Y", "X".
+    #         When "auto" and ptype != 0, the frame axis is inferred as a singleton
+    #         axis not used by that ptype. For ptype == 0, fallback preference is
+    #         singleton T, then Z, then Y, then X.
+    #     - animation_title_template: str, optional template used to construct
+    #         per-frame titles. Available fields are {title}, {frame}, and {axis}.
+
+    #     Example:
+    #             cfp.con(
+    #                     f,
+    #                     animation=True,
+    #                     reuse_map_background=True,
+    #                     animation_axis="auto",
+    #                     animation_title_template="{title} [{frame}]",
+    #                     title="Air temperature",
+    #             )
+
     # Refactor mode: unsupported cases should fail explicitly rather than
     # silently routing through legacy code.
     if not _can_use_new_xy_path(f=f, kwargs=kwargs):

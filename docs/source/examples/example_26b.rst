@@ -43,4 +43,4 @@ Example 26b: Contour plot from discrete feature values with labelling
    cfp.gclose()
 
 
-.. figure:: /../../cfplot/test/reference-example-images/ref_fig_26b.png
+.. figure:: /../../tests/reference-example-images/ref_fig_26b.png

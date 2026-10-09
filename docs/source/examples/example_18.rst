@@ -19,4 +19,4 @@ Example 18: Polar stipple plot
    cfp.gclose()
 
 
-.. figure:: /../../cfplot/test/reference-example-images/ref_fig_18.png
+.. figure:: /../../tests/reference-example-images/ref_fig_18.png

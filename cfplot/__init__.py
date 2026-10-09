@@ -21,7 +21,8 @@ from .utility import regrid
 from .vector import vect
 
 __author__ = "Andy Heaps, Sadie Bartholomew, Bryan Lawrence"
-__date__ = "16th May, 2026"
+__maintainer__ ="Sadie Bartholomew"
+__date__ = "2026-10-09"
 
 
 from importlib.metadata import PackageNotFoundError
