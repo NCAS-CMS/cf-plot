@@ -69,6 +69,38 @@ More detail about installation is provided on the
 (`https://ncas-cms.github.io/cf-plot/installation.html`)
 of the documentation.
 
+### Refreshing image-test references
+
+If image tests fail after an environment change, inspect the reference,
+generated plot and failure diff before accepting the differences. From the
+repository root, generate fresh plots using your testing environment:
+
+```bash
+python -m pytest tests/integration/test_contour_plot_examples.py tests/integration/test_advanced_plot_examples.py
+```
+
+For a complete refresh, avoid `-k` or `::` selectors: targeted runs preserve
+old generated images. The
+[reference refresh script](scripts/refresh_image_references.py) previews
+updates by default. Select examples by filename suffix (for example,
+`gen_fig_16b.png` has ID `16b`):
+
+```bash
+python scripts/refresh_image_references.py 4 5 16b
+# After visually approving these generated plots:
+python scripts/refresh_image_references.py 4 5 16b --write
+```
+
+Use `--all` instead of example IDs to preview every available generated
+baseline, then `--all --write` only after reviewing all selected plots.
+The script validates the selection before writing, replaces existing
+references, and removes only their failure-diff images; generated plots
+are retained. It does not render or automatically approve plots.
+
+Rerun the image tests afterward to verify the updated references and clear
+pytest's recorded failures. Review and commit the reference-image changes;
+do not accept a genuine plotting regression merely to make tests pass.
+
 ### Contributing
 
 Everyone is welcome to contribute to cf-plot in the form
