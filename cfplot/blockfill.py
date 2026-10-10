@@ -107,9 +107,11 @@ def _bfill(
                 colarr[pts] = np.size(levels) - 2
 
     if isinstance(field, np.ma.MaskedArray):
-        pts = np.ma.where(field.mask)
-        if np.size(pts) > 0:
-            colarr[pts] = -1
+        # np.ma.where on a scalar False mask raises on newer NumPy.
+        # Use a normalized boolean mask array instead.
+        mask = np.ma.getmaskarray(field)
+        if np.any(mask):
+            colarr[mask] = -1
 
     norm = matplotlib.colors.BoundaryNorm(levels, cmap.N)
 

@@ -88,3 +88,49 @@ def test_blockfill_signature_does_not_advertise_lonlat():
     params = inspect.signature(blockfill._bfill).parameters
 
     assert "lonlat" not in params
+
+
+def test_curvilinear_defaults_enable_fast_blockfill_and_disable_lines():
+    data = contour.ContourData(
+        field=np.ones((3, 4)),
+        x=np.ones((3, 4)),
+        y=np.ones((3, 4)),
+        ptype=1,
+    )
+
+    fill, lines, blockfill, blockfill_fast = contour._resolve_curvilinear_render_defaults(
+        data=data,
+        kwargs={},
+        fill=True,
+        lines=True,
+        blockfill=False,
+        blockfill_fast=None,
+    )
+
+    assert fill is False
+    assert lines is False
+    assert blockfill is True
+    assert blockfill_fast is True
+
+
+def test_curvilinear_defaults_respect_explicit_user_choices():
+    data = contour.ContourData(
+        field=np.ones((3, 4)),
+        x=np.ones((3, 4)),
+        y=np.ones((3, 4)),
+        ptype=1,
+    )
+
+    fill, lines, blockfill, blockfill_fast = contour._resolve_curvilinear_render_defaults(
+        data=data,
+        kwargs={"blockfill": False, "lines": True},
+        fill=True,
+        lines=True,
+        blockfill=False,
+        blockfill_fast=None,
+    )
+
+    assert fill is True
+    assert lines is True
+    assert blockfill is False
+    assert blockfill_fast is None

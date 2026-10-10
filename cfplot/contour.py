@@ -1693,9 +1693,51 @@ def _window_irregular_map_data(
     return field_irregular, lons_irregular, lats_irregular
 
 
-def _render_with_new_xy(
-    f: Any, x: Any, y: Any, kwargs: dict[str, Any]
-) -> bool:
+def _is_curvilinear_map_grid(data: ContourData) -> bool:
+    """Return True for map plots using 2D lon/lat coordinates.
+
+    Curvilinear grids (for example NEMO/ORCA ocean meshes) are prone to
+    severe contourf/contour artefacts. These are better rendered through
+    blockfill/pcolormesh.
+    """
+    if data.ptype != 1 or data.x is None or data.y is None:
+        return False
+    if np.ndim(data.field) != 2:
+        return False
+    return np.ndim(data.x) == 2 and np.ndim(data.y) == 2
+
+
+def _resolve_curvilinear_render_defaults(
+    *,
+    data: ContourData,
+    kwargs: dict[str, Any],
+    fill: bool,
+    lines: bool,
+    blockfill: bool,
+    blockfill_fast: bool | None,
+) -> tuple[bool, bool, bool, bool | None]:
+    """Adjust renderer defaults for curvilinear lon/lat map grids.
+
+    Returns the possibly updated (fill, lines, blockfill, blockfill_fast)
+    tuple.
+    """
+    if not _is_curvilinear_map_grid(data):
+        return fill, lines, blockfill, blockfill_fast
+
+    # Use robust defaults for 2D map grids unless the caller explicitly
+    # requested alternative behavior.
+    if "blockfill" not in kwargs:
+        blockfill = True
+        fill = False
+    if blockfill and blockfill_fast is None:
+        blockfill_fast = True
+    if "lines" not in kwargs:
+        lines = False
+
+    return fill, lines, blockfill, blockfill_fast
+
+
+def _render_with_new_xy(f: Any, x: Any, y: Any, kwargs: dict[str, Any]) -> bool:
     """Attempt rendering via new XY renderer and return True on success.
 
     Note: Imports from cfplot are local (inside function) to maintain
@@ -1772,6 +1814,7 @@ def _render_with_new_xy(
     fill = kwargs.get("fill", global_fill)
     lines = kwargs.get("lines", global_lines)
     blockfill = kwargs.get("blockfill", global_blockfill)
+    blockfill_fast = kwargs.get("blockfill_fast", None)
     line_labels = kwargs.get("line_labels", True)
     zero_thick = kwargs.get("zero_thick", False)
     colors = kwargs.get("colors", "k")
@@ -1782,6 +1825,15 @@ def _render_with_new_xy(
 
     if blockfill:
         fill = False
+
+    fill, lines, blockfill, blockfill_fast = _resolve_curvilinear_render_defaults(
+        data=data,
+        kwargs=kwargs,
+        fill=fill,
+        lines=lines,
+        blockfill=blockfill,
+        blockfill_fast=blockfill_fast,
+    )
 
     colorbar = kwargs.get("colorbar", True)
     if not fill and not blockfill:
@@ -2167,7 +2219,7 @@ def _render_with_new_xy(
         )
     if blockfill:
         renderer.render_blockfill(
-            fast=kwargs.get("blockfill_fast", None), alpha=alpha, zorder=zorder
+            fast=blockfill_fast, alpha=alpha, zorder=zorder
         )
     if lines:
         renderer.render_lines(
