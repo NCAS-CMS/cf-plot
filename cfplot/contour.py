@@ -23,21 +23,21 @@ function-level cfplot imports.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, replace
 import logging
 import time
+from dataclasses import dataclass, replace
 from typing import Any
 
-import cf
 import cartopy.crs as ccrs
+import cf
 import matplotlib.colors
 import numpy as np
 from matplotlib.axes import Axes
 
 from . import utility
 from .blockfill import _bfill, _bfill_ugrid
-from .colour import apply_colour_scale, get_colour_scale_map
 from .colorbar import cbar
+from .colour import apply_colour_scale, get_colour_scale_map
 from .layout_runtime import (
     apply_axes,
     ensure_xy_viewport,
@@ -47,8 +47,8 @@ from .layout_runtime import (
 from .map_runtime import (
     MapSet,
     _apply_dim_titles,
-    _apply_map_title,
     _apply_map_features,
+    _apply_map_title,
     ensure_map_viewport,
 )
 from .rotated_runtime import _render_ptype6_rotated_pole
@@ -59,8 +59,53 @@ from .state import (
     plotvars,
 )
 
-
 logger = logging.getLogger(__name__)
+
+
+def _animation_construct_logical_axis(construct: Any) -> str | None:
+    """Best-effort logical axis name for a construct."""
+    for axis_name in ("T", "Z", "Y", "X"):
+        if bool(getattr(construct, axis_name, False)):
+            return axis_name
+    return None
+
+
+def _resolve_animation_construct(
+    f: Any, axis_spec: Any
+) -> tuple[str | None, Any, str | None]:
+    """Resolve an animation axis spec to construct key, construct, and logical axis."""
+    if not isinstance(f, cf.Field) or axis_spec is None:
+        return (None, None, None)
+
+    axis_text = str(axis_spec).strip()
+    if not axis_text:
+        return (None, None, None)
+
+    def _from_axis_key(
+        axis_key: str, logical_axis: str | None = None
+    ) -> tuple[str | None, Any, str | None]:
+        resolved_key = axis_key
+        if logical_axis == "Z":
+            try:
+                resolved_key = utility.find_z(f)
+            except Exception:
+                resolved_key = axis_key
+
+        try:
+            construct = f.construct(resolved_key)
+        except Exception:
+            return (None, None, None)
+
+        resolved_logical = logical_axis or _animation_construct_logical_axis(
+            construct
+        )
+        return (str(resolved_key), construct, resolved_logical)
+
+    axis_upper = axis_text.upper()
+    if axis_upper in {"T", "Z", "Y", "X"}:
+        return _from_axis_key(axis_upper, logical_axis=axis_upper)
+
+    return _from_axis_key(axis_text)
 
 
 def _detect_lon_cyclic(f: "cf.Field", x: "np.ndarray | None") -> bool:
@@ -81,7 +126,9 @@ def _detect_lon_cyclic(f: "cf.Field", x: "np.ndarray | None") -> bool:
         # Fallback: centre-point heuristic — only valid for 1-D lon arrays
         if x is not None and x.ndim == 1 and len(x) > 1:
             step = (float(x[-1]) - float(x[0])) / (len(x) - 1)
-            return abs((float(x[-1]) - float(x[0]) + step) - 360.0) < 0.5 * abs(step)
+            return abs(
+                (float(x[-1]) - float(x[0]) + step) - 360.0
+            ) < 0.5 * abs(step)
 
     except Exception:
         pass
@@ -92,7 +139,7 @@ def _detect_lon_cyclic(f: "cf.Field", x: "np.ndarray | None") -> bool:
 @dataclass(frozen=True)
 class ContourData:
     """Read-only contour inputs after extraction and validation.
-    
+
     Holds extracted, validated, and pre-processed arrays ready for rendering.
     Immutable by design to prevent unintended state mutations during plotting.
     """
@@ -139,7 +186,9 @@ class ContourData:
             ylabel,
             xpole,
             ypole,
-        ) = utility.cf_data_assign(f, colorbar_title, verbose=verbose, proj=proj)
+        ) = utility.cf_data_assign(
+            f, colorbar_title, verbose=verbose, proj=proj
+        )
 
         if colorbar_title is not None:
             cbar_title = colorbar_title
@@ -152,7 +201,9 @@ class ContourData:
             and y is not None
             and np.ndim(x_arr) == 1
             and np.ndim(y) == 1
-            and np.asanyarray(field).size == np.asarray(x_arr).size == np.asarray(y).size
+            and np.asanyarray(field).size
+            == np.asarray(x_arr).size
+            == np.asarray(y).size
         )
 
         if irregular and proj == "cyl":
@@ -186,7 +237,9 @@ class ContourData:
 
         # Validate array dimensions - support both 1D coordinates and 2D (e.g., ORCA grids)
         if field.ndim not in (1, 2, 3):
-            raise ValueError(f"Field must be 1D, 2D, or 3D, got shape {field.shape}")
+            raise ValueError(
+                f"Field must be 1D, 2D, or 3D, got shape {field.shape}"
+            )
 
         return cls(
             field=field,
@@ -201,7 +254,7 @@ class ContourData:
 
 class ContourLayout:
     """Manage viewport and annotation geometry for contour plots.
-    
+
     Separates concerns: layout calculates space, rendering uses it.
     Currently still delegates to legacy gopen/gset/gpos system.
     """
@@ -220,10 +273,10 @@ class ContourLayout:
         colorbar_position: list[float] | None,
     ) -> "ContourLayout":
         """Reserve viewport for Cartesian/non-map rendering.
-        
+
         Coordinates with plotvars for multi-plot grids.
         """
-        # Set colorbar orientation  
+        # Set colorbar orientation
         self.colorbar_orientation = colorbar_orientation or "horizontal"
         self.colorbar_position = colorbar_position
 
@@ -259,7 +312,9 @@ class ContourLayout:
         colorbar_position: list[float] | None,
     ) -> "ContourLayout":
         """Backward-compatible alias for Cartesian viewport allocation."""
-        return self.allocate_xy_viewport(colorbar_orientation, colorbar_position)
+        return self.allocate_xy_viewport(
+            colorbar_orientation, colorbar_position
+        )
 
     def apply_title(
         self,
@@ -339,7 +394,7 @@ class ContourLayout:
 
 class ColourScale:
     """Encapsulate level fitting, colormap selection, and cbar labels.
-    
+
     Replaces the scattered cscale_flag (0/1/2) branching with explicit methods.
     """
 
@@ -475,7 +530,9 @@ class ColourScale:
         return self._expand_skipped_labels(labels, label_skip)
 
     @staticmethod
-    def _expand_skipped_labels(labels: list[Any], label_skip: int) -> list[str]:
+    def _expand_skipped_labels(
+        labels: list[Any], label_skip: int
+    ) -> list[str]:
         """Interleave skipped colour-bar labels with blank placeholders."""
         clabels: list[str] = []
         for label in labels:
@@ -561,7 +618,7 @@ class ContourRenderer:
 
 class MapContourRenderer(ContourRenderer):
     """Map renderer specialization for ptype == 1 (lon-lat plots).
-    
+
     Handles Cartopy transformations, coastlines, and polar projections.
     """
 
@@ -569,7 +626,11 @@ class MapContourRenderer(ContourRenderer):
         self, alpha: float, zorder: int, transform_first: bool | None
     ) -> None:
         """Render filled contours on a map with Cartopy."""
-        if self.data.x is None or self.data.y is None or self.data.levels is None:
+        if (
+            self.data.x is None
+            or self.data.y is None
+            or self.data.levels is None
+        ):
             return
 
         lons = self.data.x
@@ -600,7 +661,11 @@ class MapContourRenderer(ContourRenderer):
                 self.frame_artists.extend(list(runtime.image.collections))
             return
 
-        if transform_first is None and np.ndim(lons) == 1 and np.ndim(lats) == 1:
+        if (
+            transform_first is None
+            and np.ndim(lons) == 1
+            and np.ndim(lats) == 1
+        ):
             if np.size(lons) >= 400:
                 transform_first = True
 
@@ -676,7 +741,11 @@ class MapContourRenderer(ContourRenderer):
         zorder: int = 1,
     ) -> None:
         """Render contour lines on a map with Cartopy transform."""
-        if self.data.x is None or self.data.y is None or self.data.levels is None:
+        if (
+            self.data.x is None
+            or self.data.y is None
+            or self.data.levels is None
+        ):
             return
 
         if self.data.irregular:
@@ -804,7 +873,7 @@ class MapContourRenderer(ContourRenderer):
 
 class XYContourRenderer(ContourRenderer):
     """Cartesian renderer specialization for non-map contour plots.
-    
+
     Handles ptypes 0, 2-7 (simple XY, lat-height, lon-height, Hovmuller, rotated).
     """
 
@@ -813,7 +882,11 @@ class XYContourRenderer(ContourRenderer):
     ) -> None:
         """Render filled contours in Cartesian space."""
         _ = transform_first
-        if self.data.x is None or self.data.y is None or self.data.levels is None:
+        if (
+            self.data.x is None
+            or self.data.y is None
+            or self.data.levels is None
+        ):
             return
 
         cmap = self.cs.get_cmap()
@@ -835,7 +908,11 @@ class XYContourRenderer(ContourRenderer):
         self, fast: bool | None, alpha: float, zorder: int
     ) -> None:
         """Render block-filled contours in Cartesian space."""
-        if self.data.x is None or self.data.y is None or self.data.levels is None:
+        if (
+            self.data.x is None
+            or self.data.y is None
+            or self.data.levels is None
+        ):
             return
 
         _bfill(
@@ -859,7 +936,11 @@ class XYContourRenderer(ContourRenderer):
         zorder: int = 1,
     ) -> None:
         """Render contour lines in Cartesian space."""
-        if self.data.x is None or self.data.y is None or self.data.levels is None:
+        if (
+            self.data.x is None
+            or self.data.y is None
+            or self.data.levels is None
+        ):
             return
 
         runtime = plotvars.runtime
@@ -981,13 +1062,17 @@ def levs(min=None, max=None, step=None, manual=None, extend="both"):
             if all(isinstance(item, int) for item in [min, max, step]):
                 lstep = step * 1e-10
                 levs_arr = np.arange(min, max + lstep, step, dtype=np.float64)
-                levs_arr = ((levs_arr * 1e10).astype(np.int64)).astype(np.float64)
+                levs_arr = ((levs_arr * 1e10).astype(np.int64)).astype(
+                    np.float64
+                )
                 levs_arr = (levs_arr / 1e10).astype(np.int64)
                 scale.levels = levs_arr
             else:
                 lstep = step * 1e-10
                 levs_arr = np.arange(min, max + lstep, step, dtype=np.float64)
-                levs_arr = (levs_arr * 1e10).astype(np.int64).astype(np.float64)
+                levs_arr = (
+                    (levs_arr * 1e10).astype(np.int64).astype(np.float64)
+                )
                 levs_arr = levs_arr / 1e10
                 scale.levels = levs_arr
             runtime.user_levs = 1
@@ -1024,7 +1109,9 @@ def _can_use_new_xy_path(f: Any, kwargs: dict[str, Any]) -> bool:
         kwargs.get(key) is not None
         for key in ("face_lons", "face_lats", "face_connectivity")
     )
-    if face_kwargs_present and not (isinstance(f, cf.Field) and kwargs.get("blockfill")):
+    if face_kwargs_present and not (
+        isinstance(f, cf.Field) and kwargs.get("blockfill")
+    ):
         return False
 
     ptype = kwargs.get("ptype", 0)
@@ -1050,7 +1137,9 @@ def _clear_animation_artists(plotvars: Any) -> None:
 
 def _clear_animation_map_feature_artists(plotvars: Any) -> None:
     """Remove per-frame map feature artists from previous animation frame."""
-    feature_artists = getattr(plotvars.runtime, "_contour_animation_map_feature_artists", None)
+    feature_artists = getattr(
+        plotvars.runtime, "_contour_animation_map_feature_artists", None
+    )
     if not feature_artists:
         return
     for artist in feature_artists:
@@ -1063,7 +1152,9 @@ def _clear_animation_map_feature_artists(plotvars: Any) -> None:
 
 def _clear_animation_title_artist(plotvars: Any) -> None:
     """Remove animation title artist from previous frame if present."""
-    title_artist = getattr(plotvars.runtime, "_contour_animation_title_artist", None)
+    title_artist = getattr(
+        plotvars.runtime, "_contour_animation_title_artist", None
+    )
     if title_artist is None:
         return
     try:
@@ -1075,7 +1166,9 @@ def _clear_animation_title_artist(plotvars: Any) -> None:
 
 def _clear_animation_colorbar(plotvars: Any) -> None:
     """Remove animation colorbar from previous frame if present."""
-    colorbar_artist = getattr(plotvars.runtime, "_contour_animation_colorbar", None)
+    colorbar_artist = getattr(
+        plotvars.runtime, "_contour_animation_colorbar", None
+    )
     if colorbar_artist is None:
         return
 
@@ -1138,20 +1231,15 @@ def _animation_axis_value_object(f: Any, axis: str | None) -> Any:
     if axis is None or not isinstance(f, cf.Field):
         return None
 
-    axis_key = axis
-    if axis == "Z":
-        try:
-            axis_key = utility.find_z(f)
-        except Exception:
-            axis_key = axis
-
-    try:
-        construct = f.construct(axis_key)
-    except Exception:
+    axis_key, construct, logical_axis = _resolve_animation_construct(f, axis)
+    if axis_key is None or construct is None:
         return None
 
     try:
-        if axis == "T" and getattr(construct, "dtarray", None) is not None:
+        if (
+            logical_axis == "T"
+            and getattr(construct, "dtarray", None) is not None
+        ):
             values = np.asanyarray(construct.dtarray)
         else:
             values = np.asanyarray(construct.array)
@@ -1191,10 +1279,14 @@ def _emit_animation_meta_callback(
     runtime._animation_meta_emitted = True
 
 
-def _emit_animation_frame_callback(*, f: Any, ptype: int | None, kwargs: dict[str, Any]) -> None:
+def _emit_animation_frame_callback(
+    *, f: Any, ptype: int | None, kwargs: dict[str, Any]
+) -> None:
     """Emit a per-frame callback after drawing is complete."""
     runtime = plotvars.runtime
-    axis = _infer_animation_axis(f, kwargs.get("animation_axis", "auto"), ptype)
+    axis = _infer_animation_axis(
+        f, kwargs.get("animation_axis", "auto"), ptype
+    )
     payload = {
         "session_id": runtime._animation_session_id,
         "frame_index": int(runtime._animation_frame_index),
@@ -1222,7 +1314,9 @@ def _ptype_axes(ptype: int | None) -> set[str]:
     return mapping.get(int(ptype), set())
 
 
-def _infer_animation_axis(f: Any, axis_spec: Any, ptype: int | None) -> str | None:
+def _infer_animation_axis(
+    f: Any, axis_spec: Any, ptype: int | None
+) -> str | None:
     """Infer animation axis from a field and axis specification.
 
     Parameters
@@ -1243,12 +1337,13 @@ def _infer_animation_axis(f: Any, axis_spec: Any, ptype: int | None) -> str | No
         return None
 
     axis_upper = axis_text.upper()
-    valid_axes = ("T", "Z", "Y", "X")
-
     if axis_upper != "AUTO":
-        if axis_upper in valid_axes and f.has_construct(axis_upper):
-            return axis_upper
-        return None
+        axis_key, construct, _logical_axis = _resolve_animation_construct(
+            f, axis_text
+        )
+        if axis_key is None or construct is None:
+            return None
+        return str(construct.identity(default=axis_key))
 
     try:
         dims = utility.find_dim_names(f)
@@ -1264,11 +1359,12 @@ def _infer_animation_axis(f: Any, axis_spec: Any, ptype: int | None) -> str | No
             if axis not in dims or axis in ptype_axes:
                 continue
             try:
-                values = np.asanyarray(f.construct(axis).array)
+                construct = f.construct(axis)
+                values = np.asanyarray(construct.array)
             except Exception:
                 continue
             if values.size == 1:
-                return axis
+                return str(construct.identity(default=axis.lower()))
         return None
 
     # ptype=0 fallback: prefer temporal slices first, then vertical,
@@ -1277,31 +1373,27 @@ def _infer_animation_axis(f: Any, axis_spec: Any, ptype: int | None) -> str | No
         if axis not in dims:
             continue
         try:
-            values = np.asanyarray(f.construct(axis).array)
+            construct = f.construct(axis)
+            values = np.asanyarray(construct.array)
         except Exception:
             continue
         if values.size == 1:
-            return axis
+            return str(construct.identity(default=axis.lower()))
 
     return None
 
 
 def _animation_axis_value_text(f: cf.Field, axis: str) -> str | None:
     """Return axis/value text used in animation titles."""
-    axis_key = axis
-    if axis == "Z":
-        try:
-            axis_key = utility.find_z(f)
-        except Exception:
-            axis_key = axis
-
-    try:
-        construct = f.construct(axis_key)
-    except Exception:
+    axis_key, construct, logical_axis = _resolve_animation_construct(f, axis)
+    if axis_key is None or construct is None:
         return None
 
     try:
-        if axis == "T" and getattr(construct, "dtarray", None) is not None:
+        if (
+            logical_axis == "T"
+            and getattr(construct, "dtarray", None) is not None
+        ):
             values = np.asanyarray(construct.dtarray)
         else:
             values = np.asanyarray(construct.array)
@@ -1375,15 +1467,12 @@ def _animation_axis_size_gt_one(f: Any, axis: str | None) -> int:
     if not isinstance(f, cf.Field) or axis is None:
         return 0
 
-    axis_key = axis
-    if axis == "Z":
-        try:
-            axis_key = utility.find_z(f)
-        except Exception:
-            axis_key = axis
+    axis_key, construct, _logical_axis = _resolve_animation_construct(f, axis)
+    if axis_key is None or construct is None:
+        return 0
 
     try:
-        values = np.asanyarray(f.construct(axis_key).array)
+        values = np.asanyarray(construct.array)
     except Exception:
         return 0
 
@@ -1391,7 +1480,9 @@ def _animation_axis_size_gt_one(f: Any, axis: str | None) -> int:
     return size if size > 1 else 0
 
 
-def _choose_animation_sequence_axis(f: Any, axis_spec: Any, ptype: int | None) -> str | None:
+def _choose_animation_sequence_axis(
+    f: Any, axis_spec: Any, ptype: int | None
+) -> str | None:
     """Choose an axis for internal animation slicing when full field is >2D."""
     if not isinstance(f, cf.Field):
         return None
@@ -1406,29 +1497,23 @@ def _choose_animation_sequence_axis(f: Any, axis_spec: Any, ptype: int | None) -
         if candidate in ptype_axes:
             continue
         if _animation_axis_size_gt_one(f, candidate) > 1:
-            return candidate
+            resolved = _infer_animation_axis(f, candidate, ptype)
+            return resolved or candidate
 
     for candidate in ("T", "Z", "Y", "X"):
         if _animation_axis_size_gt_one(f, candidate) > 1:
-            return candidate
+            resolved = _infer_animation_axis(f, candidate, ptype)
+            return resolved or candidate
 
     return None
 
 
-def _slice_animation_frame(f: cf.Field, axis: str, frame_value: Any) -> cf.Field:
+def _slice_animation_frame(
+    f: cf.Field, axis: str, frame_value: Any
+) -> cf.Field:
     """Return one frame slice for the chosen animation axis."""
-    axis_key = axis
-    if axis == "Z":
-        try:
-            axis_key = utility.find_z(f)
-        except Exception:
-            axis_key = axis
-
-    try:
-        construct = f.construct(axis_key)
-        coord_name = str(construct.identity(default=axis.lower()))
-    except Exception:
-        coord_name = axis
+    axis_key, construct, _logical_axis = _resolve_animation_construct(f, axis)
+    coord_name = str(construct.identity(default=str(axis_key or axis).lower()))
 
     try:
         return f.subspace(**{coord_name: frame_value})
@@ -1445,16 +1530,17 @@ def _render_animation_sequence(
     animation_axis: str,
 ) -> bool:
     """Render an animation by slicing a >2D field into 2D frames."""
-    axis_key = animation_axis
-    if animation_axis == "Z":
-        try:
-            axis_key = utility.find_z(f)
-        except Exception:
-            axis_key = animation_axis
+    axis_key, construct, logical_axis = _resolve_animation_construct(
+        f, animation_axis
+    )
+    if axis_key is None or construct is None:
+        return False
 
     try:
-        construct = f.construct(axis_key)
-        if animation_axis == "T" and getattr(construct, "dtarray", None) is not None:
+        if (
+            logical_axis == "T"
+            and getattr(construct, "dtarray", None) is not None
+        ):
             frame_values = np.asanyarray(construct.dtarray).reshape(-1)
         else:
             frame_values = np.asanyarray(construct.array).reshape(-1)
@@ -1475,7 +1561,9 @@ def _render_animation_sequence(
         if i == 0 and bool(base_kwargs.get("reuse_map_background", False)):
             frame_kwargs["reuse_map_background"] = False
 
-        if not _render_with_new_xy(f=frame_field, x=x, y=y, kwargs=frame_kwargs):
+        if not _render_with_new_xy(
+            f=frame_field, x=x, y=y, kwargs=frame_kwargs
+        ):
             return False
 
     return True
@@ -1484,9 +1572,10 @@ def _render_animation_sequence(
 def _field_has_ugrid_faces(f: cf.Field) -> bool:
     """Return True when a CF field exposes face connectivity for UGRID plots."""
     try:
-        return bool(f.domain_topologies()) and f.domain_topology(
-            "cell:face", default=None
-        ) is not None
+        return (
+            bool(f.domain_topologies())
+            and f.domain_topology("cell:face", default=None) is not None
+        )
     except Exception:
         return False
 
@@ -1510,7 +1599,11 @@ def _face_vertex_array(face_values: Any, face_connectivity: Any) -> np.ndarray:
     values = _as_array(face_values)
     connectivity = np.asanyarray(_as_array(face_connectivity), dtype=int)
     if values.ndim == 1 and connectivity.ndim == 2:
-        if connectivity.size and connectivity.min() >= 0 and connectivity.max() < values.size:
+        if (
+            connectivity.size
+            and connectivity.min() >= 0
+            and connectivity.max() < values.size
+        ):
             return values[connectivity]
     return values
 
@@ -1646,7 +1739,7 @@ def _resolve_curvilinear_render_defaults(
 
 def _render_with_new_xy(f: Any, x: Any, y: Any, kwargs: dict[str, Any]) -> bool:
     """Attempt rendering via new XY renderer and return True on success.
-    
+
     Note: Imports from cfplot are local (inside function) to maintain
     module-level independence while preserving current functionality.
     """
@@ -1692,7 +1785,11 @@ def _render_with_new_xy(f: Any, x: Any, y: Any, kwargs: dict[str, Any]) -> bool:
         data = ContourData.from_arrays(field=np.asanyarray(f), x=x, y=y)
         data = replace(data, ptype=kwargs.get("ptype", 0) or 0)
 
-    if isinstance(f, cf.Field) and bool(kwargs.get("blockfill")) and _field_has_ugrid_faces(f):
+    if (
+        isinstance(f, cf.Field)
+        and bool(kwargs.get("blockfill"))
+        and _field_has_ugrid_faces(f)
+    ):
         # Prefer the face metadata embedded in the field, which is the legacy
         # path and is more reliable than the auxiliary coordinate variables
         # supplied by callers.
@@ -1744,7 +1841,10 @@ def _render_with_new_xy(f: Any, x: Any, y: Any, kwargs: dict[str, Any]) -> bool:
 
     if pv_scale.levels is None:
         levels_field = data.field
-        if bool(kwargs.get("animation", False)) and kwargs.get("animation_reference") is not None:
+        if (
+            bool(kwargs.get("animation", False))
+            and kwargs.get("animation_reference") is not None
+        ):
             ref = kwargs.get("animation_reference")
             if isinstance(ref, cf.Field):
                 levels_field = np.asanyarray(ref.array)
@@ -1769,6 +1869,7 @@ def _render_with_new_xy(f: Any, x: Any, y: Any, kwargs: dict[str, Any]) -> bool:
     )
 
     import matplotlib
+
     matplotlib.rcParams["contour.negative_linestyle"] = "solid"
 
     _cb_orient = kwargs.get("colorbar_orientation", None)
@@ -1842,7 +1943,9 @@ def _render_with_new_xy(f: Any, x: Any, y: Any, kwargs: dict[str, Any]) -> bool:
         )
 
         if animation:
-            _emit_animation_frame_callback(f=f, ptype=data.ptype, kwargs=kwargs)
+            _emit_animation_frame_callback(
+                f=f, ptype=data.ptype, kwargs=kwargs
+            )
 
         return rendered
 
@@ -1856,7 +1959,10 @@ def _render_with_new_xy(f: Any, x: Any, y: Any, kwargs: dict[str, Any]) -> bool:
 
     # Legacy parity for latitude/longitude/time-pressure plots:
     # pressure-like coordinates are rendered with pressure decreasing upward.
-    if data.ptype in (2, 3, 7) and kwargs.get("user_gset", pv_runtime.user_gset) == 0:
+    if (
+        data.ptype in (2, 3, 7)
+        and kwargs.get("user_gset", pv_runtime.user_gset) == 0
+    ):
         positive = "down"
         if isinstance(f, cf.Field):
             myz = utility.find_z(f)
@@ -1946,7 +2052,10 @@ def _render_with_new_xy(f: Any, x: Any, y: Any, kwargs: dict[str, Any]) -> bool:
             mylonmax = mylonmin + 360.0
 
         if draw_static_map:
-            if not ((lonrange > 350 and latrange > 160) or pv_runtime.user_mapset == 1):
+            if not (
+                (lonrange > 350 and latrange > 160)
+                or pv_runtime.user_mapset == 1
+            ):
                 map_runtime.configure(
                     lonmin=mylonmin,
                     lonmax=mylonmax,
@@ -2002,7 +2111,11 @@ def _render_with_new_xy(f: Any, x: Any, y: Any, kwargs: dict[str, Any]) -> bool:
                 field=np.roll(data.field, -split, axis=-1),
             )
 
-        if not data.irregular and np.ndim(data.y) == 1 and data.y[0] > data.y[-1]:
+        if (
+            not data.irregular
+            and np.ndim(data.y) == 1
+            and data.y[0] > data.y[-1]
+        ):
             data = replace(data, y=data.y[::-1], field=np.flipud(data.field))
 
         xticks = kwargs.get("xticks", None)
@@ -2025,25 +2138,30 @@ def _render_with_new_xy(f: Any, x: Any, y: Any, kwargs: dict[str, Any]) -> bool:
             tspace_hour=pv_output.tspace_hour,
             tspace_day=pv_output.tspace_day,
         )
-    xticks, yticks, xticklabels, yticklabels, default_xlabel, default_ylabel = (
-        utility.compute_xy_ticks(
-            ptype=data.ptype,
-            xmin=xmin,
-            xmax=xmax,
-            ymin=ymin,
-            ymax=ymax,
-            ylog=bool(kwargs.get("ylog", False)),
-            degsym=pv_dec.degsym,
-            xticks=xticks,
-            yticks=yticks,
-            xticklabels=xticklabels,
-            yticklabels=yticklabels,
-            default_xlabel=default_xlabel,
-            default_ylabel=default_ylabel,
-            time_ticks=time_ticks,
-            time_labels=time_labels,
-            time_label=time_label,
-        )
+    (
+        xticks,
+        yticks,
+        xticklabels,
+        yticklabels,
+        default_xlabel,
+        default_ylabel,
+    ) = utility.compute_xy_ticks(
+        ptype=data.ptype,
+        xmin=xmin,
+        xmax=xmax,
+        ymin=ymin,
+        ymax=ymax,
+        ylog=bool(kwargs.get("ylog", False)),
+        degsym=pv_dec.degsym,
+        xticks=xticks,
+        yticks=yticks,
+        xticklabels=xticklabels,
+        yticklabels=yticklabels,
+        default_xlabel=default_xlabel,
+        default_ylabel=default_ylabel,
+        time_ticks=time_ticks,
+        time_labels=time_labels,
+        time_label=time_label,
     )
 
     if data.ptype == 1:
@@ -2075,7 +2193,9 @@ def _render_with_new_xy(f: Any, x: Any, y: Any, kwargs: dict[str, Any]) -> bool:
         blockfill=blockfill,
     )
     if data.ptype == 1:
-        renderer = MapContourRenderer(layout=layout, data=data, colour_scale=cs)
+        renderer = MapContourRenderer(
+            layout=layout, data=data, colour_scale=cs
+        )
     else:
         renderer = XYContourRenderer(layout=layout, data=data, colour_scale=cs)
 
@@ -2153,7 +2273,9 @@ def _render_with_new_xy(f: Any, x: Any, y: Any, kwargs: dict[str, Any]) -> bool:
                 kwargs=feature_kwargs,
             )
             if draw_features_each_frame:
-                pv_runtime._contour_animation_map_feature_artists = map_feature_artists
+                pv_runtime._contour_animation_map_feature_artists = (
+                    map_feature_artists
+                )
             if kwargs.get("grid", pv_dec.grid):
                 map_runtime.draw_grid()
 
@@ -2167,19 +2289,23 @@ def _render_with_new_xy(f: Any, x: Any, y: Any, kwargs: dict[str, Any]) -> bool:
             except (TypeError, ValueError):
                 contour_zorder = 1.0
             feature_kwargs["zorder"] = contour_zorder + 1.0
-            pv_runtime._contour_animation_map_feature_artists = _apply_map_features(
-                mymap=pv_runtime.mymap,
-                continent_color=pv_dec.continent_color or "k",
-                continent_thickness=pv_dec.continent_thickness or 1.5,
-                continent_linestyle=pv_dec.continent_linestyle or "solid",
-                kwargs=feature_kwargs,
+            pv_runtime._contour_animation_map_feature_artists = (
+                _apply_map_features(
+                    mymap=pv_runtime.mymap,
+                    continent_color=pv_dec.continent_color or "k",
+                    continent_thickness=pv_dec.continent_thickness or 1.5,
+                    continent_linestyle=pv_dec.continent_linestyle or "solid",
+                    kwargs=feature_kwargs,
+                )
             )
 
         # Persist only dynamic contour artists for animation updates.
         pv_runtime._contour_animation_artists = list(renderer.frame_artists)
 
     render_colorbar_this_frame = True
-    if bool(kwargs.get("animation", False)) and bool(kwargs.get("reuse_map_background", False)):
+    if bool(kwargs.get("animation", False)) and bool(
+        kwargs.get("reuse_map_background", False)
+    ):
         frame_index = int(getattr(pv_runtime, "_animation_frame_index", 0))
         render_colorbar_this_frame = frame_index == 0
 
@@ -2246,38 +2372,161 @@ def _render_with_new_xy(f: Any, x: Any, y: Any, kwargs: dict[str, Any]) -> bool:
 
 
 def con(f=None, x=None, y=None, **kwargs):
-    """Contour entrypoint coordinating through new object architecture.
-    
-    Gradually extracts logic from legacy _legacy_con into structured classes
-    while preserving behavior. Eventually rendering will be split into 
-    MapContourRenderer and XYContourRenderer subclasses.
-    
-    For now, orchestration uses the new classes for data and styling,
-    then delegates to legacy renderer.
+    """The interface to contouring in cf-plot.
 
-        Animation title options (map and non-map):
-        - animation: bool, enables animation-aware rendering hooks.
-        - animation_reference: cf.Field or array-like, optional reference data
-            used for automatic level generation across animation frames.
-            When supplied and levels are automatic, contour levels are computed
-            from this full reference rather than the current frame slice.
-        - animation_axis: str, one of "auto", "T", "Z", "Y", "X".
-            When "auto" and ptype != 0, the frame axis is inferred as a singleton
-            axis not used by that ptype. For ptype == 0, fallback preference is
-            singleton T, then Z, then Y, then X.
-        - animation_title_template: str, optional template used to construct
-            per-frame titles. Available fields are {title}, {frame}, and {axis}.
+    The minimum use is con(f)
+    where f is a 2 dimensional array. If a cf field is passed then an
+    appropriate plot will be produced i.e. a longitude-latitude or
+    latitude-height plot for example. If a 2d numeric array is passed then
+    the optional arrays x and y can be used to describe the x and y data
+    point locations.
 
-        Example:
-                cfp.con(
-                        f,
-                        animation=True,
-                        reuse_map_background=True,
-                        animation_axis="auto",
-                        animation_title_template="{title} [{frame}]",
-                        title="Air temperature",
-                )
+    | f - array to contour
+    | x - x locations of data in f (optional)
+    | y - y locations of data in f (optional)
+    | fill=True - colour fill contours
+    | lines=True - draw contour lines and labels
+    | line_labels=True - label contour lines
+    | title=title - title for the plot
+    | ptype=0 - plot type - not needed for cf fields.
+    |                       0 = no specific plot type,
+    |                       1 = longitude-latitude,
+    |                       2 = latitude - height,
+    |                       3 = longitude - height,
+    |                       4 = latitude - time,
+    |                       5 = longitude - time
+    |                       6 = rotated pole
+    | negative_linestyle='solid' - set to one of 'solid', 'dashed'
+    | zero_thick=False - add a thick zero contour line. Set to 3 for example.
+    | blockfill=False - set to True for a blockfill plot
+    | colorbar_title=colbar_title - title for the colour bar
+    | colorbar=True - add a colour bar if a filled contour plot
+    | colorbar_label_skip=None - skip colour bar labels. Set to 2 to skip
+    |                            every other label.
+    | colorbar_orientation=None - options are 'horizontal' and 'vertical'
+    |                      The default for most plots is horizontal but
+    |                      for polar stereographic plots this is vertical.
+    | colorbar_shrink=None - value to shrink the colorbar by.  If the colorbar
+    |                        exceeds the plot area then values of 1.0, 0.55
+    |                        or 0.5m may help it better fit the plot area.
+    | colorbar_position=None - position of colorbar
+    |                          [xmin, ymin, x_extent,y_extent] in normalised
+    |                          coordinates. Use when a common colorbar
+    |                          is required for a set of plots. A typical set
+    |                          of values would be [0.1, 0.05, 0.8, 0.02]
+    | colorbar_fontsize=None - text size for colorbar labels and title
+    | colorbar_fontweight=None - font weight for colorbar labels and title
+    | colorbar_text_up_down=False - if True horizontal colour bar labels
+    |                               alternate above (start) and below the
+    |                               colour bar
+    | colorbar_text_down_up=False - if True horizontal colour bar labels
+    |                               alternate below (start) and above the
+    |                               colour bar
+    | colorbar_drawedges=True - draw internal divisions in the colorbar
+    | colorbar_fraction=None - space for the colorbar - default = 0.21,
+    |                          in normalised
+    |                       coordinates
+    | colorbar_thick=None - thickness of the colorbar - default = 0.015,
+    |                       in normalised coordinates
+    | colorbar_anchor=None - default=0.5 - anchor point of colorbar within
+    |                        the fraction space.
+    |                        0.0 = close to plot, 1.0 = further away
+    | colorbar_labels=None - labels to use for colorbar. The default is to
+    |                        use the contour levels as labels
+    | colorbar_text_up_down=False - on a horizontal colorbar alternate the
+    |                               labels top and bottom starting in the
+    |                               up position
+    | colorbar_text_down_up=False - on a horizontal colorbar alternate the
+    |                               labels bottom and top starting in the
+    |                               bottom position
+    | colorbar_drawedges=True - draw internal delimeter lines in the colorbar
+    | colors='k' - contour line colors - takes one or many values.
+    | xlog=False - logarithmic x axis
+    | ylog=False - logarithmic y axis
+    | axes=True - plot x and y axes
+    | xaxis=True - plot xaxis
+    | yaxis=True - plot y axis
+    | xticks=None - xtick positions
+    | xticklabels=None - xtick labels
+    | yticks=None - y tick positions
+    | yticklabels=None - ytick labels
+    | xlabel=None - label for x axis
+    | ylabel=None - label for y axis
+    | swap_axes=False - swap plotted axes - only valid for X, Y, Z vs T plots
+    | verbose=None - change to 1 to get a verbose listing of what con
+    |                is doing
+    | linewidths=None - contour linewidths.  Either a single number for all
+    |                   lines or array of widths
+    | linestyles=None - takes 'solid', 'dashed', 'dashdot' or 'dotted'
+    | alpha=1.0 - transparency setting.  The default is no transparency.
+    | zorder=1 - order of drawing
+    | level_spacing=None - Default of 'linear' level spacing.  Also takes
+    |                      'log', 'loglike', 'outlier' and 'inspect'
+    | irregular=None - flag for contouring irregular data
+    | face_lons=None - longitude points for face vertices
+    | face_lats=None - latitude points for face verticies
+    | face_connectivity=None - connectivity for face verticies
+    | titles=False - set to True to have a dimensions title
+    | transform_first=None - Cartopy should transform the points before
+    |                        calling the contouring algorithm, which can have
+    |                        a significant impact on speed (it is much
+    |                        faster to transform points than it is to
+    |                        transform patches) If this is unset and the
+    |                        number of points in the x direction is > 400
+    |                        then it is set to True.
+    | blockfill_fast=None - Use pcolormesh blockfill. This is possibly less
+    |                       reliable that the usual code but is
+    |                       faster for higher resolution datasets
+    | nlevs=False - Let Matplotlib work out the levels for the contour plot
+    | orca=None - User specifies this is an orca tripolar grid. Internally
+    |             cf-plot tries to detect this by looking for a single
+    |             discontinuity in the logitude 2D array. If found a fix
+    |             it make to the longitudes so that they are no longer
+    |             discontinuous.
+    | orca_skip=None - Only plot every nth grid point in the 2D longitude
+    |                  and latitude arrays.  This is useful for when
+    |                  plotting his resolution data over the whole globe
+    |                  which would otherwise be very slow to visualize.
+    | grid=False - Draw a grid on the map using the parameters set by
+    |              cfp.setvars. Defaults are grid_x_spacing=60,
+    |              grid_y_spacing=30, grid_colour='k',
+    |              grid_linestyle = '--', grid_thickness=1.0
+    |
+    :Returns:
+     None
     """
+    # Contour entrypoint coordinating through new object architecture.
+
+    # Gradually extracts logic from legacy _legacy_con into structured classes
+    # while preserving behavior. Eventually rendering will be split into
+    # MapContourRenderer and XYContourRenderer subclasses.
+
+    # For now, orchestration uses the new classes for data and styling,
+    # then delegates to legacy renderer.
+
+    #     Animation title options (map and non-map):
+    #     - animation: bool, enables animation-aware rendering hooks.
+    #     - animation_reference: cf.Field or array-like, optional reference data
+    #         used for automatic level generation across animation frames.
+    #         When supplied and levels are automatic, contour levels are computed
+    #         from this full reference rather than the current frame slice.
+    #     - animation_axis: str, one of "auto", "T", "Z", "Y", "X".
+    #         When "auto" and ptype != 0, the frame axis is inferred as a singleton
+    #         axis not used by that ptype. For ptype == 0, fallback preference is
+    #         singleton T, then Z, then Y, then X.
+    #     - animation_title_template: str, optional template used to construct
+    #         per-frame titles. Available fields are {title}, {frame}, and {axis}.
+
+    #     Example:
+    #             cfp.con(
+    #                     f,
+    #                     animation=True,
+    #                     reuse_map_background=True,
+    #                     animation_axis="auto",
+    #                     animation_title_template="{title} [{frame}]",
+    #                     title="Air temperature",
+    #             )
+
     # Refactor mode: unsupported cases should fail explicitly rather than
     # silently routing through legacy code.
     if not _can_use_new_xy_path(f=f, kwargs=kwargs):
@@ -2310,4 +2559,3 @@ def con(f=None, x=None, y=None, **kwargs):
     raise NotImplementedError(
         "Contour case not implemented in refactored renderer yet"
     )
-

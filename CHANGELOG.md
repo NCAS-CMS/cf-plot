@@ -2,7 +2,7 @@
 
 ## cf-plot changelog
 
-**Current release: version `3.4.0`, released `2025-04-28`**
+**Current release: version `3.5.0`, released `2026-10-09`**
 
 *Note*: stated dates of releases correspond to the date a given
 version was tagged on GitHub. Up until 2024 some detail may
@@ -14,28 +14,42 @@ of being developed elsewhere.
 -----
 
 
-### Version `3.5.X`, first released TBC
+### Version `3.5.X`, first released 2026-10-09
 
-#### Version `3.5.0`, release TBC
+#### Version `3.5.0`, release 2026-10-09
 
-* Modularise the codebase, which has no user-facing implications except
-  that functionality is available via sub-modules as well as at the top-level
+* Modularise and refactor the codebase, which has no user-facing implications
+  except that functionality is available via sub-modules as well as at the top-level
   e.g. `cfp.con` is available also as `cfp.contour.con`, `cfp.gopen` is also
-  `cfp.graphic.graphic.gopen` etc.
-  (https://github.com/NCAS-CMS/cf-plot/issues/11)
-* Make the internal API obsolete - it is no longer exposed to the user
-   (but similar functionality can be added upon request).
-* Update the API reference to group and categorise all routines.
+  `cfp.graphic.graphic.gopen` etc. (https://github.com/NCAS-CMS/cf-plot/pull/118,
+  https://github.com/NCAS-CMS/cf-plot/pull/123)
+* Documentation improvements including patching missing API coverage
+  and updating the API reference to group and categorise all routines
+  (https://github.com/NCAS-CMS/cf-plot/pull/116,
+  https://github.com/NCAS-CMS/cf-plot/pull/121)
+* Make the internal API obsolete such that it is no longer exposed to the user
+  (but similar functionality can be added upon request)
+  (https://github.com/NCAS-CMS/cf-plot/pull/121)
 * Add missing space between variable name and units in
   colour bar titles (https://github.com/NCAS-CMS/cf-plot/issues/115)
-* Update any (documentation) examples which extract a ``Field`` from
-  a ``Fieldlist`` of length greater than one to use ``select_by_identity ``
+* Update any (documentation and test) examples which extract a `Field` from
+  a `Fieldlist` of length greater than one to use `select_by_identity`
   instead of indexing, for clarity
   (https://github.com/NCAS-CMS/cf-plot/issues/119)
 * Add optional animation hooks for external library integration on
   `gopen` (`animation_session_id`, `animation_meta_callback`,
   `animation_frame_callback`) and emit additive animation metadata/frame
-  callback payloads from the contour animation path.
+  callback payloads from the contour animation path
+  (https://github.com/NCAS-CMS/cf-plot/pull/130)
+* Provide & document access to all datasets used for the examples
+  (https://github.com/NCAS-CMS/cf-plot/pull/113)
+* Added community health files such as a contributing guide and code of conduct
+  (https://github.com/NCAS-CMS/cf-plot/pull/110)
+* Fix for weird artefacts and distortion on plots of larger grids
+  (https://github.com/NCAS-CMS/cf-plot/issues/128)
+* Add missing documentation page for example '39b'
+  (https://github.com/NCAS-CMS/cf-plot/issues/114)
+
 
 ### Version `3.4.X`, first released (`3.4.0`) `2025-04-28`
 
@@ -48,26 +62,26 @@ of being developed elsewhere.
   `ncas-cms.github.io/cf-plot/` with the previous documentation at root URL
   `ajheaps.github.io/cf-plot/` frozen (no longer updated so do not consult)
 * Documentation overhaul including new responsive theme, hierarchical structuring,
-   improved navigation, listing of all examples grouped by theme with reorganisation
-   of gallery view, updates for informational pages, and more
+  improved navigation, listing of all examples grouped by theme with reorganisation
+  of gallery view, updates for informational pages, and more
 * New feature: `traj` method can now natively plot *single* trajectories
-(i.e. one-dimensional paths, having no trajectory dimension) encoded as
+  (i.e. one-dimensional paths, having no trajectory dimension) encoded as
   discrete sampling geometries (https://github.com/NCAS-CMS/cf-plot/issues/84)
 * Fix bug whereby `con` contour plot with `verbose=True` would result in
-   an `UnboundLocalError` (https://github.com/NCAS-CMS/cf-plot/issues/54)
+  an `UnboundLocalError` (https://github.com/NCAS-CMS/cf-plot/issues/54)
 * Fix bug whereby plots such as with `con` using the 'merc' Mercator projection
-    would be cropped to small portion of the y axis
-    (https://github.com/NCAS-CMS/cf-plot/issues/65)
+  would be cropped to small portion of the y axis
+  (https://github.com/NCAS-CMS/cf-plot/issues/65)
 * Fix bug whereby the colour bar would be mostly cutoff from the foot of
   the figure for plots such as `con` contour plots when using certain projections
   such as 'ortho', 'merc', and 'lcc' after a call to e.g. `cfp.mapset(proj='ortho')`
   (https://github.com/NCAS-CMS/cf-plot/issues/70)
 * Fix bug whereby `con` contour plot in the 'UKCP' projection would
-     result in an `IndexError` for `blockfill=True`
-     (https://github.com/NCAS-CMS/cf-plot/issues/91) or otherwise an
-     `UnboundLocalError` (https://github.com/NCAS-CMS/cf-plot/issues/60)
-     or an `AttributeError` (https://github.com/NCAS-CMS/cf-plot/issues/59)
-     dependent on other configuration
+  result in an `IndexError` for `blockfill=True`
+  (https://github.com/NCAS-CMS/cf-plot/issues/91) or otherwise an
+  `UnboundLocalError` (https://github.com/NCAS-CMS/cf-plot/issues/60)
+  or an `AttributeError` (https://github.com/NCAS-CMS/cf-plot/issues/59)
+  dependent on other configuration
 * Fix bug whereby `con` would result in a blank plot for rotated pole data
   requested for display on its native grid through setting of `cfp.mapset(proj="rotated")`
   (see https://github.com/NCAS-CMS/cf-plot/issues/86)
@@ -78,8 +92,8 @@ of being developed elsewhere.
   projection (`proj="npstere"` or `proj="spstere"`) could display blacked out areas
   (see https://github.com/NCAS-CMS/cf-plot/issues/99)
 * Make consistent the defaults for `feature_zorder` and
-   `rotated_grid_thickness` plotting variables as configurable through `setvars`
-   (https://github.com/NCAS-CMS/cf-plot/issues/73)
+  `rotated_grid_thickness` plotting variables as configurable through `setvars`
+  (https://github.com/NCAS-CMS/cf-plot/issues/73)
 * Set new minimum version of dependency: `'cf-python >= 3.17.0'`
 * Set new minimum version of dependency: `'cartopy >= 0.17.0'`
 * Removed explicit (listed) dependency to `matplotlib` since this is required already by

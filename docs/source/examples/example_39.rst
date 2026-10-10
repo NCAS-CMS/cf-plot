@@ -12,4 +12,4 @@ Example 39: Basic track plotting
    cfp.traj(f)
 
 
-.. figure:: /../../cfplot/test/reference-example-images/ref_fig_39.png
+.. figure:: /../../tests/reference-example-images/ref_fig_39.png

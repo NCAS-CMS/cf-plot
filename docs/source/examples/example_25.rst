@@ -26,4 +26,4 @@ Example 25: UGRID contour plot with ORCA 2 output
    cfp.con(f=temp.array, x=lons.array, y=lats.array, ptype=1)
 
 
-.. figure:: /../../cfplot/test/reference-example-images/ref_fig_25.png
+.. figure:: /../../tests/reference-example-images/ref_fig_25.png

@@ -1,6 +1,8 @@
-import cf
-import cfplot as cfp
 from pathlib import Path
+
+import cf
+
+import cfplot as cfp
 
 # Path to test data
 DATA_FILE1 = Path(__file__).parent / "data" / "da193_example.nc"
@@ -29,10 +31,10 @@ def test_realdata_pstereo():
 
     # this works correctly, though of course there
     # is an unplotted segment of data
-    f1 = f0[:,0:399]
+    f1 = f0[:, 0:399]
     cfp.con(f1)
 
     # this goes back to the bad stripes, with
     # an appropriate empty segment
-    f1 = f0[:,0:403]
+    f1 = f0[:, 0:403]
     cfp.con(f1)

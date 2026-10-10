@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 
 
@@ -8,7 +7,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>User guide &#8212; cf-plot 3.4.0 documentation</title>
+    <title>User guide &#8212; cf-plot 3.5.0 documentation</title>
   
   
   
@@ -16,66 +15,67 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link href="_static/styles/theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
 
-  
-  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
-
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b76e3c8a" />
-    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=fd3f3429" />
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
   
+  <!-- So that users can add custom icons -->
+  <script defer src="_static/scripts/fontawesome.js?digest=18bd87630a240e9c25be"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
-  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="_static/documentation_options.js?v=b0e360d0"></script>
-    <script src="_static/doctools.js?v=9a2dae69"></script>
-    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/documentation_options.js?v=c1362a89"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/design-tabs.js?v=f930bc37"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'user_guide';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Advanced use" href="advanced.html" />
     <link rel="prev" title="Example 43: CF-compliant WRF model output data" href="examples/example_43.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="3.5.0" />
+  
+    
+    <script src="_static/searchtools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="searchindex.js"></script>
+  
   </head>
-  
-  
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
-
+  <body data-default-mode="">
   
   
   <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
   
   <div id="pst-scroll-pixel-helper"></div>
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-
   
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-primary-sidebar-checkbox"/>
-  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
   
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-secondary-sidebar-checkbox"/>
-  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
   
-  <div class="search-button__wrapper">
-    <div class="search-button__overlay"></div>
-    <div class="search-button__search-container">
+  
+  <dialog id="pst-search-dialog">
+    
 <form class="bd-search d-flex align-items-center"
       action="search.html"
       method="get">
@@ -83,7 +83,6 @@
   <input type="search"
          class="form-control"
          name="q"
-         id="search-input"
          placeholder="Search the docs ..."
          aria-label="Search the docs ..."
          autocomplete="off"
@@ -91,8 +90,8 @@
          autocapitalize="off"
          spellcheck="false"/>
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form></div>
-  </div>
+</form>
+  </dialog>
 
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
@@ -102,9 +101,9 @@
 </aside>
 
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
 <div class="bd-header__inner bd-page-width">
-  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
     <span class="fa-solid fa-bars"></span>
   </button>
   
@@ -124,7 +123,7 @@
   
   
   
-    <p class="title logo__title">cf-plot 3.4.0 documentation</p>
+    <p class="title logo__title">cf-plot 3.5.0 documentation</p>
   
 </a></div>
     
@@ -167,13 +166,15 @@
 
 
 <li class="nav-item current active">
-  <a class="nav-link nav-internal" href="#">
+  <a class="nav-link nav-internal" href="#" aria-current="page">
     User guide
   </a>
 </li>
 
             <li class="nav-item dropdown">
-                <button class="btn dropdown-toggle nav-item" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-controls="pst-nav-more-links">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
                     More
                 </button>
                 <ul id="pst-nav-more-links" class="dropdown-menu">
@@ -233,29 +234,28 @@
         <div class="navbar-item navbar-persistent--container">
           
 
- <script>
- document.write(`
-   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
-    <span class="search-button__default-text">Search</span>
-    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-   </button>
- `);
- </script>
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
         </div>
       
       
         <div class="navbar-item">
 
-<script>
-document.write(`
-  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
-    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
-    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
   </button>
-`);
-</script></div>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
       
     </div>
     
@@ -264,20 +264,16 @@ document.write(`
   
     <div class="navbar-persistent--mobile">
 
- <script>
- document.write(`
-   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
-    <span class="search-button__default-text">Search</span>
-    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-   </button>
- `);
- </script>
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
     </div>
   
 
   
-    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+    <button type="button" class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
       <span class="fa-solid fa-outdent"></span>
     </button>
   
@@ -291,7 +287,8 @@ document.write(`
       
       
       
-      <div class="bd-sidebar-primary bd-sidebar">
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
         
 
   
@@ -335,7 +332,7 @@ document.write(`
 
 
 <li class="nav-item current active">
-  <a class="nav-link nav-internal" href="#">
+  <a class="nav-link nav-internal" href="#" aria-current="page">
     User guide
   </a>
 </li>
@@ -394,15 +391,18 @@ document.write(`
         
           <div class="navbar-item">
 
-<script>
-document.write(`
-  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
-    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
-    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
   </button>
-`);
-</script></div>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
         
       </div>
     
@@ -410,6 +410,7 @@ document.write(`
   
     <div class="sidebar-primary-items__start sidebar-primary__section">
         <div class="sidebar-primary-item">
+
 <nav class="bd-docs-nav bd-links"
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
@@ -419,9 +420,14 @@ document.write(`
   
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
   </div>
-  
-  <div id="rtd-footer-container"></div>
 
 
       </div>
@@ -439,8 +445,6 @@ document.write(`
       
         <div class="header-article-item">
 
-
-
 <nav aria-label="Breadcrumb" class="d-print-none">
   <ul class="bd-breadcrumbs">
     
@@ -449,7 +453,7 @@ document.write(`
         <i class="fa-solid fa-home"></i>
       </a>
     </li>
-    <li class="breadcrumb-item active" aria-current="page">User guide</li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">User guide</span></li>
   </ul>
 </nav>
 </div>
@@ -596,13 +600,13 @@ as follows.</p>
 <p>The data to make a contour plot can be read in and passed to cf-plot using cf-python as per the following example.</p>
 <section id="cylindrical-projection">
 <h3>Cylindrical projection<a class="headerlink" href="#cylindrical-projection" title="Link to this heading">#</a></h3>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
-<span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">cf</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cfplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cfp</span>
 <span class="n">f</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/tas_A1.nc&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">15</span><span class="p">))</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/fig1.png"><img alt="_images/fig1.png" src="_images/fig1.png" style="width: 514.28px; height: 313.56px;" />
+<a class="reference internal image-reference" href="_images/fig1.png"><img alt="_images/fig1.png" height="314" src="_images/fig1.png" width="514" />
 </a>
 <p>Note that for a contour plot two dimensional data is required.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
@@ -612,15 +616,15 @@ as follows.</p>
 <p>Dimensions that have one element, such as time in this instance, are ignored.</p>
 <p>The <strong>cfp.mapset</strong> routine is used to change the map area and projection.
 <strong>cfp.mapset(lonmin=-15, lonmax=3, latmin=48, latmax=60)</strong> sets the map to a view over the British Isles. The cfp.mapset command is persistent in that any further map plots will use the same map projection and limits without having to specify the same map again.  The levels are taken from the whole field and in this example we specify the levels explicitly with the <strong>cfp.levs</strong> command.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
-<span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">cf</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cfplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cfp</span>
 <span class="n">f</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/tas_A1.nc&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">mapset</span><span class="p">(</span><span class="n">lonmin</span><span class="o">=-</span><span class="mi">15</span><span class="p">,</span> <span class="n">lonmax</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">latmin</span><span class="o">=</span><span class="mi">48</span><span class="p">,</span> <span class="n">latmax</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">levs</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mi">265</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">285</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">15</span><span class="p">))</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/fig3.png"><img alt="_images/fig3.png" src="_images/fig3.png" style="width: 487.24px; height: 328.12px;" />
+<a class="reference internal image-reference" href="_images/fig3.png"><img alt="_images/fig3.png" height="328" src="_images/fig3.png" width="487" />
 </a>
 <p>The default settings are for colour fill with contour lines over the top.  These can be changed with the <strong>fill=False</strong> and <strong>lines=False</strong> flags to <strong>cfp.con</strong>.</p>
 <p>To reset the mapping to the default cylindrical projection -180 to 180 in longitude and -90 to 90 in latitude use <strong>cfp.mapset()</strong>.  Likewise to reset the contour levels use <strong>cfp.levs()</strong>.</p>
@@ -628,36 +632,36 @@ as follows.</p>
 <section id="blockfill-plots">
 <h3>Blockfill plots<a class="headerlink" href="#blockfill-plots" title="Link to this heading">#</a></h3>
 <p>Blockfill plots in the cylindrical projection are made using the <strong>blockfill=True</strong> flag to the <strong>cfp.con</strong> routine.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
-<span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">cf</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cfplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cfp</span>
 <span class="n">f</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/tas_A1.nc&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">15</span><span class="p">),</span> <span class="n">blockfill</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">lines</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/fig2.png"><img alt="_images/fig2.png" src="_images/fig2.png" style="width: 514.28px; height: 313.56px;" />
+<a class="reference internal image-reference" href="_images/fig2.png"><img alt="_images/fig2.png" height="314" src="_images/fig2.png" width="514" />
 </a>
 </section>
 <section id="polar-stereographic-plots">
 <h3>Polar stereographic plots<a class="headerlink" href="#polar-stereographic-plots" title="Link to this heading">#</a></h3>
 <p>Polar Stereographic plots are set using <strong>proj='npstere'</strong> or <strong>proj='spstere'</strong> in the call to <strong>cfp.mapset</strong>.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
-<span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">cf</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cfplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cfp</span>
 <span class="n">f</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/ggap.nc&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">mapset</span><span class="p">(</span><span class="n">proj</span><span class="o">=</span><span class="s1">&#39;npstere&#39;</span><span class="p">)</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">pressure</span><span class="o">=</span><span class="mi">500</span><span class="p">))</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/fig4.png"><img alt="_images/fig4.png" src="_images/fig4.png" style="width: 439.92px; height: 387.40000000000003px;" />
+<a class="reference internal image-reference" href="_images/fig4.png"><img alt="_images/fig4.png" height="387" src="_images/fig4.png" width="440" />
 </a>
 <p>The <strong>mapset</strong> <strong>bounding_lat</strong> and <strong>lon_0</strong> parameters are used to set the latitude limit of the plot and the orientation of the plot. Generally for the southern hemisphere the Greenwich Meridian (zero degrees longitude) is plotted at the top of the plot and is set with <strong>lon_0=0</strong>.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
-<span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">cf</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cfplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cfp</span>
 <span class="n">f</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/ggap.nc&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">mapset</span><span class="p">(</span><span class="n">proj</span><span class="o">=</span><span class="s1">&#39;spstere&#39;</span><span class="p">,</span> <span class="n">boundinglat</span><span class="o">=-</span><span class="mi">30</span><span class="p">,</span> <span class="n">lon_0</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">pressure</span><span class="o">=</span><span class="mi">500</span><span class="p">))</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/fig5.png"><img alt="_images/fig5.png" src="_images/fig5.png" style="width: 438.88px; height: 384.28000000000003px;" />
+<a class="reference internal image-reference" href="_images/fig5.png"><img alt="_images/fig5.png" height="384" src="_images/fig5.png" width="439" />
 </a>
 </section>
 <section id="latitude-pressure-plots">
@@ -667,47 +671,47 @@ as follows.</p>
 </pre></div>
 </div>
 <p>&lt;CF Field: air_temperature(time(1), pressure(23), latitude(160), longitude(1)) K&gt;</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
-<span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">cf</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cfplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cfp</span>
 <span class="n">f</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/ggap.nc&#39;</span><span class="p">)[</span><span class="mi">2</span><span class="p">]</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/fig6.png"><img alt="_images/fig6.png" src="_images/fig6.png" style="width: 530.9200000000001px; height: 346.84000000000003px;" />
+<a class="reference internal image-reference" href="_images/fig6.png"><img alt="_images/fig6.png" height="347" src="_images/fig6.png" width="531" />
 </a>
 <p>A mean of the data along the longitude (zonal mean) is made using the cf.collapse method.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
-<span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">cf</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cfplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cfp</span>
 <span class="n">f</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/ggap.nc&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span><span class="s1">&#39;longitude&#39;</span><span class="p">))</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/fig7.png"><img alt="_images/fig7.png" src="_images/fig7.png" style="width: 530.9200000000001px; height: 346.84000000000003px;" />
+<a class="reference internal image-reference" href="_images/fig7.png"><img alt="_images/fig7.png" height="347" src="_images/fig7.png" width="531" />
 </a>
 <p>To make a log pressure on the y axis use the ylog=True flag to the con routine.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
-<span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">cf</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cfplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cfp</span>
 <span class="n">f</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/ggap.nc&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span><span class="s1">&#39;longitude&#39;</span><span class="p">),</span> <span class="n">ylog</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/fig8.png"><img alt="_images/fig8.png" src="_images/fig8.png" style="width: 530.9200000000001px; height: 346.84000000000003px;" />
+<a class="reference internal image-reference" href="_images/fig8.png"><img alt="_images/fig8.png" height="347" src="_images/fig8.png" width="531" />
 </a>
 </section>
 <section id="hovmuller-plots">
 <h3>Hovmuller plots<a class="headerlink" href="#hovmuller-plots" title="Link to this heading">#</a></h3>
 <p>A Hovmuller plot is one of longitude or latitude versus time as in the following examples.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
-<span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">cf</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cfplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cfp</span>
 <span class="n">f</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/tas_A1.nc&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">cscale</span><span class="p">(</span><span class="s1">&#39;plasma&#39;</span><span class="p">)</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">lines</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/fig10.png"><img alt="_images/fig10.png" src="_images/fig10.png" style="width: 530.9200000000001px; height: 344.76px;" />
+<a class="reference internal image-reference" href="_images/fig10.png"><img alt="_images/fig10.png" height="345" src="_images/fig10.png" width="531" />
 </a>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
-<span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">cf</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cfplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cfp</span>
 <span class="n">f</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/tas_A1.nc&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">gset</span><span class="p">(</span><span class="o">-</span><span class="mi">30</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="s1">&#39;1960-1-1&#39;</span><span class="p">,</span> <span class="s1">&#39;1980-1-1&#39;</span><span class="p">)</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">levs</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mi">280</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">305</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
@@ -715,7 +719,7 @@ as follows.</p>
 <span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">lines</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/fig11.png"><img alt="_images/fig11.png" src="_images/fig11.png" style="width: 530.4px; height: 345.28000000000003px;" />
+<a class="reference internal image-reference" href="_images/fig11.png"><img alt="_images/fig11.png" height="345" src="_images/fig11.png" width="530" />
 </a>
 </section>
 <section id="vector-and-stream-plots">
@@ -725,15 +729,15 @@ as follows.</p>
 <div class="line">&lt;CF Field: eastward_wind(time(1), pressure(1), latitude(160), longitude(320)) m s**-1&gt;</div>
 <div class="line">&lt;CF Field: northward_wind(time(1), pressure(1), latitude(160), longitude(320)) m s**-1&gt;</div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
-<span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">cf</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cfplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cfp</span>
 <span class="n">f</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/ggap.nc&#39;</span><span class="p">)</span>
 <span class="n">u</span><span class="o">=</span><span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">pressure</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
 <span class="n">v</span><span class="o">=</span><span class="n">f</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">pressure</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">vect</span><span class="p">(</span><span class="n">u</span><span class="o">=</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="o">=</span><span class="n">v</span><span class="p">,</span> <span class="n">key_length</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/fig13.png"><img alt="_images/fig13.png" src="_images/fig13.png" style="width: 514.28px; height: 264.68px;" />
+<a class="reference internal image-reference" href="_images/fig13.png"><img alt="_images/fig13.png" height="265" src="_images/fig13.png" width="514" />
 </a>
 <div class="line-block">
 <div class="line"><br /></div>
@@ -741,8 +745,8 @@ as follows.</p>
 </div>
 <p>The <strong>key_length</strong> parameter sets the length of the reference key.  The scale parameter sets the viewable length of the vector with <strong>scale=50</strong> producing vectors that look twice as long as <strong>scale=100</strong>.  There are often too many vectors on the plot giving a mostly black set of lines.  The <strong>stride=5</strong> option helps with this and will plot only every 5th vector location in x and y.  There is also an alternative <strong>npts</strong> parameter that can be user to interpolate the data to this number of points in x and y.</p>
 <p>In this example vectors are overlaid on a contour plot. Usually a plot is displayed immediately after making a <strong>cfp.con</strong> or <strong>cfp.vect</strong> command.  As we want a vector plot on top of a contour plot we need to open a graphics file file <strong>cfp.gopen()</strong> make our contour and vector plots with <strong>cfp.con</strong> and <strong>cfp.vect</strong> and then close the graphics file with <strong>cfp.gclose()</strong>.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
-<span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">cf</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cfplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cfp</span>
 <span class="n">f</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/ggap.nc&#39;</span><span class="p">)</span>
 <span class="n">u</span><span class="o">=</span><span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">pressure</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
 <span class="n">v</span><span class="o">=</span><span class="n">f</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">pressure</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
@@ -755,11 +759,11 @@ as follows.</p>
 <span class="n">cfp</span><span class="o">.</span><span class="n">gclose</span><span class="p">()</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/fig14.png"><img alt="_images/fig14.png" src="_images/fig14.png" style="width: 516.88px; height: 325.0px;" />
+<a class="reference internal image-reference" href="_images/fig14.png"><img alt="_images/fig14.png" height="325" src="_images/fig14.png" width="517" />
 </a>
 <p>Here we make a zonal mean vector plot with different vector keys and scaling factors for the X and Y directions.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
-<span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">cf</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cfplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cfp</span>
 
 <span class="n">c</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/vaAMIPlcd_DJF.nc&#39;</span><span class="p">)</span>
 <span class="n">c</span><span class="o">=</span><span class="n">c</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">Y</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">wi</span><span class="p">(</span><span class="o">-</span><span class="mi">60</span><span class="p">,</span><span class="mi">60</span><span class="p">))</span>
@@ -777,12 +781,12 @@ as follows.</p>
          <span class="n">key_location</span><span class="o">=</span><span class="p">[</span><span class="mf">0.95</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.05</span><span class="p">])</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/fig16.png"><img alt="_images/fig16.png" src="_images/fig16.png" style="width: 456.72px; height: 352.44px;" />
+<a class="reference internal image-reference" href="_images/fig16.png"><img alt="_images/fig16.png" height="352" src="_images/fig16.png" width="457" />
 </a>
 <p>A streamplot is used to show fluid flow and 2D field gradients.  In this first example the data goes from 0 to 358.875 in longitude.  The cartopy / matplotlib interface seems to need the data to be inside the data window in longitude so we anchor the data in cf-python using the anchor method to start at -180 in longitude.  If we didn't do this any longitudes less than zero would have no streams drawn.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
-<span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">cf</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cfplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cfp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="n">f</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/ggap.nc&#39;</span><span class="p">)</span>
 <span class="n">u</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">pressure</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
 <span class="n">v</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">pressure</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
@@ -793,7 +797,7 @@ as follows.</p>
 <span class="n">cfp</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="n">u</span><span class="o">=</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="o">=</span><span class="n">v</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/fig16b.png"><img alt="_images/fig16b.png" src="_images/fig16b.png" style="width: 435.16px; height: 218.68px;" />
+<a class="reference internal image-reference" href="_images/fig16b.png"><img alt="_images/fig16b.png" height="219" src="_images/fig16b.png" width="435" />
 </a>
 <p>In the second streamplot example a colorbar showing the intensity of the wind is drawn.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">magnitude</span> <span class="o">=</span> <span class="p">(</span><span class="n">u</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">v</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span>
@@ -807,14 +811,14 @@ as follows.</p>
 <span class="n">cfp</span><span class="o">.</span><span class="n">gclose</span><span class="p">()</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/fig16c.png"><img alt="_images/fig16c.png" src="_images/fig16c.png" style="width: 435.16px; height: 270.6px;" />
+<a class="reference internal image-reference" href="_images/fig16c.png"><img alt="_images/fig16c.png" height="271" src="_images/fig16c.png" width="435" />
 </a>
 </section>
 <section id="multiple-plots-on-a-page-and-plot-positioning">
 <span id="multiple"></span><h3>Multiple plots on a page and plot positioning<a class="headerlink" href="#multiple-plots-on-a-page-and-plot-positioning" title="Link to this heading">#</a></h3>
 <p>To make multiple plots on the page open a graphic file with <strong>cfp.gopen</strong> and pass the rows and columns parameters. Make each plot in turn first selecting the position with <strong>cfp.gpos()</strong>.  The first position is the top left plot and increases by one for one plot to the right until the final plot is made in the bottom right. When all the plots have been made close the plot with <strong>cfp.gclose()</strong>.  A combined colour bar is also made as all the plots have the same contour levels and colour scale helping to reduce the plot complexity.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
-<span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">cf</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cfplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cfp</span>
 <span class="n">f</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/ggap.nc&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
 
 <span class="n">cfp</span><span class="o">.</span><span class="n">gopen</span><span class="p">(</span><span class="n">rows</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">bottom</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
@@ -833,7 +837,7 @@ as follows.</p>
 <span class="n">cfp</span><span class="o">.</span><span class="n">gclose</span><span class="p">()</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/fig19.png"><img alt="_images/fig19.png" src="_images/fig19.png" style="width: 508.04px; height: 367.64px;" />
+<a class="reference internal image-reference" href="_images/fig19.png"><img alt="_images/fig19.png" height="368" src="_images/fig19.png" width="508" />
 </a>
 <p>Plot spacing options are located in <strong>cfp.gopen</strong></p>
 <div class="line-block">
@@ -888,10 +892,10 @@ paramenters for the plot display area are in plot extent normalised coordinates.
 for bottom or left and 1.0 for top or right of the plot area.</p>
 <p>Cylidrical projection plots have an additional rider of having a degree in longitude and latitude
 being the same size so plots of this type might not fill the plot area specified as expected.</p>
-<a class="reference internal image-reference" href="_images/fig19a.png"><img alt="_images/fig19a.png" src="_images/fig19a.png" style="width: 430.32px; height: 289.96px;" />
+<a class="reference internal image-reference" href="_images/fig19a.png"><img alt="_images/fig19a.png" height="290" src="_images/fig19a.png" width="430" />
 </a>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
-<span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">cf</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cfplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cfp</span>
 <span class="n">f</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/ggap.nc&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
 
 <span class="n">cfp</span><span class="o">.</span><span class="n">gopen</span><span class="p">(</span><span class="n">user_position</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -911,11 +915,11 @@ being the same size so plots of this type might not fill the plot area specified
 <strong>user_position=True</strong> parameter to <strong>cfp.gopen</strong>. The required plot position is set in <strong>cfp.gpos</strong>
 with the <strong>xmin, xmax, ymin, ymax</strong> parameters.  Two calls to the <strong>cfp.cbar</strong> routine then place
 colour bars on the plot with different colour scales and contour levels.</p>
-<a class="reference internal image-reference" href="_images/fig19b.png"><img alt="_images/fig19b.png" src="_images/fig19b.png" style="width: 399.52px; height: 286.88px;" />
+<a class="reference internal image-reference" href="_images/fig19b.png"><img alt="_images/fig19b.png" height="287" src="_images/fig19b.png" width="400" />
 </a>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
-<span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">cf</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cfplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cfp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
 <span class="n">f</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/ggap.nc&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
 <span class="n">g</span><span class="o">=</span><span class="n">f</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;X: mean&#39;</span><span class="p">)</span>
@@ -941,10 +945,10 @@ colour bars on the plot with different colour scales and contour levels.</p>
 <section id="trajectories">
 <span id="trajectoriesug"></span><h3>Trajectories<a class="headerlink" href="#trajectories" title="Link to this heading">#</a></h3>
 <p>Data stored in contiguous ragged array format, such as from Kevin Hodges's TRACK program, can be plotted using cf-plot using <strong>cfp.traj</strong>.</p>
-<a class="reference internal image-reference" href="_images/fig39.png"><img alt="_images/fig39.png" src="_images/fig39.png" style="width: 514.28px; height: 258.96000000000004px;" />
+<a class="reference internal image-reference" href="_images/fig39.png"><img alt="_images/fig39.png" height="259" src="_images/fig39.png" width="514" />
 </a>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
-<span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">cf</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cfplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cfp</span>
 <span class="n">f</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/ff_trs_pos.nc&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">traj</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
 </pre></div>
@@ -958,8 +962,8 @@ colour bars on the plot with different colour scales and contour levels.</p>
 <section id="stipple-plots">
 <span id="significance"></span><h3>Stipple plots<a class="headerlink" href="#stipple-plots" title="Link to this heading">#</a></h3>
 <p>A stipple plot is usually used to show areas of significance such as 95% or greater confidence. These plots use the overlay technique as used in the previous contour/vector plot.  In these plots we show a coutour plot and a stipple plot between varous contour levels to show that the stippling works correctly.  For different significance levels such as confidences of 95% and 99% chosing a different sized or colour marker is a common plot technique.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
-<span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">cf</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cfplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cfp</span>
 <span class="n">f</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/tas_A1.nc&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 <span class="n">g</span><span class="o">=</span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">gopen</span><span class="p">()</span>
@@ -970,10 +974,10 @@ colour bars on the plot with different colour scales and contour levels.</p>
 <span class="n">cfp</span><span class="o">.</span><span class="n">gclose</span><span class="p">()</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/fig17.png"><img alt="_images/fig17.png" src="_images/fig17.png" style="width: 514.28px; height: 313.56px;" />
+<a class="reference internal image-reference" href="_images/fig17.png"><img alt="_images/fig17.png" height="314" src="_images/fig17.png" width="514" />
 </a>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
-<span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">cf</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cfplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cfp</span>
 <span class="n">f</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/tas_A1.nc&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 <span class="n">g</span><span class="o">=</span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">gopen</span><span class="p">()</span>
@@ -984,7 +988,7 @@ colour bars on the plot with different colour scales and contour levels.</p>
 <span class="n">cfp</span><span class="o">.</span><span class="n">gclose</span><span class="p">()</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/fig18.png"><img alt="_images/fig18.png" src="_images/fig18.png" style="width: 440.96000000000004px; height: 387.40000000000003px;" />
+<a class="reference internal image-reference" href="_images/fig18.png"><img alt="_images/fig18.png" height="387" src="_images/fig18.png" width="441" />
 </a>
 <div class="line-block">
 <div class="line"><br /></div>
@@ -995,15 +999,15 @@ colour bars on the plot with different colour scales and contour levels.</p>
 <section id="graph-plots">
 <span id="graphsug"></span><h3>Graph plots<a class="headerlink" href="#graph-plots" title="Link to this heading">#</a></h3>
 <p>To make a graph plot use the <strong>cfp.lineplot</strong> function as below on a single line of data in a field.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
-<span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">cf</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cfplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cfp</span>
 <span class="n">f</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/ggap.nc&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
 <span class="n">g</span><span class="o">=</span><span class="n">f</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;X: mean&#39;</span><span class="p">)</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">lineplot</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">pressure</span><span class="o">=</span><span class="mi">100</span><span class="p">),</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span>
              <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Zonal mean zonal wind at 100mb&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/fig27.png"><img alt="_images/fig27.png" src="_images/fig27.png" style="width: 516.36px; height: 399.88px;" />
+<a class="reference internal image-reference" href="_images/fig27.png"><img alt="_images/fig27.png" height="400" src="_images/fig27.png" width="516" />
 </a>
 <div class="line-block">
 <div class="line">Other valid markers are:</div>
@@ -1047,8 +1051,8 @@ colour bars on the plot with different colour scales and contour levels.</p>
 <div class="line"><strong>cfp.lineplot(g)</strong></div>
 </div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
-<span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">cf</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cfplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cfp</span>
 <span class="n">f</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/ggap.nc&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
 <span class="n">g</span><span class="o">=</span><span class="n">f</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;X: mean&#39;</span><span class="p">)</span>
 <span class="n">xticks</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">90</span><span class="p">,</span><span class="o">-</span><span class="mi">75</span><span class="p">,</span><span class="o">-</span><span class="mi">60</span><span class="p">,</span><span class="o">-</span><span class="mi">45</span><span class="p">,</span><span class="o">-</span><span class="mi">30</span><span class="p">,</span><span class="o">-</span><span class="mi">15</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">15</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">45</span><span class="p">,</span><span class="mi">60</span><span class="p">,</span><span class="mi">75</span><span class="p">,</span><span class="mi">90</span><span class="p">]</span>
@@ -1069,7 +1073,7 @@ colour bars on the plot with different colour scales and contour levels.</p>
 <span class="n">cfp</span><span class="o">.</span><span class="n">gclose</span><span class="p">()</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/fig28.png"><img alt="_images/fig28.png" src="_images/fig28.png" style="width: 524.16px; height: 399.88px;" />
+<a class="reference internal image-reference" href="_images/fig28.png"><img alt="_images/fig28.png" height="400" src="_images/fig28.png" width="524" />
 </a>
 </section>
 <section id="setting-contour-levels">
@@ -1099,7 +1103,7 @@ Once the <strong>cfp.levs</strong> command is used you'll need to think about th
 <span class="n">cfp</span><span class="o">.</span><span class="n">cscale</span><span class="p">(</span><span class="s1">&#39;scale1&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/cs1.png"><img alt="_images/cs1.png" src="_images/cs1.png" style="width: 502.32px; height: 26.0px;" />
+<a class="reference internal image-reference" href="_images/cs1.png"><img alt="_images/cs1.png" height="26" src="_images/cs1.png" width="502" />
 </a>
 <p>If no call has been made to adjust the colour scale then continuous and diverging colour scales are self adjusting to fit the number of levels automatically generated by cf-plot or specified by the user with the <strong>cfp.levs</strong> command.  This behaviour is also followed for a simple call to <strong>cfp.cscale</strong> specifying a different colour scale - for example <strong>cfp.cscale('radar')</strong> to select the radar colour scheme.</p>
 <p>If a call to <strong>cfp.cscale</strong> specifies additional parameters to the colour scale, then the automatic colour adjustment is turned off giving the user fine tuning of colours as below.</p>
@@ -1108,21 +1112,21 @@ Once the <strong>cfp.levs</strong> command is used you'll need to think about th
 <span class="n">cfp</span><span class="o">.</span><span class="n">levs</span><span class="p">(</span><span class="nb">min</span><span class="o">=-</span><span class="mi">5</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/cs2.png"><img alt="_images/cs2.png" src="_images/cs2.png" style="width: 502.32px; height: 26.0px;" />
+<a class="reference internal image-reference" href="_images/cs2.png"><img alt="_images/cs2.png" height="26" src="_images/cs2.png" width="502" />
 </a>
 <p>To change the number of colours above and below the mid-point of the scale use the above and below parameters. This is useful for fields where you have differing extents of data above and below the zero line.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cfp</span><span class="o">.</span><span class="n">cscale</span><span class="p">(</span><span class="s1">&#39;scale1&#39;</span><span class="p">,</span> <span class="n">below</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">above</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">levs</span><span class="p">(</span><span class="nb">min</span><span class="o">=-</span><span class="mi">30</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/cs3.png"><img alt="_images/cs3.png" src="_images/cs3.png" style="width: 502.32px; height: 26.0px;" />
+<a class="reference internal image-reference" href="_images/cs3.png"><img alt="_images/cs3.png" height="26" src="_images/cs3.png" width="502" />
 </a>
 <p>For data where you need white to indicate that this data region is insignificant use the white=white parameter. This can take single or multiple values.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cfp</span><span class="o">.</span><span class="n">cscale</span><span class="p">(</span><span class="s1">&#39;scale1&#39;</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span> <span class="n">white</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">levs</span><span class="p">(</span><span class="n">manual</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span><span class="o">-</span><span class="mi">8</span><span class="p">,</span> <span class="o">-</span><span class="mi">6</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">10</span><span class="p">])</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/cs4.png"><img alt="_images/cs4.png" src="_images/cs4.png" style="width: 502.32px; height: 26.0px;" />
+<a class="reference internal image-reference" href="_images/cs4.png"><img alt="_images/cs4.png" height="26" src="_images/cs4.png" width="502" />
 </a>
 <p>To reverse a colour scale use the <strong>reverse=True</strong> option to <strong>cfp.cscale</strong> and specify the number of colours required.</p>
 <p><strong>cfp.cscale('viridis', reverse=True, ncols=17)</strong></p>
@@ -1161,8 +1165,8 @@ scale than one where all the blues are compressed into 3 colours.</p>
 </div>
 <p>The [2:] is to get rid of the preceding 0x in the hex output.</p>
 <p>For example to make one of the colours in the viridis colour scale grey use:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
-<span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">cf</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cfplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cfp</span>
 <span class="n">f</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/tas_A1.nc&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">cscale</span><span class="p">(</span><span class="s1">&#39;viridis&#39;</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">17</span><span class="p">)</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">plotvars</span><span class="o">.</span><span class="n">cs</span><span class="p">[</span><span class="mi">14</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;#a6a6a6&#39;</span>
@@ -1949,11 +1953,11 @@ scale than one where all the blues are compressed into 3 colours.</p>
 <h3>Colour bars<a class="headerlink" href="#colour-bars" title="Link to this heading">#</a></h3>
 <p>Colour bars are often associated with filled colour contour plots and the options for the colour bar are described in the <a class="reference internal" href="api/cbar.html#cbar"><span class="std std-ref">cbar</span></a> .  If the colour bar options are changed within the call to <strong>cfp.con</strong> then prepend <code class="docutils literal notranslate"><span class="pre">colorbar</span></code> to the appropriate colour bar option.  cf-plot has used the American spelling for colorbar for compatability with the spelling and usage within the Matplotlib Python package.</p>
 <p>Below are some examples of calls to <strong>cfp.cbar</strong></p>
-<a class="reference internal image-reference" href="_images/cbar.png"><img alt="_images/cbar.png" src="_images/cbar.png" style="width: 520.52px; height: 288.08px;" />
+<a class="reference internal image-reference" href="_images/cbar.png"><img alt="_images/cbar.png" height="288" src="_images/cbar.png" width="521" />
 </a>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
-<span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">cf</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cfplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cfp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
 <span class="n">cfp</span><span class="o">.</span><span class="n">gopen</span><span class="p">()</span>
 
@@ -2049,9 +2053,9 @@ the cfp.lineplot or to the cfp.con routines.</p>
 <p>In this example we generate labels for the start of the months in 1980.  If the middle of the month was to be labelled then the day
 number would be changed to be 15.  Our xtick positions are accumulated using the above method in the xticks array as a numerical position
 along the axis.  In this case we manually specify out tick labels using the xticklabels array of strings.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
-<span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">cf</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cfplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cfp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="n">f</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/tas_A1.nc&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
 <span class="n">xticks</span><span class="o">=</span><span class="p">[]</span>
@@ -2074,7 +2078,7 @@ along the axis.  In this case we manually specify out tick labels using the xtic
              <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Air temperature at the equator in 1980&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/time_axis_labelling.png"><img alt="_images/time_axis_labelling.png" src="_images/time_axis_labelling.png" style="width: 441.32px; height: 347.16px;" />
+<a class="reference internal image-reference" href="_images/time_axis_labelling.png"><img alt="_images/time_axis_labelling.png" height="347" src="_images/time_axis_labelling.png" width="441" />
 </a>
 <p>Axis labels can also be placed at an angle which in the case of time axis labels is often a way of displaying more lengthy labels.
 <strong>cfp.setvars(xtick_label_rotation=30)</strong> or <strong>cfp.setvars(ytick_label_rotation=30)</strong> are examples of how to rotate axis labels.</p>
@@ -2163,10 +2167,10 @@ In the file /home/swsheaps/ajh.sh:</p>
 </pre></div>
 </div>
 <p>In the file /home/users/swsheaps/ajh.py:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mpl</span>
 <span class="n">mpl</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;Agg&#39;</span><span class="p">)</span>
-<span class="kn">import</span> <span class="nn">cf</span>
-<span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cf</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cfplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cfp</span>
 <span class="n">f</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/tas_A1.nc&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">setvars</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="s1">&#39;/home/swsheaps/ll.png&#39;</span><span class="p">)</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">15</span><span class="p">))</span>
@@ -2428,8 +2432,8 @@ For example the following data has monthly data points but bounds of ten years f
 <section id="appendix-b-passing-data-via-arrays">
 <span id="appendixb"></span><h2>Appendix B - Passing data via arrays<a class="headerlink" href="#appendix-b-passing-data-via-arrays" title="Link to this heading">#</a></h2>
 <p>cf-plot can also make contour and vector plots by passing data arrays. In this example we read in a temperature field from a netCDF file and pass it to cf-plot for plotting.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
-<span class="kn">from</span> <span class="nn">netCDF4</span> <span class="kn">import</span> <span class="n">Dataset</span> <span class="k">as</span> <span class="n">ncfile</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">cfplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cfp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">netCDF4</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dataset</span> <span class="k">as</span> <span class="n">ncfile</span>
 <span class="n">nc</span> <span class="o">=</span> <span class="n">ncfile</span><span class="p">(</span><span class="s1">&#39;cfplot_data/tas_A1.nc&#39;</span><span class="p">)</span>
 <span class="n">lons</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">][:]</span>
 <span class="n">lats</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">][:]</span>
@@ -2437,13 +2441,13 @@ For example the following data has monthly data points but bounds of ten years f
 <span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="o">=</span><span class="n">temp</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">lons</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">lats</span><span class="p">)</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/guide5.png"><img alt="_images/guide5.png" src="_images/guide5.png" style="width: 507.52000000000004px; height: 389.48px;" />
+<a class="reference internal image-reference" href="_images/guide5.png"><img alt="_images/guide5.png" height="389" src="_images/guide5.png" width="508" />
 </a>
 <p>The contouring routine doesn't know that the data passed is a map plot as the only information passed is data arrays. i.e. there is no metadata available to help cf-plot to know what type of plot is required.  The plot type can be explicitly set in this case with the <strong>ptype</strong> flag to <strong>cfp.con</strong>.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="o">=</span><span class="n">temp</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">lons</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">lats</span><span class="p">,</span> <span class="n">ptype</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/guide6.png"><img alt="_images/guide6.png" src="_images/guide6.png" style="width: 514.28px; height: 298.48px;" />
+<a class="reference internal image-reference" href="_images/guide6.png"><img alt="_images/guide6.png" height="298" src="_images/guide6.png" width="514" />
 </a>
 <p>Other types of plot are:</p>
 <div class="line-block">
@@ -2458,9 +2462,9 @@ For example the following data has monthly data points but bounds of ten years f
 <div class="line"><br /></div>
 </div>
 <p>In the next example the atmosphere is upside down as cf-plot will plot data axes starting with the smallest value.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">netCDF4</span> <span class="kn">import</span> <span class="n">Dataset</span> <span class="k">as</span> <span class="n">ncfile</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">cfplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cfp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">netCDF4</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dataset</span> <span class="k">as</span> <span class="n">ncfile</span>
 <span class="n">nc</span> <span class="o">=</span> <span class="n">ncfile</span><span class="p">(</span><span class="s1">&#39;cfplot_data/ggap.nc&#39;</span><span class="p">)</span>
 <span class="n">lats</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;latitude&#39;</span><span class="p">][:]</span>
 <span class="n">pressure</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;p&#39;</span><span class="p">][:]</span>
@@ -2469,13 +2473,13 @@ For example the following data has monthly data points but bounds of ten years f
 <span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="o">=</span><span class="n">u_mean</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">lats</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">pressure</span><span class="p">)</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/guide7.png"><img alt="_images/guide7.png" src="_images/guide7.png" style="width: 514.28px; height: 389.48px;" />
+<a class="reference internal image-reference" href="_images/guide7.png"><img alt="_images/guide7.png" height="389" src="_images/guide7.png" width="514" />
 </a>
 <p>Adding <strong>ptype=4</strong> to the <strong>cfp.con</strong> allows cf-plot to recognise the data as having a pressure axis and plots the atmosphere the right way up.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="o">=</span><span class="n">u_mean</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">lats</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">pressure</span><span class="p">,</span> <span class="n">ptype</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/guide8.png"><img alt="_images/guide8.png" src="_images/guide8.png" style="width: 518.96px; height: 389.48px;" />
+<a class="reference internal image-reference" href="_images/guide8.png"><img alt="_images/guide8.png" height="389" src="_images/guide8.png" width="519" />
 </a>
 </section>
 <section id="appendix-c-map-projections-and-options">
@@ -2505,10 +2509,10 @@ In addition to these the <strong>boundinglat</strong> parameter sets the edge of
 viewable latitudes and <strong>lat_0</strong> sets the centre of desired map domain.</p>
 <p>Additional map projections via proj are: <strong>ortho</strong>, <strong>merc</strong>, <strong>moll</strong>, <strong>robin</strong> and <strong>lcc</strong>, <strong>ukcp</strong>,
 <strong>osgb</strong> and <strong>EuroPP</strong>.</p>
-<a class="reference internal image-reference" href="_images/fig31.png"><img alt="_images/fig31.png" src="_images/fig31.png" style="width: 487.24px; height: 324.48px;" />
+<a class="reference internal image-reference" href="_images/fig31.png"><img alt="_images/fig31.png" height="324" src="_images/fig31.png" width="487" />
 </a>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
-<span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">cf</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cfplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cfp</span>
 <span class="n">f</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/ukcp_rcm_test.nc&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">mapset</span><span class="p">(</span><span class="n">proj</span><span class="o">=</span><span class="s1">&#39;UKCP&#39;</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="s1">&#39;50m&#39;</span><span class="p">)</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">levs</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
@@ -2535,11 +2539,11 @@ viewable latitudes and <strong>lat_0</strong> sets the centre of desired map dom
 <div class="line">grid_thickness=1.0 - grid thickness</div>
 </div>
 <p>Here we change the plotted grid with <strong>grid_lons</strong> and <strong>grid_lats</strong> options to <strong>cfp.setvars</strong> and make a blockfill plot.</p>
-<a class="reference internal image-reference" href="_images/fig32.png"><img alt="_images/fig32.png" src="_images/fig32.png" style="width: 487.24px; height: 324.48px;" />
+<a class="reference internal image-reference" href="_images/fig32.png"><img alt="_images/fig32.png" height="324" src="_images/fig32.png" width="487" />
 </a>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
-<span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">cf</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cfplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cfp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="n">f</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/ukcp_rcm_test.nc&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">mapset</span><span class="p">(</span><span class="n">proj</span><span class="o">=</span><span class="s1">&#39;UKCP&#39;</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="s1">&#39;50m&#39;</span><span class="p">)</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">levs</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
@@ -2551,10 +2555,10 @@ viewable latitudes and <strong>lat_0</strong> sets the centre of desired map dom
 <div class="line"><br /></div>
 <div class="line"><br /></div>
 </div>
-<a class="reference internal image-reference" href="_images/fig33.png"><img alt="_images/fig33.png" src="_images/fig33.png" style="width: 487.76px; height: 324.48px;" />
+<a class="reference internal image-reference" href="_images/fig33.png"><img alt="_images/fig33.png" height="324" src="_images/fig33.png" width="488" />
 </a>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
-<span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">cf</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cfplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cfp</span>
 <span class="n">f</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/ukcp_rcm_test.nc&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">levs</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">gopen</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
@@ -2570,11 +2574,11 @@ viewable latitudes and <strong>lat_0</strong> sets the centre of desired map dom
 <div class="line"><br /></div>
 <div class="line"><br /></div>
 </div>
-<a class="reference internal image-reference" href="_images/fig34.png"><img alt="_images/fig34.png" src="_images/fig34.png" style="width: 487.24px; height: 325.0px;" />
+<a class="reference internal image-reference" href="_images/fig34.png"><img alt="_images/fig34.png" height="325" src="_images/fig34.png" width="487" />
 </a>
 <p>Lambert conformal projections can now be cropped as in the following code:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
-<span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">cf</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cfplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cfp</span>
 <span class="n">f</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/tas_A1.nc&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">mapset</span><span class="p">(</span><span class="n">proj</span><span class="o">=</span><span class="s1">&#39;lcc&#39;</span><span class="p">,</span> <span class="n">lonmin</span><span class="o">=-</span><span class="mi">50</span><span class="p">,</span> <span class="n">lonmax</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">latmin</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">latmax</span><span class="o">=</span><span class="mi">85</span><span class="p">)</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">15</span><span class="p">))</span>
@@ -2584,19 +2588,19 @@ viewable latitudes and <strong>lat_0</strong> sets the centre of desired map dom
 <div class="line"><br /></div>
 <div class="line"><br /></div>
 </div>
-<a class="reference internal image-reference" href="_images/fig35.png"><img alt="_images/fig35.png" src="_images/fig35.png" style="width: 488.28000000000003px; height: 310.96000000000004px;" />
+<a class="reference internal image-reference" href="_images/fig35.png"><img alt="_images/fig35.png" height="311" src="_images/fig35.png" width="488" />
 </a>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
-<span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">cf</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cfplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cfp</span>
 <span class="n">f</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/tas_A1.nc&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">mapset</span><span class="p">(</span><span class="n">proj</span><span class="o">=</span><span class="s1">&#39;moll&#39;</span><span class="p">)</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">15</span><span class="p">))</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/fig36.png"><img alt="_images/fig36.png" src="_images/fig36.png" style="width: 487.24px; height: 339.56px;" />
+<a class="reference internal image-reference" href="_images/fig36.png"><img alt="_images/fig36.png" height="340" src="_images/fig36.png" width="487" />
 </a>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
-<span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">cf</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cfplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cfp</span>
 <span class="n">f</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/tas_A1.nc&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">mapset</span><span class="p">(</span><span class="n">proj</span><span class="o">=</span><span class="s1">&#39;merc&#39;</span><span class="p">)</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">15</span><span class="p">))</span>
@@ -2606,10 +2610,10 @@ viewable latitudes and <strong>lat_0</strong> sets the centre of desired map dom
 <div class="line"><br /></div>
 <div class="line"><br /></div>
 </div>
-<a class="reference internal image-reference" href="_images/fig37.png"><img alt="_images/fig37.png" src="_images/fig37.png" style="width: 487.24px; height: 339.56px;" />
+<a class="reference internal image-reference" href="_images/fig37.png"><img alt="_images/fig37.png" height="340" src="_images/fig37.png" width="487" />
 </a>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
-<span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">cf</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cfplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cfp</span>
 <span class="n">f</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/tas_A1.nc&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">mapset</span><span class="p">(</span><span class="n">proj</span><span class="o">=</span><span class="s1">&#39;ortho&#39;</span><span class="p">)</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">15</span><span class="p">))</span>
@@ -2619,10 +2623,10 @@ viewable latitudes and <strong>lat_0</strong> sets the centre of desired map dom
 <div class="line"><br /></div>
 <div class="line"><br /></div>
 </div>
-<a class="reference internal image-reference" href="_images/fig38.png"><img alt="_images/fig38.png" src="_images/fig38.png" style="width: 488.28000000000003px; height: 318.76px;" />
+<a class="reference internal image-reference" href="_images/fig38.png"><img alt="_images/fig38.png" height="319" src="_images/fig38.png" width="488" />
 </a>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
-<span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">cf</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cfplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cfp</span>
 <span class="n">f</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/tas_A1.nc&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">mapset</span><span class="p">(</span><span class="n">proj</span><span class="o">=</span><span class="s1">&#39;robin&#39;</span><span class="p">)</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">15</span><span class="p">))</span>
@@ -2653,7 +2657,7 @@ viewable latitudes and <strong>lat_0</strong> sets the centre of desired map dom
 <section id="example-1-adding-a-standard-name-to-a-field-that-doesn-t-have-one">
 <h3>Example 1 - adding a standard_name to a field that doesn't have one<a class="headerlink" href="#example-1-adding-a-standard-name-to-a-field-that-doesn-t-have-one" title="Link to this heading">#</a></h3>
 <p>In this case we have a field with a long_name but no standard_name</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">cf</span>
 <span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/data1.nc&#39;</span><span class="p">)[</span><span class="mi">2</span><span class="p">]</span>
 <span class="n">f</span>
 </pre></div>
@@ -2672,8 +2676,8 @@ viewable latitudes and <strong>lat_0</strong> sets the centre of desired map dom
 </section>
 <section id="example-2-change-the-field-data-to-something-else">
 <h3>Example 2 - change the field data to something else<a class="headerlink" href="#example-2-change-the-field-data-to-something-else" title="Link to this heading">#</a></h3>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
-<span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">cf</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cfplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cfp</span>
 <span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/data1.nc&#39;</span><span class="p">)[</span><span class="mi">7</span><span class="p">]</span>
 <span class="n">f</span>
 </pre></div>
@@ -2719,8 +2723,8 @@ For the original data:</p>
 <h3>Example 3 - Data with an incorrect valid_min / valid_max<a class="headerlink" href="#example-3-data-with-an-incorrect-valid-min-valid-max" title="Link to this heading">#</a></h3>
 <p>Sometimes data has an invalid valid_min or valid_max due to a data creation mistake or processing error.</p>
 <p>Here we make some sample data where the maximum of the data is greater than the valid_max parameter.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cf</span>
-<span class="kn">import</span> <span class="nn">cfplot</span> <span class="k">as</span> <span class="nn">cfp</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">cf</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cfplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cfp</span>
 <span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;cfplot_data/data1.nc&#39;</span><span class="p">)[</span><span class="mi">7</span><span class="p">]</span>
 <span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">Z</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
 <span class="n">g</span> <span class="o">+=</span> <span class="mi">60</span>
@@ -2739,7 +2743,7 @@ For the original data:</p>
 <span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/data_incorrect1.png"><img alt="_images/data_incorrect1.png" src="_images/data_incorrect1.png" style="width: 514.28px; height: 309.92px;" />
+<a class="reference internal image-reference" href="_images/data_incorrect1.png"><img alt="_images/data_incorrect1.png" height="310" src="_images/data_incorrect1.png" width="514" />
 </a>
 <p>To turn on the warning in the <strong>cf.read</strong> command use <strong>warn_valid=True</strong></p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">h</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;data_incorrect.nc&#39;</span><span class="p">,</span> <span class="n">warn_valid</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
@@ -2753,7 +2757,7 @@ See <a class="reference external" href="https://ncas-cms.github.io/cf-python/tut
 </pre></div>
 </div>
 <p>Now the data plots as we expect and we can change the data valid_min or valid_max as in the second example above.</p>
-<a class="reference internal image-reference" href="_images/data_incorrect2.png"><img alt="_images/data_incorrect2.png" src="_images/data_incorrect2.png" style="width: 514.28px; height: 309.92px;" />
+<a class="reference internal image-reference" href="_images/data_incorrect2.png"><img alt="_images/data_incorrect2.png" height="310" src="_images/data_incorrect2.png" width="514" />
 </a>
 </section>
 </section>
@@ -2794,7 +2798,8 @@ See <a class="reference external" href="https://ncas-cms.github.io/cf-python/tut
             
             
               
-                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
 
   <div class="sidebar-secondary-item">
@@ -2803,8 +2808,8 @@ See <a class="reference external" href="https://ncas-cms.github.io/cf-python/tut
     class="page-toc tocsection onthispage">
     <i class="fa-solid fa-list"></i> On this page
   </div>
-  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
-    <ul class="visible nav section-nav flex-column">
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#introduction">Introduction</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#core-operations">Core operations</a></li>
 </ul>
@@ -2887,8 +2892,8 @@ See <a class="reference external" href="https://ncas-cms.github.io/cf-python/tut
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
-<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <script defer src="_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -2899,7 +2904,7 @@ See <a class="reference external" href="https://ncas-cms.github.io/cf-python/tut
 
   <p class="copyright">
     
-      © Copyright 2025, National Centre for Atmospheric Science (NCAS).
+      © Copyright 2026, National Centre for Atmospheric Science (NCAS).
       <br/>
     
   </p>
@@ -2908,8 +2913,7 @@ See <a class="reference external" href="https://ncas-cms.github.io/cf-python/tut
         <div class="footer-item">
 
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.3.7.
-    <br/>
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
   </p>
 </div>
       
@@ -2921,7 +2925,8 @@ See <a class="reference external" href="https://ncas-cms.github.io/cf-python/tut
       
         <div class="footer-item">
 <p class="theme-version">
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.4.
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.23.0.
 </p></div>
       
     </div>

@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 
 
@@ -8,7 +7,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>API reference &#8212; cf-plot 3.4.0 documentation</title>
+    <title>API reference &#8212; cf-plot 3.5.0 documentation</title>
   
   
   
@@ -16,66 +15,67 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link href="_static/styles/theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
 
-  
-  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
-
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b76e3c8a" />
-    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=fd3f3429" />
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
   
+  <!-- So that users can add custom icons -->
+  <script defer src="_static/scripts/fontawesome.js?digest=18bd87630a240e9c25be"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
-  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="_static/documentation_options.js?v=b0e360d0"></script>
-    <script src="_static/doctools.js?v=9a2dae69"></script>
-    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/documentation_options.js?v=c1362a89"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/design-tabs.js?v=f930bc37"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'api_reference';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Versions" href="versions.html" />
     <link rel="prev" title="Advanced use" href="advanced.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="3.5.0" />
+  
+    
+    <script src="_static/searchtools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="searchindex.js"></script>
+  
   </head>
-  
-  
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
-
+  <body data-default-mode="">
   
   
   <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
   
   <div id="pst-scroll-pixel-helper"></div>
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-
   
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-primary-sidebar-checkbox"/>
-  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
   
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-secondary-sidebar-checkbox"/>
-  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
   
-  <div class="search-button__wrapper">
-    <div class="search-button__overlay"></div>
-    <div class="search-button__search-container">
+  
+  <dialog id="pst-search-dialog">
+    
 <form class="bd-search d-flex align-items-center"
       action="search.html"
       method="get">
@@ -83,7 +83,6 @@
   <input type="search"
          class="form-control"
          name="q"
-         id="search-input"
          placeholder="Search the docs ..."
          aria-label="Search the docs ..."
          autocomplete="off"
@@ -91,8 +90,8 @@
          autocapitalize="off"
          spellcheck="false"/>
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form></div>
-  </div>
+</form>
+  </dialog>
 
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
@@ -102,9 +101,9 @@
 </aside>
 
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
 <div class="bd-header__inner bd-page-width">
-  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
     <span class="fa-solid fa-bars"></span>
   </button>
   
@@ -124,7 +123,7 @@
   
   
   
-    <p class="title logo__title">cf-plot 3.4.0 documentation</p>
+    <p class="title logo__title">cf-plot 3.5.0 documentation</p>
   
 </a></div>
     
@@ -173,7 +172,9 @@
 </li>
 
             <li class="nav-item dropdown">
-                <button class="btn dropdown-toggle nav-item" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-controls="pst-nav-more-links">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
                     More
                 </button>
                 <ul id="pst-nav-more-links" class="dropdown-menu">
@@ -186,7 +187,7 @@
 
 
 <li class=" current active">
-  <a class="nav-link dropdown-item nav-internal" href="#">
+  <a class="nav-link dropdown-item nav-internal" href="#" aria-current="page">
     API reference
   </a>
 </li>
@@ -233,29 +234,28 @@
         <div class="navbar-item navbar-persistent--container">
           
 
- <script>
- document.write(`
-   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
-    <span class="search-button__default-text">Search</span>
-    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-   </button>
- `);
- </script>
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
         </div>
       
       
         <div class="navbar-item">
 
-<script>
-document.write(`
-  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
-    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
-    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
   </button>
-`);
-</script></div>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
       
     </div>
     
@@ -264,20 +264,16 @@ document.write(`
   
     <div class="navbar-persistent--mobile">
 
- <script>
- document.write(`
-   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
-    <span class="search-button__default-text">Search</span>
-    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-   </button>
- `);
- </script>
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
     </div>
   
 
   
-    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+    <button type="button" class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
       <span class="fa-solid fa-outdent"></span>
     </button>
   
@@ -291,7 +287,8 @@ document.write(`
       
       
       
-      <div class="bd-sidebar-primary bd-sidebar">
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
         
 
   
@@ -349,7 +346,7 @@ document.write(`
 
 
 <li class="nav-item current active">
-  <a class="nav-link nav-internal" href="#">
+  <a class="nav-link nav-internal" href="#" aria-current="page">
     API reference
   </a>
 </li>
@@ -394,15 +391,18 @@ document.write(`
         
           <div class="navbar-item">
 
-<script>
-document.write(`
-  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
-    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
-    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
   </button>
-`);
-</script></div>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
         
       </div>
     
@@ -410,6 +410,7 @@ document.write(`
   
     <div class="sidebar-primary-items__start sidebar-primary__section">
         <div class="sidebar-primary-item">
+
 <nav class="bd-docs-nav bd-links"
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
@@ -419,9 +420,14 @@ document.write(`
   
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
   </div>
-  
-  <div id="rtd-footer-container"></div>
 
 
       </div>
@@ -439,8 +445,6 @@ document.write(`
       
         <div class="header-article-item">
 
-
-
 <nav aria-label="Breadcrumb" class="d-print-none">
   <ul class="bd-breadcrumbs">
     
@@ -449,7 +453,7 @@ document.write(`
         <i class="fa-solid fa-home"></i>
       </a>
     </li>
-    <li class="breadcrumb-item active" aria-current="page">API reference</li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">API reference</span></li>
   </ul>
 </nav>
 </div>
@@ -472,43 +476,25 @@ document.write(`
 <h2>API<a class="headerlink" href="#api" title="Link to this heading">#</a></h2>
 <section id="plotting-routines">
 <h3>Plotting routines<a class="headerlink" href="#plotting-routines" title="Link to this heading">#</a></h3>
-<div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="api/con.html#cfplot.con" title="cfplot.con"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.con</span></code></a></p></td>
-<td><p><div class="line-block">
-<div class="line">The interface to contouring in cf-plot.</div>
-</div>
-</p></td>
+<td><p>The interface to contouring in cf-plot.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="api/lineplot.html#cfplot.lineplot" title="cfplot.lineplot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.lineplot</span></code></a></p></td>
-<td><p><div class="line-block">
-<div class="line">The interface to line plotting in cf-plot.</div>
-</div>
-</p></td>
+<td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="api/stipple.html#cfplot.stipple" title="cfplot.stipple"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.stipple</span></code></a></p></td>
-<td><p><div class="line-block">
-<div class="line">Put markers on a plot to indicate value of interest.</div>
-</div>
-</p></td>
+<td><p></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="api/stream.html#cfplot.stream" title="cfplot.stream"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.stream</span></code></a></p></td>
-<td><p><div class="line-block">
-<div class="line">Plot a streamplot to show fluid flow and 2D field gradients.</div>
-</div>
-</p></td>
+<td><p>Plot a streamplot to show fluid flow and 2D field gradients.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="api/traj.html#cfplot.traj" title="cfplot.traj"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.traj</span></code></a></p></td>
-<td><p><div class="line-block">
-<div class="line">The interface to trajectory plotting in cf-plot.</div>
-</div>
-</p></td>
+<td><p></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="api/vect.html#cfplot.vect" title="cfplot.vect"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.vect</span></code></a></p></td>
-<td><p><div class="line-block">
-<div class="line">Plot vectors.</div>
-</div>
-</p></td>
+<td><p></p></td>
 </tr>
 </tbody>
 </table>
@@ -516,25 +502,16 @@ document.write(`
 </section>
 <section id="graphics-related">
 <h3>Graphics related<a class="headerlink" href="#graphics-related" title="Link to this heading">#</a></h3>
-<div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="api/gopen.html#cfplot.gopen" title="cfplot.gopen"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.gopen</span></code></a></p></td>
-<td><p><div class="line-block">
-<div class="line">Open a graphic file.</div>
-</div>
-</p></td>
+<td><p>Open a contour-runtime graphics session compatible with cfplot.gopen.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="api/gclose.html#cfplot.gclose" title="cfplot.gclose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.gclose</span></code></a></p></td>
-<td><p><div class="line-block">
-<div class="line">Saves a graphics file. The default is to view the file as well</div>
-</div>
-</p></td>
+<td><p>Close a contour-runtime graphics session and save/view output.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="api/gpos.html#cfplot.gpos" title="cfplot.gpos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.gpos</span></code></a></p></td>
-<td><p><div class="line-block">
-<div class="line">Set plot position. Plots start at top left and increase by one each plot</div>
-</div>
-</p></td>
+<td><p>Select a subplot position, matching the legacy cfplot.gpos API.</p></td>
 </tr>
 </tbody>
 </table>
@@ -542,52 +519,28 @@ document.write(`
 </section>
 <section id="parameter-related">
 <h3>Parameter related<a class="headerlink" href="#parameter-related" title="Link to this heading">#</a></h3>
-<div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="api/axes.html#cfplot.axes" title="cfplot.axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.axes</span></code></a></p></td>
-<td><p><div class="line-block">
-<div class="line">Set axes plotting parameters. The xstep and ystep</div>
-</div>
-</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="api/cscale.html#cfplot.cscale" title="cfplot.cscale"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.cscale</span></code></a></p></td>
+<td><p>Choose and manipulate colour maps in shared plotting state.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="api/cscale.html#cfplot.cscale" title="cfplot.cscale"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.cscale</span></code></a></p></td>
-<td><p><div class="line-block">
-<div class="line">Choose and manipulate colour maps. Around 200 colour scales are</div>
-</div>
-</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="api/gset.html#cfplot.gset" title="cfplot.gset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.gset</span></code></a></p></td>
+<td><p>Set plot limits for non-longitude-latitude plots.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="api/gset.html#cfplot.gset" title="cfplot.gset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.gset</span></code></a></p></td>
-<td><p><div class="line-block">
-<div class="line">Set plot limits for all non-longitude-latitide plots.</div>
-</div>
-</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="api/levs.html#cfplot.levs" title="cfplot.levs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.levs</span></code></a></p></td>
+<td><p>Set or clear the contour levels stored in shared plotting state.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="api/levs.html#cfplot.levs" title="cfplot.levs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.levs</span></code></a></p></td>
-<td><p><div class="line-block">
-<div class="line">Manually sets the contour levels.</div>
-</div>
-</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="api/mapset.html#cfplot.mapset" title="cfplot.mapset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.mapset</span></code></a></p></td>
+<td><p>Set map plotting parameters in shared state.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="api/mapset.html#cfplot.mapset" title="cfplot.mapset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.mapset</span></code></a></p></td>
-<td><p><div class="line-block">
-<div class="line">Sets the mapping parameters.</div>
-</div>
-</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.plotvars</span></code></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.plotvars</span></code></p></td>
 <td><p>Stores plotting variables in <cite>cfp.plotvars</cite>.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="api/reset.html#cfplot.reset" title="cfplot.reset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.reset</span></code></a></p></td>
-<td><p><div class="line-block">
-<div class="line">Reset all plotting variables.</div>
-</div>
-</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="api/reset.html#cfplot.reset" title="cfplot.reset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.reset</span></code></a></p></td>
+<td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="api/setvars.html#cfplot.setvars" title="cfplot.setvars"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.setvars</span></code></a></p></td>
-<td><p><div class="line-block">
-<div class="line">Set plotting variables and their defaults.</div>
-</div>
-</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="api/setvars.html#cfplot.setvars" title="cfplot.setvars"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.setvars</span></code></a></p></td>
+<td><p>Set shared plotting variables from defaults plus explicit overrides.</p></td>
 </tr>
 </tbody>
 </table>
@@ -595,30 +548,18 @@ document.write(`
 </section>
 <section id="mapping-related">
 <h3>Mapping related<a class="headerlink" href="#mapping-related" title="Link to this heading">#</a></h3>
-<div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="api/axes_plot.html#cfplot.axes_plot" title="cfplot.axes_plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.axes_plot</span></code></a></p></td>
-<td><p><div class="line-block">
-<div class="line">A system function to specify axes plotting parameters.</div>
-</div>
-</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="api/map_grid.html#cfplot.map_grid" title="cfplot.map_grid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.map_grid</span></code></a></p></td>
-<td><p>Plot a grid on a map.</p></td>
-</tr>
 </tbody>
 </table>
 </div>
 </section>
 <section id="colour-related">
 <h3>Colour related<a class="headerlink" href="#colour-related" title="Link to this heading">#</a></h3>
-<div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="api/cbar.html#cfplot.cbar" title="cfplot.cbar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.cbar</span></code></a></p></td>
-<td><p><div class="line-block">
-<div class="line">The cf-plot interface to the Matplotlib colorbar routine.</div>
-</div>
-</p></td>
+<td><p>The cf-plot interface to Matplotlib colorbar for contour rendering.</p></td>
 </tr>
 </tbody>
 </table>
@@ -626,96 +567,18 @@ document.write(`
 </section>
 <section id="calculations">
 <h3>Calculations<a class="headerlink" href="#calculations" title="Link to this heading">#</a></h3>
-<div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="api/calculate_levels.html#cfplot.calculate_levels" title="cfplot.calculate_levels"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.calculate_levels</span></code></a></p></td>
-<td><p>Calculate contour levels.</p></td>
-</tr>
 </tbody>
 </table>
 </div>
 </section>
 <section id="utility-routines">
 <h3>Utility Routines<a class="headerlink" href="#utility-routines" title="Link to this heading">#</a></h3>
-<div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="api/add_cyclic.html#cfplot.add_cyclic" title="cfplot.add_cyclic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.add_cyclic</span></code></a></p></td>
-<td><p><div class="line-block">
-<div class="line">A wrapper for <cite>cartopy_util.add_cyclic_point(field, lons)</cite>.</div>
-</div>
-</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="api/cf_var_name.html#cfplot.cf_var_name" title="cfplot.cf_var_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.cf_var_name</span></code></a></p></td>
-<td><p><div class="line-block">
-<div class="line">Return the name from a supplied dimension in order.</div>
-</div>
-</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="api/cf_var_name_titles.html#cfplot.cf_var_name_titles" title="cfplot.cf_var_name_titles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.cf_var_name_titles</span></code></a></p></td>
-<td><p><div class="line-block">
-<div class="line">Return the name from a supplied dimension in order.</div>
-</div>
-</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="api/find_dim_names.html#cfplot.find_dim_names" title="cfplot.find_dim_names"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.find_dim_names</span></code></a></p></td>
-<td><p>Find the field dimension coordinate names.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="api/find_pos_in_array.html#cfplot.find_pos_in_array" title="cfplot.find_pos_in_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.find_pos_in_array</span></code></a></p></td>
-<td><p><div class="line-block">
-<div class="line">Find the position of a point in an array.</div>
-</div>
-</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="api/find_z.html#cfplot.find_z" title="cfplot.find_z"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.find_z</span></code></a></p></td>
-<td><p>Find the Z coordinate if it exists.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="api/fix_floats.html#cfplot.fix_floats" title="cfplot.fix_floats"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.fix_floats</span></code></a></p></td>
-<td><p>Fixes numpy rounding issues where 0.4 becomes 0.399999999999999999999.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="api/generate_titles.html#cfplot.generate_titles" title="cfplot.generate_titles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.generate_titles</span></code></a></p></td>
-<td><p>Generate a set of title dims to put at the top of plots.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="api/irregular_window.html#cfplot.irregular_window" title="cfplot.irregular_window"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.irregular_window</span></code></a></p></td>
-<td><p>TODO DOCS.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="api/max_ndecs_data.html#cfplot.max_ndecs_data" title="cfplot.max_ndecs_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.max_ndecs_data</span></code></a></p></td>
-<td><p>TODO DOCS.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="api/ndecs.html#cfplot.ndecs" title="cfplot.ndecs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.ndecs</span></code></a></p></td>
-<td><p><div class="line-block">
-<div class="line">Finds the number of decimal places in an array.</div>
-</div>
-</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="api/pcon.html#cfplot.pcon" title="cfplot.pcon"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.pcon</span></code></a></p></td>
-<td><p><div class="line-block">
-<div class="line">Convert pressure to height in kilometers and vice-versa.</div>
-</div>
-</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="api/polar_regular_grid.html#cfplot.polar_regular_grid" title="cfplot.polar_regular_grid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.polar_regular_grid</span></code></a></p></td>
-<td><p><div class="line-block">
-<div class="line">Return a regular grid over a polar stereographic area.</div>
-</div>
-</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="api/rgaxes.html#cfplot.rgaxes" title="cfplot.rgaxes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.rgaxes</span></code></a></p></td>
-<td><p><div class="line-block">
-<div class="line">Label rotated grid plots.</div>
-</div>
-</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="api/stipple_points.html#cfplot.stipple_points" title="cfplot.stipple_points"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.stipple_points</span></code></a></p></td>
-<td><p><div class="line-block">
-<div class="line">Calculate interpolation points.</div>
-</div>
-</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="api/vloc.html#cfplot.vloc" title="cfplot.vloc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.vloc</span></code></a></p></td>
-<td><p><div class="line-block">
-<div class="line">Locate the positions of a set of points in a vector.</div>
-</div>
-</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="api/rgaxes.html#cfplot.rgaxes" title="cfplot.rgaxes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.rgaxes</span></code></a></p></td>
+<td><p></p></td>
 </tr>
 </tbody>
 </table>
@@ -723,14 +586,8 @@ document.write(`
 </section>
 <section id="validation">
 <h3>Validation<a class="headerlink" href="#validation" title="Link to this heading">#</a></h3>
-<div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="api/check_well_formed.html#cfplot.check_well_formed" title="cfplot.check_well_formed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.check_well_formed</span></code></a></p></td>
-<td><p>Check the coordinates are all of the form X, Y, Z, T.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="api/orca_check.html#cfplot.orca_check" title="cfplot.orca_check"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.orca_check</span></code></a></p></td>
-<td><p>Check input data to see if it is an orca ocean grid.</p></td>
-</tr>
 </tbody>
 </table>
 </div>
@@ -742,7 +599,7 @@ document.write(`
 <h3>Deprecations<a class="headerlink" href="#deprecations" title="Link to this heading">#</a></h3>
 <p>These functions <em>are not</em> intended for user use and will be removed in the next
 version. In most cases these have no use in the codebase as of v3.3.0.</p>
-<div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
 </tbody>
 </table>
@@ -816,7 +673,8 @@ us know and we may be able to support them again.</p>
             
             
               
-                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
 
   <div class="sidebar-secondary-item">
@@ -825,8 +683,8 @@ us know and we may be able to support them again.</p>
     class="page-toc tocsection onthispage">
     <i class="fa-solid fa-list"></i> On this page
   </div>
-  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
-    <ul class="visible nav section-nav flex-column">
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#api">API</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#plotting-routines">Plotting routines</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#graphics-related">Graphics related</a></li>
@@ -868,8 +726,8 @@ us know and we may be able to support them again.</p>
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
-<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <script defer src="_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -880,7 +738,7 @@ us know and we may be able to support them again.</p>
 
   <p class="copyright">
     
-      © Copyright 2025, National Centre for Atmospheric Science (NCAS).
+      © Copyright 2026, National Centre for Atmospheric Science (NCAS).
       <br/>
     
   </p>
@@ -889,8 +747,7 @@ us know and we may be able to support them again.</p>
         <div class="footer-item">
 
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.3.7.
-    <br/>
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
   </p>
 </div>
       
@@ -902,7 +759,8 @@ us know and we may be able to support them again.</p>
       
         <div class="footer-item">
 <p class="theme-version">
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.4.
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.23.0.
 </p></div>
       
     </div>

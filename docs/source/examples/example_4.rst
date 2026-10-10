@@ -16,4 +16,4 @@ Example 4: North Pole polar stereographic projection contour plot
    cfp.con(f.subspace(pressure=500))
 
 
-.. figure:: /../../cfplot/test/reference-example-images/ref_fig_4.png
+.. figure:: /../../tests/reference-example-images/ref_fig_4.png

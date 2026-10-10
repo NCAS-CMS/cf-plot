@@ -33,32 +33,6 @@ f = cf.read('<dataset name>.nc')[0]  # picks out a read-in field of the dataset
 cfp.con(f.subspace(time=<chosen time value>))  # creates a contour plot of the field at that time value
 ```
 
-### Contour Animation Titles
-
-`cfp.con()` supports animation-aware title updates via:
-
-- `animation=True`
-- `animation_axis="auto"` (or one of `"T"`, `"Z"`, `"Y"`, `"X"`)
-- `animation_title_template="{title} [{frame}]"` (optional)
-
-With `animation_axis="auto"`, axis inference is based on `ptype`:
-
-- for `ptype != 0`, choose a singleton axis not used by that `ptype`;
-- for `ptype == 0`, fallback preference is singleton `T`, then `Z`, then `Y`, then `X`.
-
-Example:
-
-```python
-cfp.con(
-	f,
-	animation=True,
-	reuse_map_background=True,
-	animation_axis="auto",
-	animation_title_template="{title} [{frame}]",
-	title="Air temperature",
-)
-```
-
 
 ### Examples Gallery
 
@@ -94,6 +68,38 @@ More detail about installation is provided on the
 [installation page](https://ncas-cms.github.io/cf-plot/installation.html)
 (`https://ncas-cms.github.io/cf-plot/installation.html`)
 of the documentation.
+
+### Refreshing image-test references
+
+If image tests fail after an environment change, inspect the reference,
+generated plot and failure diff before accepting the differences. From the
+repository root, generate fresh plots using your testing environment:
+
+```bash
+python -m pytest tests/integration/test_contour_plot_examples.py tests/integration/test_advanced_plot_examples.py
+```
+
+For a complete refresh, avoid `-k` or `::` selectors: targeted runs preserve
+old generated images. The
+[reference refresh script](scripts/refresh_image_references.py) previews
+updates by default. Select examples by filename suffix (for example,
+`gen_fig_16b.png` has ID `16b`):
+
+```bash
+python scripts/refresh_image_references.py 4 5 16b
+# After visually approving these generated plots:
+python scripts/refresh_image_references.py 4 5 16b --write
+```
+
+Use `--all` instead of example IDs to preview every available generated
+baseline, then `--all --write` only after reviewing all selected plots.
+The script validates the selection before writing, replaces existing
+references, and removes only their failure-diff images; generated plots
+are retained. It does not render or automatically approve plots.
+
+Rerun the image tests afterward to verify the updated references and clear
+pytest's recorded failures. Review and commit the reference-image changes;
+do not accept a genuine plotting regression merely to make tests pass.
 
 ### Contributing
 

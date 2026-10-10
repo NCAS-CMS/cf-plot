@@ -14,4 +14,4 @@ Example 21b: Plot of rotated pole data
 
    cfp.con(f)
 
-.. figure:: /../../cfplot/test/reference-example-images/ref_fig_21b.png
+.. figure:: /../../tests/reference-example-images/ref_fig_21b.png

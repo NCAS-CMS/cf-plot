@@ -15,4 +15,4 @@ Example 31: UKCP projection
 
    cfp.con(f, lines=False)
 
-.. figure:: /../../cfplot/test/reference-example-images/ref_fig_31.png
+.. figure:: /../../tests/reference-example-images/ref_fig_31.png

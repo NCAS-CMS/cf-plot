@@ -35,10 +35,17 @@ def _apply_map_title(
 
     if proj in myprojs:
         lon_mid = lonmin + (lonmax - lonmin) / 2.0
-        projs = [ccrs.PlateCarree, ccrs.Robinson, ccrs.Mollweide, ccrs.Mercator]
+        projs = [
+            ccrs.PlateCarree,
+            ccrs.Robinson,
+            ccrs.Mollweide,
+            ccrs.Mercator,
+        ]
         myind = myprojs.index(proj)
         map_proj = projs[myind](central_longitude=lon_mid)
-        xpt, ypt = map_proj.transform_point(lon_mid, latmax, ccrs.PlateCarree())
+        xpt, ypt = map_proj.transform_point(
+            lon_mid, latmax, ccrs.PlateCarree()
+        )
         ypt = ypt + (latmax - latmin) / 40.0
     elif proj == "npstere":
         mylon = lon_0 + 180
@@ -60,7 +67,9 @@ def _apply_map_title(
             central_latitude=lat_0,
             cutoff=latmin,
         )
-        xpt, ypt = map_proj.transform_point(lon_mid, latmax, ccrs.PlateCarree())
+        xpt, ypt = map_proj.transform_point(
+            lon_mid, latmax, ccrs.PlateCarree()
+        )
     else:
         return None
 
@@ -199,7 +208,9 @@ class MapSet:
         pv.resolution = resolution
 
         if (
-            all(val is None for val in [lonmin, lonmax, latmin, latmax, aspect])
+            all(
+                val is None for val in [lonmin, lonmax, latmin, latmax, aspect]
+            )
             and proj == "cyl"
         ):
             pv.lonmin = -180
@@ -350,12 +361,16 @@ class MapSet:
         if vproj in ["OSGB", "EuroPP", "UKCP", "robin", "lcc"]:
             set_extent = False
         if extent and set_extent:
-            mymap.set_extent([lonmin, lonmax, latmin, latmax], crs=ccrs.PlateCarree())
+            mymap.set_extent(
+                [lonmin, lonmax, latmin, latmax], crs=ccrs.PlateCarree()
+            )
 
         if vproj == "cyl":
             mymap.set_aspect(pv.aspect)
         elif vproj == "lcc":
-            mymap.set_extent([lonmin, lonmax, latmin, latmax], crs=ccrs.PlateCarree())
+            mymap.set_extent(
+                [lonmin, lonmax, latmin, latmax], crs=ccrs.PlateCarree()
+            )
         elif vproj == "UKCP":
             mymap.set_extent([-11, 3, 49, 61], crs=ccrs.PlateCarree())
         elif vproj == "EuroPP":
@@ -378,7 +393,9 @@ class MapSet:
 
         lons = np.arange((360 / pv.grid_x_spacing) + 1) * pv.grid_x_spacing
         lons = np.concatenate([lons - 360, lons])
-        lats = np.arange((180 / pv.grid_y_spacing) + 1) * pv.grid_y_spacing - 90
+        lats = (
+            np.arange((180 / pv.grid_y_spacing) + 1) * pv.grid_y_spacing - 90
+        )
 
         pv.mymap.gridlines(
             color=pv.grid_colour,
@@ -420,7 +437,8 @@ class MapSet:
                 lons_line = np.arange(361, dtype=float)
                 lats_line = np.full(361, lat)
                 mymap.plot(
-                    lons_line, lats_line,
+                    lons_line,
+                    lats_line,
                     color=pv.grid_colour,
                     linewidth=pv.grid_thickness,
                     linestyle=pv.grid_linestyle,
@@ -436,7 +454,8 @@ class MapSet:
                 lats_line = np.arange(boundinglat + 91) - 90
             lons_line = np.full(lats_line.size, float(lon))
             mymap.plot(
-                lons_line, lats_line,
+                lons_line,
+                lats_line,
                 color=pv.grid_colour,
                 linewidth=pv.grid_thickness,
                 linestyle=pv.grid_linestyle,
@@ -487,7 +506,9 @@ class MapSet:
                         v_align = "bottom"
 
                 mymap.text(
-                    lonr, latr, label,
+                    lonr,
+                    latr,
+                    label,
                     horizontalalignment=h_align,
                     verticalalignment=v_align,
                     fontsize=axis_label_fontsize,
@@ -531,8 +552,11 @@ class MapSet:
             ccrs.PlateCarree(), lons_circ, lats_circ
         )
         mymap.plot(
-            circle_coords[:, 0], circle_coords[:, 1],
-            color="k", zorder=100, clip_on=False,
+            circle_coords[:, 0],
+            circle_coords[:, 1],
+            color="k",
+            zorder=100,
+            clip_on=False,
         )
 
         # Expand axes limits slightly so labels are not clipped
@@ -585,7 +609,9 @@ def ensure_map_viewport() -> None:
         if plotvars.master_plot is None:
             _open_figure(user_plot=0)
 
-        if plotvars.plot is None or (plotvars.rows > 1 or plotvars.columns > 1):
+        if plotvars.plot is None or (
+            plotvars.rows > 1 or plotvars.columns > 1
+        ):
             if plotvars.gpos_called is False or plotvars.plot is None:
                 _select_position(1)
 
@@ -672,12 +698,12 @@ def _apply_map_features(
     kwargs: dict[str, Any] | None = None,
 ) -> list[Any]:
     """Apply coastlines and ocean/land/lake feature colors to a map axes.
-    
+
     This centralizes the common map feature colouring logic.
     """
     if mymap is None:
         return []
-    
+
     if kwargs is None:
         kwargs = {}
     artists: list[Any] = []
@@ -690,35 +716,43 @@ def _apply_map_features(
         scale=plotvars.resolution,
         facecolor="none",
     )
-    artists.append(mymap.add_feature(
-        feature,
-        edgecolor=continent_color or "k",
-        linewidth=continent_thickness or 1.5,
-        linestyle=continent_linestyle or "solid",
-        zorder=kwargs.get("zorder", 1),
-    ))
+    artists.append(
+        mymap.add_feature(
+            feature,
+            edgecolor=continent_color or "k",
+            linewidth=continent_thickness or 1.5,
+            linestyle=continent_linestyle or "solid",
+            zorder=kwargs.get("zorder", 1),
+        )
+    )
 
     if plotvars.ocean_color is not None:
-        artists.append(mymap.add_feature(
-            cfeature.OCEAN,
-            edgecolor="face",
-            facecolor=plotvars.ocean_color,
-            zorder=plotvars.feature_zorder,
-        ))
+        artists.append(
+            mymap.add_feature(
+                cfeature.OCEAN,
+                edgecolor="face",
+                facecolor=plotvars.ocean_color,
+                zorder=plotvars.feature_zorder,
+            )
+        )
     if plotvars.land_color is not None:
-        artists.append(mymap.add_feature(
-            cfeature.LAND,
-            edgecolor="face",
-            facecolor=plotvars.land_color,
-            zorder=plotvars.feature_zorder,
-        ))
+        artists.append(
+            mymap.add_feature(
+                cfeature.LAND,
+                edgecolor="face",
+                facecolor=plotvars.land_color,
+                zorder=plotvars.feature_zorder,
+            )
+        )
     if plotvars.lake_color is not None:
-        artists.append(mymap.add_feature(
-            cfeature.LAKES,
-            edgecolor="face",
-            facecolor=plotvars.lake_color,
-            zorder=plotvars.feature_zorder,
-        ))
+        artists.append(
+            mymap.add_feature(
+                cfeature.LAKES,
+                edgecolor="face",
+                facecolor=plotvars.lake_color,
+                zorder=plotvars.feature_zorder,
+            )
+        )
 
     return artists
 
@@ -852,7 +886,9 @@ def _apply_map_axes(
 
         # Mask left and right of plot
         lons_lr = np.zeros(np.size(lats)) + lonmin
-        device_coords = proj.transform_points(ccrs.PlateCarree(), lons_lr, lats)
+        device_coords = proj.transform_points(
+            ccrs.PlateCarree(), lons_lr, lats
+        )
         xmin = np.min(device_coords[:, 0])
         xmax = np.max(device_coords[:, 0])
         if lat_0 > 0:
@@ -870,7 +906,11 @@ def _apply_map_axes(
             zorder=100,
         )
         map_ax.plot(
-            [xmin, xmax], [ymin_lr, ymax_lr], color="k", zorder=101, clip_on=False
+            [xmin, xmax],
+            [ymin_lr, ymax_lr],
+            color="k",
+            zorder=101,
+            clip_on=False,
         )
 
         map_ax.fill(
@@ -881,18 +921,30 @@ def _apply_map_axes(
             zorder=100,
         )
         map_ax.plot(
-            [-xmin, -xmax], [ymin_lr, ymax_lr], color="k", zorder=101, clip_on=False
+            [-xmin, -xmax],
+            [ymin_lr, ymax_lr],
+            color="k",
+            zorder=101,
+            clip_on=False,
         )
 
         # Upper mask/boundary
         lats_top = np.zeros(np.size(lons)) + latmax
-        device_coords = proj.transform_points(ccrs.PlateCarree(), lons, lats_top)
+        device_coords = proj.transform_points(
+            ccrs.PlateCarree(), lons, lats_top
+        )
         ymax_top = np.max(device_coords[:, 1])
         xpts = np.append(device_coords[:, 0], device_coords[:, 0][::-1])
-        ypts = np.append(device_coords[:, 1], np.zeros(np.size(lons)) + ymax_top)
+        ypts = np.append(
+            device_coords[:, 1], np.zeros(np.size(lons)) + ymax_top
+        )
         map_ax.fill(xpts, ypts, alpha=1.0, color="w", zorder=100)
         map_ax.plot(
-            device_coords[:, 0], device_coords[:, 1], color="k", zorder=101, clip_on=False
+            device_coords[:, 0],
+            device_coords[:, 1],
+            color="k",
+            zorder=101,
+            clip_on=False,
         )
 
         # Lower mask/boundary
@@ -902,10 +954,16 @@ def _apply_map_axes(
         )
         ymin_bottom = np.min(device_coords[:, 1]) * 1.05
         xpts = np.append(device_coords[:, 0], device_coords[:, 0][::-1])
-        ypts = np.append(device_coords[:, 1], np.zeros(np.size(lons)) + ymin_bottom)
+        ypts = np.append(
+            device_coords[:, 1], np.zeros(np.size(lons)) + ymin_bottom
+        )
         map_ax.fill(xpts, ypts, alpha=1.0, color="w", zorder=100)
         map_ax.plot(
-            device_coords[:, 0], device_coords[:, 1], color="k", zorder=101, clip_on=False
+            device_coords[:, 0],
+            device_coords[:, 1],
+            color="k",
+            zorder=101,
+            clip_on=False,
         )
 
         map_ax.set_frame_on(False)
@@ -920,7 +978,9 @@ def _apply_map_axes(
                 )
             else:
                 map_xticks = xticks
-                map_xticklabels = xticks if xticklabels is None else xticklabels
+                map_xticklabels = (
+                    xticks if xticklabels is None else xticklabels
+                )
 
             lats_x = np.arange(latmax - latmin + 1) + latmin
             for tick, tick_label in zip(map_xticks, map_xticklabels):
@@ -961,7 +1021,9 @@ def _apply_map_axes(
                 )
             else:
                 map_yticks = yticks
-                map_yticklabels = yticks if yticklabels is None else yticklabels
+                map_yticklabels = (
+                    yticks if yticklabels is None else yticklabels
+                )
 
             lons_y = np.arange(lonmax - lonmin + 1) + lonmin
             for tick, tick_label in zip(map_yticks, map_yticklabels):
@@ -978,7 +1040,9 @@ def _apply_map_axes(
                     zorder=101,
                 )
 
-                dpt_l = proj.transform_point(lonmin - 1, tick, ccrs.PlateCarree())
+                dpt_l = proj.transform_point(
+                    lonmin - 1, tick, ccrs.PlateCarree()
+                )
                 map_ax.text(
                     dpt_l[0],
                     dpt_l[1],
@@ -990,7 +1054,9 @@ def _apply_map_axes(
                     zorder=101,
                 )
 
-                dpt_r = proj.transform_point(lonmax + 1, tick, ccrs.PlateCarree())
+                dpt_r = proj.transform_point(
+                    lonmax + 1, tick, ccrs.PlateCarree()
+                )
                 map_ax.text(
                     dpt_r[0],
                     dpt_r[1],

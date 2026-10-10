@@ -76,9 +76,13 @@ def cbar(
         divider = make_axes_locatable(myplot)
         if orientation == "horizontal":
             if plotvars.plot_type == 1:
-                cax = divider.append_axes("bottom", size="2%", pad=0.3, title=title)
+                cax = divider.append_axes(
+                    "bottom", size="2%", pad=0.3, title=title
+                )
             else:
-                cax = divider.append_axes("bottom", size="2%", pad=1.0, title=title)
+                cax = divider.append_axes(
+                    "bottom", size="2%", pad=1.0, title=title
+                )
         else:
             cax = divider.append_axes("right", size="2%", pad=0.5, title=title)
 
@@ -115,8 +119,12 @@ def cbar(
                 width = max(width, 1e-6)
                 height = max(height, 1e-6)
                 if height / width >= 0.9:
-                    this_plot.set_position([left, bottom + fraction, width, height - fraction])
-                    left, bottom, width, height = this_plot.get_position().bounds
+                    this_plot.set_position(
+                        [left, bottom + fraction, width, height - fraction]
+                    )
+                    left, bottom, width, height = (
+                        this_plot.get_position().bounds
+                    )
                     width = abs(width)
                     height = abs(height)
                     width = max(width, 1e-6)
@@ -131,7 +139,9 @@ def cbar(
                     ]
                 )
             else:
-                this_plot.set_position([left, bottom + fraction, width, height - fraction])
+                this_plot.set_position(
+                    [left, bottom + fraction, width, height - fraction]
+                )
                 ax1 = plotvars.master_plot.add_axes(
                     [
                         left + width * (1.0 - shrink) / 2.0,
@@ -183,10 +193,15 @@ def cbar(
         ncolors -= 1
 
     if mid is not None:
-        lbot = [(lbot[i + 1] - lbot[i]) / 2.0 + lbot[i] for i in np.arange(len(labels))]
+        lbot = [
+            (lbot[i + 1] - lbot[i]) / 2.0 + lbot[i]
+            for i in np.arange(len(labels))
+        ]
 
     if not isinstance(levs, int):
-        plotvars.norm = matplotlib.colors.BoundaryNorm(boundaries=levs, ncolors=ncolors)
+        plotvars.norm = matplotlib.colors.BoundaryNorm(
+            boundaries=levs, ncolors=ncolors
+        )
 
         boundaries = levs.astype(float)
         if extend in ("both", "min"):
@@ -194,7 +209,9 @@ def cbar(
             boundaries = np.insert(boundaries, 0, boundaries[0] - 1)
         if extend in ("both", "max"):
             cmap.set_over(plotvars.cs[-1])
-            boundaries = np.insert(boundaries, len(boundaries), boundaries[-1] + 1)
+            boundaries = np.insert(
+                boundaries, len(boundaries), boundaries[-1] + 1
+            )
 
         if not isinstance(levs, list):
             lbot = None

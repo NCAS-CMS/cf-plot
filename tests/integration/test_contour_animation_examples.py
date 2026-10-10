@@ -9,8 +9,12 @@ import pytest
 
 import cfplot as cfp
 
-
-DATA_DIR = Path(__file__).parent.parent.parent / "docs" / "source" / "example-datasets"
+DATA_DIR = (
+    Path(__file__).parent.parent.parent
+    / "docs"
+    / "source"
+    / "example-datasets"
+)
 TEST_GEN_DIR = Path(__file__).parent.parent.parent / "generated-example-images"
 ANIM_GEN_DIR = TEST_GEN_DIR / "animation"
 
@@ -54,7 +58,9 @@ def test_ptype1_animation_first_five_tas_timesteps_updates_titles():
             )
 
             if reuse_map_background:
-                title_artist = cfp.plotvars.runtime._contour_animation_title_artist
+                title_artist = (
+                    cfp.plotvars.runtime._contour_animation_title_artist
+                )
                 assert title_artist is not None
                 frame_title = title_artist.get_text()
                 assert frame_title.startswith("tas [")

@@ -22,4 +22,4 @@ Example 29: Time series line plot
    )
 
 
-.. figure:: /../../cfplot/test/reference-example-images/ref_fig_29.png
+.. figure:: /../../tests/reference-example-images/ref_fig_29.png

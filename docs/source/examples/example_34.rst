@@ -15,4 +15,4 @@ Example 34: Cropping the Lambert Conformal Conic (LCC) projection
    cfp.con(f.subspace(time=15))
 
 
-.. figure:: /../../cfplot/test/reference-example-images/ref_fig_34.png
+.. figure:: /../../tests/reference-example-images/ref_fig_34.png

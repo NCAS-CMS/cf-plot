@@ -5,9 +5,19 @@ from cfplot import contour
 
 
 class _FakeConstruct:
-    def __init__(self, values, dtvalues=None):
+    def __init__(self, values, dtvalues=None, *, name=None, **flags):
         self.array = np.asarray(values)
-        self.dtarray = None if dtvalues is None else np.asarray(dtvalues, dtype=object)
+        self.dtarray = (
+            None if dtvalues is None else np.asarray(dtvalues, dtype=object)
+        )
+        self.name = name
+        self.T = bool(flags.get("T", False))
+        self.Z = bool(flags.get("Z", False))
+        self.Y = bool(flags.get("Y", False))
+        self.X = bool(flags.get("X", False))
+
+    def identity(self, default=None):
+        return self.name or default
 
 
 class _FakeField:
@@ -15,9 +25,23 @@ class _FakeField:
         self._constructs = constructs
 
     def has_construct(self, key):
-        return key in self._constructs
+        if key in self._constructs:
+            return True
+        return any(
+            getattr(construct, "identity", lambda default=None: None)(None)
+            == key
+            for construct in self._constructs.values()
+        )
 
     def construct(self, key):
+        if key in self._constructs:
+            return self._constructs[key]
+        for construct in self._constructs.values():
+            identity = getattr(
+                construct, "identity", lambda default=None: None
+            )(None)
+            if identity == key:
+                return construct
         return self._constructs[key]
 
 
@@ -37,8 +61,12 @@ def test_gopen_registers_animation_hooks(tmp_path):
 
     cfp.gopen(
         animation_session_id="session-1",
-        animation_meta_callback=lambda payload: events.append(("meta", payload)),
-        animation_frame_callback=lambda payload: events.append(("frame", payload)),
+        animation_meta_callback=lambda payload: events.append(
+            ("meta", payload)
+        ),
+        animation_frame_callback=lambda payload: events.append(
+            ("frame", payload)
+        ),
     )
 
     runtime = cfp.plotvars.runtime
@@ -53,22 +81,34 @@ def test_gopen_registers_animation_hooks(tmp_path):
 
 def test_meta_and_frame_callbacks_emit_in_order(monkeypatch):
     monkeypatch.setattr(contour.cf, "Field", _FakeField)
-    monkeypatch.setattr(contour.utility, "find_dim_names", lambda f: ["X", "Y", "T"])
+    monkeypatch.setattr(
+        contour.utility, "find_dim_names", lambda f: ["X", "Y", "T"]
+    )
 
     runtime = cfp.plotvars.runtime
     runtime._animation_session_id = "session-2"
 
     events = []
-    runtime._animation_meta_callback = lambda payload: events.append(("meta", payload))
-    runtime._animation_frame_callback = lambda payload: events.append(("frame", payload))
+    runtime._animation_meta_callback = lambda payload: events.append(
+        ("meta", payload)
+    )
+    runtime._animation_frame_callback = lambda payload: events.append(
+        ("frame", payload)
+    )
     runtime._animation_meta_emitted = False
     runtime._animation_frame_index = 0
 
     f = _FakeField(
         {
-            "X": _FakeConstruct(np.linspace(0, 350, 36)),
-            "Y": _FakeConstruct(np.linspace(-90, 90, 19)),
-            "T": _FakeConstruct([1], dtvalues=["2001-01-01 00:00:00"]),
+            "X": _FakeConstruct(
+                np.linspace(0, 350, 36), name="longitude", X=True
+            ),
+            "Y": _FakeConstruct(
+                np.linspace(-90, 90, 19), name="latitude", Y=True
+            ),
+            "T": _FakeConstruct(
+                [1], dtvalues=["2001-01-01 00:00:00"], name="time", T=True
+            ),
         }
     )
 
@@ -113,9 +153,13 @@ def test_meta_and_frame_callbacks_emit_in_order(monkeypatch):
     assert frame_payload["timestamp"] is not None
 
 
-def test_callback_exceptions_are_logged_and_frame_index_advances(monkeypatch, caplog):
+def test_callback_exceptions_are_logged_and_frame_index_advances(
+    monkeypatch, caplog
+):
     monkeypatch.setattr(contour.cf, "Field", _FakeField)
-    monkeypatch.setattr(contour.utility, "find_dim_names", lambda f: ["X", "Y", "T"])
+    monkeypatch.setattr(
+        contour.utility, "find_dim_names", lambda f: ["X", "Y", "T"]
+    )
 
     runtime = cfp.plotvars.runtime
     runtime._animation_session_id = "session-3"
@@ -128,9 +172,13 @@ def test_callback_exceptions_are_logged_and_frame_index_advances(monkeypatch, ca
 
     f = _FakeField(
         {
-            "X": _FakeConstruct(np.linspace(0, 350, 36)),
-            "Y": _FakeConstruct(np.linspace(-90, 90, 19)),
-            "T": _FakeConstruct([1]),
+            "X": _FakeConstruct(
+                np.linspace(0, 350, 36), name="longitude", X=True
+            ),
+            "Y": _FakeConstruct(
+                np.linspace(-90, 90, 19), name="latitude", Y=True
+            ),
+            "T": _FakeConstruct([1], name="time", T=True),
         }
     )
 

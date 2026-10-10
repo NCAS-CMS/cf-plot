@@ -16,7 +16,7 @@ from . import utility
 from .blockfill import _bfill
 from .colorbar import cbar
 from .layout_runtime import apply_axes, ensure_xy_viewport, set_plot_limits
-from .map_runtime import MapSet, _apply_map_title, _apply_map_features
+from .map_runtime import MapSet, _apply_map_features, _apply_map_title
 from .state import plotvars
 
 
@@ -155,7 +155,9 @@ def _render_rotated_grid_axes(
             )
             xout = np.array(points)[:, 0]
             yout = np.array(points)[:, 1]
-            xpts, ypts = _rotated_vloc(lons=xout, lats=yout, xvec=xvec, yvec=yvec)
+            xpts, ypts = _rotated_vloc(
+                lons=xout, lats=yout, xvec=xvec, yvec=yvec
+            )
             plotvars.plot.plot(
                 xpts,
                 ypts,
@@ -178,7 +180,9 @@ def _render_rotated_grid_axes(
     spacing_y = (ylim[1] - ylim[0]) / 20
     spacing = min(spacing_x, spacing_y)
 
-    rotated_transform = ccrs.RotatedPole(pole_latitude=ypole, pole_longitude=xpole)
+    rotated_transform = ccrs.RotatedPole(
+        pole_latitude=ypole, pole_longitude=xpole
+    )
 
     if axes:
         if xaxis:
@@ -191,7 +195,9 @@ def _render_rotated_grid_axes(
                 )
                 xout = np.array(points)[:, 0]
                 yout = np.array(points)[:, 1]
-                xpts, ypts = _rotated_vloc(lons=xout, lats=yout, xvec=xvec, yvec=yvec)
+                xpts, ypts = _rotated_vloc(
+                    lons=xout, lats=yout, xvec=xvec, yvec=yvec
+                )
                 if grid:
                     plotvars.plot.plot(
                         xpts, ypts, ":", linewidth=grid_thickness, color="k"
@@ -210,7 +216,12 @@ def _render_rotated_grid_axes(
                         plotvars.plot.add_line(line)
                         line.set_clip_on(False)
                         xticklabel = (
-                            utility.mapaxis(lons[val], lons[val], axis_type=1, degsym=plotvars.degsym)[1][0]
+                            utility.mapaxis(
+                                lons[val],
+                                lons[val],
+                                axis_type=1,
+                                degsym=plotvars.degsym,
+                            )[1][0]
                             if xticklabels is None
                             else xticklabels[val]
                         )
@@ -234,7 +245,9 @@ def _render_rotated_grid_axes(
                 )
                 xout = np.array(points)[:, 0]
                 yout = np.array(points)[:, 1]
-                xpts, ypts = _rotated_vloc(lons=xout, lats=yout, xvec=xvec, yvec=yvec)
+                xpts, ypts = _rotated_vloc(
+                    lons=xout, lats=yout, xvec=xvec, yvec=yvec
+                )
 
                 if grid:
                     plotvars.plot.plot(
@@ -244,7 +257,11 @@ def _render_rotated_grid_axes(
                 if labels and np.size(xpts[5:]) > np.sum(np.isnan(xpts[5:])):
                     xmin = np.nanmin(xpts[5:])
                     loc = np.where(xpts == xmin)[0]
-                    if np.size(loc) == 1 and loc > 0 and np.isfinite(ypts[loc]):
+                    if (
+                        np.size(loc) == 1
+                        and loc > 0
+                        and np.isfinite(ypts[loc])
+                    ):
                         ypos = float(np.asarray(ypts[loc]).reshape(-1)[0])
                         line = matplotlib.lines.Line2D(
                             [0, -spacing / 2], [ypos, ypos], color="k"
@@ -252,7 +269,12 @@ def _render_rotated_grid_axes(
                         plotvars.plot.add_line(line)
                         line.set_clip_on(False)
                         yticklabel = (
-                            utility.mapaxis(lats[val], lats[val], axis_type=2, degsym=plotvars.degsym)[1][0]
+                            utility.mapaxis(
+                                lats[val],
+                                lats[val],
+                                axis_type=2,
+                                degsym=plotvars.degsym,
+                            )[1][0]
                             if yticklabels is None
                             else yticklabels[val]
                         )
@@ -309,12 +331,18 @@ def _render_ptype6_rotated_pole(
     if plotvars.user_plot == 0:
         ensure_xy_viewport()
 
-    rotated_pole = f.ref("grid_mapping_name:rotated_latitude_longitude", default=None)
+    rotated_pole = f.ref(
+        "grid_mapping_name:rotated_latitude_longitude", default=None
+    )
     xpole = ypole = None
     transform = None
     if rotated_pole:
-        xpole = utility.to_float_or_none(rotated_pole.get("grid_north_pole_longitude"))
-        ypole = utility.to_float_or_none(rotated_pole.get("grid_north_pole_latitude"))
+        xpole = utility.to_float_or_none(
+            rotated_pole.get("grid_north_pole_longitude")
+        )
+        ypole = utility.to_float_or_none(
+            rotated_pole.get("grid_north_pole_latitude")
+        )
 
     if plotvars.proj == "rotated":
         xpts = np.arange(np.size(data.x))
@@ -485,7 +513,8 @@ def _render_ptype6_rotated_pole(
     if kwargs.get("colorbar", True) and (fill or blockfill):
         cbar(
             labels=cbar_labels,
-            orientation=kwargs.get("colorbar_orientation", None) or "horizontal",
+            orientation=kwargs.get("colorbar_orientation", None)
+            or "horizontal",
             position=kwargs.get("colorbar_position", None),
             shrink=kwargs.get("colorbar_shrink", None),
             title=colorbar_title,

@@ -14,4 +14,4 @@ Example 35: Mollweide projection
    cfp.con(f.subspace(time=15))
 
 
-.. figure:: /../../cfplot/test/reference-example-images/ref_fig_35.png
+.. figure:: /../../tests/reference-example-images/ref_fig_35.png

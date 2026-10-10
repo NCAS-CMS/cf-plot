@@ -4,6 +4,7 @@ import cartopy.crs as ccrs
 import cf
 import numpy as np
 
+from . import utility
 from .layout_runtime import ensure_runtime_session, finalize_runtime_session
 from .map_runtime import (
     _apply_current_map_title,
@@ -13,7 +14,6 @@ from .map_runtime import (
     mapset,
 )
 from .state import plotvars
-from . import utility
 from .validate import _check_data
 
 
@@ -98,7 +98,9 @@ def stream(
             xpole,
             ypole,
         ) = utility.cf_data_assign(
-            u, colorbar_title, proj=("rotated" if rotated_vect else plotvars.proj)
+            u,
+            colorbar_title,
+            proj=("rotated" if rotated_vect else plotvars.proj),
         )
         del xpole, ypole
     elif isinstance(u, cf.FieldList):
@@ -135,7 +137,9 @@ def stream(
             xpole,
             ypole,
         ) = utility.cf_data_assign(
-            v, colorbar_title, proj=("rotated" if rotated_vect else plotvars.proj)
+            v,
+            colorbar_title,
+            proj=("rotated" if rotated_vect else plotvars.proj),
         )
         del v_x, v_y, xpole, ypole
     elif isinstance(v, cf.FieldList):

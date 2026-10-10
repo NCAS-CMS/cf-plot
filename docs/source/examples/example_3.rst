@@ -17,4 +17,4 @@ Example 3: Contour plot with altered map limits and levels
    cfp.con(f.subspace(time=15))
 
 
-.. figure:: /../../cfplot/test/reference-example-images/ref_fig_3.png
+.. figure:: /../../tests/reference-example-images/ref_fig_3.png
