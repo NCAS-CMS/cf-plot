@@ -14,8 +14,10 @@ of being developed elsewhere.
 -----
 
 
-### Version `3.5.X`, first released 2026-10-09
+### Version `3.5.1`, first released XXXXXX
 
+* Prevent striped artefacts on curvilinear longitude/latitude grids such as NEMO. 
+  
 #### Version `3.5.0`, release 2026-10-09
 
 * Modularise and refactor the codebase, which has no user-facing implications
