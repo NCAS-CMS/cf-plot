@@ -1,6 +1,6 @@
 
 # A GitHub Action to run the cf-plot test suite after PR events on main.
-name: Run test suite
+name: Run all testing excluding image comparison aspect
 
 # Triggers the workflow on PR events targeting main.
 on:
@@ -24,7 +24,10 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        python-version: ["3.11", "3.12", "3.13", "3.14"]
+        # DO NOT RUN on the latest Python, because we run this for the
+        # image comparison workflow so it would just be duplicating the
+        # same test.
+        python-version: ["3.11", "3.12", "3.13"]
 
     steps:
       - name: Checkout cf-plot
@@ -97,7 +100,7 @@ jobs:
       - name: Run test suite
         shell: bash -l {0}
         working-directory: ${{ github.workspace }}/main
-        run: pytest tests
+        run: pytest tests --skip-image-comparison
 
       - name: Notify about a completed run
         run: |
@@ -110,7 +113,10 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        python-version: ["3.11", "3.12", "3.13", "3.14"]
+        # DO NOT RUN on the latest Python, because we run this for the
+        # image comparison workflow so it would just be duplicating the
+        # same test.
+        python-version: ["3.11", "3.12", "3.13"]
 
     steps:
       - name: Checkout cf-plot
@@ -183,7 +189,7 @@ jobs:
       - name: Run test suite
         shell: bash -l {0}
         working-directory: ${{ github.workspace }}/main
-        run: pytest tests
+        run: pytest tests --skip-image-comparison
 
       - name: Notify about a completed run
         run: |
