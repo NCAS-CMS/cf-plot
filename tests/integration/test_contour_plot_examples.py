@@ -104,7 +104,7 @@ def _assert_reference_match_strict(generated: Path, reference: Path) -> None:
     result = mpl_compare.compare_images(
         str(reference),
         str(generated),
-        tol=0.,
+        tol=0.0,
         in_decorator=True,
     )
     if result is not None:

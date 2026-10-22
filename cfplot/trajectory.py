@@ -20,6 +20,29 @@ from .map_runtime import (
 from .state import plotvars
 
 
+def _trajectory_segments(x, y):
+    """Yield contiguous segments of finite, unmasked coordinates."""
+    x = np.ma.asarray(x, dtype=float)
+    y = np.ma.asarray(y, dtype=float)
+
+    x_data = x.filled(np.nan)
+    y_data = y.filled(np.nan)
+
+    valid = (
+        ~np.ma.getmaskarray(x)
+        & ~np.ma.getmaskarray(y)
+        & np.isfinite(x_data)
+        & np.isfinite(y_data)
+    )
+
+    edges = np.diff(np.r_[False, valid, False].astype(int))
+    starts = np.flatnonzero(edges == 1)
+    stops = np.flatnonzero(edges == -1)
+
+    for start, stop in zip(starts, stops):
+        yield start, stop, x_data[start:stop], y_data[start:stop]
+
+
 def traj(
     f=None,
     title=None,
@@ -305,22 +328,35 @@ def traj(
                 print("plotting markers")
 
             if legend_lines is False:
-                mymap.plot(
-                    xpts,
-                    ypts,
-                    color=linecolor,
-                    linewidth=plot_linewidth,
-                    linestyle=linestyle,
-                    marker=marker,
-                    markevery=markevery,
-                    markersize=plot_markersize,
-                    markerfacecolor=markerfacecolor,
-                    markeredgecolor=markeredgecolor,
-                    markeredgewidth=markeredgewidth,
-                    zorder=zorder,
-                    clip_on=True,
-                    transform=ccrs.PlateCarree(),
-                )
+                for start, stop, x_segment, y_segment in _trajectory_segments(
+                    xpts, ypts
+                ):
+                    segment_markevery = markevery
+                    if (
+                        isinstance(markevery, (int, np.integer))
+                        and markevery > 0
+                    ):
+                        segment_markevery = np.flatnonzero(
+                            np.arange(start, stop) % markevery == 0
+                        )
+                        segment_markevery -= start
+
+                    mymap.plot(
+                        x_segment,
+                        y_segment,
+                        color=linecolor,
+                        linewidth=plot_linewidth,
+                        linestyle=linestyle,
+                        marker=marker,
+                        markevery=segment_markevery,
+                        markersize=plot_markersize,
+                        markerfacecolor=markerfacecolor,
+                        markeredgecolor=markeredgecolor,
+                        markeredgewidth=markeredgewidth,
+                        zorder=zorder,
+                        clip_on=True,
+                        transform=ccrs.PlateCarree(),
+                    )
             else:
                 line_xpts = xpts.compressed()
                 line_ypts = ypts.compressed()

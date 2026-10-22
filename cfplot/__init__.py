@@ -21,7 +21,7 @@ from .utility import regrid
 from .vector import vect
 
 __author__ = "Andy Heaps, Sadie Bartholomew, Bryan Lawrence"
-__maintainer__ ="Sadie Bartholomew"
+__maintainer__ = "Sadie Bartholomew"
 __date__ = "2026-10-09"
 
 
