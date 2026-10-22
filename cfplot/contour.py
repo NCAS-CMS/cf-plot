@@ -469,10 +469,14 @@ class ColourScale:
         colmap = get_colour_scale_map()
         cmap = matplotlib.colors.ListedColormap(colmap)
 
+        extremes = {}
         if scale.levels_extend == "min" or scale.levels_extend == "both":
-            cmap.set_under(scale.cs[0])
+            extremes["under"] = plotvars.cs[0]
         if scale.levels_extend == "max" or scale.levels_extend == "both":
-            cmap.set_over(scale.cs[-1])
+            extremes["over"] = plotvars.cs[-1]
+
+        if extremes:
+            cmap = cmap.with_extremes(**extremes)
 
         return cmap
 

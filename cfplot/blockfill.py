@@ -448,10 +448,10 @@ def _bfill_ugrid(
 
     levs = deepcopy(np.array(clevs))
 
-    if plotvars.levels_extend == "min" or plotvars.levels_extend == "both":
+    if plotvars.levels_extend in ("min", "both"):
         levs = np.concatenate([[-1e20], levs])
     ilevs_max = np.size(levs)
-    if plotvars.levels_extend == "max" or plotvars.levels_extend == "both":
+    if plotvars.levels_extend in ("max", "both"):
         levs = np.concatenate([levs, [1e20]])
     else:
         ilevs_max = ilevs_max - 1

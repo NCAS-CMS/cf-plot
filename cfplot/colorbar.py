@@ -204,14 +204,18 @@ def cbar(
         )
 
         boundaries = levs.astype(float)
+        extremes = {}
         if extend in ("both", "min"):
-            cmap.set_under(plotvars.cs[0])
+            extremes["under"] = plotvars.cs[0]
             boundaries = np.insert(boundaries, 0, boundaries[0] - 1)
         if extend in ("both", "max"):
-            cmap.set_over(plotvars.cs[-1])
+            extremes["over"] = plotvars.cs[-1]
             boundaries = np.insert(
                 boundaries, len(boundaries), boundaries[-1] + 1
             )
+
+        if extremes:
+            cmap = cmap.with_extremes(**extremes)
 
         if not isinstance(levs, list):
             lbot = None
