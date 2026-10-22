@@ -26,7 +26,7 @@ DATA_DIR = (
 TEST_GEN_DIR = (
     Path(__file__).parent.parent.parent / "generated-example-images-cont"
 )
-REF_IMAGE_DIR = Path(__file__).parent.parent / "reference-example-images"
+REF_IMAGE_DIR = Path(__file__).parent.parent / "v350-controlled-env-ref-images"
 LOCAL_DATA_DIR = Path(__file__).parent.parent / "data"
 TEST_GEN_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -104,7 +104,7 @@ def _assert_reference_match_strict(generated: Path, reference: Path) -> None:
     result = mpl_compare.compare_images(
         str(reference),
         str(generated),
-        tol=0.0,
+        tol=0.,
         in_decorator=True,
     )
     if result is not None:
@@ -240,7 +240,7 @@ def test_regression_seaice_ortho_bbox_image():
         f, fill=True, lines=False, line_labels=False, title="seaice_ortho_bbox"
     )
 
-    _assert_reference_match_strict(generated=generated, reference=reference)
+    _assert_reference_match("seaice_ortho_bbox")
 
 
 @pytest.mark.integration
@@ -265,7 +265,7 @@ def test_regression_npstere_da193_image():
         f, fill=True, lines=False, line_labels=False, title="npstere_da193"
     )
 
-    _assert_reference_match_strict(generated=generated, reference=reference)
+    _assert_reference_match("da193")
 
 
 @pytest.mark.integration

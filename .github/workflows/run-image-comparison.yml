@@ -1,0 +1,59 @@
+# Run cf-plot tests including image comparison, in the reference environment
+name: Run image comparison testing
+
+on:
+  pull_request:
+    types: [opened, reopened, ready_for_review]
+    branches:
+      - main
+
+jobs:
+  test-image-comparison:
+    strategy:
+      fail-fast: true
+      matrix:
+        os: [ubuntu-latest, macos-15-intel]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout cf-plot
+        uses: actions/checkout@v7
+        with:
+          path: main
+
+      - name: Setup reference Conda environment
+        uses: conda-incubator/setup-miniconda@v4
+        with:
+          auto-update-conda: true
+          miniconda-version: "latest"
+          environment-file: main/cfplot-test-env.yml
+          activate-environment: cfplot-test-env
+
+      - name: Check reference environment
+        shell: bash -l {0}
+        run: |
+          python --version
+          python -c "import sys; assert sys.version_info[:3] == (3, 14, 8), f'Expected Python 3.14.8, got {sys.version}'"
+
+          echo "*Conda report:*"
+          conda info
+          conda list
+
+          echo "*Pip report:*"
+          pip --version
+          pip list
+
+      - name: Install cf-plot from source
+        shell: bash -l {0}
+        working-directory: ${{ github.workspace }}/main
+        run: pip install --no-deps -e .
+
+      - name: Run full test suite including image comparison
+        shell: bash -l {0}
+        working-directory: ${{ github.workspace }}/main
+        run: pytest tests
+
+      - name: Notify about a completed run
+        if: success()
+        run: echo "Image comparison testing completed successfully on ${{ matrix.os }}."
