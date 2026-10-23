@@ -64,7 +64,7 @@ jobs:
         with:
           name: image-comparison-results-${{ runner.os }}
           path: |
-            generated-example-images-adv/
-            generated-example-images-cont/
+            main/generated-example-images-adv/
+            main/generated-example-images-cont/
           if-no-files-found: warn
           retention-days: 7
