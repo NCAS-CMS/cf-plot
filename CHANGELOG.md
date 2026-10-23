@@ -14,11 +14,15 @@ of being developed elsewhere.
 -----
 
 
-### Version `3.5.1`, first released XXXXXX
+### Version `3.5.X`, first released XXXXXX
 
-* Prevent striped artefacts on curvilinear longitude/latitude grids such as NEMO. 
-  
-#### Version `3.5.0`, release 2026-10-09
+#### Version `3.5.1`, released 2026-??-??
+
+* Update code to prevent deprecation-related warnings
+  (https://github.com/NCAS-CMS/cf-plot/issues/72)
+* Prevent striped artefacts on curvilinear longitude/latitude grids such as NEMO.
+
+#### Version `3.5.0`, released 2026-10-09
 
 * Modularise and refactor the codebase, which has no user-facing implications
   except that functionality is available via sub-modules as well as at the top-level

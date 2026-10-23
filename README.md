@@ -69,6 +69,45 @@ More detail about installation is provided on the
 (`https://ncas-cms.github.io/cf-plot/installation.html`)
 of the documentation.
 
+### Testing
+
+To run the full test suite, call from the repo root:
+
+``` bash
+$ pytest tests
+```
+
+Note however this calls image comparison testing on plot outputs and exact
+image comparison depends on the environment (libraries and versions) used.
+So they may fail if your environment differs from that which was used to
+generate the reference images. Therefore, to allow like-for-like comparison,
+a specific testing conda environment is provided, ``cfplot-test-env.yml``.
+With this environment enabled, the image comparison should pass. Note we
+recommend use of `mamba` for environment creation/solving, but `conda`
+will also work.
+
+```console
+$ # Deactivate all other environments present first
+$ mamba env create --file cfplot-test-env.yml --name cfplot-test-env
+$ conda activate cfplot-test-env
+$ pytest tests
+```
+
+However you can disable this aspect with the ``--skip-image-comparison``
+or equivalently ``-I`` option to the cf-plot test suite run with `pytest`,
+so that only the functional tests run. This is advised when you use any
+environment other than the above, except where some library version
+differs for the purpose of regression testing on that versioning change.
+
+```console
+$ pytest tests -I
+```
+
+> [!NOTE]
+> More comprehensive testing across different environments is under development
+> but is not yet available. For now, use the reference environment to test with.
+
+
 ### Contributing
 
 Everyone is welcome to contribute to cf-plot in the form

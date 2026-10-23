@@ -1,0 +1,197 @@
+
+# A GitHub Action to run the cf-plot test suite after PR events on main.
+name: Run all testing excluding image comparison aspect
+
+# Triggers the workflow on PR events targeting main.
+on:
+  # For now, at least, do not enable on push to save on limited usage resource
+  #push:
+  #  branches:
+  #    - main
+  pull_request:
+    # 'reopened' enables manual retrigger via close & re-open. Disable for all
+    # edits to manage limited resource (PRs often change before merge-ready).
+    types: [opened, reopened, ready_for_review]
+    branches:
+      - main
+
+jobs:
+  # Test on Linux and Intel macOS.
+
+  # Test the suite on Linux (with Ubuntu as representative distribution).
+  test-on-linux:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        # DO NOT RUN on the latest Python, because we run this for the
+        # image comparison workflow so it would just be duplicating the
+        # same test.
+        python-version: ["3.11", "3.12", "3.13"]
+
+    steps:
+      - name: Checkout cf-plot
+        uses: actions/checkout@v7
+        with:
+          path: main
+
+      - name: Notify about setup
+        run: echo "Now setting up the environment for the cf-plot test suite..."
+
+      - name: Checkout the current cf-python main to use as a dependency
+        uses: actions/checkout@v7
+        with:
+          repository: NCAS-CMS/cf-python
+          path: cf-python
+
+      - name: Checkout the current cfdm main to use as a dependency
+        uses: actions/checkout@v7
+        with:
+          repository: NCAS-CMS/cfdm
+          path: cfdm
+
+      # Set up Conda for scientific Python dependencies.
+      - name: Setup Miniconda
+        uses: conda-incubator/setup-miniconda@v4
+        with:
+          auto-update-conda: true
+          miniconda-version: "latest"
+          activate-environment: cf-latest
+          python-version: ${{ matrix.python-version }}
+          channels: ncas, conda-forge
+
+      # Report the configured environment.
+      - name: Check conda and pip config
+        shell: bash -l {0}
+        run: |
+          echo "*Conda report:*"
+          conda info
+          conda list
+          conda config --show-sources
+          conda config --show
+          echo "*Pip report:*"
+          pip --version
+          pip list
+
+      # Install the scientific dependencies required by cf-plot and cf-python.
+      - name: Install dependencies
+        shell: bash -l {0}
+        run: |
+          conda install -c ncas -c conda-forge cf-python udunits2
+          conda install -c conda-forge mpich esmpy cartopy scipy matplotlib pytest
+
+      # Install cfdm, cf-python and cf-plot from source.
+      - name: Install development versions of cf* dependencies and cf-plot
+        shell: bash -l {0}
+        run: |
+          cd cfdm
+          pip install -e .
+
+          cd ../cf-python
+          pip install --no-deps -e .
+
+          cd ../main
+          pip install --no-deps -e .
+
+      - name: Notify about starting testing
+        run: echo "Setup complete. Now starting to run the cf-plot test suite..."
+
+      # Run the cf-plot test suite.
+      - name: Run test suite
+        shell: bash -l {0}
+        working-directory: ${{ github.workspace }}/main
+        run: pytest tests --skip-image-comparison
+
+      - name: Notify about a completed run
+        run: |
+          echo "The cf-plot test suite on Linux has completed."
+
+  # Test on Intel macOS rather than ARM64, which is not compatible with
+  # the existing Conda installation approach.
+  test-on-mac:
+    runs-on: macos-15-intel
+    strategy:
+      fail-fast: true
+      matrix:
+        # DO NOT RUN on the latest Python, because we run this for the
+        # image comparison workflow so it would just be duplicating the
+        # same test.
+        python-version: ["3.11", "3.12", "3.13"]
+
+    steps:
+      - name: Checkout cf-plot
+        uses: actions/checkout@v7
+        with:
+          path: main
+
+      - name: Notify about setup
+        run: echo "Now setting up the environment for the cf-plot test suite..."
+
+      - name: Checkout the current cf-python main to use as a dependency
+        uses: actions/checkout@v7
+        with:
+          repository: NCAS-CMS/cf-python
+          path: cf-python
+
+      - name: Checkout the current cfdm main to use as a dependency
+        uses: actions/checkout@v7
+        with:
+          repository: NCAS-CMS/cfdm
+          path: cfdm
+
+      # Set up Conda for scientific Python dependencies.
+      - name: Setup Miniconda
+        uses: conda-incubator/setup-miniconda@v4
+        with:
+          auto-update-conda: true
+          miniconda-version: "latest"
+          activate-environment: cf-latest
+          python-version: ${{ matrix.python-version }}
+          channels: ncas, conda-forge
+
+      # Report the configured environment.
+      - name: Check conda and pip config
+        shell: bash -l {0}
+        run: |
+          echo "*Conda report:*"
+          conda info
+          conda list
+          conda config --show-sources
+          conda config --show
+          echo "*Pip report:*"
+          pip --version
+          pip list
+
+      # Install the scientific dependencies required by cf-plot and cf-python.
+      - name: Install dependencies
+        shell: bash -l {0}
+        run: |
+          conda install -c ncas -c conda-forge cf-python udunits2
+          conda install -c conda-forge mpich esmpy cartopy scipy matplotlib pytest
+
+      # Install cfunits, cfdm, cf-python and cf-plot from source.
+      - name: Install development versions of dependencies and cf-plot
+        shell: bash -l {0}
+        run: |
+          cd cfdm
+          pip install -e .
+
+          cd ../cf-python
+          pip install --no-deps -e .
+
+          cd ../main
+          pip install --no-deps -e .
+
+      - name: Notify about starting testing
+        run: echo "Setup complete. Now starting to run the cf-plot test suite..."
+
+      # Run the cf-plot test suite.
+      - name: Run test suite
+        shell: bash -l {0}
+        working-directory: ${{ github.workspace }}/main
+        run: pytest tests --skip-image-comparison
+
+      - name: Notify about a completed run
+        run: |
+          echo "The cf-plot test suite on Mac has completed."
+          echo "You may now inspect the results."

@@ -63,19 +63,20 @@ def _bfill(
         colmap = get_colour_scale_map()
         cmap = matplotlib.colors.ListedColormap(colmap)
         fill_colors = list(colmap)
-        if plotvars.levels_extend in ["min", "both"]:
-            cmap.set_under(plotvars.cs[0])
-        if plotvars.levels_extend in ["max", "both"]:
-            cmap.set_over(plotvars.cs[-1])
 
-        under_index = None
-        over_index = None
+        extremes = {}
         if plotvars.levels_extend in ["min", "both"]:
+            extremes["under"] = plotvars.cs[0]
             under_index = len(fill_colors)
             fill_colors.append(plotvars.cs[0])
         if plotvars.levels_extend in ["max", "both"]:
+            extremes["over"] = plotvars.cs[-1]
             over_index = len(fill_colors)
             fill_colors.append(plotvars.cs[-1])
+
+        if extremes:
+            cmap = cmap.with_extremes(**extremes)
+
     else:
         cols = single_fill_color
         cmap = matplotlib.colors.ListedColormap(cols)
@@ -449,10 +450,10 @@ def _bfill_ugrid(
 
     levs = deepcopy(np.array(clevs))
 
-    if plotvars.levels_extend == "min" or plotvars.levels_extend == "both":
+    if plotvars.levels_extend in ("min", "both"):
         levs = np.concatenate([[-1e20], levs])
     ilevs_max = np.size(levs)
-    if plotvars.levels_extend == "max" or plotvars.levels_extend == "both":
+    if plotvars.levels_extend in ("max", "both"):
         levs = np.concatenate([levs, [1e20]])
     else:
         ilevs_max = ilevs_max - 1
