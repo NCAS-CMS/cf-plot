@@ -26,4 +26,4 @@ Example 42a: Tracks with labelled data points
    )
 
 
-.. figure:: /../../tests/reference-example-images/ref_fig_42a.png
+.. figure:: /../../tests/v350-controlled-env-ref-images/ref_fig_42a.png

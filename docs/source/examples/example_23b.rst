@@ -23,4 +23,4 @@ Example 23b: Overlaying vectors over a rotated pole data plot
    cfp.gclose()
 
 
-.. figure:: /../../tests/reference-example-images/ref_fig_23b.png
+.. figure:: /../../tests/v350-controlled-env-ref-images/ref_fig_23b.png

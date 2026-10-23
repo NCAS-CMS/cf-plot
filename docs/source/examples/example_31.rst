@@ -15,4 +15,4 @@ Example 31: UKCP projection
 
    cfp.con(f, lines=False)
 
-.. figure:: /../../tests/reference-example-images/ref_fig_31.png
+.. figure:: /../../tests/v350-controlled-env-ref-images/ref_fig_31.png

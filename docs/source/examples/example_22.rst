@@ -16,4 +16,4 @@ Example 22: Plot of rotated pole data on its native grid
    cfp.con(f)
 
 
-.. figure:: /../../tests/reference-example-images/ref_fig_22.png
+.. figure:: /../../tests/v350-controlled-env-ref-images/ref_fig_22.png

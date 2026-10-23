@@ -17,4 +17,4 @@ Example 24c: UGRID contour plot with LFRic cubed sphere mesh output
    cfp.con(g, lines=False)
 
 
-.. figure:: /../../tests/reference-example-images/ref_fig_24c.png
+.. figure:: /../../tests/v350-controlled-env-ref-images/ref_fig_24c.png

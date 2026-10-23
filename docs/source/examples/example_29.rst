@@ -22,4 +22,4 @@ Example 29: Time series line plot
    )
 
 
-.. figure:: /../../tests/reference-example-images/ref_fig_29.png
+.. figure:: /../../tests/v350-controlled-env-ref-images/ref_fig_29.png

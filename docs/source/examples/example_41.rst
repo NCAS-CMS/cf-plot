@@ -14,4 +14,4 @@ Example 41: Feature propagation over Europe
    cfp.traj(f, vector=True, markersize=0.0, fc="b", ec="b")
 
 
-.. figure:: /../../tests/reference-example-images/ref_fig_41.png
+.. figure:: /../../tests/v350-controlled-env-ref-images/ref_fig_41.png

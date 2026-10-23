@@ -21,4 +21,4 @@ Example 21a: User-defined axes
    )
 
 
-.. figure:: /../../tests/reference-example-images/ref_fig_21a.png
+.. figure:: /../../tests/v350-controlled-env-ref-images/ref_fig_21a.png

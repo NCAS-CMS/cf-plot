@@ -23,4 +23,4 @@ Example 32: UKCP projection with blockfill
    )
 
 
-.. figure:: /../../tests/reference-example-images/ref_fig_32.png
+.. figure:: /../../tests/v350-controlled-env-ref-images/ref_fig_32.png

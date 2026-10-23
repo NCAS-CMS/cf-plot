@@ -682,7 +682,7 @@ class MapContourRenderer(ContourRenderer):
         runtime.image = runtime.mymap.contourf(
             lons,
             lats,
-            self.data.field * self.data.fmult,
+            _mask_curvilinear_contour_seams(self.data) * self.data.fmult,
             self.data.levels,
             extend=scale.levels_extend,
             cmap=cmap,
@@ -792,10 +792,11 @@ class MapContourRenderer(ContourRenderer):
 
         runtime = plotvars.runtime
         dec = plotvars.decoration
+        field = _mask_curvilinear_contour_seams(self.data) * self.data.fmult
         cs = runtime.mymap.contour(
             self.data.x,
             self.data.y,
-            self.data.field * self.data.fmult,
+            field,
             self.data.levels,
             colors=colors,
             linewidths=linewidths,
@@ -825,7 +826,7 @@ class MapContourRenderer(ContourRenderer):
             cs0 = runtime.mymap.contour(
                 self.data.x,
                 self.data.y,
-                self.data.field * self.data.fmult,
+                field,
                 [-1e-32, 0],
                 colors=colors,
                 linewidths=zero_thick,
@@ -1697,6 +1698,70 @@ def _window_irregular_map_data(
     return field_irregular, lons_irregular, lats_irregular
 
 
+def _is_curvilinear_map_grid(data: ContourData) -> bool:
+    """Return True for map plots using 2D lon/lat coordinates.
+
+    Curvilinear grids (for example NEMO/ORCA ocean meshes) are prone to
+    severe contourf/contour artefacts. These are better rendered through
+    blockfill/pcolormesh.
+    """
+    if data.ptype != 1 or data.x is None or data.y is None:
+        return False
+    if np.ndim(data.field) != 2:
+        return False
+    return np.ndim(data.x) == 2 and np.ndim(data.y) == 2
+
+
+def _mask_curvilinear_contour_seams(data: ContourData) -> np.ndarray:
+    """Exclude vertices adjoining longitude jumps from structured contours."""
+    if not _is_curvilinear_map_grid(data):
+        return data.field
+
+    mask = np.ma.getmaskarray(data.field).copy()
+    for axis in (0, 1):
+        jumps = np.abs(np.diff(data.x, axis=axis)) > 180.0
+        before = [slice(None), slice(None)]
+        after = before.copy()
+        before[axis] = slice(None, -1)
+        after[axis] = slice(1, None)
+        # Mask both ends so corner masking cannot retain a seam-crossing
+        # triangle and interpolate a contour across the whole map.
+        mask[tuple(before)] |= jumps
+        mask[tuple(after)] |= jumps
+
+    return np.ma.array(data.field, mask=mask)
+
+
+def _resolve_curvilinear_render_defaults(
+    *,
+    data: ContourData,
+    kwargs: dict[str, Any],
+    fill: bool,
+    lines: bool,
+    blockfill: bool,
+    blockfill_fast: bool | None,
+) -> tuple[bool, bool, bool, bool | None]:
+    """Adjust renderer defaults for curvilinear lon/lat map grids.
+
+    Returns the possibly updated (fill, lines, blockfill, blockfill_fast)
+    tuple.
+    """
+    if not _is_curvilinear_map_grid(data):
+        return fill, lines, blockfill, blockfill_fast
+
+    # Use robust defaults for 2D map grids unless the caller explicitly
+    # requested alternative behavior.
+    if "blockfill" not in kwargs:
+        blockfill = True
+        fill = False
+    if blockfill and blockfill_fast is None:
+        blockfill_fast = True
+    if "lines" not in kwargs:
+        lines = False
+
+    return fill, lines, blockfill, blockfill_fast
+
+
 def _render_with_new_xy(
     f: Any, x: Any, y: Any, kwargs: dict[str, Any]
 ) -> bool:
@@ -1776,6 +1841,7 @@ def _render_with_new_xy(
     fill = kwargs.get("fill", global_fill)
     lines = kwargs.get("lines", global_lines)
     blockfill = kwargs.get("blockfill", global_blockfill)
+    blockfill_fast = kwargs.get("blockfill_fast", None)
     line_labels = kwargs.get("line_labels", True)
     zero_thick = kwargs.get("zero_thick", False)
     colors = kwargs.get("colors", "k")
@@ -1786,6 +1852,17 @@ def _render_with_new_xy(
 
     if blockfill:
         fill = False
+
+    fill, lines, blockfill, blockfill_fast = (
+        _resolve_curvilinear_render_defaults(
+            data=data,
+            kwargs=kwargs,
+            fill=fill,
+            lines=lines,
+            blockfill=blockfill,
+            blockfill_fast=blockfill_fast,
+        )
+    )
 
     colorbar = kwargs.get("colorbar", True)
     if not fill and not blockfill:
@@ -2171,7 +2248,7 @@ def _render_with_new_xy(
         )
     if blockfill:
         renderer.render_blockfill(
-            fast=kwargs.get("blockfill_fast", None), alpha=alpha, zorder=zorder
+            fast=blockfill_fast, alpha=alpha, zorder=zorder
         )
     if lines:
         renderer.render_lines(
@@ -2350,7 +2427,11 @@ def con(f=None, x=None, y=None, **kwargs):
     |                       6 = rotated pole
     | negative_linestyle='solid' - set to one of 'solid', 'dashed'
     | zero_thick=False - add a thick zero contour line. Set to 3 for example.
-    | blockfill=False - set to True for a blockfill plot
+    | blockfill=False - set to True for a blockfill plot. For 2D lon/lat
+    |                  grids, defaults to fast blockfill without lines.
+    |                  Explicit False selects contours; vertices adjoining
+    |                  longitude wrap jumps are excluded to avoid stripes,
+    |                  leaving a narrow gap at the seam.
     | colorbar_title=colbar_title - title for the colour bar
     | colorbar=True - add a colour bar if a filled contour plot
     | colorbar_label_skip=None - skip colour bar labels. Set to 2 to skip

@@ -12,4 +12,4 @@ Example 39: Basic track plotting
    cfp.traj(f)
 
 
-.. figure:: /../../tests/reference-example-images/ref_fig_39.png
+.. figure:: /../../tests/v350-controlled-env-ref-images/ref_fig_39.png

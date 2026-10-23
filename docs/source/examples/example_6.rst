@@ -14,4 +14,4 @@ Example 6: Latitude-pressure plot at set longitude
    cfp.con(f.subspace(longitude=0))
 
 
-.. figure:: /../../tests/reference-example-images/ref_fig_6.png
+.. figure:: /../../tests/v350-controlled-env-ref-images/ref_fig_6.png
