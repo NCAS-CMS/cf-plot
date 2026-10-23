@@ -37,4 +37,4 @@ Example 15: Polar projection vector plot
    cfp.gclose()
 
 
-.. figure:: /../../tests/reference-example-images/ref_fig_15.png
+.. figure:: /../../tests/v350-controlled-env-ref-images/ref_fig_15.png

@@ -17,4 +17,4 @@ Example 5: South Pole polar projection contour plot with bounding latitude
    cfp.con(f.subspace(pressure=500))
 
 
-.. figure:: /../../tests/reference-example-images/ref_fig_5.png
+.. figure:: /../../tests/v350-controlled-env-ref-images/ref_fig_5.png

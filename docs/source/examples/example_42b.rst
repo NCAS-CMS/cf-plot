@@ -25,4 +25,4 @@ Example 42b: Tracks displayed in a colour scale
    )
 
 
-.. figure:: /../../tests/reference-example-images/ref_fig_42b.png
+.. figure:: /../../tests/v350-controlled-env-ref-images/ref_fig_42b.png

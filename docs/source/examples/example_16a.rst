@@ -29,4 +29,4 @@ Example 16a: Zonal vector plot
    )
 
 
-.. figure:: /../../tests/reference-example-images/ref_fig_16a.png
+.. figure:: /../../tests/v350-controlled-env-ref-images/ref_fig_16a.png

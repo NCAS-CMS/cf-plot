@@ -30,4 +30,4 @@ Example 24b: UGRID plot in the polar stereographic projection view
    )
 
 
-.. figure:: /../../tests/reference-example-images/ref_fig_24b.png
+.. figure:: /../../tests/v350-controlled-env-ref-images/ref_fig_24b.png
