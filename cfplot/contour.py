@@ -1762,7 +1762,9 @@ def _resolve_curvilinear_render_defaults(
     return fill, lines, blockfill, blockfill_fast
 
 
-def _render_with_new_xy(f: Any, x: Any, y: Any, kwargs: dict[str, Any]) -> bool:
+def _render_with_new_xy(
+    f: Any, x: Any, y: Any, kwargs: dict[str, Any]
+) -> bool:
     """Attempt rendering via new XY renderer and return True on success.
 
     Note: Imports from cfplot are local (inside function) to maintain
@@ -1851,13 +1853,15 @@ def _render_with_new_xy(f: Any, x: Any, y: Any, kwargs: dict[str, Any]) -> bool:
     if blockfill:
         fill = False
 
-    fill, lines, blockfill, blockfill_fast = _resolve_curvilinear_render_defaults(
-        data=data,
-        kwargs=kwargs,
-        fill=fill,
-        lines=lines,
-        blockfill=blockfill,
-        blockfill_fast=blockfill_fast,
+    fill, lines, blockfill, blockfill_fast = (
+        _resolve_curvilinear_render_defaults(
+            data=data,
+            kwargs=kwargs,
+            fill=fill,
+            lines=lines,
+            blockfill=blockfill,
+            blockfill_fast=blockfill_fast,
+        )
     )
 
     colorbar = kwargs.get("colorbar", True)
