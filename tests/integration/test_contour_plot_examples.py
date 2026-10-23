@@ -685,6 +685,22 @@ def test_example_37b_orthographic_full_globe():
 
 
 @pytest.mark.integration
+def test_example_nemo_1():
+    """Test plotting of data on a NEMO grid."""
+    data_file = Path(__file__).parent.parent / "data" / "nemo_eg260916.nc"
+    if not data_file.exists():
+        pytest.skip(f"Missing test data: {data_file}")
+
+    fl = cf.read(str(data_file))
+    f = fl[0].squeeze()
+
+    _configure_example_output("nemo1")
+    cfp.con(f)
+
+    _assert_reference_match("nemo1")
+
+
+@pytest.mark.integration
 def test_example_numpy_arrays():
     """Test contour with raw numpy arrays."""
     # Create synthetic 2D data
