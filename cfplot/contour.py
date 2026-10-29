@@ -1757,7 +1757,7 @@ def _resolve_curvilinear_render_defaults(
     if blockfill and blockfill_fast is None:
         blockfill_fast = True
     if "lines" not in kwargs:
-        lines = False
+        lines = True
 
     return fill, lines, blockfill, blockfill_fast
 
