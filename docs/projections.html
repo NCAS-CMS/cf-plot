@@ -7,7 +7,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Projections in cf-plot &#8212; cf-plot 3.5.0 documentation</title>
+    <title>Projections &#8212; cf-plot 3.5.0 documentation</title>
   
   
   
@@ -428,9 +428,9 @@
 <li class="toctree-l1"><a class="reference internal" href="rotated_pole.html">Rotated pole plots</a></li>
 <li class="toctree-l1"><a class="reference internal" href="unstructured.html">Unstructured grids and UGRID</a></li>
 <li class="toctree-l1"><a class="reference internal" href="graphs.html">Line plots i.e. graphs</a></li>
-<li class="toctree-l1 current active"><a aria-current="page" class="current reference internal" href="#">Projections in cf-plot</a></li>
+<li class="toctree-l1 current active"><a aria-current="page" class="current reference internal" href="#">Projections</a></li>
 <li class="toctree-l1"><a class="reference internal" href="trajectories.html">Trajectories</a></li>
-<li class="toctree-l1"><a class="reference internal" href="wrf.html">WRF data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="specific_models.html">Specific Models</a></li>
 </ul>
 </div>
 </nav></div>
@@ -474,7 +474,7 @@
     
     <li class="breadcrumb-item"><a href="plot_types.html" class="nav-link">Plots by type/theme</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Projections in cf-plot</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Projections</span></li>
   </ul>
 </nav>
 </div>
@@ -491,15 +491,15 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="projections-in-cf-plot">
-<span id="projections"></span><h1>Projections in cf-plot<a class="headerlink" href="#projections-in-cf-plot" title="Link to this heading">#</a></h1>
+  <section id="projections">
+<span id="id1"></span><h1>Projections<a class="headerlink" href="#projections" title="Link to this heading">#</a></h1>
 <p>The cylindrical and polar stereographic projections are detailed
 separately in <a class="reference internal" href="cylindrical.html#cylindrical"><span class="std std-ref">cylindrical plots</span></a> and
 <a class="reference internal" href="polar.html#polar"><span class="std std-ref">polar plots</span></a>.</p>
 <section id="example-31-ukcp-projection">
 <span id="example31"></span><h2>Example 31: UKCP projection<a class="headerlink" href="#example-31-ukcp-projection" title="Link to this heading">#</a></h2>
-<div class="literal-block-wrapper docutils container" id="id1">
-<div class="code-block-caption"><span class="caption-text">Plotting using the UKCP projection</span><a class="headerlink" href="#id1" title="Link to this code">#</a></div>
+<div class="literal-block-wrapper docutils container" id="id2">
+<div class="code-block-caption"><span class="caption-text">Plotting using the UKCP projection</span><a class="headerlink" href="#id2" title="Link to this code">#</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;cfplot_data/ukcp_rcm_test.nc&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
 <span class="n">cfp</span><span class="o">.</span><span class="n">mapset</span><span class="p">(</span><span class="n">proj</span><span class="o">=</span><span class="s2">&quot;UKCP&quot;</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="s2">&quot;50m&quot;</span><span class="p">)</span>
@@ -522,8 +522,8 @@ supplied bounds.</p>
 </section>
 <section id="example-32-ukcp-projection-with-blockfill">
 <span id="example32"></span><h2>Example 32: UKCP projection with blockfill<a class="headerlink" href="#example-32-ukcp-projection-with-blockfill" title="Link to this heading">#</a></h2>
-<div class="literal-block-wrapper docutils container" id="id2">
-<div class="code-block-caption"><span class="caption-text">Plotting a blockfill plot using the UKCP projection</span><a class="headerlink" href="#id2" title="Link to this code">#</a></div>
+<div class="literal-block-wrapper docutils container" id="id3">
+<div class="code-block-caption"><span class="caption-text">Plotting a blockfill plot using the UKCP projection</span><a class="headerlink" href="#id3" title="Link to this code">#</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;cfplot_data/ukcp_rcm_test.nc&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
 <span class="n">cfp</span><span class="o">.</span><span class="n">mapset</span><span class="p">(</span><span class="n">proj</span><span class="o">=</span><span class="s2">&quot;UKCP&quot;</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="s2">&quot;50m&quot;</span><span class="p">)</span>
@@ -542,7 +542,7 @@ supplied bounds.</p>
 </div>
 </div>
 <figure class="align-default">
-<img alt="../../tests/reference-example-images/ref_fig_32.png" src="../../tests/reference-example-images/ref_fig_32.png" />
+<img alt="../../tests/v350-controlled-env-ref-images/ref_fig_32.png" src="../../tests/v350-controlled-env-ref-images/ref_fig_32.png" />
 </figure>
 <p><cite>cfp.setvars</cite> options affecting the grid plotting for the UKCP grid are:</p>
 <div class="line-block">
@@ -558,8 +558,8 @@ and make a blockfill plot.</p>
 </section>
 <section id="example-33-osgb-and-europp-projections">
 <span id="example33"></span><h2>Example 33: OSGB and EuroPP projections<a class="headerlink" href="#example-33-osgb-and-europp-projections" title="Link to this heading">#</a></h2>
-<div class="literal-block-wrapper docutils container" id="id3">
-<div class="code-block-caption"><span class="caption-text">Plotting using the projections OSGB and EuroPP</span><a class="headerlink" href="#id3" title="Link to this code">#</a></div>
+<div class="literal-block-wrapper docutils container" id="id4">
+<div class="code-block-caption"><span class="caption-text">Plotting using the projections OSGB and EuroPP</span><a class="headerlink" href="#id4" title="Link to this code">#</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;cfplot_data/ukcp_rcm_test.nc&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
 <span class="n">cfp</span><span class="o">.</span><span class="n">levs</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
@@ -580,9 +580,9 @@ and make a blockfill plot.</p>
 </section>
 <section id="example-34-cropping-the-lambert-conformal-conic-lcc-projection">
 <span id="example34"></span><h2>Example 34: Cropping the Lambert Conformal Conic (LCC) projection<a class="headerlink" href="#example-34-cropping-the-lambert-conformal-conic-lcc-projection" title="Link to this heading">#</a></h2>
-<div class="literal-block-wrapper docutils container" id="id4">
+<div class="literal-block-wrapper docutils container" id="id5">
 <div class="code-block-caption"><span class="caption-text">Plotting using the Lambert Conformal Conic (LCC) projection
-and cropping the displayed boundaries.</span><a class="headerlink" href="#id4" title="Link to this code">#</a></div>
+and cropping the displayed boundaries.</span><a class="headerlink" href="#id5" title="Link to this code">#</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;cfplot_data/tas_A1.nc&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
 <span class="n">cfp</span><span class="o">.</span><span class="n">mapset</span><span class="p">(</span><span class="n">proj</span><span class="o">=</span><span class="s2">&quot;lcc&quot;</span><span class="p">,</span> <span class="n">lonmin</span><span class="o">=-</span><span class="mi">50</span><span class="p">,</span> <span class="n">lonmax</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">latmin</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">latmax</span><span class="o">=</span><span class="mi">85</span><span class="p">)</span>
@@ -598,8 +598,8 @@ and cropping the displayed boundaries.</span><a class="headerlink" href="#id4" t
 </section>
 <section id="example-35-mollweide-projection">
 <span id="example35"></span><h2>Example 35: Mollweide projection<a class="headerlink" href="#example-35-mollweide-projection" title="Link to this heading">#</a></h2>
-<div class="literal-block-wrapper docutils container" id="id5">
-<div class="code-block-caption"><span class="caption-text">Plotting using the Mollweide projection</span><a class="headerlink" href="#id5" title="Link to this code">#</a></div>
+<div class="literal-block-wrapper docutils container" id="id6">
+<div class="code-block-caption"><span class="caption-text">Plotting using the Mollweide projection</span><a class="headerlink" href="#id6" title="Link to this code">#</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;cfplot_data/tas_A1.nc&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
 <span class="n">cfp</span><span class="o">.</span><span class="n">mapset</span><span class="p">(</span><span class="n">proj</span><span class="o">=</span><span class="s2">&quot;moll&quot;</span><span class="p">)</span>
@@ -614,8 +614,8 @@ and cropping the displayed boundaries.</span><a class="headerlink" href="#id4" t
 </section>
 <section id="example-36-mercator-projection">
 <span id="example36"></span><h2>Example 36: Mercator projection<a class="headerlink" href="#example-36-mercator-projection" title="Link to this heading">#</a></h2>
-<div class="literal-block-wrapper docutils container" id="id6">
-<div class="code-block-caption"><span class="caption-text">Plotting using the Mercator projection</span><a class="headerlink" href="#id6" title="Link to this code">#</a></div>
+<div class="literal-block-wrapper docutils container" id="id7">
+<div class="code-block-caption"><span class="caption-text">Plotting using the Mercator projection</span><a class="headerlink" href="#id7" title="Link to this code">#</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;cfplot_data/tas_A1.nc&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
 <span class="n">cfp</span><span class="o">.</span><span class="n">mapset</span><span class="p">(</span><span class="n">proj</span><span class="o">=</span><span class="s2">&quot;merc&quot;</span><span class="p">)</span>
@@ -630,8 +630,8 @@ and cropping the displayed boundaries.</span><a class="headerlink" href="#id4" t
 </section>
 <section id="example-37-orthographic-projection">
 <span id="example37"></span><h2>Example 37: Orthographic projection<a class="headerlink" href="#example-37-orthographic-projection" title="Link to this heading">#</a></h2>
-<div class="literal-block-wrapper docutils container" id="id7">
-<div class="code-block-caption"><span class="caption-text">Plotting using the Orthographic projection</span><a class="headerlink" href="#id7" title="Link to this code">#</a></div>
+<div class="literal-block-wrapper docutils container" id="id8">
+<div class="code-block-caption"><span class="caption-text">Plotting using the Orthographic projection</span><a class="headerlink" href="#id8" title="Link to this code">#</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;cfplot_data/tas_A1.nc&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
 <span class="n">cfp</span><span class="o">.</span><span class="n">mapset</span><span class="p">(</span><span class="n">proj</span><span class="o">=</span><span class="s2">&quot;ortho&quot;</span><span class="p">)</span>
@@ -646,8 +646,8 @@ and cropping the displayed boundaries.</span><a class="headerlink" href="#id4" t
 </section>
 <section id="example-38-robinson-projection">
 <span id="example38"></span><h2>Example 38: Robinson projection<a class="headerlink" href="#example-38-robinson-projection" title="Link to this heading">#</a></h2>
-<div class="literal-block-wrapper docutils container" id="id8">
-<div class="code-block-caption"><span class="caption-text">Plotting using the Robinson projection</span><a class="headerlink" href="#id8" title="Link to this code">#</a></div>
+<div class="literal-block-wrapper docutils container" id="id9">
+<div class="code-block-caption"><span class="caption-text">Plotting using the Robinson projection</span><a class="headerlink" href="#id9" title="Link to this code">#</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;cfplot_data/tas_A1.nc&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
 <span class="n">cfp</span><span class="o">.</span><span class="n">mapset</span><span class="p">(</span><span class="n">proj</span><span class="o">=</span><span class="s2">&quot;robin&quot;</span><span class="p">)</span>

@@ -492,7 +492,13 @@ point locations.</p>
 </div>
 <div class="line">negative_linestyle='solid' - set to one of 'solid', 'dashed'</div>
 <div class="line">zero_thick=False - add a thick zero contour line. Set to 3 for example.</div>
-<div class="line">blockfill=False - set to True for a blockfill plot</div>
+<div class="line">blockfill=False - set to True for a blockfill plot. For 2D lon/lat</div>
+<div class="line-block">
+<div class="line">grids, defaults to fast blockfill without lines.</div>
+<div class="line">Explicit False selects contours; vertices adjoining</div>
+<div class="line">longitude wrap jumps are excluded to avoid stripes,</div>
+<div class="line">leaving a narrow gap at the seam.</div>
+</div>
 <div class="line">colorbar_title=colbar_title - title for the colour bar</div>
 <div class="line">colorbar=True - add a colour bar if a filled contour plot</div>
 <div class="line">colorbar_label_skip=None - skip colour bar labels. Set to 2 to skip</div>
