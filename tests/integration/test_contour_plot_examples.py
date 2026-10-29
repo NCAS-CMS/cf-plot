@@ -686,7 +686,7 @@ def test_example_37b_orthographic_full_globe():
 
 @pytest.mark.integration
 def test_example_nemo_1():
-    """Test plotting of data on a NEMO grid."""
+    """Test plot of data on a NEMO grid globally and Pacific Ocean close up."""
     data_file = Path(__file__).parent.parent / "data" / "nemo_eg260916.nc"
     if not data_file.exists():
         pytest.skip(f"Missing test data: {data_file}")
@@ -695,7 +695,23 @@ def test_example_nemo_1():
     f = fl[0].squeeze()
 
     _configure_example_output("nemo1")
-    cfp.con(f)
+
+    cfp.gopen(rows=2, columns=1, bottom=0.2)
+    cfp.cscale("precip2_17lev")
+    cfp.gpos(1)
+    cfp.con(
+        f, colorbar=None, lines=False,
+        title=(
+            "Total precipitation flux at midnight 1979-02-15 highlighted "
+            "over the Tropical Indo-Pacific"
+        ))
+    cfp.gpos(2)
+    cfp.con(
+        f.subspace(
+            X=cf.wi(120, 180), Y=cf.wi(-25, 5)),
+        lines=False,
+    )
+    cfp.gclose()
 
     _assert_reference_match("nemo1")
 
