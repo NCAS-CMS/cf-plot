@@ -236,6 +236,7 @@ Listing of all examples
    examples/example_42a.rst
    examples/example_42b.rst
    examples/example_43.rst
+   examples/example_44.rst
 
 
 .. include:: datasets.rst
