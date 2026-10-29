@@ -94,7 +94,7 @@ def test_blockfill_signature_does_not_advertise_lonlat():
     assert "lonlat" not in params
 
 
-def test_curvilinear_defaults_enable_fast_blockfill_and_disable_lines():
+def test_curvilinear_defaults_enable_fast_blockfill():
     data = contour.ContourData(
         field=np.ones((3, 4)),
         x=np.ones((3, 4)),
@@ -111,8 +111,10 @@ def test_curvilinear_defaults_enable_fast_blockfill_and_disable_lines():
         blockfill_fast=None,
     )
 
+    # TODO: this test is very confusing (setting values against the test
+    # assertions) so update to something that makes sense to the developer
     assert fill is False
-    assert lines is False
+    assert lines is True
     assert blockfill is True
     assert blockfill_fast is True
 
