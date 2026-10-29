@@ -2401,7 +2401,7 @@ def _render_with_new_xy(
 
 
 def con(f=None, x=None, y=None, **kwargs):
-    """The interface to contouring in cf-plot.
+    """Create a contour or blockfill (or combined contour-blockfill) plot.
 
     The minimum use is con(f)
     where f is a 2 dimensional array. If a cf field is passed then an
@@ -2428,10 +2428,13 @@ def con(f=None, x=None, y=None, **kwargs):
     | negative_linestyle='solid' - set to one of 'solid', 'dashed'
     | zero_thick=False - add a thick zero contour line. Set to 3 for example.
     | blockfill=False - set to True for a blockfill plot. For 2D lon/lat
-    |                  grids, defaults to fast blockfill without lines.
-    |                  Explicit False selects contours; vertices adjoining
-    |                  longitude wrap jumps are excluded to avoid stripes,
-    |                  leaving a narrow gap at the seam.
+    |                   grids, defaults to fast blockfill so blockfill=True.
+    |                   For 2D lon/lat grids, defaults to fast blockfill,
+    |                   i.e. blockfill=True, fill=False, and
+    |                   blockfill_fast=True.
+    |                   Explicit False selects contours; vertices adjoining
+    |                   longitude wrap jumps are excluded to avoid stripes,
+    |                   leaving a narrow gap at the seam.
     | colorbar_title=colbar_title - title for the colour bar
     | colorbar=True - add a colour bar if a filled contour plot
     | colorbar_label_skip=None - skip colour bar labels. Set to 2 to skip
@@ -2509,7 +2512,10 @@ def con(f=None, x=None, y=None, **kwargs):
     |                        then it is set to True.
     | blockfill_fast=None - Use pcolormesh blockfill. This is possibly less
     |                       reliable that the usual code but is
-    |                       faster for higher resolution datasets
+    |                       faster for higher resolution datasets.
+    |                       For 2D lon/lat grids, defaults to fast
+    |                       blockfill, i.e. blockfill=True, fill=False and
+    |                       blockfill_fast=True.
     | nlevs=False - Let Matplotlib work out the levels for the contour plot
     | orca=None - User specifies this is an orca tripolar grid. Internally
     |             cf-plot tries to detect this by looking for a single
