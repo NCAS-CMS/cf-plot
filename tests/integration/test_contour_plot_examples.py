@@ -686,7 +686,7 @@ def test_example_37b_orthographic_full_globe():
 
 @pytest.mark.integration
 def test_example_nemo_1():
-    """Test plot of data on a NEMO grid globally and Pacific Ocean close up."""
+    """Test plotting of data on a NEMO grid including with feature close up."""
     data_file = Path(__file__).parent.parent / "data" / "nemo_eg260916.nc"
     if not data_file.exists():
         pytest.skip(f"Missing test data: {data_file}")
