@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Example 44: NEMO data on a curvilinear T grid &#8212; cf-plot 3.5.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../_static/scripts/fontawesome.js?digest=18bd87630a240e9c25be"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
+
+    <script src="../_static/documentation_options.js?v=c1362a89"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'examples/example_44';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="User guide" href="../user_guide.html" />
+    <link rel="prev" title="Example 43: CF-compliant WRF model output data" href="example_43.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="3.5.0" />
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+<aside class="bd-header-announcement" aria-label="Announcement">
+  <div class="bd-header-announcement__content">This is the new permanent home of the cf-plot documentation: please consult this and not the old frozen version under 'http://ajheaps.github.io'.</div>
+</aside>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">cf-plot 3.5.0 documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../introduction.html">
+    Introduction
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../plot_types.html">
+    Plots by type/theme
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../gallery_of_examples.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../user_guide.html">
+    User guide
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../advanced.html">
+    Advanced use
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../api_reference.html">
+    API reference
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../versions.html">
+    Versions
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../support.html">
+    Support and contributing
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../training.html">
+    Training material
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../license.html">
+    License
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button type="button" class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../introduction.html">
+    Introduction
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../plot_types.html">
+    Plots by type/theme
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../gallery_of_examples.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../user_guide.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../advanced.html">
+    Advanced use
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api_reference.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../versions.html">
+    Versions
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../support.html">
+    Support and contributing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../training.html">
+    Training material
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../license.html">
+    License
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="example_1.html">Example 1: Basic contour plot in default projection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_2.html">Example 2: Basic blockfill plot in default projection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_3.html">Example 3: Contour plot with altered map limits and levels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_4.html">Example 4: North Pole polar stereographic projection contour plot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_5.html">Example 5: South Pole polar projection contour plot with bounding latitude</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_6.html">Example 6: Latitude-pressure plot at set longitude</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_7.html">Example 7: Latitude-pressure plot over zonal mean</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_8.html">Example 8: Latitude against log of pressure over longitude zonal mean</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_9.html">Example 9: Longitude-pressure plot over latitude mean</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_10.html">Example 10: Latitude-time Hovmöller plot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_11.html">Example 11: Latitude-time subset view Hovmöller plot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_12.html">Example 12: Longitude-time Hovmöller plot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_13.html">Example 13: Basic vector plot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_14.html">Example 14: Vector plot overlaid on a contour map</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_15.html">Example 15: Polar projection vector plot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_16a.html">Example 16a: Zonal vector plot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_16b.html">Example 16b: Basic stream plot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_16c.html">Example 16c: Stream plot in a colour scale</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_17.html">Example 17: Basic stipple plot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_18.html">Example 18: Polar stipple plot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_19a.html">Example 19a: Multiple plots</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_19b.html">Example 19b: Multiple plots with user-specified plot positions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_19c.html">Example 19c: Accomodating more than one colour bar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_20.html">Example 20: Case where user-defined axis labels are required</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_21a.html">Example 21a: User-defined axes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_21b.html">Example 21b: Plot of rotated pole data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_22.html">Example 22: Plot of rotated pole data on its native grid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_23a.html">Example 23a: Rotated pole plot from data which is not CF Compliant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_23b.html">Example 23b: Overlaying vectors over a rotated pole data plot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_24a.html">Example 24a: UGRID blockfill plot with LFRic cubed sphere mesh output</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_24b.html">Example 24b: UGRID plot in the polar stereographic projection view</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_25.html">Example 25: UGRID contour plot with ORCA 2 output</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_26a.html">Example 26a: Contour plot based on discrete feature values</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_26b.html">Example 26b: Contour plot from discrete feature values with labelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_27.html">Example 27: Basic line plot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_28.html">Example 28: Line plot with a legend</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_29.html">Example 29: Time series line plot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_30.html">Example 30: Line plot with two x axes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_31.html">Example 31: UKCP projection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_32.html">Example 32: UKCP projection with blockfill</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_33.html">Example 33: OSGB and EuroPP projections</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_34.html">Example 34: Cropping the Lambert Conformal Conic (LCC) projection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_35.html">Example 35: Mollweide projection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_36.html">Example 36: Mercator projection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_37.html">Example 37: Orthographic projection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_38.html">Example 38: Robinson projection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_39.html">Example 39: Basic track plotting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_39b.html">Example 39b: plotting a single (1D) DSG trajectory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_40.html">Example 40: Tracks in the polar stereographic projection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_41.html">Example 41: Feature propagation over Europe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_42a.html">Example 42a: Tracks with labelled data points</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_42b.html">Example 42b: Tracks displayed in a colour scale</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_43.html">Example 43: CF-compliant WRF model output data</a></li>
+<li class="toctree-l1 current active"><a aria-current="page" class="current reference internal" href="#">Example 44: NEMO data on a curvilinear T grid</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../gallery_of_examples.html" class="nav-link">Examples</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Example 44: NEMO data on a curvilinear T grid</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="example-44-nemo-data-on-a-curvilinear-t-grid">
+<span id="example-44"></span><h1>Example 44: NEMO data on a curvilinear T grid<a class="headerlink" href="#example-44-nemo-data-on-a-curvilinear-t-grid" title="Link to this heading">#</a></h1>
+<div class="literal-block-wrapper docutils container" id="id1">
+<div class="code-block-caption"><span class="caption-text">Making a global and close-up contour plot of NEMO data
+defined on a curvilinear T grid, shown on a single figure</span><a class="headerlink" href="#id1" title="Link to this code">#</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fl</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;cfplot_data/nemo_eg260916.nc&quot;</span><span class="p">)</span>
+<span class="n">f</span> <span class="o">=</span> <span class="n">fl</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+
+<span class="n">cfp</span><span class="o">.</span><span class="n">gopen</span><span class="p">(</span><span class="n">rows</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">bottom</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">cscale</span><span class="p">(</span><span class="s2">&quot;precip2_17lev&quot;</span><span class="p">)</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">gpos</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span>
+    <span class="n">f</span><span class="p">,</span> <span class="n">colorbar</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">lines</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="p">(</span>
+        <span class="s2">&quot;Total precipitation flux at midnight 1979-02-15 highlighted &quot;</span>
+        <span class="s2">&quot;over the Tropical Indo-Pacific&quot;</span>
+    <span class="p">))</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">gpos</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span>
+        <span class="n">X</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">wi</span><span class="p">(</span><span class="mi">120</span><span class="p">,</span> <span class="mi">180</span><span class="p">),</span> <span class="n">Y</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">wi</span><span class="p">(</span><span class="o">-</span><span class="mi">25</span><span class="p">,</span> <span class="mi">5</span><span class="p">)),</span>
+    <span class="n">lines</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">gclose</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<figure class="align-default">
+<img alt="../_images/ref_fig_nemo1.png" src="../_images/ref_fig_nemo1.png" />
+</figure>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="example_43.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Example 43: CF-compliant WRF model output data</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../user_guide.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">User guide</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../_sources/examples/example_44.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2026, National Centre for Atmospheric Science (NCAS).
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.23.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
