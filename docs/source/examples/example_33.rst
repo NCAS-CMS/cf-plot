@@ -13,10 +13,10 @@ Example 33: OSGB and EuroPP projections
 
    cfp.gopen(columns=2)
    cfp.mapset(proj="OSGB", resolution="50m")
-   cfp.con(f, lines=False, colorbar_label_skip=2)
+   cfp.con(f, fill=True, blockfill=False, lines=False, colorbar_label_skip=2)
    cfp.gpos(2)
    cfp.mapset(proj="EuroPP", resolution="50m")
-   cfp.con(f, lines=False, colorbar_label_skip=2)
+   cfp.con(f, fill=True, blockfill=False, lines=False, colorbar_label_skip=2)
    cfp.gclose()
 
 

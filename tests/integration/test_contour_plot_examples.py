@@ -554,7 +554,7 @@ def test_example_31_ukcp_projection():
     # file. We need to fix setvars so it doesn't just reset
     # everything.
     cfp.levs(-3, 7, 0.5)
-    cfp.con(f, lines=False)
+    cfp.con(f, fill=True, blockfill=False, lines=False)
     _assert_reference_match("31")
 
 
@@ -571,10 +571,10 @@ def test_example_33_osgb_and_europp():
     cfp.levs(-3, 7, 0.5)
     cfp.gopen(columns=2)
     cfp.mapset(proj="OSGB", resolution="50m")
-    cfp.con(f, lines=False, colorbar_label_skip=2)
+    cfp.con(f, fill=True, blockfill=False, lines=False, colorbar_label_skip=2)
     cfp.gpos(2)
     cfp.mapset(proj="EuroPP", resolution="50m")
-    cfp.con(f, lines=False, colorbar_label_skip=2)
+    cfp.con(f, fill=True, blockfill=False, lines=False, colorbar_label_skip=2)
     cfp.gclose()
     _assert_reference_match("33")
 
