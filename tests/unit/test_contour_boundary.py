@@ -64,7 +64,7 @@ def test_maybe_autosave_calls_gclose(monkeypatch):
     calls: list[bool] = []
 
     monkeypatch.setattr(
-        layout_runtime.plotvars, "_contour_session_open", False
+        layout_runtime.plotvars.runtime, "_contour_session_open", False
     )
     monkeypatch.setattr(
         layout_runtime, "gclose", lambda view=True: calls.append(view)
@@ -78,7 +78,8 @@ def test_maybe_autosave_calls_gclose(monkeypatch):
 def test_maybe_autosave_skips_when_session_open(monkeypatch):
     calls: list[bool] = []
 
-    monkeypatch.setattr(layout_runtime.plotvars, "_contour_session_open", True)
+    monkeypatch.setattr(
+        layout_runtime.plotvars.runtime, "_contour_session_open", True)
     monkeypatch.setattr(
         layout_runtime, "gclose", lambda view=True: calls.append(view)
     )
