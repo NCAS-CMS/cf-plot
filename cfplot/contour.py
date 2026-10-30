@@ -2401,138 +2401,129 @@ def _render_with_new_xy(
 
 
 def con(f=None, x=None, y=None, **kwargs):
-    """Create a contour or blockfill (or combined contour-blockfill) plot.
+    """Create a contour, (block)fill, or combined contour-(block)fill plot.
 
-    The minimum use is con(f)
-    where f is a 2 dimensional array. If a cf field is passed then an
-    appropriate plot will be produced i.e. a longitude-latitude or
-    latitude-height plot for example. If a 2d numeric array is passed then
-    the optional arrays x and y can be used to describe the x and y data
-    point locations.
+    The minimum usage is ``con(f)``, where *f* is a two-dimensional array.
+    If a CF field is passed, an appropriate plot is produced, such as a
+    longitude-latitude or latitude-height plot. If a two-dimensional numeric
+    array is passed, the optional *x* and *y* arrays can be used to specify
+    the data point locations.
 
-    | f - array to contour
-    | x - x locations of data in f (optional)
-    | y - y locations of data in f (optional)
-    | fill=True - colour fill contours
-    | lines=True - draw contour lines and labels
-    | line_labels=True - label contour lines
-    | title=title - title for the plot
-    | ptype=0 - plot type - not needed for cf fields.
-    |                       0 = no specific plot type,
-    |                       1 = longitude-latitude,
-    |                       2 = latitude - height,
-    |                       3 = longitude - height,
-    |                       4 = latitude - time,
-    |                       5 = longitude - time
-    |                       6 = rotated pole
-    | negative_linestyle='solid' - set to one of 'solid', 'dashed'
-    | zero_thick=False - add a thick zero contour line. Set to 3 for example.
-    | blockfill=False - set to True for a blockfill plot. For 2D lon/lat
-    |                   grids, defaults to fast blockfill so blockfill=True.
-    |                   For 2D lon/lat grids, defaults to fast blockfill,
-    |                   i.e. blockfill=True, fill=False, and
-    |                   blockfill_fast=True.
-    |                   Explicit False selects contours; vertices adjoining
-    |                   longitude wrap jumps are excluded to avoid stripes,
-    |                   leaving a narrow gap at the seam.
-    | colorbar_title=colbar_title - title for the colour bar
-    | colorbar=True - add a colour bar if a filled contour plot
-    | colorbar_label_skip=None - skip colour bar labels. Set to 2 to skip
-    |                            every other label.
-    | colorbar_orientation=None - options are 'horizontal' and 'vertical'
-    |                      The default for most plots is horizontal but
-    |                      for polar stereographic plots this is vertical.
-    | colorbar_shrink=None - value to shrink the colorbar by.  If the colorbar
-    |                        exceeds the plot area then values of 1.0, 0.55
-    |                        or 0.5m may help it better fit the plot area.
-    | colorbar_position=None - position of colorbar
-    |                          [xmin, ymin, x_extent,y_extent] in normalised
-    |                          coordinates. Use when a common colorbar
-    |                          is required for a set of plots. A typical set
-    |                          of values would be [0.1, 0.05, 0.8, 0.02]
-    | colorbar_fontsize=None - text size for colorbar labels and title
-    | colorbar_fontweight=None - font weight for colorbar labels and title
-    | colorbar_text_up_down=False - if True horizontal colour bar labels
-    |                               alternate above (start) and below the
-    |                               colour bar
-    | colorbar_text_down_up=False - if True horizontal colour bar labels
-    |                               alternate below (start) and above the
-    |                               colour bar
-    | colorbar_drawedges=True - draw internal divisions in the colorbar
-    | colorbar_fraction=None - space for the colorbar - default = 0.21,
-    |                          in normalised
-    |                       coordinates
-    | colorbar_thick=None - thickness of the colorbar - default = 0.015,
-    |                       in normalised coordinates
-    | colorbar_anchor=None - default=0.5 - anchor point of colorbar within
-    |                        the fraction space.
-    |                        0.0 = close to plot, 1.0 = further away
-    | colorbar_labels=None - labels to use for colorbar. The default is to
-    |                        use the contour levels as labels
-    | colorbar_text_up_down=False - on a horizontal colorbar alternate the
-    |                               labels top and bottom starting in the
-    |                               up position
-    | colorbar_text_down_up=False - on a horizontal colorbar alternate the
-    |                               labels bottom and top starting in the
-    |                               bottom position
-    | colorbar_drawedges=True - draw internal delimeter lines in the colorbar
-    | colors='k' - contour line colors - takes one or many values.
-    | xlog=False - logarithmic x axis
-    | ylog=False - logarithmic y axis
-    | axes=True - plot x and y axes
-    | xaxis=True - plot xaxis
-    | yaxis=True - plot y axis
-    | xticks=None - xtick positions
-    | xticklabels=None - xtick labels
-    | yticks=None - y tick positions
-    | yticklabels=None - ytick labels
-    | xlabel=None - label for x axis
-    | ylabel=None - label for y axis
-    | swap_axes=False - swap plotted axes - only valid for X, Y, Z vs T plots
-    | verbose=None - change to 1 to get a verbose listing of what con
-    |                is doing
-    | linewidths=None - contour linewidths.  Either a single number for all
-    |                   lines or array of widths
-    | linestyles=None - takes 'solid', 'dashed', 'dashdot' or 'dotted'
-    | alpha=1.0 - transparency setting.  The default is no transparency.
-    | zorder=1 - order of drawing
-    | level_spacing=None - Default of 'linear' level spacing.  Also takes
-    |                      'log', 'loglike', 'outlier' and 'inspect'
-    | irregular=None - flag for contouring irregular data
-    | face_lons=None - longitude points for face vertices
-    | face_lats=None - latitude points for face verticies
-    | face_connectivity=None - connectivity for face verticies
-    | titles=False - set to True to have a dimensions title
-    | transform_first=None - Cartopy should transform the points before
-    |                        calling the contouring algorithm, which can have
-    |                        a significant impact on speed (it is much
-    |                        faster to transform points than it is to
-    |                        transform patches) If this is unset and the
-    |                        number of points in the x direction is > 400
-    |                        then it is set to True.
-    | blockfill_fast=None - Use pcolormesh blockfill. This is possibly less
-    |                       reliable that the usual code but is
-    |                       faster for higher resolution datasets.
-    |                       For 2D lon/lat grids, defaults to fast
-    |                       blockfill, i.e. blockfill=True, fill=False and
-    |                       blockfill_fast=True.
-    | nlevs=False - Let Matplotlib work out the levels for the contour plot
-    | orca=None - User specifies this is an orca tripolar grid. Internally
-    |             cf-plot tries to detect this by looking for a single
-    |             discontinuity in the logitude 2D array. If found a fix
-    |             it make to the longitudes so that they are no longer
-    |             discontinuous.
-    | orca_skip=None - Only plot every nth grid point in the 2D longitude
-    |                  and latitude arrays.  This is useful for when
-    |                  plotting his resolution data over the whole globe
-    |                  which would otherwise be very slow to visualize.
-    | grid=False - Draw a grid on the map using the parameters set by
-    |              cfp.setvars. Defaults are grid_x_spacing=60,
-    |              grid_y_spacing=30, grid_colour='k',
-    |              grid_linestyle = '--', grid_thickness=1.0
-    |
-    :Returns:
-     None
+    For two-dimensional longitude-latitude grids, blockfill defaults to a
+    fast implementation using ``pcolormesh``. Explicitly setting
+    ``blockfill=False`` selects contours; vertices adjoining longitude wrap
+    jumps are excluded to avoid stripes, leaving a narrow gap at the seam.
+
+    Args:
+        f: Array or CF field to plot.
+        x: Optional x-coordinate locations of the data in *f*.
+        y: Optional y-coordinate locations of the data in *f*.
+        fill: If ``True``, fill the contours with colours.
+        lines: If ``True``, draw contour lines and labels.
+        line_labels: If ``True``, label the contour lines.
+        title: Title for the plot.
+        ptype: Plot type. Not required for CF fields. Options are 0 (no
+            specific plot type), 1 (longitude-latitude), 2 (latitude-height),
+            3 (longitude-height), 4 (latitude-time), 5 (longitude-time), and
+            6 (rotated pole).
+        negative_linestyle: Line style for negative contours. Options are
+            ``'solid'`` and ``'dashed'``.
+        zero_thick: If non-zero, draw a thicker zero contour line. For
+            example, set to ``3`` to specify the line thickness.
+        blockfill: If ``True``, produce a blockfill plot. For two-dimensional
+            longitude-latitude grids, defaults to fast blockfill, equivalent
+            to ``blockfill=True``, ``fill=False``, and
+            ``blockfill_fast=True``. Explicitly setting this to ``False``
+            selects contours and excludes vertices adjoining longitude wrap
+            jumps to avoid stripes, leaving a narrow gap at the seam.
+        colorbar_title: Title for the colour bar.
+        colorbar: If ``True``, add a colour bar to a filled contour plot.
+        colorbar_label_skip: Number of colour bar labels to skip. For example,
+            set to ``2`` to skip every other label.
+        colorbar_orientation: Colour bar orientation. Options are
+            ``'horizontal'`` and ``'vertical'``. Defaults to horizontal for
+            most plots and vertical for polar stereographic plots.
+        colorbar_shrink: Factor by which to shrink the colour bar. If the
+            colour bar exceeds the plot area, values such as ``1.0``, ``0.55``,
+            or ``0.5`` may help it fit.
+        colorbar_position: Colour bar position as
+            ``[xmin, ymin, x_extent, y_extent]`` in normalised coordinates.
+            Use this to position a common colour bar across multiple plots.
+            For example, ``[0.1, 0.05, 0.8, 0.02]``.
+        colorbar_fontsize: Font size for colour bar labels and title.
+        colorbar_fontweight: Font weight for colour bar labels and title.
+        colorbar_text_up_down: If ``True``, alternate horizontal colour bar
+            labels above and below the colour bar, starting above.
+        colorbar_text_down_up: If ``True``, alternate horizontal colour bar
+            labels below and above the colour bar, starting below.
+        colorbar_drawedges: If ``True``, draw internal dividing lines in the
+            colour bar.
+        colorbar_fraction: Fraction of the plot area allocated to the colour
+            bar. Defaults to ``0.21`` in normalised coordinates.
+        colorbar_thick: Colour bar thickness. Defaults to ``0.015`` in
+            normalised coordinates.
+        colorbar_anchor: Anchor point of the colour bar within the fraction
+            space. Defaults to ``0.5``; ``0.0`` places it closer to the plot
+            and ``1.0`` places it further away.
+        colorbar_labels: Labels to use for the colour bar. Defaults to the
+            contour levels.
+        colors: Colour or sequence of colours for contour lines. Defaults to
+            ``'k'``.
+        xlog: If ``True``, use a logarithmic x-axis.
+        ylog: If ``True``, use a logarithmic y-axis.
+        axes: If ``True``, plot the x- and y-axes.
+        xaxis: If ``True``, plot the x-axis.
+        yaxis: If ``True``, plot the y-axis.
+        xticks: Positions of the x-axis ticks.
+        xticklabels: Labels for the x-axis ticks.
+        yticks: Positions of the y-axis ticks.
+        yticklabels: Labels for the y-axis ticks.
+        xlabel: Label for the x-axis.
+        ylabel: Label for the y-axis.
+        swap_axes: If ``True``, swap the plotted axes. Only valid for
+            X, Y, Z versus T plots.
+        verbose: Set to ``1`` to display a verbose listing of the operations
+            performed by ``con``.
+        linewidths: Contour line widths. Accepts a single number for all
+            lines or an array of widths.
+        linestyles: Contour line styles. Options are ``'solid'``,
+            ``'dashed'``, ``'dashdot'``, and ``'dotted'``.
+        alpha: Transparency setting. Defaults to ``1.0`` (fully opaque).
+        zorder: Drawing order.
+        level_spacing: Contour level spacing. Defaults to ``'linear'``.
+            Also accepts ``'log'``, ``'loglike'``, ``'outlier'``, and
+            ``'inspect'``.
+        irregular: Flag indicating whether the data are irregular.
+        face_lons: Longitude coordinates of face vertices.
+        face_lats: Latitude coordinates of face vertices.
+        face_connectivity: Connectivity information for face vertices.
+        titles: If ``True``, display a dimensions title.
+        transform_first: If ``True``, Cartopy transforms points before
+            calling the contouring algorithm. This can significantly improve
+            performance because transforming points is faster than
+            transforming patches. If unset and the number of points in the
+            x-direction exceeds 400, this is set to ``True``.
+        blockfill_fast: If ``True``, use ``pcolormesh`` for blockfill.
+            This may be less reliable than the usual implementation but is
+            faster for high-resolution datasets. For two-dimensional
+            longitude-latitude grids, defaults to fast blockfill, equivalent
+            to ``blockfill=True``, ``fill=False``, and
+            ``blockfill_fast=True``.
+        nlevs: If ``False``, let Matplotlib determine the contour levels.
+        orca: Flag indicating that the data are on an ORCA tripolar grid.
+            If unset, cf-plot attempts to detect such grids by looking for
+            a single discontinuity in the two-dimensional longitude array.
+            If found, it adjusts the longitudes to remove the discontinuity.
+        orca_skip: Plot every nth grid point in the two-dimensional
+            longitude and latitude arrays. Useful for speeding up
+            visualisation of high-resolution global datasets.
+        grid: If ``True``, draw a grid on the map using the parameters set
+            by ``cfp.setvars``. Defaults are ``grid_x_spacing=60``,
+            ``grid_y_spacing=30``, ``grid_colour='k'``,
+            ``grid_linestyle='--'``, and ``grid_thickness=1.0``.
+
+    Returns:
+        None
     """
     # Contour entrypoint coordinating through new object architecture.
 
