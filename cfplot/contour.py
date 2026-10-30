@@ -2523,7 +2523,7 @@ def con(f=None, x=None, y=None, **kwargs):
             ``grid_linestyle='--'``, and ``grid_thickness=1.0``.
 
     Returns:
-        None
+        None.
     """
     # Contour entrypoint coordinating through new object architecture.
 
