@@ -20,4 +20,4 @@ Plots by type/theme
    graphs
    projections
    trajectories
-   wrf
+   specific_models

@@ -465,7 +465,7 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="cfplot.con">
 <span class="sig-prename descclassname"><span class="pre">cfplot.</span></span><span class="sig-name descname"><span class="pre">con</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cfplot/contour.html#con"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfplot.con" title="Link to this definition">#</a></dt>
-<dd><p>The interface to contouring in cf-plot.</p>
+<dd><p>Create a contour or blockfill (or combined contour-blockfill) plot.</p>
 <p>The minimum use is con(f)
 where f is a 2 dimensional array. If a cf field is passed then an
 appropriate plot will be produced i.e. a longitude-latitude or
@@ -492,7 +492,16 @@ point locations.</p>
 </div>
 <div class="line">negative_linestyle='solid' - set to one of 'solid', 'dashed'</div>
 <div class="line">zero_thick=False - add a thick zero contour line. Set to 3 for example.</div>
-<div class="line">blockfill=False - set to True for a blockfill plot</div>
+<div class="line">blockfill=False - set to True for a blockfill plot. For 2D lon/lat</div>
+<div class="line-block">
+<div class="line">grids, defaults to fast blockfill so blockfill=True.</div>
+<div class="line">For 2D lon/lat grids, defaults to fast blockfill,</div>
+<div class="line">i.e. blockfill=True, fill=False, and</div>
+<div class="line">blockfill_fast=True.</div>
+<div class="line">Explicit False selects contours; vertices adjoining</div>
+<div class="line">longitude wrap jumps are excluded to avoid stripes,</div>
+<div class="line">leaving a narrow gap at the seam.</div>
+</div>
 <div class="line">colorbar_title=colbar_title - title for the colour bar</div>
 <div class="line">colorbar=True - add a colour bar if a filled contour plot</div>
 <div class="line">colorbar_label_skip=None - skip colour bar labels. Set to 2 to skip</div>
@@ -605,7 +614,10 @@ point locations.</p>
 <div class="line">blockfill_fast=None - Use pcolormesh blockfill. This is possibly less</div>
 <div class="line-block">
 <div class="line">reliable that the usual code but is</div>
-<div class="line">faster for higher resolution datasets</div>
+<div class="line">faster for higher resolution datasets.</div>
+<div class="line">For 2D lon/lat grids, defaults to fast</div>
+<div class="line">blockfill, i.e. blockfill=True, fill=False and</div>
+<div class="line">blockfill_fast=True.</div>
 </div>
 <div class="line">nlevs=False - Let Matplotlib work out the levels for the contour plot</div>
 <div class="line">orca=None - User specifies this is an orca tripolar grid. Internally</div>

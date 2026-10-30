@@ -468,6 +468,7 @@
 <li class="toctree-l1"><a class="reference internal" href="example_42a.html">Example 42a: Tracks with labelled data points</a></li>
 <li class="toctree-l1"><a class="reference internal" href="example_42b.html">Example 42b: Tracks displayed in a colour scale</a></li>
 <li class="toctree-l1"><a class="reference internal" href="example_43.html">Example 43: CF-compliant WRF model output data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_44.html">Example 44: NEMO data on a curvilinear T grid</a></li>
 </ul>
 </div>
 </nav></div>
@@ -538,10 +539,10 @@
 
 <span class="n">cfp</span><span class="o">.</span><span class="n">gopen</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">mapset</span><span class="p">(</span><span class="n">proj</span><span class="o">=</span><span class="s2">&quot;OSGB&quot;</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="s2">&quot;50m&quot;</span><span class="p">)</span>
-<span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">lines</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">colorbar_label_skip</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">blockfill</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">lines</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">colorbar_label_skip</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">gpos</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">mapset</span><span class="p">(</span><span class="n">proj</span><span class="o">=</span><span class="s2">&quot;EuroPP&quot;</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="s2">&quot;50m&quot;</span><span class="p">)</span>
-<span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">lines</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">colorbar_label_skip</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">blockfill</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">lines</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">colorbar_label_skip</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">gclose</span><span class="p">()</span>
 </pre></div>
 </div>

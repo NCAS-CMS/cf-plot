@@ -554,7 +554,7 @@ def test_example_31_ukcp_projection():
     # file. We need to fix setvars so it doesn't just reset
     # everything.
     cfp.levs(-3, 7, 0.5)
-    cfp.con(f, lines=False)
+    cfp.con(f, fill=True, blockfill=False, lines=False)
     _assert_reference_match("31")
 
 
@@ -571,10 +571,10 @@ def test_example_33_osgb_and_europp():
     cfp.levs(-3, 7, 0.5)
     cfp.gopen(columns=2)
     cfp.mapset(proj="OSGB", resolution="50m")
-    cfp.con(f, lines=False, colorbar_label_skip=2)
+    cfp.con(f, fill=True, blockfill=False, lines=False, colorbar_label_skip=2)
     cfp.gpos(2)
     cfp.mapset(proj="EuroPP", resolution="50m")
-    cfp.con(f, lines=False, colorbar_label_skip=2)
+    cfp.con(f, fill=True, blockfill=False, lines=False, colorbar_label_skip=2)
     cfp.gclose()
     _assert_reference_match("33")
 
@@ -682,6 +682,38 @@ def test_example_37b_orthographic_full_globe():
         title="time=3080592000.0",
     )
     _assert_reference_match("37b")
+
+
+@pytest.mark.integration
+def test_example_nemo_1():
+    """Test plotting of data on a NEMO grid including with feature close up."""
+    data_file = Path(__file__).parent.parent / "data" / "nemo_eg260916.nc"
+    if not data_file.exists():
+        pytest.skip(f"Missing test data: {data_file}")
+
+    fl = cf.read(str(data_file))
+    f = fl[0].squeeze()
+
+    _configure_example_output("nemo1")
+
+    cfp.gopen(rows=2, columns=1, bottom=0.2)
+    cfp.cscale("precip2_17lev")
+    cfp.gpos(1)
+    cfp.con(
+        f, colorbar=None, lines=False,
+        title=(
+            "Total precipitation flux at midnight 1979-02-15 highlighted "
+            "over the Tropical Indo-Pacific"
+        ))
+    cfp.gpos(2)
+    cfp.con(
+        f.subspace(
+            X=cf.wi(120, 180), Y=cf.wi(-25, 5)),
+        lines=False,
+    )
+    cfp.gclose()
+
+    _assert_reference_match("nemo1")
 
 
 @pytest.mark.integration

@@ -39,4 +39,4 @@ Example 19c: Accomodating more than one colour bar
    cfp.gclose()
 
 
-.. figure:: /../../tests/reference-example-images/ref_fig_19c.png
+.. figure:: /../../tests/v350-controlled-env-ref-images/ref_fig_19c.png

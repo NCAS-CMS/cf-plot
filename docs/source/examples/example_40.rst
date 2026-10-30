@@ -15,4 +15,4 @@ Example 40: Tracks in the polar stereographic projection
    cfp.traj(f)
 
 
-.. figure:: /../../tests/reference-example-images/ref_fig_40.png
+.. figure:: /../../tests/v350-controlled-env-ref-images/ref_fig_40.png

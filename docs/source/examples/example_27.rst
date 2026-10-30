@@ -22,4 +22,4 @@ Example 27: Basic line plot
    cfp.gclose()
 
 
-.. figure:: /../../tests/reference-example-images/ref_fig_27.png
+.. figure:: /../../tests/v350-controlled-env-ref-images/ref_fig_27.png

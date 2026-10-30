@@ -13,4 +13,4 @@ Example 2: Basic blockfill plot in default projection
    cfp.con(f.subspace(time=15), blockfill=True, lines=False)
 
 
-.. figure:: /../../tests/reference-example-images/ref_fig_2.png
+.. figure:: /../../tests/v350-controlled-env-ref-images/ref_fig_2.png

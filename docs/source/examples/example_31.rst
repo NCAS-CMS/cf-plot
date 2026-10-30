@@ -13,6 +13,6 @@ Example 31: UKCP projection
    cfp.levs(-3, 7, 0.5)
    cfp.setvars(grid_x_spacing=1, grid_y_spacing=1)
 
-   cfp.con(f, lines=False)
+   cfp.con(f, fill=True, blockfill=False, lines=False)
 
-.. figure:: /../../tests/reference-example-images/ref_fig_31.png
+.. figure:: /../../tests/v350-controlled-env-ref-images/ref_fig_31.png

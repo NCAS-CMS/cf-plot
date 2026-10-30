@@ -31,4 +31,4 @@ Example 30: Line plot with two x axes
    cfp.gclose()
 
 
-.. figure:: /../../tests/reference-example-images/ref_fig_30.png
+.. figure:: /../../tests/v350-controlled-env-ref-images/ref_fig_30.png

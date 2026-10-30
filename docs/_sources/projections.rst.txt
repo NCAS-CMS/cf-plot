@@ -1,7 +1,7 @@
 .. _projections:
 
-Projections in cf-plot
-**********************
+Projections
+***********
 
 The cylindrical and polar stereographic projections are detailed
 separately in :ref:`cylindrical plots <cylindrical>` and

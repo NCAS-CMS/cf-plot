@@ -29,4 +29,4 @@ Example 19a: Multiple plots
    cfp.gclose()
 
 
-.. figure:: /../../tests/reference-example-images/ref_fig_19a.png
+.. figure:: /../../tests/v350-controlled-env-ref-images/ref_fig_19a.png
