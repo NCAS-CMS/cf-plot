@@ -41,7 +41,39 @@ def stream(
     title=None,
     zorder=None,
 ):
-    """Plot a streamplot to show fluid flow and 2D field gradients."""
+    """Create a stream plot to show flow and gradients.
+
+    Args:
+        u: Horizontal component of the vector field.
+        v: Vertical component of the vector field.
+        x: X-coordinates of the grid points.
+        y: Y-coordinates of the grid points.
+
+        density: Streamline density. Controls the spacing of streamlines.
+        linewidth: Width of the streamlines.
+        color: Colour or array of values used to colour the streamlines.
+        arrowsize: Size of the arrows indicating flow direction.
+        arrowstyle: Style of the arrows indicating flow direction.
+        minlength: Minimum length of a streamline.
+        maxlength: Maximum length of a streamline.
+
+        zorder: Plotting order. Defaults to ``None``.
+
+        axes: If ``True``, display the x- and y-axes.
+        xaxis: If ``True``, display the x-axis.
+        yaxis: If ``True``, display the y-axis.
+
+        xticks: X-axis tick positions.
+        xticklabels: X-axis tick labels.
+        yticks: Y-axis tick positions.
+        yticklabels: Y-axis tick labels.
+        xlabel: X-axis label.
+        ylabel: Y-axis label.
+        title: Plot title.
+
+    Returns:
+        None.
+    """
     del zorder
 
     colorbar_title = ""
