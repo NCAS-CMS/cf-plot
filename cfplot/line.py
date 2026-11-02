@@ -66,7 +66,6 @@ def lineplot(
 
     Args:
         f: CF data used to make a line plot.
-
         x: X-coordinates of the data in *y*.
         y: Y-coordinates of the data in *x*.
 
@@ -85,10 +84,35 @@ def lineplot(
 
         label: Label for the line. Defaults to ``None``.
         legend_location: Location of the legend. Defaults to
-            ``'upper right'``. Other options are ``'best'``, ``'center'``,
-            ``'center left'``, ``'center right'``, ``'lower center'``,
-            ``'lower left'``, ``'lower right'``, ``'right'``,
-            ``'upper center'``, ``'upper left'``, and ``'upper right'``.
+            ``'upper right'``. The available options are:
+
+            .. list-table::
+               :header-rows: 1
+
+               * - Value
+                 - Location
+               * - ``'best'``
+                 - Best location (automatically determined)
+               * - ``'center'``
+                 - Centre
+               * - ``'center left'``
+                 - Centre left
+               * - ``'center right'``
+                 - Centre right
+               * - ``'lower center'``
+                 - Lower centre
+               * - ``'lower left'``
+                 - Lower left
+               * - ``'lower right'``
+                 - Lower right
+               * - ``'right'``
+                 - Right
+               * - ``'upper center'``
+                 - Upper centre
+               * - ``'upper left'``
+                 - Upper left
+               * - ``'upper right'``
+                 - Upper right
 
         titles: If ``True``, display a dimensions title.
         verbose: Set to ``1`` to display a verbose listing of the operations

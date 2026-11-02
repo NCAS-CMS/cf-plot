@@ -2422,10 +2422,28 @@ def con(f=None, x=None, y=None, **kwargs):
         lines: If ``True``, draw contour lines and labels.
         line_labels: If ``True``, label the contour lines.
         title: Title for the plot.
-        ptype: Plot type. Not required for CF fields. Options are 0 (no
-            specific plot type), 1 (longitude-latitude), 2 (latitude-height),
-            3 (longitude-height), 4 (latitude-time), 5 (longitude-time), and
-            6 (rotated pole).
+        ptype: Plot type. Not required for CF fields. Options are:
+
+            .. list-table::
+               :header-rows: 1
+
+               * - Value
+                 - Plot type
+               * - 0
+                 - No specific plot type
+               * - 1
+                 - Longitude–latitude
+               * - 2
+                 - Latitude–height
+               * - 3
+                 - Longitude–height
+               * - 4
+                 - Latitude–time
+               * - 5
+                 - Longitude–time
+               * - 6
+                 - Rotated pole
+
         negative_linestyle: Line style for negative contours. Options are
             ``'solid'`` and ``'dashed'``.
         zero_thick: If non-zero, draw a thicker zero contour line. For
@@ -2486,13 +2504,43 @@ def con(f=None, x=None, y=None, **kwargs):
             performed by ``con``.
         linewidths: Contour line widths. Accepts a single number for all
             lines or an array of widths.
-        linestyles: Contour line styles. Options are ``'solid'``,
-            ``'dashed'``, ``'dashdot'``, and ``'dotted'``.
+        linestyles: Contour line styles. Options are:
+
+            .. list-table::
+               :header-rows: 1
+
+               * - Value
+                 - Line style
+               * - ``'solid'``
+                 - Solid line
+               * - ``'dashed'``
+                 - Dashed line
+               * - ``'dashdot'``
+                 - Dash-dot line
+               * - ``'dotted'``
+                 - Dotted line
+
         alpha: Transparency setting. Defaults to ``1.0`` (fully opaque).
         zorder: Drawing order.
         level_spacing: Contour level spacing. Defaults to ``'linear'``.
-            Also accepts ``'log'``, ``'loglike'``, ``'outlier'``, and
-            ``'inspect'``.
+            The available options are:
+
+            .. list-table::
+               :header-rows: 1
+
+               * - Value
+                 - Description
+               * - ``'linear'``
+                 - Linear contour level spacing
+               * - ``'log'``
+                 - Logarithmic contour level spacing
+               * - ``'loglike'``
+                 - Log-like contour level spacing
+               * - ``'outlier'``
+                 - Outlier-based contour level spacing
+               * - ``'inspect'``
+                 - Inspect contour levels
+
         irregular: Flag indicating whether the data are irregular.
         face_lons: Longitude coordinates of face vertices.
         face_lats: Latitude coordinates of face vertices.

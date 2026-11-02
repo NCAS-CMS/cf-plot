@@ -138,10 +138,29 @@ def vect(
             normalised coordinates. Defaults to ``[0.9, -0.06]``.
         key_show: If ``True``, draw the vector key. Defaults to ``True``.
 
-        ptype: Plot type. Not required for CF fields. Options are 0 (no
-            specific plot type), 1 (longitude-latitude), 2 (latitude-height),
-            3 (longitude-height), 4 (latitude-time), 5 (longitude-time), and
-            6 (rotated pole).
+        ptype: Plot type. Not required for CF fields. The available options
+            are:
+
+            .. list-table::
+               :header-rows: 1
+
+               * - Value
+                 - Plot type
+               * - 0
+                 - No specific plot type
+               * - 1
+                 - Longitude–latitude
+               * - 2
+                 - Latitude–height
+               * - 3
+                 - Longitude–height
+               * - 4
+                 - Latitude–time
+               * - 5
+                 - Longitude–time
+               * - 6
+                 - Rotated pole
+
         title: Plot title. Defaults to ``None``.
 
         width: Arrow shaft width in arrow units. Defaults to ``0.005`` times
