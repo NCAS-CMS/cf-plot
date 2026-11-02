@@ -46,8 +46,8 @@ def stream(
     Args:
         u: Horizontal component of the vector field.
         v: Vertical component of the vector field.
-        x: X-coordinates of the grid points.
-        y: Y-coordinates of the grid points.
+        x: x-coordinates of the grid points.
+        y: y-coordinates of the grid points.
 
         density: Streamline density. Controls the spacing of streamlines.
         linewidth: Width of the streamlines.
@@ -63,12 +63,12 @@ def stream(
         xaxis: If ``True``, display the x-axis.
         yaxis: If ``True``, display the y-axis.
 
-        xticks: X-axis tick positions.
-        xticklabels: X-axis tick labels.
-        yticks: Y-axis tick positions.
-        yticklabels: Y-axis tick labels.
-        xlabel: X-axis label.
-        ylabel: Y-axis label.
+        xticks: x-axis tick positions.
+        xticklabels: x-axis tick labels.
+        yticks: y-axis tick positions.
+        yticklabels: y-axis tick labels.
+        xlabel: x-axis label.
+        ylabel: y-axis label.
         title: Plot title.
 
     Returns:

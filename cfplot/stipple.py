@@ -27,8 +27,8 @@ def stipple(
     Args:
         f: CF Field or field to plot.
 
-        x: X-coordinates of the field points.
-        y: Y-coordinates of the field points.
+        x: x-coordinates of the field points.
+        y: y-coordinates of the field points.
 
         min: Minimum threshold for stippling.
         max: Maximum threshold for stippling.

@@ -118,12 +118,12 @@ def traj(
         xaxis: If ``True``, display the x-axis.
         yaxis: If ``True``, display the y-axis.
 
-        xlabel: X-axis label. Defaults to ``None``.
-        ylabel: Y-axis label. Defaults to ``None``.
-        xticks: X-axis tick positions. Defaults to ``None``.
-        xticklabels: X-axis tick labels. Defaults to ``None``.
-        yticks: Y-axis tick positions. Defaults to ``None``.
-        yticklabels: Y-axis tick labels. Defaults to ``None``.
+        xlabel: x-axis label. Defaults to ``None``.
+        ylabel: y-axis label. Defaults to ``None``.
+        xticks: x-axis tick positions. Defaults to ``None``.
+        xticklabels: x-axis tick labels. Defaults to ``None``.
+        yticks: y-axis tick positions. Defaults to ``None``.
+        yticklabels: y-axis tick labels. Defaults to ``None``.
 
         colorbar: If not ``None``, controls whether a colour bar is plotted.
         colorbar_position: Colour bar position as

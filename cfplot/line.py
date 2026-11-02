@@ -66,8 +66,9 @@ def lineplot(
 
     Args:
         f: CF data used to make a line plot.
-        x: X-coordinates of the data in *y*.
-        y: Y-coordinates of the data in *x*.
+
+        x: x-coordinates of the data in *y*.
+        y: y-coordinates of the data in *x*.
 
         linestyle: Line style. Defaults to ``'-'``.
         color: Line colour. Defaults to Matplotlib's colour scheme unless
@@ -122,16 +123,16 @@ def lineplot(
         derived from CF data:
 
         title: Plot title. Defaults to ``None``.
-        xunits: X-axis units. Defaults to ``None``.
-        yunits: Y-axis units. Defaults to ``None``.
-        xlabel: X-axis label. Defaults to ``None``.
-        ylabel: Y-axis label. Defaults to ``None``.
+        xunits: x-axis units. Defaults to ``None``.
+        yunits: y-axis units. Defaults to ``None``.
+        xlabel: x-axis label. Defaults to ``None``.
+        ylabel: y-axis label. Defaults to ``None``.
         xname: Deprecated keyword.
         yname: Deprecated keyword.
-        xticks: X-axis tick positions. Defaults to ``None``.
-        xticklabels: X-axis tick labels. Defaults to ``None``.
-        yticks: Y-axis tick positions. Defaults to ``None``.
-        yticklabels: Y-axis tick labels.
+        xticks: x-axis tick positions. Defaults to ``None``.
+        xticklabels: x-axis tick labels. Defaults to ``None``.
+        yticks: y-axis tick positions. Defaults to ``None``.
+        yticklabels: y-axis tick labels.
         axes: If ``True``, display the x- and y-axes.
         xaxis: If ``True``, display the x-axis.
         yaxis: If ``True``, display the y-axis.

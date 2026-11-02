@@ -2499,7 +2499,7 @@ def con(f=None, x=None, y=None, **kwargs):
         xlabel: Label for the x-axis.
         ylabel: Label for the y-axis.
         swap_axes: If ``True``, swap the plotted axes. Only valid for
-            X, Y, Z versus T plots.
+            x, y, z versus t plots.
         verbose: Set to ``1`` to display a verbose listing of the operations
             performed by ``con``.
         linewidths: Contour line widths. Accepts a single number for all

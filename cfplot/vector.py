@@ -111,10 +111,10 @@ def vect(
     """Create a vector plot representing a two-dimensional vector field.
 
     Args:
-        u: U-component of the vector field.
-        v: V-component of the vector field.
-        x: X-coordinates of the grid points for *u* and *v*.
-        y: Y-coordinates of the grid points for *u* and *v*.
+        u: u-component of the vector field.
+        v: v-component of the vector field.
+        x: x-coordinates of the grid points for *u* and *v*.
+        y: y-coordinates of the grid points for *u* and *v*.
 
         scale: Data units per arrow length unit. Smaller values produce
             larger vectors. Generally accepts a single value; if two values
@@ -179,12 +179,12 @@ def vect(
         xaxis: If ``True``, display the x-axis.
         yaxis: If ``True``, display the y-axis.
 
-        xticks: X-axis tick positions.
-        xticklabels: X-axis tick labels.
-        yticks: Y-axis tick positions.
-        yticklabels: Y-axis tick labels.
-        xlabel: X-axis label.
-        ylabel: Y-axis label.
+        xticks: x-axis tick positions.
+        xticklabels: x-axis tick labels.
+        yticks: y-axis tick positions.
+        yticklabels: y-axis tick labels.
+        xlabel: x-axis label.
+        ylabel: y-axis label.
         ylog: If ``True``, use a logarithmic y-axis.
 
         color: Colour of the vectors. Defaults to ``'k'`` (black).
