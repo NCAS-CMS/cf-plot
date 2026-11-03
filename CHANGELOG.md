@@ -25,6 +25,10 @@ of being developed elsewhere.
 * Add new example 'Example 44: NEMO data on a curvilinear T grid'
   to the documentation and integration testing
   (https://github.com/NCAS-CMS/cf-plot/issues/142)
+* Update docstrings to Google style formatting standard, including
+  adding a 'parameter breakdown' list to all plotting functions
+  (https://github.com/NCAS-CMS/cf-plot/issues/39,
+  https://github.com/NCAS-CMS/cf-plot/issues/145)
 
 #### Version `3.5.0`, released 2026-10-09
 

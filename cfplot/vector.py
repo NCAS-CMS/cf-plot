@@ -108,71 +108,113 @@ def vect(
     titles=None,
     alpha=1.0,
 ):
-    """
-    | Plot vectors.
-    |
-    | u=None - u wind
-    | v=None - v wind
-    | x=None - x locations of u and v
-    | y=None - y locations of u and v
-    | scale=None - data units per arrow length unit.  A smaller values gives
-    |              a larger vector. Generally takes one value but in the case
-    |              of two supplied values the second vector scaling applies to
-    |              the v field.
-    | stride=None - plot vector every stride points. Can take two values one
-    |               for x and one for y.
-    | pts=None - use bilinear interpolation to interpolate vectors onto a new
-    |            grid - takes one or two values.
-    |            If one value is passed then this is used for both the x and
-    |            y axes.
-    | magmin=None - don't plot any vects with less than this magnitude.
-    | key_length=None - length of the key.  Generally takes one value but in
-    |                   the case of two supplied values the second vector
-    |                   scaling applies to the v field.
-    | key_label=None - label for the key. Generally takes one value but in the
-    |                  case of two supplied values the second vector scaling
-    |                  applies to the v field.
-    | key_location=[0.9, -0.06] - location of the vector key relative to the
-    |                             plot in normalised coordinates.
-    | key_show=True - draw the key.  Set to False if not required.
-    | ptype=0 - plot type - not needed for cf fields.
-    |                       0 = no specific plot type,
-    |                       1 = longitude-latitude,
-    |                       2 = latitude - height,
-    |                       3 = longitude - height,
-    |                       4 = latitude - time,
-    |                       5 = longitude - time
-    |                       6 = rotated pole
-    |
-    | title=None - plot title
-    | width=0.005 - shaft width in arrow units; default is 0.005 times the
-    |               width of the plot
-    | headwidth=3 - head width as multiple of shaft width, default is 3
-    | headlength=5 - head length as multiple of shaft width, default is 5
-    | headaxislength=4.5 - head length at shaft intersection, default is 4.5
-    | pivot='middle' - the part of the arrow that is at the grid point; the
-    |                  arrow rotates about this point
-                       takes 'tail', 'middle', 'tip'
-    | axes=True - plot x and y axes
-    | xaxis=True - plot xaxis
-    | yaxis=True - plot y axis
-    | xticks=None - xtick positions
-    | xticklabels=None - xtick labels
-    | yticks=None - y tick positions
-    | yticklabels=None - ytick labels
-    | xlabel=None - label for x axis
-    | ylabel=None - label for y axis
-    | ylog=False - log y axis
-    | color='k' - colour for the vectors - default is black.
-    | zorder=3 - plotting order
-    | titles=None - generate dimension and cell_methods titles for plot
-    | alpha=1.0 - transparency setting.  The default is no transparency.
-    |
-    :Returns:
-     None
-    |
-    """
+    """Create a vector plot representing a two-dimensional vector field.
 
+    Parameter breakdown (see below for full detail). The following parameters:
+        - specify the vector field and grid coordinates:
+            - ``u``, ``v``, ``x``, ``y``
+        - control vector scaling, spacing and magnitude thresholds:
+            - ``scale``, ``stride``, ``pts``, ``magmin``
+        - specify the plot type:
+            - ``ptype``
+        - configure arrow appearance and geometry:
+            - ``width``, ``headwidth``, ``headlength``, ``headaxislength`,
+              ``pivot``
+        - configure the vector key:
+            - ``key_length``, ``key_label``, ``key_location``, ``key_show``
+        - configure axis visibility:
+            - ``axes``, ``xaxis``, ``yaxis``
+        - configure axis ticks, labels and scaling:
+            - ``xticks``, ``xticklabels``, ``yticks``, ``yticklabels``,
+              ``xlabel``, ``ylabel``, ``ylog``
+        - configure general plot style:
+            - ``title``, ``color``, ``zorder``, ``titles``, ``alpha``
+
+    Args:
+        u: u-component of the vector field.
+        v: v-component of the vector field.
+        x: x-coordinates of the grid points for *u* and *v*.
+        y: y-coordinates of the grid points for *u* and *v*.
+
+        scale: Data units per arrow length unit. Smaller values produce
+            larger vectors. Generally accepts a single value; if two values
+            are supplied, the second scaling value applies to the *v* field.
+        stride: Plot vectors at intervals of the specified number of grid
+            points. Accepts one or two values, specifying the intervals
+            along the x- and y-axes, respectively.
+        pts: Use bilinear interpolation to interpolate vectors onto a new
+            grid. Accepts one or two values. If one value is supplied, it is
+            used for both the x- and y-axes.
+        magmin: Minimum vector magnitude to plot. Vectors with magnitudes
+            below this threshold are omitted.
+
+        ptype: Plot type. Not required for CF fields. The available options
+            are:
+
+            .. list-table::
+               :header-rows: 1
+
+               * - Value
+                 - Plot type
+               * - 0
+                 - No specific plot type
+               * - 1
+                 - Longitude–latitude
+               * - 2
+                 - Latitude–height
+               * - 3
+                 - Longitude–height
+               * - 4
+                 - Latitude–time
+               * - 5
+                 - Longitude–time
+               * - 6
+                 - Rotated pole
+
+        width: Arrow shaft width in arrow units. Defaults to ``0.005`` times
+            the width of the plot.
+        headwidth: Arrowhead width as a multiple of the shaft width.
+            Defaults to ``3``.
+        headlength: Arrowhead length as a multiple of the shaft width.
+            Defaults to ``5``.
+        headaxislength: Arrowhead length at the shaft intersection, as a
+            multiple of the shaft width. Defaults to ``4.5``.
+        pivot: Position on the arrow that coincides with the grid point and
+            about which the arrow rotates. Options are ``'tail'``,
+            ``'middle'``, and ``'tip'``. Defaults to ``'middle'``.
+
+        key_length: Length of the vector key. Generally accepts a single
+            value; if two values are supplied, the second scaling value
+            applies to the *v* field.
+        key_label: Label for the vector key. Generally accepts a single
+            value; if two values are supplied, the second scaling value
+            applies to the *v* field.
+        key_location: Location of the vector key relative to the plot, in
+            normalised coordinates. Defaults to ``[0.9, -0.06]``.
+        key_show: If ``True``, draw the vector key. Defaults to ``True``.
+
+        axes: If ``True``, display the x- and y-axes.
+        xaxis: If ``True``, display the x-axis.
+        yaxis: If ``True``, display the y-axis.
+
+        xticks: x-axis tick positions.
+        xticklabels: x-axis tick labels.
+        yticks: y-axis tick positions.
+        yticklabels: y-axis tick labels.
+        xlabel: x-axis label.
+        ylabel: y-axis label.
+        ylog: If ``True``, use a logarithmic y-axis.
+
+        title: Plot title. Defaults to ``None``.
+        color: Colour of the vectors. Defaults to ``'k'`` (black).
+        zorder: Plotting order. Defaults to ``3``.
+        titles: If not ``None``, generate dimension and cell-methods titles
+            for the plot.
+        alpha: Transparency setting. Defaults to ``1.0`` (fully opaque).
+
+    Returns:
+        None.
+    """
     # If the vector color is white set the quicker key colour to black
     # so that it can be seen
     qkey_color = color

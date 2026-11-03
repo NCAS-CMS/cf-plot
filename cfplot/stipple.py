@@ -22,27 +22,40 @@ def stipple(
     ylog=False,
     zorder=1,
 ):
-    """
-    | Put markers on a plot to indicate value of interest.
-    |
-    | f=None - cf field or field
-    | x=None - x points for field
-    | y=None - y points for field
-    | min=None - minimum threshold for stipple
-    | max=None - maximum threshold for stipple
-    | size=80 - default size for stipples
-    | color='k' - default colour for stipples
-    | pts=50 - number of points in the x direction
-    | marker='.' - default marker for stipples
-    | edegecolors='k' - outline colour
-    | alpha=1.0 - transparency setting - default is off
-    | ylog=False - set to True if a log pressure stipple plot
-    |              is required
-    | zorder=2 - plotting order
-    |
-    :Returns:
-       None
-    |
+    """Create a stipple plot to mark areas of interest.
+
+    Parameter breakdown (see below for full detail). The following parameters:
+        - specify the input data:
+            - ``f``, ``x``, ``y``
+        - set stippling thresholds:
+            - ``min``, ``max``
+        - set stippling size and spacing:
+            - ``pts``, ``size``
+        - configure the general plot style:
+            - ``color``, ``marker``, ``edgecolors``, ``alpha``,
+              ``zorder``, ``ylog``
+
+    Args:
+        f: CF Field or field to plot.
+        x: x-coordinates of the field points.
+        y: y-coordinates of the field points.
+
+        min: Minimum threshold for stippling.
+        max: Maximum threshold for stippling.
+
+        pts: Number of points in the x-direction. Defaults to ``50``.
+        size: Default size for stipple markers. Defaults to ``80``.
+
+        color: Default colour for stipple markers. Defaults to ``'k'``.
+        marker: Marker style for stipple points. Defaults to ``'.'``.
+        edgecolors: Outline colour. Defaults to ``'k'``.
+        alpha: Transparency setting. Defaults to ``1.0`` (fully opaque).
+        zorder: Plotting order. Defaults to ``2``.
+        ylog: If ``True``, produce a stipple plot with a logarithmic
+            pressure axis.
+
+    Returns:
+        None.
     """
 
     if plotvars.plot_type not in [1, 2, 3]:

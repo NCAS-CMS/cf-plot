@@ -41,7 +41,55 @@ def stream(
     title=None,
     zorder=None,
 ):
-    """Plot a streamplot to show fluid flow and 2D field gradients."""
+    """Create a stream plot to show flow and gradients.
+
+    Parameter breakdown  (see below for full detail). The following parameters:
+        - specify the vector field and grid coordinates:
+            - ``u``, ``v``, ``x``, ``y``
+        - control streamline density and length:
+            - ``density``, ``minlength``, ``maxlength``
+        - configure arrow appearance:
+            - ``arrowsize``, ``arrowstyle``
+        - configure axis visibility:
+            - ``axes``, ``xaxis``, ``yaxis``
+        - configure axis ticks and labels:
+            - ``xticks``, ``xticklabels``, ``yticks``, ``yticklabels``,
+              ``xlabel``, ``ylabel``
+        - configure general plot style properties:
+            - ``linewidth``, ``color``, ``title``, ``zorder``
+
+    Args:
+        u: Horizontal component of the vector field.
+        v: Vertical component of the vector field.
+        x: x-coordinates of the grid points.
+        y: y-coordinates of the grid points.
+
+        density: Streamline density. Controls the spacing of streamlines.
+        minlength: Minimum length of a streamline.
+        maxlength: Maximum length of a streamline.
+
+        arrowsize: Size of the arrows indicating flow direction.
+        arrowstyle: Style of the arrows indicating flow direction.
+
+        axes: If ``True``, display the x- and y-axes.
+        xaxis: If ``True``, display the x-axis.
+        yaxis: If ``True``, display the y-axis.
+
+        xticks: x-axis tick positions.
+        xticklabels: x-axis tick labels.
+        yticks: y-axis tick positions.
+        yticklabels: y-axis tick labels.
+        xlabel: x-axis label.
+        ylabel: y-axis label.
+
+        linewidth: Width of the streamlines.
+        color: Colour or array of values used to colour the streamlines.
+        title: Plot title.
+        zorder: Plotting order. Defaults to ``None``.
+
+    Returns:
+        None.
+    """
     del zorder
 
     colorbar_title = ""

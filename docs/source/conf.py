@@ -36,7 +36,15 @@ extensions = [
     # For grids of images:
     "sphinxarg.ext",
     "sphinx_design",
+    # For parsing Google-style docstrings
+    "sphinx.ext.napoleon",
 ]
+
+# Allow parsing of Google-style dostrings as used in the cf-plot codebase
+napoleon_google_docstring = True
+napoleon_numpy_docstring = False
+napoleon_use_param = True
+napoleon_use_rtype = True
 
 autosummary_generate = True
 # Autodoc options: esp. to prevent pages being generated for internal API

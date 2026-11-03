@@ -89,70 +89,100 @@ def traj(
     ec="k",
     zorder=None,
 ):
-    """
-    | The interface to trajectory plotting in cf-plot.
-    |
-    | The minimum use is traj(f) where f is a CF field.
-    |
-    | f - CF data used to make a line plot
-    | linestyle='-' - line style
-    | linecolor='b' - line colour
-    | linewidth=1.0 - line width
-    | marker='o' - marker for points along the line
-    | markersize=30 - size of the marker
-    | markerfacecolor='b' - colour of the marker face
-    | markeredgecolor='g' - colour of the marker edge
-    | legend=False - plot different colour markers based on a set of user
-    |                levels
-    | zorder=None - order for plotting
-    | verbose=None - Set to True to get a verbose listing of what traj is doing
-    |
-    | The following parameters override any CF data defaults:
-    | title=None - plot title
-    | axes=True - plot x and y axes
-    | xaxis=True - plot xaxis
-    | yaxis=True - plot y axis
-    | xlabel=None - x name
-    | ylabel=None - y name
-    | xticks=None - x ticks
-    | xticklabels=None - x tick labels
-    | yticks=None - y ticks
-    | yticklabels=None - y tick labels
-    | colorbar=None - plot a colorbar
-    | colorbar_position=None - position of colorbar
-    |                          [xmin, ymin, x_extent,y_extent] in normalised
-    |                          coordinates. Use when a common colorbar
-    |                          is required for a set of plots. A typical set
-    |                          of values would be [0.1, 0.05, 0.8, 0.02]
-    | colorbar_orientation=None - orientation of the colorbar
-    | colorbar_title=None - title for the colorbar
-    | colorbar_text_up_down=False - if True horizontal colour bar labels
-    |                               alternate above (start) and below the
-    |                               colour bar
-    | colorbar_text_down_up=False - if True horizontal colour bar labels
-    |                               alternate below (start) and above the
-    |                               colour bar
-    | colorbar_drawedges=True - draw internal divisions in the colorbar
-    | colorbar_fraction=None - space for the colorbar - default = 0.21, in
-    |                          normalised coordinates
-    | colorbar_thick=None - thickness of the colorbar - default = 0.015, in
-    |                       normalised coordinates
-    | colorbar_anchor=None - default=0.5 - anchor point of colorbar within
-    |                        the fraction space. 0.0 = close to plot,
-    |                        1.0 = further away
-    | colorbar_shrink=None - value to shrink the colorbar by.  If the colorbar
-    |                        exceeds the plot area then values of 1.0, 0.55
-    |                        or 0.5m ay help it better fit the plot area.
-    | colorbar_labels=None - labels for the colorbar. Default is to use the
-    |                        levels defined
-    |                        using cfp.levs
-    | Vector options
-    | vector=False - Draw vectors
-    | head_width=2.0 - vector head width
-    | head_length=2.0 - vector head length
-    | fc='k' - vector face colour
-    | ec='k' - vector edge colour
+    """Create a trajectory plot for (discrete sampling) geometries.
 
+    The minimum usage is ``traj(f)``, where *f* is a CF field.
+
+    Parameter breakdown (see below for full detail). The following parameters:
+        - specify the input CF data:
+            - ``f``
+        - configure trajectory line and marker appearance:
+            - ``linestyle``, ``linecolor``, ``linewidth``, ``marker``,
+              ``markersize``, ``markerfacecolor``, ``markeredgecolor``
+        - control marker colouring and plotting order:
+            - ``legend``, ``zorder``, ``verbose``
+        - override the defaults derived from CF data:
+            - ``title``, ``axes``, ``xaxis``, ``yaxis``, ``xlabel``,
+              ``ylabel``, ``xticks``, ``xticklabels``, ``yticks``,
+              ``yticklabels``
+        - configure the colourbar:
+            - ``colorbar``, ``colorbar_position``,
+              ``colorbar_orientation``, ``colorbar_title``,
+              ``colorbar_text_up_down``, ``colorbar_text_down_up``,
+              ``colorbar_drawedges``, ``colorbar_fraction``,
+              ``colorbar_thick``, ``colorbar_anchor``,
+              ``colorbar_shrink``, ``colorbar_labels``
+        - configure vector plotting:
+            - ``vector``, ``head_width``, ``head_length``, ``fc``, ``ec``
+
+    Args:
+        f: CF data used to make a trajectory plot.
+
+        linestyle: Line style. Defaults to ``'-'``.
+        linecolor: Line colour. Defaults to ``'b'``.
+        linewidth: Line width. Defaults to ``1.0``.
+        marker: Marker style for points along the line. Defaults to ``'o'``.
+        markersize: Marker size. Defaults to ``30``.
+        markerfacecolor: Colour of the marker face. Defaults to ``'b'``.
+        markeredgecolor: Colour of the marker edge. Defaults to ``'g'``.
+        legend: If ``True``, plot markers in different colours according to
+            a set of user-defined levels. Defaults to ``False``.
+        zorder: Plotting order. Defaults to ``None``.
+        verbose: Set to ``True`` to display a verbose listing of the
+            operations performed by ``traj``. Defaults to ``None``.
+
+        The following parameters override the corresponding defaults
+        derived from CF data:
+
+        title: Plot title. Defaults to ``None``.
+
+        axes: If ``True``, display the x- and y-axes.
+        xaxis: If ``True``, display the x-axis.
+        yaxis: If ``True``, display the y-axis.
+
+        xlabel: x-axis label. Defaults to ``None``.
+        ylabel: y-axis label. Defaults to ``None``.
+        xticks: x-axis tick positions. Defaults to ``None``.
+        xticklabels: x-axis tick labels. Defaults to ``None``.
+        yticks: y-axis tick positions. Defaults to ``None``.
+        yticklabels: y-axis tick labels. Defaults to ``None``.
+
+        colorbar: If not ``None``, controls whether a colour bar is plotted.
+        colorbar_position: Colour bar position as
+            ``[xmin, ymin, x_extent, y_extent]`` in normalised coordinates.
+            Use this to position a common colour bar across multiple plots.
+            For example, ``[0.1, 0.05, 0.8, 0.02]``.
+        colorbar_orientation: Colour bar orientation.
+        colorbar_title: Colour bar title.
+        colorbar_text_up_down: If ``True``, alternate horizontal colour bar
+            labels above and below the colour bar, starting above.
+        colorbar_text_down_up: If ``True``, alternate horizontal colour bar
+            labels below and above the colour bar, starting below.
+        colorbar_drawedges: If ``True``, draw internal dividing lines in the
+            colour bar. Defaults to ``True``.
+        colorbar_fraction: Fraction of the plot area allocated to the colour
+            bar. Defaults to ``0.21`` in normalised coordinates.
+        colorbar_thick: Colour bar thickness. Defaults to ``0.015`` in
+            normalised coordinates.
+        colorbar_anchor: Anchor point of the colour bar within the fraction
+            space. Defaults to ``0.5``; ``0.0`` places it closer to the plot
+            and ``1.0`` places it further away.
+        colorbar_shrink: Factor by which to shrink the colour bar. If the
+            colour bar exceeds the plot area, values such as ``1.0``, ``0.55``,
+            or ``0.5`` may help it fit.
+        colorbar_labels: Labels for the colour bar. Defaults to the levels
+            defined using ``cfp.levs``.
+
+        The following parameters control vector plotting:
+
+        vector: If ``True``, draw vectors. Defaults to ``False``.
+        head_width: Width of the vector arrowheads. Defaults to ``2.0``.
+        head_length: Length of the vector arrowheads. Defaults to ``2.0``.
+        fc: Vector face colour. Defaults to ``'k'``.
+        ec: Vector edge colour. Defaults to ``'k'``.
+
+    Returns:
+        None.
     """
     is_1d_data = False
     if f.ndim == 1:

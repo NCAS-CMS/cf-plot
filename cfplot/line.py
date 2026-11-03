@@ -50,66 +50,116 @@ def lineplot(
     titles=False,
     zorder=None,
 ):
-    """
-    | The interface to line plotting in cf-plot.
-    |
-    | The minimum use is lineplot(f) where f is a CF field.
-    | If x and y are passed then an appropriate plot is made allowing
-    | x vs data and y vs data plots.
+    """Create a line (graph) plot.
 
-    | When making a labelled line plot:
-    | always have a label for each line
-    | always put the legend location as an option to the last call to lineplot
-    |
-    | f - CF data used to make a line plot
-    | x - x locations of data in y
-    | y - y locations of data in x
-    | linestyle='-' - line style
-    | color=None - line color. Defaults to Matplotlib colour scheme
-    |              unless specified
-    | linewidth=1.0 - line width
-    | marker=None - marker for points along the line
-    | markersize=5.0 - size of the marker
-    | markeredgecolor = 'k' - colour of edge around the marker
-    | markeredgewidth = 0.5 - width of edge around the marker
-    | xlog=False - log x-axis
-    | ylog=False - log y-axis
-    | label=None - line label - label for line
-    | legend_location='upper right' - default location of legend
-    |                 Other options are {'best': 0, 'center': 10,
-    |                                    'center left': 6,
-    |                                    'center right': 7, 'lower center': 8,
-    |                                    'lower left': 3, 'lower right': 4,
-    |                                    'right': 5,
-    |                                    'upper center': 9, 'upper left': 2,
-    |                                    'upper right': 1}
-    | titles=False - set to True to have a dimensions title
-    | verbose=None - change to 1 to get a verbose listing of what lineplot
-    |                is doing
-    | zorder=None - plotting order
-    |
-    | The following parameters override any CF data defaults:
-    | title=None - plot title
-    | xunits=None - x units
-    | yunits=None - y units
-    | xlabel=None - x name
-    | ylabel=None - y name
-    | xname=None - deprecated keyword
-    | yname=None - deprecated keyword
-    | xticks=None - x ticks
-    | xticklabels=None - x tick labels
-    | yticks=None - y ticks
-    | yticklabels - y tick labels
-    | axes=True - plot x and y axes
-    | xaxis=True - plot xaxis
-    | yaxis=True - plot y axis
-    |
-    |
-    | When making a multiple line plot:
-    | a) set the axis limits with gset before plotting the lines
-    | b) the last call to lineplot is the one that any of the above
-    |    axis overrides should be placed in.
-    |
+    The minimum usage is ``lineplot(f)``, where *f* is a CF field.
+    If *x* and *y* are provided, appropriate plots can be made, including
+    x-versus-data and y-versus-data plots.
+
+    When making a labelled line plot, always provide a label for each line
+    and specify the legend location in the final call to ``lineplot``.
+
+    When making a multiple-line plot:
+        - Set the axis limits with ``gset`` before plotting the lines.
+        - Place any axis overrides described below in the final call to
+          ``lineplot``.
+
+    Parameter breakdown (see below for full detail). The following parameters:
+        - specify the input data:
+            - ``f``, ``x``, ``y``
+        - set the verbosity to toggle log level:
+            - ``verbose``
+        - configure the line appearance and markers:
+            - ``linestyle``, ``color``, ``linewidth``, ``marker``,
+              ``markersize``, ``markeredgecolor``, ``markeredgewidth``,
+              ``zorder``
+        - configure the x- and y-axis scales:
+            - ``xlog``, ``ylog``
+        - configure line labels and the legend:
+            - ``label``, ``legend_location``
+        - control titles:
+            - ``titles``
+        - override the defaults derived from CF data:
+            - ``title``, ``axes``, ``xunits``, ``yunits``, ``xlabel``,
+              ``ylabel``, ``xticks``, ``yticks``, ``xticklabels``,
+              ``yticklabels``, ``xaxis``, ``yaxis``
+        - specify deprecated parameters:
+            - ``xname``, ``yname``
+
+    Args:
+        f: CF data used to make a line plot.
+        x: x-coordinates of the data in *y*.
+        y: y-coordinates of the data in *x*.
+
+        verbose: Set to ``1`` to display a verbose listing of the operations
+            performed by ``lineplot``.
+
+        linestyle: Line style. Defaults to ``'-'``.
+        color: Line colour. Defaults to Matplotlib's colour scheme unless
+            explicitly specified.
+        linewidth: Line width. Defaults to ``1.0``.
+        marker: Marker style for points along the line. Defaults to ``None``.
+        markersize: Marker size. Defaults to ``5.0``.
+        markeredgecolor: Colour of the marker edge. Defaults to ``'k'``.
+        markeredgewidth: Width of the marker edge. Defaults to ``0.5``.
+        zorder: Plotting order. Defaults to ``None``.
+
+        xlog: If ``True``, use a logarithmic x-axis.
+        ylog: If ``True``, use a logarithmic y-axis.
+
+        label: Label for the line. Defaults to ``None``.
+        legend_location: Location of the legend. Defaults to
+            ``'upper right'``. The available options are:
+
+            .. list-table::
+               :header-rows: 1
+
+               * - Value
+                 - Location
+               * - ``'best'``
+                 - Best location (automatically determined)
+               * - ``'center'``
+                 - Centre
+               * - ``'center left'``
+                 - Centre left
+               * - ``'center right'``
+                 - Centre right
+               * - ``'lower center'``
+                 - Lower centre
+               * - ``'lower left'``
+                 - Lower left
+               * - ``'lower right'``
+                 - Lower right
+               * - ``'right'``
+                 - Right
+               * - ``'upper center'``
+                 - Upper centre
+               * - ``'upper left'``
+                 - Upper left
+               * - ``'upper right'``
+                 - Upper right
+
+        titles: If ``True``, display a dimensions title.
+
+        title: Plot title. Defaults to ``None``.
+        axes: If ``True``, display the x- and y-axes.
+
+        xunits: x-axis units. Defaults to ``None``.
+        yunits: y-axis units. Defaults to ``None``.
+        xlabel: x-axis label. Defaults to ``None``.
+        ylabel: y-axis label. Defaults to ``None``.
+        xticks: x-axis tick positions. Defaults to ``None``.
+        yticks: y-axis tick positions. Defaults to ``None``.
+        xticklabels: x-axis tick labels. Defaults to ``None``.
+        yticklabels: y-axis tick labels.
+        xaxis: If ``True``, display the x-axis.
+        yaxis: If ``True``, display the y-axis.
+
+        xname: Deprecated keyword.
+        yname: Deprecated keyword.
+
+    Returns:
+        None.
     """
     if verbose:
         print("lineplot - making a line plot")
