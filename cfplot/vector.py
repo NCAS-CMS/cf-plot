@@ -110,6 +110,26 @@ def vect(
 ):
     """Create a vector plot representing a two-dimensional vector field.
 
+    Parameter breakdown (see below for full detail). The following parameters:
+        - specify the vector field and grid coordinates:
+            - ``u``, ``v``, ``x``, ``y``
+        - control vector scaling, spacing and magnitude thresholds:
+            - ``scale``, ``stride``, ``pts``, ``magmin``
+        - specify the plot type:
+            - ``ptype``
+        - configure arrow appearance and geometry:
+            - ``width``, ``headwidth``, ``headlength``, ``headaxislength`,
+              ``pivot``
+        - configure the vector key:
+            - ``key_length``, ``key_label``, ``key_location``, ``key_show``
+        - configure axis visibility:
+            - ``axes``, ``xaxis``, ``yaxis``
+        - configure axis ticks, labels and scaling:
+            - ``xticks``, ``xticklabels``, ``yticks``, ``yticklabels``,
+              ``xlabel``, ``ylabel``, ``ylog``
+        - configure general plot style:
+            - ``title``, ``color``, ``zorder``, ``titles``, ``alpha``
+
     Args:
         u: u-component of the vector field.
         v: v-component of the vector field.
@@ -127,16 +147,6 @@ def vect(
             used for both the x- and y-axes.
         magmin: Minimum vector magnitude to plot. Vectors with magnitudes
             below this threshold are omitted.
-
-        key_length: Length of the vector key. Generally accepts a single
-            value; if two values are supplied, the second scaling value
-            applies to the *v* field.
-        key_label: Label for the vector key. Generally accepts a single
-            value; if two values are supplied, the second scaling value
-            applies to the *v* field.
-        key_location: Location of the vector key relative to the plot, in
-            normalised coordinates. Defaults to ``[0.9, -0.06]``.
-        key_show: If ``True``, draw the vector key. Defaults to ``True``.
 
         ptype: Plot type. Not required for CF fields. The available options
             are:
@@ -161,8 +171,6 @@ def vect(
                * - 6
                  - Rotated pole
 
-        title: Plot title. Defaults to ``None``.
-
         width: Arrow shaft width in arrow units. Defaults to ``0.005`` times
             the width of the plot.
         headwidth: Arrowhead width as a multiple of the shaft width.
@@ -174,6 +182,16 @@ def vect(
         pivot: Position on the arrow that coincides with the grid point and
             about which the arrow rotates. Options are ``'tail'``,
             ``'middle'``, and ``'tip'``. Defaults to ``'middle'``.
+
+        key_length: Length of the vector key. Generally accepts a single
+            value; if two values are supplied, the second scaling value
+            applies to the *v* field.
+        key_label: Label for the vector key. Generally accepts a single
+            value; if two values are supplied, the second scaling value
+            applies to the *v* field.
+        key_location: Location of the vector key relative to the plot, in
+            normalised coordinates. Defaults to ``[0.9, -0.06]``.
+        key_show: If ``True``, draw the vector key. Defaults to ``True``.
 
         axes: If ``True``, display the x- and y-axes.
         xaxis: If ``True``, display the x-axis.
@@ -187,6 +205,7 @@ def vect(
         ylabel: y-axis label.
         ylog: If ``True``, use a logarithmic y-axis.
 
+        title: Plot title. Defaults to ``None``.
         color: Colour of the vectors. Defaults to ``'k'`` (black).
         zorder: Plotting order. Defaults to ``3``.
         titles: If not ``None``, generate dimension and cell-methods titles
