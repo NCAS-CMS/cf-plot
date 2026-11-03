@@ -465,78 +465,170 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="cfplot.lineplot">
 <span class="sig-prename descclassname"><span class="pre">cfplot.</span></span><span class="sig-name descname"><span class="pre">lineplot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lines</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">line_labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ptype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">linestyle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'-'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">linewidth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlog</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylog</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">swap_xy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">marker</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">markersize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">markeredgecolor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'k'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">markeredgewidth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">legend_location</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'upper</span> <span class="pre">right'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xunits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yunits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xticks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yticks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xticklabels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yticklabels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xaxis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yaxis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">titles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zorder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cfplot/line.html#lineplot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfplot.lineplot" title="Link to this definition">#</a></dt>
-<dd><div class="line-block">
-<div class="line">The interface to line plotting in cf-plot.</div>
-<div class="line"><br /></div>
-<div class="line">The minimum use is lineplot(f) where f is a CF field.</div>
-<div class="line">If x and y are passed then an appropriate plot is made allowing</div>
-<div class="line">x vs data and y vs data plots.</div>
+<dd><p>Create a line (graph) plot.</p>
+<p>The minimum usage is <code class="docutils literal notranslate"><span class="pre">lineplot(f)</span></code>, where <em>f</em> is a CF field.
+If <em>x</em> and <em>y</em> are provided, appropriate plots can be made, including
+x-versus-data and y-versus-data plots.</p>
+<p>When making a labelled line plot, always provide a label for each line
+and specify the legend location in the final call to <code class="docutils literal notranslate"><span class="pre">lineplot</span></code>.</p>
+<dl class="simple">
+<dt>When making a multiple-line plot:</dt><dd><ul class="simple">
+<li><p>Set the axis limits with <code class="docutils literal notranslate"><span class="pre">gset</span></code> before plotting the lines.</p></li>
+<li><p>Place any axis overrides described below in the final call to
+<code class="docutils literal notranslate"><span class="pre">lineplot</span></code>.</p></li>
+</ul>
+</dd>
+<dt>Parameter breakdown (see below for full detail). The following parameters:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt>specify the input data:</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">f</span></code>, <code class="docutils literal notranslate"><span class="pre">x</span></code>, <code class="docutils literal notranslate"><span class="pre">y</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>set the verbosity to toggle log level:</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">verbose</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>configure the line appearance and markers:</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">linestyle</span></code>, <code class="docutils literal notranslate"><span class="pre">color</span></code>, <code class="docutils literal notranslate"><span class="pre">linewidth</span></code>, <code class="docutils literal notranslate"><span class="pre">marker</span></code>,
+<code class="docutils literal notranslate"><span class="pre">markersize</span></code>, <code class="docutils literal notranslate"><span class="pre">markeredgecolor</span></code>, <code class="docutils literal notranslate"><span class="pre">markeredgewidth</span></code>,
+<code class="docutils literal notranslate"><span class="pre">zorder</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>configure the x- and y-axis scales:</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">xlog</span></code>, <code class="docutils literal notranslate"><span class="pre">ylog</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>configure line labels and the legend:</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">label</span></code>, <code class="docutils literal notranslate"><span class="pre">legend_location</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>control titles:</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">titles</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>override the defaults derived from CF data:</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">title</span></code>, <code class="docutils literal notranslate"><span class="pre">axes</span></code>, <code class="docutils literal notranslate"><span class="pre">xunits</span></code>, <code class="docutils literal notranslate"><span class="pre">yunits</span></code>, <code class="docutils literal notranslate"><span class="pre">xlabel</span></code>,
+<code class="docutils literal notranslate"><span class="pre">ylabel</span></code>, <code class="docutils literal notranslate"><span class="pre">xticks</span></code>, <code class="docutils literal notranslate"><span class="pre">yticks</span></code>, <code class="docutils literal notranslate"><span class="pre">xticklabels</span></code>,
+<code class="docutils literal notranslate"><span class="pre">yticklabels</span></code>, <code class="docutils literal notranslate"><span class="pre">xaxis</span></code>, <code class="docutils literal notranslate"><span class="pre">yaxis</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>specify deprecated parameters:</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">xname</span></code>, <code class="docutils literal notranslate"><span class="pre">yname</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>f</strong> -- CF data used to make a line plot.</p></li>
+<li><p><strong>x</strong> -- x-coordinates of the data in <em>y</em>.</p></li>
+<li><p><strong>y</strong> -- y-coordinates of the data in <em>x</em>.</p></li>
+<li><p><strong>verbose</strong> -- Set to <code class="docutils literal notranslate"><span class="pre">1</span></code> to display a verbose listing of the operations
+performed by <code class="docutils literal notranslate"><span class="pre">lineplot</span></code>.</p></li>
+<li><p><strong>linestyle</strong> -- Line style. Defaults to <code class="docutils literal notranslate"><span class="pre">'-'</span></code>.</p></li>
+<li><p><strong>color</strong> -- Line colour. Defaults to Matplotlib's colour scheme unless
+explicitly specified.</p></li>
+<li><p><strong>linewidth</strong> -- Line width. Defaults to <code class="docutils literal notranslate"><span class="pre">1.0</span></code>.</p></li>
+<li><p><strong>marker</strong> -- Marker style for points along the line. Defaults to <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>markersize</strong> -- Marker size. Defaults to <code class="docutils literal notranslate"><span class="pre">5.0</span></code>.</p></li>
+<li><p><strong>markeredgecolor</strong> -- Colour of the marker edge. Defaults to <code class="docutils literal notranslate"><span class="pre">'k'</span></code>.</p></li>
+<li><p><strong>markeredgewidth</strong> -- Width of the marker edge. Defaults to <code class="docutils literal notranslate"><span class="pre">0.5</span></code>.</p></li>
+<li><p><strong>zorder</strong> -- Plotting order. Defaults to <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>xlog</strong> -- If <code class="docutils literal notranslate"><span class="pre">True</span></code>, use a logarithmic x-axis.</p></li>
+<li><p><strong>ylog</strong> -- If <code class="docutils literal notranslate"><span class="pre">True</span></code>, use a logarithmic y-axis.</p></li>
+<li><p><strong>label</strong> -- Label for the line. Defaults to <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>legend_location</strong> -- <p>Location of the legend. Defaults to
+<code class="docutils literal notranslate"><span class="pre">'upper</span> <span class="pre">right'</span></code>. The available options are:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Value</p></th>
+<th class="head"><p>Location</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'best'</span></code></p></td>
+<td><p>Best location (automatically determined)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'center'</span></code></p></td>
+<td><p>Centre</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'center</span> <span class="pre">left'</span></code></p></td>
+<td><p>Centre left</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'center</span> <span class="pre">right'</span></code></p></td>
+<td><p>Centre right</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'lower</span> <span class="pre">center'</span></code></p></td>
+<td><p>Lower centre</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'lower</span> <span class="pre">left'</span></code></p></td>
+<td><p>Lower left</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'lower</span> <span class="pre">right'</span></code></p></td>
+<td><p>Lower right</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'right'</span></code></p></td>
+<td><p>Right</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'upper</span> <span class="pre">center'</span></code></p></td>
+<td><p>Upper centre</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'upper</span> <span class="pre">left'</span></code></p></td>
+<td><p>Upper left</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'upper</span> <span class="pre">right'</span></code></p></td>
+<td><p>Upper right</p></td>
+</tr>
+</tbody>
+</table>
 </div>
-<div class="line-block">
-<div class="line">When making a labelled line plot:</div>
-<div class="line">always have a label for each line</div>
-<div class="line">always put the legend location as an option to the last call to lineplot</div>
-<div class="line"><br /></div>
-<div class="line">f - CF data used to make a line plot</div>
-<div class="line">x - x locations of data in y</div>
-<div class="line">y - y locations of data in x</div>
-<div class="line">linestyle='-' - line style</div>
-<div class="line">color=None - line color. Defaults to Matplotlib colour scheme</div>
-<div class="line-block">
-<div class="line">unless specified</div>
-</div>
-<div class="line">linewidth=1.0 - line width</div>
-<div class="line">marker=None - marker for points along the line</div>
-<div class="line">markersize=5.0 - size of the marker</div>
-<div class="line">markeredgecolor = 'k' - colour of edge around the marker</div>
-<div class="line">markeredgewidth = 0.5 - width of edge around the marker</div>
-<div class="line">xlog=False - log x-axis</div>
-<div class="line">ylog=False - log y-axis</div>
-<div class="line">label=None - line label - label for line</div>
-<div class="line">legend_location='upper right' - default location of legend</div>
-<div class="line-block">
-<div class="line">Other options are {'best': 0, 'center': 10,</div>
-<div class="line-block">
-<div class="line">'center left': 6,</div>
-<div class="line">'center right': 7, 'lower center': 8,</div>
-<div class="line">'lower left': 3, 'lower right': 4,</div>
-<div class="line">'right': 5,</div>
-<div class="line">'upper center': 9, 'upper left': 2,</div>
-<div class="line">'upper right': 1}</div>
-</div>
-</div>
-<div class="line">titles=False - set to True to have a dimensions title</div>
-<div class="line">verbose=None - change to 1 to get a verbose listing of what lineplot</div>
-<div class="line-block">
-<div class="line">is doing</div>
-</div>
-<div class="line">zorder=None - plotting order</div>
-<div class="line"><br /></div>
-<div class="line">The following parameters override any CF data defaults:</div>
-<div class="line">title=None - plot title</div>
-<div class="line">xunits=None - x units</div>
-<div class="line">yunits=None - y units</div>
-<div class="line">xlabel=None - x name</div>
-<div class="line">ylabel=None - y name</div>
-<div class="line">xname=None - deprecated keyword</div>
-<div class="line">yname=None - deprecated keyword</div>
-<div class="line">xticks=None - x ticks</div>
-<div class="line">xticklabels=None - x tick labels</div>
-<div class="line">yticks=None - y ticks</div>
-<div class="line">yticklabels - y tick labels</div>
-<div class="line">axes=True - plot x and y axes</div>
-<div class="line">xaxis=True - plot xaxis</div>
-<div class="line">yaxis=True - plot y axis</div>
-<div class="line"><br /></div>
-<div class="line"><br /></div>
-<div class="line">When making a multiple line plot:</div>
-<div class="line">a) set the axis limits with gset before plotting the lines</div>
-<div class="line">b) the last call to lineplot is the one that any of the above</div>
-<div class="line-block">
-<div class="line">axis overrides should be placed in.</div>
-<div class="line"><br /></div>
-</div>
-</div>
+</p></li>
+<li><p><strong>titles</strong> -- If <code class="docutils literal notranslate"><span class="pre">True</span></code>, display a dimensions title.</p></li>
+<li><p><strong>title</strong> -- Plot title. Defaults to <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>axes</strong> -- If <code class="docutils literal notranslate"><span class="pre">True</span></code>, display the x- and y-axes.</p></li>
+<li><p><strong>xunits</strong> -- x-axis units. Defaults to <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>yunits</strong> -- y-axis units. Defaults to <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>xlabel</strong> -- x-axis label. Defaults to <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>ylabel</strong> -- y-axis label. Defaults to <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>xticks</strong> -- x-axis tick positions. Defaults to <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>yticks</strong> -- y-axis tick positions. Defaults to <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>xticklabels</strong> -- x-axis tick labels. Defaults to <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>yticklabels</strong> -- y-axis tick labels.</p></li>
+<li><p><strong>xaxis</strong> -- If <code class="docutils literal notranslate"><span class="pre">True</span></code>, display the x-axis.</p></li>
+<li><p><strong>yaxis</strong> -- If <code class="docutils literal notranslate"><span class="pre">True</span></code>, display the y-axis.</p></li>
+<li><p><strong>xname</strong> -- Deprecated keyword.</p></li>
+<li><p><strong>yname</strong> -- Deprecated keyword.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>

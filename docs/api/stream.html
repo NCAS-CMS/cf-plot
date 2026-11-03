@@ -465,7 +465,86 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="cfplot.stream">
 <span class="sig-prename descclassname"><span class="pre">cfplot.</span></span><span class="sig-name descname"><span class="pre">stream</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">u</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">density</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">linewidth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arrowsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arrowstyle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minlength</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxlength</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xaxis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yaxis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xticks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xticklabels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yticks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yticklabels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zorder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cfplot/stream.html#stream"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfplot.stream" title="Link to this definition">#</a></dt>
-<dd><p>Plot a streamplot to show fluid flow and 2D field gradients.</p>
+<dd><p>Create a stream plot to show flow and gradients.</p>
+<dl class="simple">
+<dt>Parameter breakdown  (see below for full detail). The following parameters:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt>specify the vector field and grid coordinates:</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">u</span></code>, <code class="docutils literal notranslate"><span class="pre">v</span></code>, <code class="docutils literal notranslate"><span class="pre">x</span></code>, <code class="docutils literal notranslate"><span class="pre">y</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>control streamline density and length:</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">density</span></code>, <code class="docutils literal notranslate"><span class="pre">minlength</span></code>, <code class="docutils literal notranslate"><span class="pre">maxlength</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>configure arrow appearance:</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">arrowsize</span></code>, <code class="docutils literal notranslate"><span class="pre">arrowstyle</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>configure axis visibility:</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">axes</span></code>, <code class="docutils literal notranslate"><span class="pre">xaxis</span></code>, <code class="docutils literal notranslate"><span class="pre">yaxis</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>configure axis ticks and labels:</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">xticks</span></code>, <code class="docutils literal notranslate"><span class="pre">xticklabels</span></code>, <code class="docutils literal notranslate"><span class="pre">yticks</span></code>, <code class="docutils literal notranslate"><span class="pre">yticklabels</span></code>,
+<code class="docutils literal notranslate"><span class="pre">xlabel</span></code>, <code class="docutils literal notranslate"><span class="pre">ylabel</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>configure general plot style properties:</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">linewidth</span></code>, <code class="docutils literal notranslate"><span class="pre">color</span></code>, <code class="docutils literal notranslate"><span class="pre">title</span></code>, <code class="docutils literal notranslate"><span class="pre">zorder</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>u</strong> -- Horizontal component of the vector field.</p></li>
+<li><p><strong>v</strong> -- Vertical component of the vector field.</p></li>
+<li><p><strong>x</strong> -- x-coordinates of the grid points.</p></li>
+<li><p><strong>y</strong> -- y-coordinates of the grid points.</p></li>
+<li><p><strong>density</strong> -- Streamline density. Controls the spacing of streamlines.</p></li>
+<li><p><strong>minlength</strong> -- Minimum length of a streamline.</p></li>
+<li><p><strong>maxlength</strong> -- Maximum length of a streamline.</p></li>
+<li><p><strong>arrowsize</strong> -- Size of the arrows indicating flow direction.</p></li>
+<li><p><strong>arrowstyle</strong> -- Style of the arrows indicating flow direction.</p></li>
+<li><p><strong>axes</strong> -- If <code class="docutils literal notranslate"><span class="pre">True</span></code>, display the x- and y-axes.</p></li>
+<li><p><strong>xaxis</strong> -- If <code class="docutils literal notranslate"><span class="pre">True</span></code>, display the x-axis.</p></li>
+<li><p><strong>yaxis</strong> -- If <code class="docutils literal notranslate"><span class="pre">True</span></code>, display the y-axis.</p></li>
+<li><p><strong>xticks</strong> -- x-axis tick positions.</p></li>
+<li><p><strong>xticklabels</strong> -- x-axis tick labels.</p></li>
+<li><p><strong>yticks</strong> -- y-axis tick positions.</p></li>
+<li><p><strong>yticklabels</strong> -- y-axis tick labels.</p></li>
+<li><p><strong>xlabel</strong> -- x-axis label.</p></li>
+<li><p><strong>ylabel</strong> -- y-axis label.</p></li>
+<li><p><strong>linewidth</strong> -- Width of the streamlines.</p></li>
+<li><p><strong>color</strong> -- Colour or array of values used to colour the streamlines.</p></li>
+<li><p><strong>title</strong> -- Plot title.</p></li>
+<li><p><strong>zorder</strong> -- Plotting order. Defaults to <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>

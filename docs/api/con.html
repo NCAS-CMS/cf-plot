@@ -465,185 +465,308 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="cfplot.con">
 <span class="sig-prename descclassname"><span class="pre">cfplot.</span></span><span class="sig-name descname"><span class="pre">con</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cfplot/contour.html#con"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfplot.con" title="Link to this definition">#</a></dt>
-<dd><p>Create a contour or blockfill (or combined contour-blockfill) plot.</p>
-<p>The minimum use is con(f)
-where f is a 2 dimensional array. If a cf field is passed then an
-appropriate plot will be produced i.e. a longitude-latitude or
-latitude-height plot for example. If a 2d numeric array is passed then
-the optional arrays x and y can be used to describe the x and y data
-point locations.</p>
-<div class="line-block">
-<div class="line">f - array to contour</div>
-<div class="line">x - x locations of data in f (optional)</div>
-<div class="line">y - y locations of data in f (optional)</div>
-<div class="line">fill=True - colour fill contours</div>
-<div class="line">lines=True - draw contour lines and labels</div>
-<div class="line">line_labels=True - label contour lines</div>
-<div class="line">title=title - title for the plot</div>
-<div class="line">ptype=0 - plot type - not needed for cf fields.</div>
-<div class="line-block">
-<div class="line">0 = no specific plot type,</div>
-<div class="line">1 = longitude-latitude,</div>
-<div class="line">2 = latitude - height,</div>
-<div class="line">3 = longitude - height,</div>
-<div class="line">4 = latitude - time,</div>
-<div class="line">5 = longitude - time</div>
-<div class="line">6 = rotated pole</div>
-</div>
-<div class="line">negative_linestyle='solid' - set to one of 'solid', 'dashed'</div>
-<div class="line">zero_thick=False - add a thick zero contour line. Set to 3 for example.</div>
-<div class="line">blockfill=False - set to True for a blockfill plot. For 2D lon/lat</div>
-<div class="line-block">
-<div class="line">grids, defaults to fast blockfill so blockfill=True.</div>
-<div class="line">For 2D lon/lat grids, defaults to fast blockfill,</div>
-<div class="line">i.e. blockfill=True, fill=False, and</div>
-<div class="line">blockfill_fast=True.</div>
-<div class="line">Explicit False selects contours; vertices adjoining</div>
-<div class="line">longitude wrap jumps are excluded to avoid stripes,</div>
-<div class="line">leaving a narrow gap at the seam.</div>
-</div>
-<div class="line">colorbar_title=colbar_title - title for the colour bar</div>
-<div class="line">colorbar=True - add a colour bar if a filled contour plot</div>
-<div class="line">colorbar_label_skip=None - skip colour bar labels. Set to 2 to skip</div>
-<div class="line-block">
-<div class="line">every other label.</div>
-</div>
-<div class="line">colorbar_orientation=None - options are 'horizontal' and 'vertical'</div>
-<div class="line-block">
-<div class="line">The default for most plots is horizontal but</div>
-<div class="line">for polar stereographic plots this is vertical.</div>
-</div>
-<div class="line">colorbar_shrink=None - value to shrink the colorbar by.  If the colorbar</div>
-<div class="line-block">
-<div class="line">exceeds the plot area then values of 1.0, 0.55</div>
-<div class="line">or 0.5m may help it better fit the plot area.</div>
-</div>
-<div class="line">colorbar_position=None - position of colorbar</div>
-<div class="line-block">
-<div class="line">[xmin, ymin, x_extent,y_extent] in normalised</div>
-<div class="line">coordinates. Use when a common colorbar</div>
-<div class="line">is required for a set of plots. A typical set</div>
-<div class="line">of values would be [0.1, 0.05, 0.8, 0.02]</div>
-</div>
-<div class="line">colorbar_fontsize=None - text size for colorbar labels and title</div>
-<div class="line">colorbar_fontweight=None - font weight for colorbar labels and title</div>
-<div class="line">colorbar_text_up_down=False - if True horizontal colour bar labels</div>
-<div class="line-block">
-<div class="line">alternate above (start) and below the</div>
-<div class="line">colour bar</div>
-</div>
-<div class="line">colorbar_text_down_up=False - if True horizontal colour bar labels</div>
-<div class="line-block">
-<div class="line">alternate below (start) and above the</div>
-<div class="line">colour bar</div>
-</div>
-<div class="line">colorbar_drawedges=True - draw internal divisions in the colorbar</div>
-<div class="line">colorbar_fraction=None - space for the colorbar - default = 0.21,</div>
-<div class="line-block">
-<div class="line-block">
-<div class="line">in normalised</div>
-</div>
-<div class="line">coordinates</div>
-</div>
-<div class="line">colorbar_thick=None - thickness of the colorbar - default = 0.015,</div>
-<div class="line-block">
-<div class="line">in normalised coordinates</div>
-</div>
-<div class="line">colorbar_anchor=None - default=0.5 - anchor point of colorbar within</div>
-<div class="line-block">
-<div class="line">the fraction space.</div>
-<div class="line">0.0 = close to plot, 1.0 = further away</div>
-</div>
-<div class="line">colorbar_labels=None - labels to use for colorbar. The default is to</div>
-<div class="line-block">
-<div class="line">use the contour levels as labels</div>
-</div>
-<div class="line">colorbar_text_up_down=False - on a horizontal colorbar alternate the</div>
-<div class="line-block">
-<div class="line">labels top and bottom starting in the</div>
-<div class="line">up position</div>
-</div>
-<div class="line">colorbar_text_down_up=False - on a horizontal colorbar alternate the</div>
-<div class="line-block">
-<div class="line">labels bottom and top starting in the</div>
-<div class="line">bottom position</div>
-</div>
-<div class="line">colorbar_drawedges=True - draw internal delimeter lines in the colorbar</div>
-<div class="line">colors='k' - contour line colors - takes one or many values.</div>
-<div class="line">xlog=False - logarithmic x axis</div>
-<div class="line">ylog=False - logarithmic y axis</div>
-<div class="line">axes=True - plot x and y axes</div>
-<div class="line">xaxis=True - plot xaxis</div>
-<div class="line">yaxis=True - plot y axis</div>
-<div class="line">xticks=None - xtick positions</div>
-<div class="line">xticklabels=None - xtick labels</div>
-<div class="line">yticks=None - y tick positions</div>
-<div class="line">yticklabels=None - ytick labels</div>
-<div class="line">xlabel=None - label for x axis</div>
-<div class="line">ylabel=None - label for y axis</div>
-<div class="line">swap_axes=False - swap plotted axes - only valid for X, Y, Z vs T plots</div>
-<div class="line">verbose=None - change to 1 to get a verbose listing of what con</div>
-<div class="line-block">
-<div class="line">is doing</div>
-</div>
-<div class="line">linewidths=None - contour linewidths.  Either a single number for all</div>
-<div class="line-block">
-<div class="line">lines or array of widths</div>
-</div>
-<div class="line">linestyles=None - takes 'solid', 'dashed', 'dashdot' or 'dotted'</div>
-<div class="line">alpha=1.0 - transparency setting.  The default is no transparency.</div>
-<div class="line">zorder=1 - order of drawing</div>
-<div class="line">level_spacing=None - Default of 'linear' level spacing.  Also takes</div>
-<div class="line-block">
-<div class="line">'log', 'loglike', 'outlier' and 'inspect'</div>
-</div>
-<div class="line">irregular=None - flag for contouring irregular data</div>
-<div class="line">face_lons=None - longitude points for face vertices</div>
-<div class="line">face_lats=None - latitude points for face verticies</div>
-<div class="line">face_connectivity=None - connectivity for face verticies</div>
-<div class="line">titles=False - set to True to have a dimensions title</div>
-<div class="line">transform_first=None - Cartopy should transform the points before</div>
-<div class="line-block">
-<div class="line">calling the contouring algorithm, which can have</div>
-<div class="line">a significant impact on speed (it is much</div>
-<div class="line">faster to transform points than it is to</div>
-<div class="line">transform patches) If this is unset and the</div>
-<div class="line">number of points in the x direction is &gt; 400</div>
-<div class="line">then it is set to True.</div>
-</div>
-<div class="line">blockfill_fast=None - Use pcolormesh blockfill. This is possibly less</div>
-<div class="line-block">
-<div class="line">reliable that the usual code but is</div>
-<div class="line">faster for higher resolution datasets.</div>
-<div class="line">For 2D lon/lat grids, defaults to fast</div>
-<div class="line">blockfill, i.e. blockfill=True, fill=False and</div>
-<div class="line">blockfill_fast=True.</div>
-</div>
-<div class="line">nlevs=False - Let Matplotlib work out the levels for the contour plot</div>
-<div class="line">orca=None - User specifies this is an orca tripolar grid. Internally</div>
-<div class="line-block">
-<div class="line">cf-plot tries to detect this by looking for a single</div>
-<div class="line">discontinuity in the logitude 2D array. If found a fix</div>
-<div class="line">it make to the longitudes so that they are no longer</div>
-<div class="line">discontinuous.</div>
-</div>
-<div class="line">orca_skip=None - Only plot every nth grid point in the 2D longitude</div>
-<div class="line-block">
-<div class="line">and latitude arrays.  This is useful for when</div>
-<div class="line">plotting his resolution data over the whole globe</div>
-<div class="line">which would otherwise be very slow to visualize.</div>
-</div>
-<div class="line">grid=False - Draw a grid on the map using the parameters set by</div>
-<div class="line-block">
-<div class="line">cfp.setvars. Defaults are grid_x_spacing=60,</div>
-<div class="line">grid_y_spacing=30, grid_colour='k',</div>
-<div class="line">grid_linestyle = '--', grid_thickness=1.0</div>
-<div class="line"><br /></div>
-</div>
-</div>
+<dd><p>Create a contour, (block)fill, or combined contour-(block)fill plot.</p>
+<p>The minimum usage is <code class="docutils literal notranslate"><span class="pre">con(f)</span></code>, where <em>f</em> is a two-dimensional array.
+If a CF field is passed, an appropriate plot is produced, such as a
+longitude-latitude or latitude-height plot. If a two-dimensional numeric
+array is passed, the optional <em>x</em> and <em>y</em> arrays can be used to specify
+the data point locations.</p>
+<p>For two-dimensional longitude-latitude grids, blockfill defaults to a
+fast implementation using <code class="docutils literal notranslate"><span class="pre">pcolormesh</span></code>. Explicitly setting
+<code class="docutils literal notranslate"><span class="pre">blockfill=False</span></code> selects contours; vertices adjoining longitude wrap
+jumps are excluded to avoid stripes, leaving a narrow gap at the seam.</p>
+<dl class="simple">
+<dt>Parameter breakdown (see below for full detail). The following parameters:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt>set the input data to plot:</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">f</span></code>, <code class="docutils literal notranslate"><span class="pre">x</span></code>, <code class="docutils literal notranslate"><span class="pre">y</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>set the form and creation approach of plot:</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">fill</span></code>, <code class="docutils literal notranslate"><span class="pre">blockfill</span></code>, <code class="docutils literal notranslate"><span class="pre">transform_first</span></code>,
+<code class="docutils literal notranslate"><span class="pre">blockfill_fast</span></code>, <code class="docutils literal notranslate"><span class="pre">lines</span></code>, <code class="docutils literal notranslate"><span class="pre">ptype</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>configure irregular and UGRID inputs:</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">face_lons</span></code>, <code class="docutils literal notranslate"><span class="pre">face_lats</span></code>, <code class="docutils literal notranslate"><span class="pre">face_connectivity</span></code>,
+<code class="docutils literal notranslate"><span class="pre">irregular</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>configure ORCA inputs:</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">orca</span></code>, <code class="docutils literal notranslate"><span class="pre">orca_skip</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>configure animation rendering, frame selection and per-frame titles:</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">animation</span></code>, <code class="docutils literal notranslate"><span class="pre">animation_reference</span></code>, <code class="docutils literal notranslate"><span class="pre">animation_axis</span></code>,
+<code class="docutils literal notranslate"><span class="pre">animation_title_template</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>set the verbosity to toggle log level:</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">verbose</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>configure the axes and line appearance:</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">axes</span></code>, <code class="docutils literal notranslate"><span class="pre">swap_axes</span></code>, <code class="docutils literal notranslate"><span class="pre">linewidths</span></code>, <code class="docutils literal notranslate"><span class="pre">linestyles</span></code>,
+<code class="docutils literal notranslate"><span class="pre">line_labels</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>configure the colourbar:</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">colorbar_title</span></code>, <code class="docutils literal notranslate"><span class="pre">colorbar</span></code>, <code class="docutils literal notranslate"><span class="pre">colorbar_label_skip</span></code>,
+<code class="docutils literal notranslate"><span class="pre">colorbar_orientation</span></code>, <code class="docutils literal notranslate"><span class="pre">colorbar_shrink</span></code>,
+<code class="docutils literal notranslate"><span class="pre">colorbar_position</span></code>, <code class="docutils literal notranslate"><span class="pre">colorbar_fontsize</span></code>,
+<code class="docutils literal notranslate"><span class="pre">colorbar_fontweight</span></code>, <code class="docutils literal notranslate"><span class="pre">colorbar_text_up_down</span></code>,
+<code class="docutils literal notranslate"><span class="pre">colorbar_text_down_up</span></code>, <code class="docutils literal notranslate"><span class="pre">colorbar_drawedges</span></code>,
+<code class="docutils literal notranslate"><span class="pre">colorbar_fraction</span></code>, <code class="docutils literal notranslate"><span class="pre">colorbar_thick</span></code>,
+<code class="docutils literal notranslate"><span class="pre">colorbar_anchor</span></code>, <code class="docutils literal notranslate"><span class="pre">colorbar_labels</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>configure the x- and y-axes:</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">xlog</span></code>, <code class="docutils literal notranslate"><span class="pre">ylog</span></code>, <code class="docutils literal notranslate"><span class="pre">xaxis</span></code>, <code class="docutils literal notranslate"><span class="pre">yaxis</span></code>, <code class="docutils literal notranslate"><span class="pre">xticks</span></code>,
+<code class="docutils literal notranslate"><span class="pre">xticklabels</span></code>, <code class="docutils literal notranslate"><span class="pre">yticks</span></code>, <code class="docutils literal notranslate"><span class="pre">yticklabels</span></code>, <code class="docutils literal notranslate"><span class="pre">xlabel</span></code>,
+<code class="docutils literal notranslate"><span class="pre">ylabel</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>configure other aspects of the plot style:</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">title</span></code>, <code class="docutils literal notranslate"><span class="pre">titles</span></code>, <code class="docutils literal notranslate"><span class="pre">negative_linestyle</span></code>,
+<code class="docutils literal notranslate"><span class="pre">zero_thick</span></code>, <code class="docutils literal notranslate"><span class="pre">colors</span></code>, <code class="docutils literal notranslate"><span class="pre">alpha</span></code>, <code class="docutils literal notranslate"><span class="pre">zorder</span></code>,
+<code class="docutils literal notranslate"><span class="pre">nlevs</span></code>, <code class="docutils literal notranslate"><span class="pre">grid</span></code>, <code class="docutils literal notranslate"><span class="pre">level_spacing</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
 <dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>None</p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>f</strong> -- Array or CF field to plot.</p></li>
+<li><p><strong>x</strong> -- Optional x-coordinate locations of the data in <em>f</em>.</p></li>
+<li><p><strong>y</strong> -- Optional y-coordinate locations of the data in <em>f</em>.</p></li>
+<li><p><strong>fill</strong> -- If <code class="docutils literal notranslate"><span class="pre">True</span></code>, fill the contours with colours.</p></li>
+<li><p><strong>blockfill</strong> -- If <code class="docutils literal notranslate"><span class="pre">True</span></code>, produce a blockfill plot. For two-dimensional
+longitude-latitude grids, defaults to fast blockfill, equivalent
+to <code class="docutils literal notranslate"><span class="pre">blockfill=True</span></code>, <code class="docutils literal notranslate"><span class="pre">fill=False</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">blockfill_fast=True</span></code>. Explicitly setting this to <code class="docutils literal notranslate"><span class="pre">False</span></code>
+selects contours and excludes vertices adjoining longitude wrap
+jumps to avoid stripes, leaving a narrow gap at the seam.</p></li>
+<li><p><strong>transform_first</strong> -- If <code class="docutils literal notranslate"><span class="pre">True</span></code>, Cartopy transforms points before
+calling the contouring algorithm. This can significantly improve
+performance because transforming points is faster than
+transforming patches. If unset and the number of points in the
+x-direction exceeds 400, this is set to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><strong>blockfill_fast</strong> -- If <code class="docutils literal notranslate"><span class="pre">True</span></code>, use <code class="docutils literal notranslate"><span class="pre">pcolormesh</span></code> for blockfill.
+This may be less reliable than the usual implementation but is
+faster for high-resolution datasets. For two-dimensional
+longitude-latitude grids, defaults to fast blockfill, equivalent
+to <code class="docutils literal notranslate"><span class="pre">blockfill=True</span></code>, <code class="docutils literal notranslate"><span class="pre">fill=False</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">blockfill_fast=True</span></code>.</p></li>
+<li><p><strong>lines</strong> -- If <code class="docutils literal notranslate"><span class="pre">True</span></code>, draw contour lines and labels.</p></li>
+<li><p><strong>ptype</strong> -- <p>Plot type. Not required for CF fields. Options are:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Value</p></th>
+<th class="head"><p>Plot type</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0</p></td>
+<td><p>No specific plot type</p></td>
+</tr>
+<tr class="row-odd"><td><p>1</p></td>
+<td><p>Longitude–latitude</p></td>
+</tr>
+<tr class="row-even"><td><p>2</p></td>
+<td><p>Latitude–height</p></td>
+</tr>
+<tr class="row-odd"><td><p>3</p></td>
+<td><p>Longitude–height</p></td>
+</tr>
+<tr class="row-even"><td><p>4</p></td>
+<td><p>Latitude–time</p></td>
+</tr>
+<tr class="row-odd"><td><p>5</p></td>
+<td><p>Longitude–time</p></td>
+</tr>
+<tr class="row-even"><td><p>6</p></td>
+<td><p>Rotated pole</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</p></li>
+<li><p><strong>face_lons</strong> -- Longitude coordinates of face vertices.</p></li>
+<li><p><strong>face_lats</strong> -- Latitude coordinates of face vertices.</p></li>
+<li><p><strong>face_connectivity</strong> -- Connectivity information for face vertices.</p></li>
+<li><p><strong>irregular</strong> -- Flag indicating whether the data are irregular.</p></li>
+<li><p><strong>orca</strong> -- Flag indicating that the data are on an ORCA tripolar grid.
+If unset, cf-plot attempts to detect such grids by looking for
+a single discontinuity in the two-dimensional longitude array.
+If found, it adjusts the longitudes to remove the discontinuity.</p></li>
+<li><p><strong>orca_skip</strong> -- Plot every nth grid point in the two-dimensional
+longitude and latitude arrays. Useful for speeding up
+visualisation of high-resolution global datasets.</p></li>
+<li><p><strong>animation</strong> -- If <code class="docutils literal notranslate"><span class="pre">True</span></code>, enable animation-aware rendering hooks.</p></li>
+<li><p><strong>animation_reference</strong> -- Optional reference data (a <code class="docutils literal notranslate"><span class="pre">cf.Field</span></code> or
+array-like) used for automatic level generation across animation
+frames. When supplied and levels are automatic, contour levels
+are computed from this full reference rather than the current
+frame slice.</p></li>
+<li><p><strong>animation_axis</strong> -- Frame axis. Options are <code class="docutils literal notranslate"><span class="pre">'auto'</span></code>, <code class="docutils literal notranslate"><span class="pre">'T'</span></code>, <code class="docutils literal notranslate"><span class="pre">'Z'</span></code>,
+<code class="docutils literal notranslate"><span class="pre">'Y'</span></code> and <code class="docutils literal notranslate"><span class="pre">'X'</span></code>. When set to <code class="docutils literal notranslate"><span class="pre">'auto'</span></code> and <code class="docutils literal notranslate"><span class="pre">ptype</span> <span class="pre">!=</span> <span class="pre">0</span></code>,
+the frame axis is inferred as a singleton axis not used by that
+ptype. For <code class="docutils literal notranslate"><span class="pre">ptype</span> <span class="pre">==</span> <span class="pre">0</span></code>, the fallback preference is singleton
+<code class="docutils literal notranslate"><span class="pre">T</span></code>, then <code class="docutils literal notranslate"><span class="pre">Z</span></code>, then <code class="docutils literal notranslate"><span class="pre">Y</span></code>, then <code class="docutils literal notranslate"><span class="pre">X</span></code>.</p></li>
+<li><p><strong>animation_title_template</strong> -- Optional template used to construct
+per-frame titles. Available fields are <code class="docutils literal notranslate"><span class="pre">{title}</span></code>, <code class="docutils literal notranslate"><span class="pre">{frame}</span></code>
+and <code class="docutils literal notranslate"><span class="pre">{axis}</span></code>.</p></li>
+<li><p><strong>verbose</strong> -- Set to <code class="docutils literal notranslate"><span class="pre">1</span></code> to display a verbose listing of the operations
+performed by <code class="docutils literal notranslate"><span class="pre">con</span></code>.</p></li>
+<li><p><strong>axes</strong> -- If <code class="docutils literal notranslate"><span class="pre">True</span></code>, plot the x- and y-axes.</p></li>
+<li><p><strong>swap_axes</strong> -- If <code class="docutils literal notranslate"><span class="pre">True</span></code>, swap the plotted axes. Only valid for
+x, y, z versus t plots.</p></li>
+<li><p><strong>linewidths</strong> -- Contour line widths. Accepts a single number for all
+lines or an array of widths.</p></li>
+<li><p><strong>linestyles</strong> -- <p>Contour line styles. Options are:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Value</p></th>
+<th class="head"><p>Line style</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'solid'</span></code></p></td>
+<td><p>Solid line</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'dashed'</span></code></p></td>
+<td><p>Dashed line</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'dashdot'</span></code></p></td>
+<td><p>Dash-dot line</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'dotted'</span></code></p></td>
+<td><p>Dotted line</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</p></li>
+<li><p><strong>line_labels</strong> -- If <code class="docutils literal notranslate"><span class="pre">True</span></code>, label the contour lines.</p></li>
+<li><p><strong>colorbar_title</strong> -- Title for the colour bar.</p></li>
+<li><p><strong>colorbar</strong> -- If <code class="docutils literal notranslate"><span class="pre">True</span></code>, add a colour bar to a filled contour plot.</p></li>
+<li><p><strong>colorbar_label_skip</strong> -- Number of colour bar labels to skip. For example,
+set to <code class="docutils literal notranslate"><span class="pre">2</span></code> to skip every other label.</p></li>
+<li><p><strong>colorbar_orientation</strong> -- Colour bar orientation. Options are
+<code class="docutils literal notranslate"><span class="pre">'horizontal'</span></code> and <code class="docutils literal notranslate"><span class="pre">'vertical'</span></code>. Defaults to horizontal for
+most plots and vertical for polar stereographic plots.</p></li>
+<li><p><strong>colorbar_shrink</strong> -- Factor by which to shrink the colour bar. If the
+colour bar exceeds the plot area, values such as <code class="docutils literal notranslate"><span class="pre">1.0</span></code>, <code class="docutils literal notranslate"><span class="pre">0.55</span></code>,
+or <code class="docutils literal notranslate"><span class="pre">0.5</span></code> may help it fit.</p></li>
+<li><p><strong>colorbar_position</strong> -- Colour bar position as
+<code class="docutils literal notranslate"><span class="pre">[xmin,</span> <span class="pre">ymin,</span> <span class="pre">x_extent,</span> <span class="pre">y_extent]</span></code> in normalised coordinates.
+Use this to position a common colour bar across multiple plots.
+For example, <code class="docutils literal notranslate"><span class="pre">[0.1,</span> <span class="pre">0.05,</span> <span class="pre">0.8,</span> <span class="pre">0.02]</span></code>.</p></li>
+<li><p><strong>colorbar_fontsize</strong> -- Font size for colour bar labels and title.</p></li>
+<li><p><strong>colorbar_fontweight</strong> -- Font weight for colour bar labels and title.</p></li>
+<li><p><strong>colorbar_text_up_down</strong> -- If <code class="docutils literal notranslate"><span class="pre">True</span></code>, alternate horizontal colour bar
+labels above and below the colour bar, starting above.</p></li>
+<li><p><strong>colorbar_text_down_up</strong> -- If <code class="docutils literal notranslate"><span class="pre">True</span></code>, alternate horizontal colour bar
+labels below and above the colour bar, starting below.</p></li>
+<li><p><strong>colorbar_drawedges</strong> -- If <code class="docutils literal notranslate"><span class="pre">True</span></code>, draw internal dividing lines in the
+colour bar.</p></li>
+<li><p><strong>colorbar_fraction</strong> -- Fraction of the plot area allocated to the colour
+bar. Defaults to <code class="docutils literal notranslate"><span class="pre">0.21</span></code> in normalised coordinates.</p></li>
+<li><p><strong>colorbar_thick</strong> -- Colour bar thickness. Defaults to <code class="docutils literal notranslate"><span class="pre">0.015</span></code> in
+normalised coordinates.</p></li>
+<li><p><strong>colorbar_anchor</strong> -- Anchor point of the colour bar within the fraction
+space. Defaults to <code class="docutils literal notranslate"><span class="pre">0.5</span></code>; <code class="docutils literal notranslate"><span class="pre">0.0</span></code> places it closer to the plot
+and <code class="docutils literal notranslate"><span class="pre">1.0</span></code> places it further away.</p></li>
+<li><p><strong>colorbar_labels</strong> -- Labels to use for the colour bar. Defaults to the
+contour levels.</p></li>
+<li><p><strong>xlog</strong> -- If <code class="docutils literal notranslate"><span class="pre">True</span></code>, use a logarithmic x-axis.</p></li>
+<li><p><strong>ylog</strong> -- If <code class="docutils literal notranslate"><span class="pre">True</span></code>, use a logarithmic y-axis.</p></li>
+<li><p><strong>xaxis</strong> -- If <code class="docutils literal notranslate"><span class="pre">True</span></code>, plot the x-axis.</p></li>
+<li><p><strong>yaxis</strong> -- If <code class="docutils literal notranslate"><span class="pre">True</span></code>, plot the y-axis.</p></li>
+<li><p><strong>xticks</strong> -- Positions of the x-axis ticks.</p></li>
+<li><p><strong>xticklabels</strong> -- Labels for the x-axis ticks.</p></li>
+<li><p><strong>yticks</strong> -- Positions of the y-axis ticks.</p></li>
+<li><p><strong>yticklabels</strong> -- Labels for the y-axis ticks.</p></li>
+<li><p><strong>xlabel</strong> -- Label for the x-axis.</p></li>
+<li><p><strong>ylabel</strong> -- Label for the y-axis.</p></li>
+<li><p><strong>title</strong> -- Title for the plot.</p></li>
+<li><p><strong>titles</strong> -- If <code class="docutils literal notranslate"><span class="pre">True</span></code>, display a dimensions title.</p></li>
+<li><p><strong>negative_linestyle</strong> -- Line style for negative contours. Options are
+<code class="docutils literal notranslate"><span class="pre">'solid'</span></code> and <code class="docutils literal notranslate"><span class="pre">'dashed'</span></code>.</p></li>
+<li><p><strong>zero_thick</strong> -- If non-zero, draw a thicker zero contour line. For
+example, set to <code class="docutils literal notranslate"><span class="pre">3</span></code> to specify the line thickness.</p></li>
+<li><p><strong>colors</strong> -- Colour or sequence of colours for contour lines. Defaults to
+<code class="docutils literal notranslate"><span class="pre">'k'</span></code>.</p></li>
+<li><p><strong>alpha</strong> -- Transparency setting. Defaults to <code class="docutils literal notranslate"><span class="pre">1.0</span></code> (fully opaque).</p></li>
+<li><p><strong>zorder</strong> -- Drawing order.</p></li>
+<li><p><strong>nlevs</strong> -- If <code class="docutils literal notranslate"><span class="pre">False</span></code>, let Matplotlib determine the contour levels.</p></li>
+<li><p><strong>grid</strong> -- If <code class="docutils literal notranslate"><span class="pre">True</span></code>, draw a grid on the map using the parameters set
+by <code class="docutils literal notranslate"><span class="pre">cfp.setvars</span></code>. Defaults are <code class="docutils literal notranslate"><span class="pre">grid_x_spacing=60</span></code>,
+<code class="docutils literal notranslate"><span class="pre">grid_y_spacing=30</span></code>, <code class="docutils literal notranslate"><span class="pre">grid_colour='k'</span></code>,
+<code class="docutils literal notranslate"><span class="pre">grid_linestyle='--'</span></code>, and <code class="docutils literal notranslate"><span class="pre">grid_thickness=1.0</span></code>.</p></li>
+<li><p><strong>level_spacing</strong> -- <p>Contour level spacing. Defaults to <code class="docutils literal notranslate"><span class="pre">'linear'</span></code>.
+The available options are:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Value</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'linear'</span></code></p></td>
+<td><p>Linear contour level spacing</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'log'</span></code></p></td>
+<td><p>Logarithmic contour level spacing</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'loglike'</span></code></p></td>
+<td><p>Log-like contour level spacing</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'outlier'</span></code></p></td>
+<td><p>Outlier-based contour level spacing</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'inspect'</span></code></p></td>
+<td><p>Inspect contour levels</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None.</p>
 </dd>
 </dl>
 </dd></dl>

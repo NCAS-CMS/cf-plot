@@ -465,35 +465,64 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="cfplot.stipple">
 <span class="sig-prename descclassname"><span class="pre">cfplot.</span></span><span class="sig-name descname"><span class="pre">stipple</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">80</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'k'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">marker</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edgecolors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'k'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylog</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zorder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cfplot/stipple.html#stipple"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfplot.stipple" title="Link to this definition">#</a></dt>
-<dd><div class="line-block">
-<div class="line">Put markers on a plot to indicate value of interest.</div>
-<div class="line"><br /></div>
-<div class="line">f=None - cf field or field</div>
-<div class="line">x=None - x points for field</div>
-<div class="line">y=None - y points for field</div>
-<div class="line">min=None - minimum threshold for stipple</div>
-<div class="line">max=None - maximum threshold for stipple</div>
-<div class="line">size=80 - default size for stipples</div>
-<div class="line">color='k' - default colour for stipples</div>
-<div class="line">pts=50 - number of points in the x direction</div>
-<div class="line">marker='.' - default marker for stipples</div>
-<div class="line">edegecolors='k' - outline colour</div>
-<div class="line">alpha=1.0 - transparency setting - default is off</div>
-<div class="line">ylog=False - set to True if a log pressure stipple plot</div>
-<div class="line-block">
-<div class="line">is required</div>
-</div>
-<div class="line">zorder=2 - plotting order</div>
-<div class="line"><br /></div>
-</div>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>None</p>
+<dd><p>Create a stipple plot to mark areas of interest.</p>
+<dl class="simple">
+<dt>Parameter breakdown (see below for full detail). The following parameters:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt>specify the input data:</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">f</span></code>, <code class="docutils literal notranslate"><span class="pre">x</span></code>, <code class="docutils literal notranslate"><span class="pre">y</span></code></p></li>
+</ul>
 </dd>
 </dl>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
+</li>
+<li><dl class="simple">
+<dt>set stippling thresholds:</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">min</span></code>, <code class="docutils literal notranslate"><span class="pre">max</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>set stippling size and spacing:</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">pts</span></code>, <code class="docutils literal notranslate"><span class="pre">size</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>configure the general plot style:</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">color</span></code>, <code class="docutils literal notranslate"><span class="pre">marker</span></code>, <code class="docutils literal notranslate"><span class="pre">edgecolors</span></code>, <code class="docutils literal notranslate"><span class="pre">alpha</span></code>,
+<code class="docutils literal notranslate"><span class="pre">zorder</span></code>, <code class="docutils literal notranslate"><span class="pre">ylog</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>f</strong> -- CF Field or field to plot.</p></li>
+<li><p><strong>x</strong> -- x-coordinates of the field points.</p></li>
+<li><p><strong>y</strong> -- y-coordinates of the field points.</p></li>
+<li><p><strong>min</strong> -- Minimum threshold for stippling.</p></li>
+<li><p><strong>max</strong> -- Maximum threshold for stippling.</p></li>
+<li><p><strong>pts</strong> -- Number of points in the x-direction. Defaults to <code class="docutils literal notranslate"><span class="pre">50</span></code>.</p></li>
+<li><p><strong>size</strong> -- Default size for stipple markers. Defaults to <code class="docutils literal notranslate"><span class="pre">80</span></code>.</p></li>
+<li><p><strong>color</strong> -- Default colour for stipple markers. Defaults to <code class="docutils literal notranslate"><span class="pre">'k'</span></code>.</p></li>
+<li><p><strong>marker</strong> -- Marker style for stipple points. Defaults to <code class="docutils literal notranslate"><span class="pre">'.'</span></code>.</p></li>
+<li><p><strong>edgecolors</strong> -- Outline colour. Defaults to <code class="docutils literal notranslate"><span class="pre">'k'</span></code>.</p></li>
+<li><p><strong>alpha</strong> -- Transparency setting. Defaults to <code class="docutils literal notranslate"><span class="pre">1.0</span></code> (fully opaque).</p></li>
+<li><p><strong>zorder</strong> -- Plotting order. Defaults to <code class="docutils literal notranslate"><span class="pre">2</span></code>.</p></li>
+<li><p><strong>ylog</strong> -- If <code class="docutils literal notranslate"><span class="pre">True</span></code>, produce a stipple plot with a logarithmic
+pressure axis.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>

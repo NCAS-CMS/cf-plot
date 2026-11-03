@@ -465,93 +465,164 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="cfplot.vect">
 <span class="sig-prename descclassname"><span class="pre">cfplot.</span></span><span class="sig-name descname"><span class="pre">vect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">u</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stride</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ptype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">magmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.02</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">headwidth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">headlength</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">headaxislength</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pivot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'middle'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key_location</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0.95,</span> <span class="pre">-0.06]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key_show</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xaxis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yaxis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xticks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xticklabels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yticks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yticklabels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylog</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'k'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zorder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">titles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cfplot/vector.html#vect"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cfplot.vect" title="Link to this definition">#</a></dt>
-<dd><div class="line-block">
-<div class="line">Plot vectors.</div>
-<div class="line"><br /></div>
-<div class="line">u=None - u wind</div>
-<div class="line">v=None - v wind</div>
-<div class="line">x=None - x locations of u and v</div>
-<div class="line">y=None - y locations of u and v</div>
-<div class="line">scale=None - data units per arrow length unit.  A smaller values gives</div>
-<div class="line-block">
-<div class="line">a larger vector. Generally takes one value but in the case</div>
-<div class="line">of two supplied values the second vector scaling applies to</div>
-<div class="line">the v field.</div>
-</div>
-<div class="line">stride=None - plot vector every stride points. Can take two values one</div>
-<div class="line-block">
-<div class="line">for x and one for y.</div>
-</div>
-<div class="line">pts=None - use bilinear interpolation to interpolate vectors onto a new</div>
-<div class="line-block">
-<div class="line">grid - takes one or two values.</div>
-<div class="line">If one value is passed then this is used for both the x and</div>
-<div class="line">y axes.</div>
-</div>
-<div class="line">magmin=None - don't plot any vects with less than this magnitude.</div>
-<div class="line">key_length=None - length of the key.  Generally takes one value but in</div>
-<div class="line-block">
-<div class="line">the case of two supplied values the second vector</div>
-<div class="line">scaling applies to the v field.</div>
-</div>
-<div class="line">key_label=None - label for the key. Generally takes one value but in the</div>
-<div class="line-block">
-<div class="line">case of two supplied values the second vector scaling</div>
-<div class="line">applies to the v field.</div>
-</div>
-<div class="line">key_location=[0.9, -0.06] - location of the vector key relative to the</div>
-<div class="line-block">
-<div class="line">plot in normalised coordinates.</div>
-</div>
-<div class="line">key_show=True - draw the key.  Set to False if not required.</div>
-<div class="line">ptype=0 - plot type - not needed for cf fields.</div>
-<div class="line-block">
-<div class="line">0 = no specific plot type,</div>
-<div class="line">1 = longitude-latitude,</div>
-<div class="line">2 = latitude - height,</div>
-<div class="line">3 = longitude - height,</div>
-<div class="line">4 = latitude - time,</div>
-<div class="line">5 = longitude - time</div>
-<div class="line">6 = rotated pole</div>
-<div class="line"><br /></div>
-</div>
-<div class="line">title=None - plot title</div>
-<div class="line">width=0.005 - shaft width in arrow units; default is 0.005 times the</div>
-<div class="line-block">
-<div class="line">width of the plot</div>
-</div>
-<div class="line">headwidth=3 - head width as multiple of shaft width, default is 3</div>
-<div class="line">headlength=5 - head length as multiple of shaft width, default is 5</div>
-<div class="line">headaxislength=4.5 - head length at shaft intersection, default is 4.5</div>
-<div class="line">pivot='middle' - the part of the arrow that is at the grid point; the</div>
-<div class="line-block">
-<div class="line">arrow rotates about this point
-takes 'tail', 'middle', 'tip'</div>
-</div>
-<div class="line">axes=True - plot x and y axes</div>
-<div class="line">xaxis=True - plot xaxis</div>
-<div class="line">yaxis=True - plot y axis</div>
-<div class="line">xticks=None - xtick positions</div>
-<div class="line">xticklabels=None - xtick labels</div>
-<div class="line">yticks=None - y tick positions</div>
-<div class="line">yticklabels=None - ytick labels</div>
-<div class="line">xlabel=None - label for x axis</div>
-<div class="line">ylabel=None - label for y axis</div>
-<div class="line">ylog=False - log y axis</div>
-<div class="line">color='k' - colour for the vectors - default is black.</div>
-<div class="line">zorder=3 - plotting order</div>
-<div class="line">titles=None - generate dimension and cell_methods titles for plot</div>
-<div class="line">alpha=1.0 - transparency setting.  The default is no transparency.</div>
-<div class="line"><br /></div>
-</div>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>None</p>
+<dd><p>Create a vector plot representing a two-dimensional vector field.</p>
+<dl class="simple">
+<dt>Parameter breakdown (see below for full detail). The following parameters:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt>specify the vector field and grid coordinates:</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">u</span></code>, <code class="docutils literal notranslate"><span class="pre">v</span></code>, <code class="docutils literal notranslate"><span class="pre">x</span></code>, <code class="docutils literal notranslate"><span class="pre">y</span></code></p></li>
+</ul>
 </dd>
 </dl>
-<div class="line-block">
-<div class="line"><br /></div>
+</li>
+<li><dl class="simple">
+<dt>control vector scaling, spacing and magnitude thresholds:</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">scale</span></code>, <code class="docutils literal notranslate"><span class="pre">stride</span></code>, <code class="docutils literal notranslate"><span class="pre">pts</span></code>, <code class="docutils literal notranslate"><span class="pre">magmin</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>specify the plot type:</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">ptype</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>configure arrow appearance and geometry:</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">width</span></code>, <code class="docutils literal notranslate"><span class="pre">headwidth</span></code>, <code class="docutils literal notranslate"><span class="pre">headlength</span></code>, <code class="docutils literal notranslate"><span class="pre">headaxislength`,</span>
+<span class="pre">``pivot</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>configure the vector key:</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">key_length</span></code>, <code class="docutils literal notranslate"><span class="pre">key_label</span></code>, <code class="docutils literal notranslate"><span class="pre">key_location</span></code>, <code class="docutils literal notranslate"><span class="pre">key_show</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>configure axis visibility:</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">axes</span></code>, <code class="docutils literal notranslate"><span class="pre">xaxis</span></code>, <code class="docutils literal notranslate"><span class="pre">yaxis</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>configure axis ticks, labels and scaling:</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">xticks</span></code>, <code class="docutils literal notranslate"><span class="pre">xticklabels</span></code>, <code class="docutils literal notranslate"><span class="pre">yticks</span></code>, <code class="docutils literal notranslate"><span class="pre">yticklabels</span></code>,
+<code class="docutils literal notranslate"><span class="pre">xlabel</span></code>, <code class="docutils literal notranslate"><span class="pre">ylabel</span></code>, <code class="docutils literal notranslate"><span class="pre">ylog</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>configure general plot style:</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">title</span></code>, <code class="docutils literal notranslate"><span class="pre">color</span></code>, <code class="docutils literal notranslate"><span class="pre">zorder</span></code>, <code class="docutils literal notranslate"><span class="pre">titles</span></code>, <code class="docutils literal notranslate"><span class="pre">alpha</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>u</strong> -- u-component of the vector field.</p></li>
+<li><p><strong>v</strong> -- v-component of the vector field.</p></li>
+<li><p><strong>x</strong> -- x-coordinates of the grid points for <em>u</em> and <em>v</em>.</p></li>
+<li><p><strong>y</strong> -- y-coordinates of the grid points for <em>u</em> and <em>v</em>.</p></li>
+<li><p><strong>scale</strong> -- Data units per arrow length unit. Smaller values produce
+larger vectors. Generally accepts a single value; if two values
+are supplied, the second scaling value applies to the <em>v</em> field.</p></li>
+<li><p><strong>stride</strong> -- Plot vectors at intervals of the specified number of grid
+points. Accepts one or two values, specifying the intervals
+along the x- and y-axes, respectively.</p></li>
+<li><p><strong>pts</strong> -- Use bilinear interpolation to interpolate vectors onto a new
+grid. Accepts one or two values. If one value is supplied, it is
+used for both the x- and y-axes.</p></li>
+<li><p><strong>magmin</strong> -- Minimum vector magnitude to plot. Vectors with magnitudes
+below this threshold are omitted.</p></li>
+<li><p><strong>ptype</strong> -- <p>Plot type. Not required for CF fields. The available options
+are:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Value</p></th>
+<th class="head"><p>Plot type</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0</p></td>
+<td><p>No specific plot type</p></td>
+</tr>
+<tr class="row-odd"><td><p>1</p></td>
+<td><p>Longitude–latitude</p></td>
+</tr>
+<tr class="row-even"><td><p>2</p></td>
+<td><p>Latitude–height</p></td>
+</tr>
+<tr class="row-odd"><td><p>3</p></td>
+<td><p>Longitude–height</p></td>
+</tr>
+<tr class="row-even"><td><p>4</p></td>
+<td><p>Latitude–time</p></td>
+</tr>
+<tr class="row-odd"><td><p>5</p></td>
+<td><p>Longitude–time</p></td>
+</tr>
+<tr class="row-even"><td><p>6</p></td>
+<td><p>Rotated pole</p></td>
+</tr>
+</tbody>
+</table>
 </div>
+</p></li>
+<li><p><strong>width</strong> -- Arrow shaft width in arrow units. Defaults to <code class="docutils literal notranslate"><span class="pre">0.005</span></code> times
+the width of the plot.</p></li>
+<li><p><strong>headwidth</strong> -- Arrowhead width as a multiple of the shaft width.
+Defaults to <code class="docutils literal notranslate"><span class="pre">3</span></code>.</p></li>
+<li><p><strong>headlength</strong> -- Arrowhead length as a multiple of the shaft width.
+Defaults to <code class="docutils literal notranslate"><span class="pre">5</span></code>.</p></li>
+<li><p><strong>headaxislength</strong> -- Arrowhead length at the shaft intersection, as a
+multiple of the shaft width. Defaults to <code class="docutils literal notranslate"><span class="pre">4.5</span></code>.</p></li>
+<li><p><strong>pivot</strong> -- Position on the arrow that coincides with the grid point and
+about which the arrow rotates. Options are <code class="docutils literal notranslate"><span class="pre">'tail'</span></code>,
+<code class="docutils literal notranslate"><span class="pre">'middle'</span></code>, and <code class="docutils literal notranslate"><span class="pre">'tip'</span></code>. Defaults to <code class="docutils literal notranslate"><span class="pre">'middle'</span></code>.</p></li>
+<li><p><strong>key_length</strong> -- Length of the vector key. Generally accepts a single
+value; if two values are supplied, the second scaling value
+applies to the <em>v</em> field.</p></li>
+<li><p><strong>key_label</strong> -- Label for the vector key. Generally accepts a single
+value; if two values are supplied, the second scaling value
+applies to the <em>v</em> field.</p></li>
+<li><p><strong>key_location</strong> -- Location of the vector key relative to the plot, in
+normalised coordinates. Defaults to <code class="docutils literal notranslate"><span class="pre">[0.9,</span> <span class="pre">-0.06]</span></code>.</p></li>
+<li><p><strong>key_show</strong> -- If <code class="docutils literal notranslate"><span class="pre">True</span></code>, draw the vector key. Defaults to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><strong>axes</strong> -- If <code class="docutils literal notranslate"><span class="pre">True</span></code>, display the x- and y-axes.</p></li>
+<li><p><strong>xaxis</strong> -- If <code class="docutils literal notranslate"><span class="pre">True</span></code>, display the x-axis.</p></li>
+<li><p><strong>yaxis</strong> -- If <code class="docutils literal notranslate"><span class="pre">True</span></code>, display the y-axis.</p></li>
+<li><p><strong>xticks</strong> -- x-axis tick positions.</p></li>
+<li><p><strong>xticklabels</strong> -- x-axis tick labels.</p></li>
+<li><p><strong>yticks</strong> -- y-axis tick positions.</p></li>
+<li><p><strong>yticklabels</strong> -- y-axis tick labels.</p></li>
+<li><p><strong>xlabel</strong> -- x-axis label.</p></li>
+<li><p><strong>ylabel</strong> -- y-axis label.</p></li>
+<li><p><strong>ylog</strong> -- If <code class="docutils literal notranslate"><span class="pre">True</span></code>, use a logarithmic y-axis.</p></li>
+<li><p><strong>title</strong> -- Plot title. Defaults to <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>color</strong> -- Colour of the vectors. Defaults to <code class="docutils literal notranslate"><span class="pre">'k'</span></code> (black).</p></li>
+<li><p><strong>zorder</strong> -- Plotting order. Defaults to <code class="docutils literal notranslate"><span class="pre">3</span></code>.</p></li>
+<li><p><strong>titles</strong> -- If not <code class="docutils literal notranslate"><span class="pre">None</span></code>, generate dimension and cell-methods titles
+for the plot.</p></li>
+<li><p><strong>alpha</strong> -- Transparency setting. Defaults to <code class="docutils literal notranslate"><span class="pre">1.0</span></code> (fully opaque).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
