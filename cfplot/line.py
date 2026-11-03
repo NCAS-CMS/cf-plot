@@ -64,7 +64,7 @@ def lineplot(
         - Place any axis overrides described below in the final call to
           ``lineplot``.
 
-    Parameter breakdown (see 'Args' for full detail). The following parameters:
+    Parameter breakdown (see below for full detail). The following parameters:
         - specify the input data:
             - ``f``, ``x``, ``y``
         - set the verbosity to toggle log level:

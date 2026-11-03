@@ -2414,7 +2414,7 @@ def con(f=None, x=None, y=None, **kwargs):
     ``blockfill=False`` selects contours; vertices adjoining longitude wrap
     jumps are excluded to avoid stripes, leaving a narrow gap at the seam.
 
-    Parameter breakdown (see 'Args' for full detail). The following parameters:
+    Parameter breakdown (see below for full detail). The following parameters:
         - set the input data to plot:
             - ``f``, ``x``, ``y``
         - set the form and creation approach of plot:
