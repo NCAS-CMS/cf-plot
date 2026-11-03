@@ -50,7 +50,7 @@ def lineplot(
     titles=False,
     zorder=None,
 ):
-    """Create a line i.e. graph plot.
+    """Create a line (graph) plot.
 
     The minimum usage is ``lineplot(f)``, where *f* is a CF field.
     If *x* and *y* are provided, appropriate plots can be made, including
@@ -64,11 +64,35 @@ def lineplot(
         - Place any axis overrides described below in the final call to
           ``lineplot``.
 
+    Parameter breakdown (see 'Args' for full detail). The following parameters:
+        - specify the input data:
+            - ``f``, ``x``, ``y``
+        - set the verbosity to toggle log level:
+            - ``verbose``
+        - configure the line appearance and markers:
+            - ``linestyle``, ``color``, ``linewidth``, ``marker``,
+              ``markersize``, ``markeredgecolor``, ``markeredgewidth``,
+              ``zorder``
+        - configure the x- and y-axis scales:
+            - ``xlog``, ``ylog``
+        - configure line labels and the legend:
+            - ``label``, ``legend_location``
+        - control titles:
+            - ``titles``
+        - override the defaults derived from CF data:
+            - ``title``, ``axes``, ``xunits``, ``yunits``, ``xlabel``,
+              ``ylabel``, ``xticks``, ``yticks``, ``xticklabels``,
+              ``yticklabels``, ``xaxis``, ``yaxis``
+        - specify deprecated parameters:
+            - ``xname``, ``yname``
+
     Args:
         f: CF data used to make a line plot.
-
         x: x-coordinates of the data in *y*.
         y: y-coordinates of the data in *x*.
+
+        verbose: Set to ``1`` to display a verbose listing of the operations
+            performed by ``lineplot``.
 
         linestyle: Line style. Defaults to ``'-'``.
         color: Line colour. Defaults to Matplotlib's colour scheme unless
@@ -116,26 +140,23 @@ def lineplot(
                  - Upper right
 
         titles: If ``True``, display a dimensions title.
-        verbose: Set to ``1`` to display a verbose listing of the operations
-            performed by ``lineplot``.
-
-        The following parameters override the corresponding defaults
-        derived from CF data:
 
         title: Plot title. Defaults to ``None``.
+        axes: If ``True``, display the x- and y-axes.
+
         xunits: x-axis units. Defaults to ``None``.
         yunits: y-axis units. Defaults to ``None``.
         xlabel: x-axis label. Defaults to ``None``.
         ylabel: y-axis label. Defaults to ``None``.
-        xname: Deprecated keyword.
-        yname: Deprecated keyword.
         xticks: x-axis tick positions. Defaults to ``None``.
-        xticklabels: x-axis tick labels. Defaults to ``None``.
         yticks: y-axis tick positions. Defaults to ``None``.
+        xticklabels: x-axis tick labels. Defaults to ``None``.
         yticklabels: y-axis tick labels.
-        axes: If ``True``, display the x- and y-axes.
         xaxis: If ``True``, display the x-axis.
         yaxis: If ``True``, display the y-axis.
+
+        xname: Deprecated keyword.
+        yname: Deprecated keyword.
 
     Returns:
         None.
