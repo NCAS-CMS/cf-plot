@@ -48,7 +48,7 @@ def stipple(
 
         color: Default colour for stipple markers. Defaults to ``'k'``.
         marker: Marker style for stipple points. Defaults to ``'.'``.
-        edegecolors: Outline colour. Defaults to ``'k'``.
+        edgecolors: Outline colour. Defaults to ``'k'``.
         alpha: Transparency setting. Defaults to ``1.0`` (fully opaque).
         zorder: Plotting order. Defaults to ``2``.
         ylog: If ``True``, produce a stipple plot with a logarithmic
