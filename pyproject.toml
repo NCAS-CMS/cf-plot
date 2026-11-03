@@ -37,14 +37,12 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Chemistry",
     "Topic :: Scientific/Engineering :: Physics",
 ]
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 dependencies = [
     "cf-python>=3.17.0",
-    "scipy>=1.4.0",
     "cartopy>=0.22.0",
 ]
 
-[project.urls]
 [project.urls]
 Homepage = "https://ncas-cms.github.io/cf-plot/"
 Documentation = "https://ncas-cms.github.io/cf-plot/"
