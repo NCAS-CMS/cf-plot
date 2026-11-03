@@ -93,6 +93,28 @@ def traj(
 
     The minimum usage is ``traj(f)``, where *f* is a CF field.
 
+    Parameter breakdown (see below for full detail). The following parameters:
+        - specify the input CF data:
+            - ``f``
+        - configure trajectory line and marker appearance:
+            - ``linestyle``, ``linecolor``, ``linewidth``, ``marker``,
+              ``markersize``, ``markerfacecolor``, ``markeredgecolor``
+        - control marker colouring and plotting order:
+            - ``legend``, ``zorder``, ``verbose``
+        - override the defaults derived from CF data:
+            - ``title``, ``axes``, ``xaxis``, ``yaxis``, ``xlabel``,
+              ``ylabel``, ``xticks``, ``xticklabels``, ``yticks``,
+              ``yticklabels``
+        - configure the colourbar:
+            - ``colorbar``, ``colorbar_position``,
+              ``colorbar_orientation``, ``colorbar_title``,
+              ``colorbar_text_up_down``, ``colorbar_text_down_up``,
+              ``colorbar_drawedges``, ``colorbar_fraction``,
+              ``colorbar_thick``, ``colorbar_anchor``,
+              ``colorbar_shrink``, ``colorbar_labels``
+        - configure vector plotting:
+            - ``vector``, ``head_width``, ``head_length``, ``fc``, ``ec``
+
     Args:
         f: CF data used to make a trajectory plot.
 
