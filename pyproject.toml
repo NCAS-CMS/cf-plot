@@ -45,7 +45,14 @@ dependencies = [
 ]
 
 [project.urls]
+[project.urls]
 Homepage = "https://ncas-cms.github.io/cf-plot/"
+Documentation = "https://ncas-cms.github.io/cf-plot/"
+Source = "https://github.com/NCAS-CMS/cf-plot"
+Download = "https://pypi.org/project/cf-plot/"
+Installation = "https://ncas-cms.github.io/cf-plot/installation.html"
+"Release Notes" = "https://github.com/NCAS-CMS/cf-plot/blob/main/CHANGELOG.md"
+Issues = "https://github.com/NCAS-CMS/cf-plot/issues"
 
 [tool.setuptools]
 include-package-data = true
