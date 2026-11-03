@@ -43,6 +43,21 @@ def stream(
 ):
     """Create a stream plot to show flow and gradients.
 
+    Parameter breakdown  (see below for full detail). The following parameters:
+        - specify the vector field and grid coordinates:
+            - ``u``, ``v``, ``x``, ``y``
+        - control streamline density and length:
+            - ``density``, ``minlength``, ``maxlength``
+        - configure arrow appearance:
+            - ``arrowsize``, ``arrowstyle``
+        - configure axis visibility:
+            - ``axes``, ``xaxis``, ``yaxis``
+        - configure axis ticks and labels:
+            - ``xticks``, ``xticklabels``, ``yticks``, ``yticklabels``,
+              ``xlabel``, ``ylabel``
+        - configure general plot style properties:
+            - ``linewidth``, ``color``, ``title``, ``zorder``
+
     Args:
         u: Horizontal component of the vector field.
         v: Vertical component of the vector field.
@@ -50,14 +65,11 @@ def stream(
         y: y-coordinates of the grid points.
 
         density: Streamline density. Controls the spacing of streamlines.
-        linewidth: Width of the streamlines.
-        color: Colour or array of values used to colour the streamlines.
-        arrowsize: Size of the arrows indicating flow direction.
-        arrowstyle: Style of the arrows indicating flow direction.
         minlength: Minimum length of a streamline.
         maxlength: Maximum length of a streamline.
 
-        zorder: Plotting order. Defaults to ``None``.
+        arrowsize: Size of the arrows indicating flow direction.
+        arrowstyle: Style of the arrows indicating flow direction.
 
         axes: If ``True``, display the x- and y-axes.
         xaxis: If ``True``, display the x-axis.
@@ -69,7 +81,11 @@ def stream(
         yticklabels: y-axis tick labels.
         xlabel: x-axis label.
         ylabel: y-axis label.
+
+        linewidth: Width of the streamlines.
+        color: Colour or array of values used to colour the streamlines.
         title: Plot title.
+        zorder: Plotting order. Defaults to ``None``.
 
     Returns:
         None.
