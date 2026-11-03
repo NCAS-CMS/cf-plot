@@ -2425,7 +2425,10 @@ def con(f=None, x=None, y=None, **kwargs):
               ``irregular``
         - configure ORCA inputs:
             - ``orca``, ``orca_skip``
-        - set the verbosity parameter to toggle log level:
+        - configure animation rendering, frame selection and per-frame titles:
+            - ``animation``, ``animation_reference``, ``animation_axis``,
+              ``animation_title_template``
+        - set the verbosity to toggle log level:
             - ``verbose``
         - configure the axes and line appearance:
             - ``axes``, ``swap_axes``, ``linewidths``, ``linestyles``,
@@ -2505,6 +2508,21 @@ def con(f=None, x=None, y=None, **kwargs):
         orca_skip: Plot every nth grid point in the two-dimensional
             longitude and latitude arrays. Useful for speeding up
             visualisation of high-resolution global datasets.
+
+        animation: If ``True``, enable animation-aware rendering hooks.
+        animation_reference: Optional reference data (a ``cf.Field`` or
+            array-like) used for automatic level generation across animation
+            frames. When supplied and levels are automatic, contour levels
+            are computed from this full reference rather than the current
+            frame slice.
+        animation_axis: Frame axis. Options are ``'auto'``, ``'T'``, ``'Z'``,
+            ``'Y'`` and ``'X'``. When set to ``'auto'`` and ``ptype != 0``,
+            the frame axis is inferred as a singleton axis not used by that
+            ptype. For ``ptype == 0``, the fallback preference is singleton
+            ``T``, then ``Z``, then ``Y``, then ``X``.
+        animation_title_template: Optional template used to construct
+            per-frame titles. Available fields are ``{title}``, ``{frame}``
+            and ``{axis}``.
 
         verbose: Set to ``1`` to display a verbose listing of the operations
             performed by ``con``.
@@ -2622,18 +2640,6 @@ def con(f=None, x=None, y=None, **kwargs):
     # then delegates to legacy renderer.
 
     #     Animation title options (map and non-map):
-    #     - animation: bool, enables animation-aware rendering hooks.
-    #     - animation_reference: cf.Field or array-like, optional reference data
-    #         used for automatic level generation across animation frames.
-    #         When supplied and levels are automatic, contour levels are computed
-    #         from this full reference rather than the current frame slice.
-    #     - animation_axis: str, one of "auto", "T", "Z", "Y", "X".
-    #         When "auto" and ptype != 0, the frame axis is inferred as a singleton
-    #         axis not used by that ptype. For ptype == 0, fallback preference is
-    #         singleton T, then Z, then Y, then X.
-    #     - animation_title_template: str, optional template used to construct
-    #         per-frame titles. Available fields are {title}, {frame}, and {axis}.
-
     #     Example:
     #             cfp.con(
     #                     f,
