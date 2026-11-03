@@ -6,6 +6,24 @@ build-backend = "setuptools.build_meta"
 name = "cf-plot"
 version = "3.5.0"
 description = "Code-light plotting for earth science and aligned research"
+keywords = [
+    "visualisation",
+    "visualization",
+    "scientific-visualisation",
+    "scientific-visualization",
+    "atmospheric-science",
+    "meteorology",
+    "earth-science",
+    "climate-science",
+    "geoscience",
+    "oceanography",
+    "cartography",
+    "cf-conventions",
+    "cf",
+    "data-analysis",
+    "netcdf",
+    "zarr",
+]
 readme = "README.md"
 license = "MIT"
 license-files = ["LICENSE.txt"]
