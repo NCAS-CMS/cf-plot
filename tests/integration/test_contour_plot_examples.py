@@ -720,7 +720,7 @@ def test_example_nemo_1():
 def test_example_45_all_titles():
     """Test Example 45: titles across the projections.
 
-    Tests whether ttitles fit across the possible supported projections
+    Tests whether titles fit across the possible supported projections
     (excluding special cases such as UKCP tested separately).
 
     NOTE. This is a test example but NOT a documentation example (plot is too
@@ -766,6 +766,47 @@ def test_example_45_all_titles():
     cfp.gclose()
 
     _assert_reference_match("45titles")
+
+@pytest.mark.integration
+def test_example_46_uk_euro_proj_titles():
+    """Test Example 45: test title for the UKCP, OSGB and EuroPP projections.
+
+    Tests whether titles fit on the special cases of the three Euro/UK
+    projections, to complete the test of 'test_example_45_all_titles'
+    covering all supported projections.
+
+    NOTE. This is a test example but NOT a documentation example (plot is too
+    cluttered and therefore ugly, the main intention is to check titles
+    appear and we want to keep all elements e.g. labelling to make sure
+    everything fits alongside the title).
+    """
+    ukcp_file = DATA_DIR / "ukcp_rcm_test.nc"
+    if not ukcp_file.exists():
+        pytest.skip(f"Missing test data: {ukcp_file}")
+
+    f = cf.read(str(ukcp_file))[0]
+    _configure_example_output("uk_euro_proj_titles")
+
+    cfp.gopen(rows=3, bottom=0.2)
+
+    proj_names = [
+        "UKCP",
+        "OSGB",
+        "EuroPP",
+    ]
+
+    for index, proj_name in enumerate(proj_names):
+        cfp.mapset(proj=proj_name)
+
+        # gpos expects 1 as first value, see:
+        # https://github.com/NCAS-CMS/cf-plot/issues/76
+        cfp.gpos(index + 1)
+
+        cfp.con(f, title=f"Title for {proj_name} projection")
+
+    cfp.gclose()
+
+    _assert_reference_match("uk_euro_proj_titles")
 
 
 @pytest.mark.integration
