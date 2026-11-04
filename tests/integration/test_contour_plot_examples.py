@@ -785,9 +785,11 @@ def test_example_46_uk_euro_proj_titles():
         pytest.skip(f"Missing test data: {ukcp_file}")
 
     f = cf.read(str(ukcp_file))[0]
+
     _configure_example_output("uk_euro_proj_titles")
 
-    cfp.gopen(rows=3, bottom=0.2)
+    cfp.levs(-3, 7, 0.5)
+    cfp.gopen(columns=3)
 
     proj_names = [
         "UKCP",
@@ -796,13 +798,14 @@ def test_example_46_uk_euro_proj_titles():
     ]
 
     for index, proj_name in enumerate(proj_names):
-        cfp.mapset(proj=proj_name)
+        cfp.mapset(proj=proj_name, resolution="50m")
 
         # gpos expects 1 as first value, see:
         # https://github.com/NCAS-CMS/cf-plot/issues/76
         cfp.gpos(index + 1)
 
-        cfp.con(f, title=f"Title for {proj_name} projection")
+        cfp.con(
+            f, title=f"Title for {proj_name} projection")
 
     cfp.gclose()
 

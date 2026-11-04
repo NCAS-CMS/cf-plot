@@ -89,6 +89,14 @@ def _apply_map_title(
         # it gets cut off due to the height required to plot in LCC.
         ymin, ymax = mymap.get_ylim()
         ypt -= 0.12 * (ymax - ymin)
+    elif proj in ("UKCP", "OSGB", "EuroPP"):
+        return mymap.set_title(
+            title,
+            loc="center",
+            pad=6,
+            fontsize=title_fontsize,
+            fontweight=title_fontweight,
+        )
     else:
         raise ValueError(
             f"Unable to produce title for projection {proj}")
