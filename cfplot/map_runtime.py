@@ -50,6 +50,19 @@ def _apply_map_title(
             lon_mid, latmax, ccrs.PlateCarree()
         )
         ypt = ypt + (latmax - latmin) / 40.0
+    elif proj == "rotated":
+        lon_mid = lonmin + (lonmax - lonmin) / 2.0
+
+        # Use the actual rotated CRS of the map axes.
+        map_proj = mymap.projection
+
+        xpt, ypt = map_proj.transform_point(
+            lon_mid,
+            latmax,
+            map_proj,
+        )
+
+        ypt = ypt + (latmax - latmin) / 40.0
     elif proj == "npstere":
         mylon = lon_0 + 180
         mylat = boundinglat - polar_range / 15.0
@@ -74,7 +87,8 @@ def _apply_map_title(
             lon_mid, latmax, ccrs.PlateCarree()
         )
     else:
-        return
+        raise ValueError(
+            f"Unable to produce title for projection {proj}")
 
     return mymap.text(
         xpt,
