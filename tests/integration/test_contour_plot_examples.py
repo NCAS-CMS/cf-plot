@@ -717,6 +717,60 @@ def test_example_nemo_1():
 
 
 @pytest.mark.integration
+def test_example_45_all_titles():
+    """Test Example 45: titles across the projections."""
+    if not (DATA_DIR / "tas_A1.nc").exists():
+        pytest.skip(f"Missing test data: {DATA_DIR / 'tas_A1.nc'}")
+
+    f = cf.read(str(DATA_DIR / "tas_A1.nc"))[0]
+    g = f.subspace(time=15)
+
+    _configure_example_output("45titles")
+
+    cfp.gopen(rows=3, columns=3, bottom=0.2)
+
+    cfp.gpos(1)
+    cfp.mapset(proj="cyl")  # default strictly but to be explicit
+    cfp.con(g, title="A title")
+
+    cfp.gpos(2)
+    cfp.mapset(proj="merc")
+    cfp.con(g, title="A title")
+
+    cfp.gpos(3)
+    cfp.mapset(proj="robin")
+    cfp.con(g, title="A title")
+
+    cfp.gpos(4)
+    cfp.mapset(proj="ortho")
+    cfp.con(g, title="A title")
+
+    cfp.gpos(5)
+    cfp.mapset(proj="moll")
+    cfp.con(g, title="A title")
+
+    cfp.gpos(6)
+    cfp.mapset(proj="npstere")
+    cfp.con(g, title="A title")
+
+    cfp.gpos(7)
+    cfp.mapset(proj="spstere")
+    cfp.con(g, title="A title")
+
+    cfp.gpos(8)
+    cfp.mapset(proj="rotated")
+    cfp.con(g, title="A title")
+
+    cfp.gpos(9)
+    cfp.mapset(proj="lcc", lonmin=-50, lonmax=50, latmin=20, latmax=85)
+    cfp.con(g, title="A title")
+
+    cfp.gclose()
+
+    _assert_reference_match("45titles")
+
+
+@pytest.mark.integration
 def test_example_numpy_arrays():
     """Test contour with raw numpy arrays."""
     # Create synthetic 2D data
