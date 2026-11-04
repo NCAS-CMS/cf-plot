@@ -15,13 +15,13 @@ import numpy as np
 
 
 def to_float_or_none(value: Any) -> float | None:
-    """Convert numeric-like metadata values to float, else return None."""
+    """Convert numeric-like metadata values to float, else return."""
     if value is None:
-        return None
+        return
     try:
         return float(value)
     except (TypeError, ValueError):
-        return None
+        return
 
 
 def resolve_colour_scale_file(scale: str) -> str:
@@ -1125,7 +1125,7 @@ def find_dim_names(field: Any) -> list:
 def find_z(field: Any) -> str | None:
     """Return the key for the Z coordinate of a CF field, or None."""
     if field is None:
-        return None
+        return
     mycoords = find_dim_names(field)
     myz = None
     for mycoord in mycoords:

@@ -71,7 +71,7 @@ def _apply_map_title(
             lon_mid, latmax, ccrs.PlateCarree()
         )
     else:
-        return None
+        return
 
     return mymap.text(
         xpt,
