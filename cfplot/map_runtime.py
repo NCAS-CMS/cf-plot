@@ -30,8 +30,6 @@ def _apply_map_title(
     title_fontweight: str,
 ) -> Any:
     """Draw a title on a map axes at the geographically correct position."""
-    print("01 TITLE IS", title)
-
     polar_range = 90 - abs(boundinglat)
     myprojs = ["cyl", "robin", "moll", "merc", "ortho"]
 
@@ -86,6 +84,11 @@ def _apply_map_title(
         xpt, ypt = map_proj.transform_point(
             lon_mid, latmax, ccrs.PlateCarree()
         )
+
+        # Move the title down towards the map so it fits in the figure, else
+        # it gets cut off due to the height required to plot in LCC.
+        ymin, ymax = mymap.get_ylim()
+        ypt -= 0.12 * (ymax - ymin)
     else:
         raise ValueError(
             f"Unable to produce title for projection {proj}")
