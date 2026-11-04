@@ -24,19 +24,66 @@ def gopen(
     file: str = "cfplot.png",
     orientation: str = "landscape",
     figsize: list[float] | tuple[float, float] = (11.7, 8.3),
+    dpi: float | None = None,
+    user_position: bool = False,
     left: float | None = None,
     right: float | None = None,
     top: float | None = None,
     bottom: float | None = None,
     wspace: float | None = None,
     hspace: float | None = None,
-    dpi: float | None = None,
-    user_position: bool = False,
     animation_session_id: str | None = None,
     animation_meta_callback: Any = None,
     animation_frame_callback: Any = None,
 ) -> None:
-    """Open a graphics file to contain plots."""
+    """Open a graphics file to contain plots.
+
+    Parameter breakdown (see below for full detail). The following parameters:
+        - configure the plot layout:
+            - ``rows``, ``columns``, ``user_plot``
+        - configure the output file and figure:
+            - ``file``, ``orientation``, ``figsize``, ``dpi``
+        - configure figure margins and subplot spacing:
+            - ``left``, ``right``, ``top``, ``bottom``, ``wspace``,
+              ``hspace``
+        - control user-defined plot positioning:
+            - ``user_position``
+        - configure animation session integration:
+            - ``animation_session_id``, ``animation_meta_callback``,
+              ``animation_frame_callback``
+
+    Args:
+        rows: Number of plot rows on the page.
+        columns: Number of plot columns on the page.
+        user_plot: Internal plot variable. Do not use.
+
+        file: Default output file name. Defaults to ``'cfplot.png'``.
+        orientation: Figure orientation. Options are ``'landscape'`` and
+            ``'portrait'``. Defaults to ``'landscape'``.
+        figsize: Figure size in inches, specified as a list or tuple of
+            two values. Defaults to ``(11.7, 8.3)``.
+        dpi: Resolution in dots per inch.
+
+        user_position: If ``True``, allow the plot position to be supplied
+            via ``gpos``. Defaults to ``False``.
+
+        left: Left margin in normalised coordinates. Defaults to ``0.12``.
+        right: Right margin in normalised coordinates. Defaults to ``0.92``.
+        top: Top margin in normalised coordinates. Defaults to ``0.08``.
+        bottom: Bottom margin in normalised coordinates. Defaults to
+            ``0.08``.
+        wspace: Width reserved for blank space between subplots. Defaults
+            to ``0.2``.
+        hspace: Height reserved for white space between subplots. Defaults
+            to ``0.2``.
+
+        animation_session_id: Identifier for the animation session.
+        animation_meta_callback: Callback for providing animation metadata.
+        animation_frame_callback: Callback for handling animation frames.
+
+    Returns:
+        None
+    """
     plotvars.rows = rows
     plotvars.columns = columns
     if file != "cfplot.png":
