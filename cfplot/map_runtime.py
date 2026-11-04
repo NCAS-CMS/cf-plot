@@ -30,8 +30,10 @@ def _apply_map_title(
     title_fontweight: str,
 ) -> Any:
     """Draw a title on a map axes at the geographically correct position."""
+    print("01 TITLE IS", title)
+
     polar_range = 90 - abs(boundinglat)
-    myprojs = ["cyl", "robin", "moll", "merc"]
+    myprojs = ["cyl", "robin", "moll", "merc", "ortho"]
 
     if proj in myprojs:
         lon_mid = lonmin + (lonmax - lonmin) / 2.0
@@ -40,6 +42,7 @@ def _apply_map_title(
             ccrs.Robinson,
             ccrs.Mollweide,
             ccrs.Mercator,
+            ccrs.Orthographic,
         ]
         myind = myprojs.index(proj)
         map_proj = projs[myind](central_longitude=lon_mid)
