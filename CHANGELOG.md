@@ -29,6 +29,9 @@ of being developed elsewhere.
   adding a 'parameter breakdown' list to all plotting functions
   (https://github.com/NCAS-CMS/cf-plot/issues/39,
   https://github.com/NCAS-CMS/cf-plot/issues/145)
+* Fix bug preventing title showing with `con` for the following
+  projections: `ortho`, `lcc`, `rotated`, `UKCP`, `OSGB` and `EuroPP`
+  (https://github.com/NCAS-CMS/cf-plot/issues/150)
 
 #### Version `3.5.0`, released 2026-10-09
 

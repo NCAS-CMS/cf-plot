@@ -33,7 +33,7 @@ from pathlib import Path
 def _version_from_pyproject():
     pyproject = Path(__file__).resolve().parent.parent / "pyproject.toml"
     if not pyproject.exists():
-        return None
+        return
 
     in_project = False
     for raw_line in pyproject.read_text(encoding="utf-8").splitlines():
@@ -47,7 +47,7 @@ def _version_from_pyproject():
             _, _, value = line.partition("=")
             return value.strip().strip('"').strip("'")
 
-    return None
+    return
 
 
 def _resolve_version():

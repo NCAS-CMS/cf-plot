@@ -67,7 +67,7 @@ def _animation_construct_logical_axis(construct: Any) -> str | None:
     for axis_name in ("T", "Z", "Y", "X"):
         if bool(getattr(construct, axis_name, False)):
             return axis_name
-    return None
+    return
 
 
 def _resolve_animation_construct(
@@ -617,7 +617,7 @@ class ContourRenderer:
             labels,
             title,
         )
-        return None
+        return
 
 
 class MapContourRenderer(ContourRenderer):
@@ -856,7 +856,7 @@ class MapContourRenderer(ContourRenderer):
     ) -> Any:
         """Render colorbar for map contour plots."""
         if self.data.levels is None:
-            return None
+            return
 
         return cbar(
             labels=labels,
@@ -1004,7 +1004,7 @@ class XYContourRenderer(ContourRenderer):
     ) -> Any:
         """Render colorbar for Cartesian contour plots."""
         if self.data.levels is None:
-            return None
+            return
 
         return cbar(
             labels=labels,
@@ -1208,25 +1208,25 @@ def _infer_animation_total_frames(
 ) -> int | None:
     """Best-effort frame count from animation reference input."""
     if reference is None:
-        return None
+        return
 
     if isinstance(reference, cf.Field):
         axis = _infer_animation_axis(reference, animation_axis, ptype)
         if axis is None:
-            return None
+            return
         try:
             values = np.asanyarray(reference.construct(axis).array)
         except Exception:
-            return None
+            return
         size = int(values.size)
         return size if size > 0 else None
 
     try:
         arr = np.asanyarray(reference)
     except Exception:
-        return None
+        return
     if arr.ndim == 0:
-        return None
+        return
     size = int(arr.shape[0])
     return size if size > 0 else None
 
@@ -1234,11 +1234,11 @@ def _infer_animation_total_frames(
 def _animation_axis_value_object(f: Any, axis: str | None) -> Any:
     """Return a frame-axis scalar value for callback payloads."""
     if axis is None or not isinstance(f, cf.Field):
-        return None
+        return
 
     axis_key, construct, logical_axis = _resolve_animation_construct(f, axis)
     if axis_key is None or construct is None:
-        return None
+        return
 
     try:
         if (
@@ -1249,10 +1249,10 @@ def _animation_axis_value_object(f: Any, axis: str | None) -> Any:
         else:
             values = np.asanyarray(construct.array)
     except Exception:
-        return None
+        return
 
     if values.size != 1:
-        return None
+        return
     return values.reshape(-1)[0]
 
 
@@ -1332,14 +1332,14 @@ def _infer_animation_axis(
         User axis selection. Supported values are "auto", "T", "Z", "Y", "X".
     """
     if not isinstance(f, cf.Field):
-        return None
+        return
 
     if axis_spec is None:
-        return None
+        return
 
     axis_text = str(axis_spec).strip()
     if axis_text == "":
-        return None
+        return
 
     axis_upper = axis_text.upper()
     if axis_upper != "AUTO":
@@ -1347,7 +1347,7 @@ def _infer_animation_axis(
             f, axis_text
         )
         if axis_key is None or construct is None:
-            return None
+            return
         return str(construct.identity(default=axis_key))
 
     try:
@@ -1370,7 +1370,7 @@ def _infer_animation_axis(
                 continue
             if values.size == 1:
                 return str(construct.identity(default=axis.lower()))
-        return None
+        return
 
     # ptype=0 fallback: prefer temporal slices first, then vertical,
     # then horizontal singleton axes.
@@ -1385,14 +1385,14 @@ def _infer_animation_axis(
         if values.size == 1:
             return str(construct.identity(default=axis.lower()))
 
-    return None
+    return
 
 
 def _animation_axis_value_text(f: cf.Field, axis: str) -> str | None:
     """Return axis/value text used in animation titles."""
     axis_key, construct, logical_axis = _resolve_animation_construct(f, axis)
     if axis_key is None or construct is None:
-        return None
+        return
 
     try:
         if (
@@ -1403,10 +1403,10 @@ def _animation_axis_value_text(f: cf.Field, axis: str) -> str | None:
         else:
             values = np.asanyarray(construct.array)
     except Exception:
-        return None
+        return
 
     if values.size != 1:
-        return None
+        return
 
     value = values.reshape(-1)[0]
     name, units = utility.cf_var_name_titles(f, axis_key)
@@ -1490,7 +1490,7 @@ def _choose_animation_sequence_axis(
 ) -> str | None:
     """Choose an axis for internal animation slicing when full field is >2D."""
     if not isinstance(f, cf.Field):
-        return None
+        return
 
     axis = _infer_animation_axis(f, axis_spec, ptype)
     if _animation_axis_size_gt_one(f, axis) > 1:
@@ -1510,7 +1510,7 @@ def _choose_animation_sequence_axis(
             resolved = _infer_animation_axis(f, candidate, ptype)
             return resolved or candidate
 
-    return None
+    return
 
 
 def _slice_animation_frame(
@@ -2359,9 +2359,10 @@ def _render_with_new_xy(
 
     if data.ptype == 1:
         title = resolved_title
+
         animation = bool(kwargs.get("animation", False))
 
-        if title != "":
+        if title:
             title_artist = _apply_map_title(
                 mymap=pv_runtime.mymap,
                 title=title,
@@ -2674,10 +2675,10 @@ def con(f=None, x=None, y=None, **kwargs):
                     kwargs=kwargs,
                     animation_axis=axis,
                 ):
-                    return None
+                    return
 
     if _render_with_new_xy(f=f, x=x, y=y, kwargs=kwargs):
-        return None
+        return
 
     raise NotImplementedError(
         "Contour case not implemented in refactored renderer yet"

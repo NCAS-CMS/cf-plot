@@ -31,7 +31,7 @@ def _apply_map_title(
 ) -> Any:
     """Draw a title on a map axes at the geographically correct position."""
     polar_range = 90 - abs(boundinglat)
-    myprojs = ["cyl", "robin", "moll", "merc"]
+    myprojs = ["cyl", "robin", "moll", "merc", "ortho"]
 
     if proj in myprojs:
         lon_mid = lonmin + (lonmax - lonmin) / 2.0
@@ -40,12 +40,26 @@ def _apply_map_title(
             ccrs.Robinson,
             ccrs.Mollweide,
             ccrs.Mercator,
+            ccrs.Orthographic,
         ]
         myind = myprojs.index(proj)
         map_proj = projs[myind](central_longitude=lon_mid)
         xpt, ypt = map_proj.transform_point(
             lon_mid, latmax, ccrs.PlateCarree()
         )
+        ypt = ypt + (latmax - latmin) / 40.0
+    elif proj == "rotated":
+        lon_mid = lonmin + (lonmax - lonmin) / 2.0
+
+        # Use the actual rotated CRS of the map axes.
+        map_proj = mymap.projection
+
+        xpt, ypt = map_proj.transform_point(
+            lon_mid,
+            latmax,
+            map_proj,
+        )
+
         ypt = ypt + (latmax - latmin) / 40.0
     elif proj == "npstere":
         mylon = lon_0 + 180
@@ -70,8 +84,22 @@ def _apply_map_title(
         xpt, ypt = map_proj.transform_point(
             lon_mid, latmax, ccrs.PlateCarree()
         )
+
+        # Move the title down towards the map so it fits in the figure, else
+        # it gets cut off due to the height required to plot in LCC.
+        ymin, ymax = mymap.get_ylim()
+        ypt -= 0.12 * (ymax - ymin)
+    elif proj in ("UKCP", "OSGB", "EuroPP"):
+        return mymap.set_title(
+            title,
+            loc="center",
+            pad=6,
+            fontsize=title_fontsize,
+            fontweight=title_fontweight,
+        )
     else:
-        return None
+        raise ValueError(
+            f"Unable to produce title for projection {proj}")
 
     return mymap.text(
         xpt,
