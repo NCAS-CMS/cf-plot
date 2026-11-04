@@ -36,7 +36,7 @@ def gopen(
     animation_meta_callback: Any = None,
     animation_frame_callback: Any = None,
 ) -> None:
-    """Open a contour-runtime graphics session compatible with cfplot.gopen."""
+    """Open a graphics file to contain plots."""
     plotvars.rows = rows
     plotvars.columns = columns
     if file != "cfplot.png":
@@ -69,7 +69,7 @@ def gopen(
 
 
 def gclose(view: bool = True) -> None:
-    """Close a contour-runtime graphics session and save/view output."""
+    """Close a plot graphics file and save and/or view the output."""
     plotvars.user_plot = 0
 
     interactive = bool(globals().get("__IPYTHON__", False))
