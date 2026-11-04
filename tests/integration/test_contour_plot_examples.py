@@ -718,7 +718,16 @@ def test_example_nemo_1():
 
 @pytest.mark.integration
 def test_example_45_all_titles():
-    """Test Example 45: titles across the projections."""
+    """Test Example 45: titles across the projections.
+
+    Tests whether ttitles fit across the possible supported projections
+    (excluding special cases such as UKCP tested separately).
+
+    NOTE. This is a test example but NOT a documentation example (plot is too
+    cluttered and therefore ugly, the main intention is to check titles
+    appear and we want to keep all elements e.g. labelling to make sure
+    everything fits alongside the title).
+    """
     if not (DATA_DIR / "tas_A1.nc").exists():
         pytest.skip(f"Missing test data: {DATA_DIR / 'tas_A1.nc'}")
 
@@ -729,41 +738,30 @@ def test_example_45_all_titles():
 
     cfp.gopen(rows=3, columns=3, bottom=0.2)
 
-    cfp.gpos(1)
-    cfp.mapset(proj="cyl")  # default strictly but to be explicit
-    cfp.con(g, title="A title")
+    proj_names = [
+        "cyl",
+        "rotated",
+        "merc",
+        "robin",
+        "ortho",
+        "moll",
+        "npstere",
+        "spstere",
+    ]
 
-    cfp.gpos(2)
-    cfp.mapset(proj="merc")
-    cfp.con(g, title="A title")
+    for index, proj_name in enumerate(proj_names):
+        cfp.mapset(proj=proj_name)
 
-    cfp.gpos(3)
-    cfp.mapset(proj="robin")
-    cfp.con(g, title="A title")
+        # gpos expects 1 as first value, see:
+        # https://github.com/NCAS-CMS/cf-plot/issues/76
+        cfp.gpos(index + 1)
 
-    cfp.gpos(4)
-    cfp.mapset(proj="ortho")
-    cfp.con(g, title="A title")
+        cfp.con(g, title=f"Title for {proj_name} projection")
 
-    cfp.gpos(5)
-    cfp.mapset(proj="moll")
-    cfp.con(g, title="A title")
-
-    cfp.gpos(6)
-    cfp.mapset(proj="npstere")
-    cfp.con(g, title="A title")
-
-    cfp.gpos(7)
-    cfp.mapset(proj="spstere")
-    cfp.con(g, title="A title")
-
-    cfp.gpos(8)
-    cfp.mapset(proj="rotated")
-    cfp.con(g, title="A title")
-
+    # LCC case needs lat and lon boundaries set, so do outside loop
     cfp.gpos(9)
     cfp.mapset(proj="lcc", lonmin=-50, lonmax=50, latmin=20, latmax=85)
-    cfp.con(g, title="A title")
+    cfp.con(g, title="Title for lcc projection")
 
     cfp.gclose()
 
