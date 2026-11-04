@@ -116,7 +116,15 @@ def gopen(
 
 
 def gclose(view: bool = True) -> None:
-    """Close a plot graphics file and save and/or view the output."""
+    """Close a plot graphics file and save and/or view the output.
+
+    Args:
+        view: If ``True``, view the graphics file after saving. Set to
+            ``False`` to disable viewing. Defaults to ``True``.
+
+    Returns:
+        None
+    """
     plotvars.user_plot = 0
 
     interactive = bool(globals().get("__IPYTHON__", False))
