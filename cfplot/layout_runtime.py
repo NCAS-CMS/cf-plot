@@ -158,22 +158,22 @@ def gclose(view: bool = True) -> None:
 
     file_ = plotvars.file
     figure = plotvars.master_plot or getattr(plotvars.plot, "figure", None)
-    if figure is not None and file_ is not None:
-        if os.path.splitext(file_)[1].lower() not in (
-            ".ps",
-            ".eps",
-            ".png",
-            ".pdf",
-        ):
-            file_ = file_ + ".png"
-        figure.savefig(
-            file_,
-            orientation=plotvars.orientation,
-            dpi=plotvars.dpi,
-            **saveargs,
-        )
-        plot.close(figure)
-    elif figure is not None:
+    if figure is not None:
+        if file_ is not None:
+            if os.path.splitext(file_)[1].lower() not in (
+                ".ps",
+                ".eps",
+                ".png",
+                ".pdf",
+            ):
+                file_ = file_ + ".png"
+            figure.savefig(
+                file_,
+                orientation=plotvars.orientation,
+                dpi=plotvars.dpi,
+                **saveargs,
+            )
+            plot.close(figure)
         if view and plotvars.viewer == "display" and not interactive:
             disp = shutil.which("display")
             if disp is not None:
