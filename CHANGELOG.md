@@ -34,6 +34,9 @@ of being developed elsewhere.
   (https://github.com/NCAS-CMS/cf-plot/issues/150)
 * Fix bug whereby `gclose` showed no view after `gopen` call with
   `file` set (https://github.com/NCAS-CMS/cf-plot/issues/53)
+* New function `gfigure` for use as context manager `with cfp.figure():`
+  to make multiple plot calls without need to call `gopen` then `gclose`
+  (https://github.com/NCAS-CMS/cf-plot/issues/159)
 
 
 #### Version `3.5.0`, released 2026-10-09
