@@ -43,43 +43,58 @@ def gopen(
             - ``rows``, ``columns``, ``user_plot``
         - configure the output file and figure:
             - ``file``, ``orientation``, ``figsize``, ``dpi``
+        - control user-defined plot positioning:
+            - ``user_position``
         - configure figure margins and subplot spacing:
             - ``left``, ``right``, ``top``, ``bottom``, ``wspace``,
               ``hspace``
-        - control user-defined plot positioning:
-            - ``user_position``
         - configure animation session integration:
             - ``animation_session_id``, ``animation_meta_callback``,
               ``animation_frame_callback``
 
     Args:
-        rows: Number of plot rows on the page.
-        columns: Number of plot columns on the page.
-        user_plot: Internal plot variable. Do not use.
+        rows (int, optional): Number of plot rows on the page. Defaults to
+            ``1``.
+        columns (int, optional): Number of plot columns on the page.
+            Defaults to ``1``.
+        _user_plot (int, optional): Internal plot variable. Do not use.
+            Defaults to ``1``.
 
-        file: Default output file name. Defaults to ``'cfplot.png'``.
-        orientation: Figure orientation. Options are ``'landscape'`` and
-            ``'portrait'``. Defaults to ``'landscape'``.
-        figsize: Figure size in inches, specified as a list or tuple of
-            two values. Defaults to ``(11.7, 8.3)``.
-        dpi: Resolution in dots per inch.
+        file (str, optional): Output file name. Defaults to
+            ``'cfplot.png'``.
+        orientation (str, optional): Figure orientation. Options are
+            ``'landscape'`` and ``'portrait'``. Defaults to
+            ``'landscape'``.
+        figsize (list[float] | tuple[float, float], optional): Figure size
+            in inches, specified as a list or tuple of two values. Defaults
+            to ``(11.7, 8.3)``.
+        dpi (float | None, optional): Resolution in dots per inch. Defaults
+            to ``None`` which defers to the matplotlib default value. TODO
 
-        user_position: If ``True``, allow the plot position to be supplied
-            via ``gpos``. Defaults to ``False``.
+        user_position (bool, optional): If ``True``, allow the plot
+            position to be supplied via the ``gpos`` arguments of ``xmin``,
+            ``xmax``, ``ymin``, ``ymax`` instead of an integer for
+            automatic positioning by cf-plot. Defaults to ``False``.
 
-        left: Left margin in normalised coordinates. Defaults to ``0.12``.
-        right: Right margin in normalised coordinates. Defaults to ``0.92``.
-        top: Top margin in normalised coordinates. Defaults to ``0.08``.
-        bottom: Bottom margin in normalised coordinates. Defaults to
-            ``0.08``.
-        wspace: Width reserved for blank space between subplots. Defaults
-            to ``0.2``.
-        hspace: Height reserved for white space between subplots. Defaults
-            to ``0.2``.
+        left (float | None, optional): Left margin in normalised
+            coordinates. Defaults to ``None`` to use ``0.12``.
+        right (float | None, optional): Right margin in normalised
+            coordinates. Defaults to ``None`` to use ``0.92``.
+        top (float | None, optional): Top margin in normalised coordinates.
+            Defaults to ``None`` to use ``0.08``.
+        bottom (float | None, optional): Bottom margin in normalised
+            coordinates. Defaults to ``None`` to use ``0.08``.
+        wspace (float | None, optional): Width reserved for blank space
+            between subplots. Defaults to ``None`` to use ``0.2``.
+        hspace (float | None, optional): Height reserved for blank space
+            between subplots. Defaults to ``None`` to use ``0.2``.
 
-        animation_session_id: Identifier for the animation session.
-        animation_meta_callback: Callback for providing animation metadata.
-        animation_frame_callback: Callback for handling animation frames.
+        animation_session_id (str | None, optional): Identifier for the
+            animation session. Defaults to ``None``.
+        animation_meta_callback (Any, optional): Callback for providing
+            animation metadata. Defaults to ``None``.
+        animation_frame_callback (Any, optional): Callback for handling
+            animation frames. Defaults to ``None``.
 
     Returns:
         None
