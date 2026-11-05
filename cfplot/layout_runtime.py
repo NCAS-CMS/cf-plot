@@ -611,10 +611,10 @@ def _reset_closed_figure_state() -> None:
 
 def gpos(
     pos: int = 1,
-    xmin: float | None = None,
-    xmax: float | None = None,
-    ymin: float | None = None,
-    ymax: float | None = None,
+    xmin: float | int | None = None,
+    xmax: float | int | None = None,
+    ymin: float | int | None = None,
+    ymax: float | int | None = None,
 ) -> None:
     """Set subplot position, starting at 1 for the top-left position.
 
@@ -622,26 +622,32 @@ def gpos(
     right. When the end of the row has been reached, the next plot will be
     the leftmost plot on the next row down.
 
-    To obtain full control over the plot position, all four
-    parameters ``xmin``, xmin, xmin, xmin
-    can be specified. In addition, ``cfp.gopen`` must
-    have the ``user_position=True`` parameter set.
+    To obtain full control over the plot position, all of the parameters
+    ``xmin``, ``xmax``, ``ymin`` and ``ymax`` can be specified (all four
+    are required, if any are given). In addition, ``cfp.gopen`` must
+    have the ``user_position=True`` parameter set if these are specified.
 
     Args:
-        pos: Plot position, an integer starting at ``1``. Defaults to ``1``.
-        xmin: Minimum x-coordinate in normalised coordinates. Defaults to
-            ``None``.
-        xmax: Maximum x-coordinate in normalised coordinates. Defaults to
-            ``None``.
-        ymin: Minimum y-coordinate in normalised coordinates. Defaults to
-            ``None``.
-        ymax: Maximum y-coordinate in normalised coordinates. Defaults to
-            ``None``.
+        pos (int): Plot position, an integer starting at ``1``. For ``1``
+            plots at the top left and for the next integer up will plot
+            the next subplot to the right, continuing to the next row
+            down once the end of the row is reached. Defaults to ``1``.
+
+        xmin (float | int | None, optional): Minimum x-coordinate in
+            normalised coordinates. Defaults to ``None``.
+        xmax (float | int | None, optional): Maximum x-coordinate in
+            normalised coordinates. Defaults to ``None``.
+        ymin (float | int | None, optional): Minimum y-coordinate in
+            normalised coordinates. Defaults to ``None``.
+        ymax (float | int | None, optional): Maximum y-coordinate in
+            normalised coordinates. Defaults to ``None``.
 
     Returns:
         None
     """
-    if all(val is not None for val in [xmin, xmax, ymin, ymax]):
+    coord_extrema = [xmin, xmax, ymin, ymax]
+    # 'not None' to distinguish None and 0.0 position
+    if all(val is not None for val in coord_extrema):
         plotvars.plot_xmin = xmin
         plotvars.plot_xmax = xmax
         plotvars.plot_ymin = ymin
