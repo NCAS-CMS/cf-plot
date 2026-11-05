@@ -206,7 +206,7 @@ def gclose(view: bool = True) -> None:
 def gfigure(*args, **kwargs):
     """Manage a figure containing multiple plots and/or layers on one plot.
 
-    The figure is opened on entering the context and closed on
+    The graphical figure is opened on entering the context and closed on
     exiting it, including when an exception occurs. The context manager
     is equivalent to calling `gopen` before the code and `gclose`
     immediately afterwards.
