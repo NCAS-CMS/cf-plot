@@ -409,8 +409,8 @@ def test_example_19a_user_positioned_subplots(ggap_file):
 
 
 @pytest.mark.integration
-def test_example_19b_multiple_subplots_via_gfigure(ggap_file):
-    """Test Example 19b: multiple plots as subplots.
+def test_example_19d_multiple_subplots_via_gfigure(ggap_file):
+    """Test Example 19d: multiple plots as subplots.
 
     The same test as 19a except using `gfigure` rather than `gopen`-`gclose`,
     to test that these produce the same result.
@@ -419,7 +419,7 @@ def test_example_19b_multiple_subplots_via_gfigure(ggap_file):
         pytest.skip(f"Missing test data: {DATA_DIR / 'ggap.nc'}")
 
     f = ggap_file["eastward_wind"]
-    _configure_example_output("19b")
+    _configure_example_output("19d")
 
     with cfp.gfigure(rows=2, columns=2, bottom=0.2):
         cfp.gpos(1)
@@ -438,7 +438,7 @@ def test_example_19b_multiple_subplots_via_gfigure(ggap_file):
             colorbar_orientation="horizontal",
         )
 
-    _assert_reference_match("19b")
+    _assert_reference_match("19d")
 
 
 @pytest.mark.integration
