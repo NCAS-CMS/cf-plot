@@ -644,6 +644,10 @@ def gpos(
 
     Returns:
         None
+
+    Raises:
+        ValueError: If only some of ``xmin``, ``xmax``, ``ymin`` and
+            ``ymax`` are specified.
     """
     coord_extrema = [xmin, xmax, ymin, ymax]
     # 'not None' to distinguish None and 0.0 position
@@ -652,6 +656,12 @@ def gpos(
         plotvars.plot_xmax = xmax
         plotvars.plot_ymin = ymin
         plotvars.plot_ymax = ymax
+    elif any(val is not None for val in coord_extrema):
+        raise ValueError(
+            "Must specify all four coordinates (xmin, xmax, ymin, ymax) "
+            "or leave all four as None. Got values of "
+            f"xmin, xmax, ymin, ymax: {xmin, xmax, ymin, ymax}"
+        )
 
     _select_position(pos)
 
