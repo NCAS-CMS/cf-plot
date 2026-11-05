@@ -32,6 +32,9 @@ of being developed elsewhere.
 * Fix bug preventing title showing with `con` for the following
   projections: `ortho`, `lcc`, `rotated`, `UKCP`, `OSGB` and `EuroPP`
   (https://github.com/NCAS-CMS/cf-plot/issues/150)
+* Fix bug whereby `gclose` showed no view after `gopen` call with
+  `file` set (https://github.com/NCAS-CMS/cf-plot/issues/53)
+
 
 #### Version `3.5.0`, released 2026-10-09
 
