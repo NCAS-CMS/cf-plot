@@ -203,9 +203,11 @@ Listing of all examples
    examples/example_16c.rst
    examples/example_17.rst
    examples/example_18.rst
+   examples/example_19.rst
    examples/example_19a.rst
    examples/example_19b.rst
    examples/example_19c.rst
+   examples/example_19d.rst
    examples/example_20.rst
    examples/example_21a.rst
    examples/example_21b.rst
