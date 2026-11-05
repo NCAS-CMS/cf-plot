@@ -246,7 +246,7 @@ def ensure_runtime_session(pos: int = 1) -> bool:
     """
     auto_session = plotvars.user_plot == 0
     if auto_session:
-        gopen(user_plot=0)
+        gopen(_user_plot=0)
 
     if plotvars.rows > 1 or plotvars.columns > 1:
         if plotvars.gpos_called is False:
