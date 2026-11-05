@@ -69,7 +69,11 @@ def gopen(
             in inches, specified as a list or tuple of two values. Defaults
             to ``(11.7, 8.3)``.
         dpi (float | None, optional): Resolution in dots per inch. Defaults
-            to ``None`` which defers to the matplotlib default value. TODO
+            to ``None`` which defers to the matplotlib default value
+            (normally ``100.0``, see :ref:`matplotlib configuration
+            <matplotlib:customizing>` and the
+            `Matplotlib figure.dpi configuration
+            <https://matplotlib.org/stable/users/explain/configuration.html#figure>`_).
 
         user_position (bool, optional): If ``True``, allow the plot
             position to be supplied via the ``gpos`` arguments of ``xmin``,
