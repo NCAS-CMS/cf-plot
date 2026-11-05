@@ -119,8 +119,9 @@ def gclose(view: bool = True) -> None:
     """Close a plot graphics file and save and/or view the output.
 
     Args:
-        view: If ``True``, view the graphics file after saving. Set to
-            ``False`` to disable viewing. Defaults to ``True``.
+        view (bool, optional): If ``True``, view the graphics file after
+            saving. Set to ``False`` to disable viewing.
+            Defaults to ``True``.
 
     Returns:
         None
@@ -136,18 +137,18 @@ def gclose(view: bool = True) -> None:
     if plotvars.tight:
         saveargs = {"bbox_inches": "tight"}
 
-    file = plotvars.file
+    file_ = plotvars.file
     figure = plotvars.master_plot or getattr(plotvars.plot, "figure", None)
-    if figure is not None and file is not None:
-        if os.path.splitext(file)[1].lower() not in (
+    if figure is not None and file_ is not None:
+        if os.path.splitext(file_)[1].lower() not in (
             ".ps",
             ".eps",
             ".png",
             ".pdf",
         ):
-            file = file + ".png"
+            file_ = file_ + ".png"
         figure.savefig(
-            file,
+            file_,
             orientation=plotvars.orientation,
             dpi=plotvars.dpi,
             **saveargs,
@@ -628,10 +629,11 @@ def gpos(
     have the ``user_position=True`` parameter set if these are specified.
 
     Args:
-        pos (int): Plot position, an integer starting at ``1``. For ``1``
-            plots at the top left and for the next integer up will plot
-            the next subplot to the right, continuing to the next row
-            down once the end of the row is reached. Defaults to ``1``.
+        pos (int, optional): Plot position, an integer starting at ``1``.
+            For ``1`` plots at the top left and for the next integer up
+            will plot the next subplot to the right, continuing to the
+            next row down once the end of the row is reached.
+            Defaults to ``1``.
 
         xmin (float | int | None, optional): Minimum x-coordinate in
             normalised coordinates. Defaults to ``None``.
