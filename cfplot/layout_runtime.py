@@ -20,7 +20,6 @@ from .state import plotvars, reset_runtime_state
 def gopen(
     rows: int = 1,
     columns: int = 1,
-    user_plot: int = 1,
     file: str = "cfplot.png",
     orientation: str = "landscape",
     figsize: list[float] | tuple[float, float] = (11.7, 8.3),
@@ -35,12 +34,13 @@ def gopen(
     animation_session_id: str | None = None,
     animation_meta_callback: Any = None,
     animation_frame_callback: Any = None,
+    _user_plot: int = 1,
 ) -> None:
     """Open a graphics file to contain plots.
 
     Parameter breakdown (see below for full detail). The following parameters:
         - configure the plot layout:
-            - ``rows``, ``columns``, ``user_plot``
+            - ``rows``, ``columns``
         - configure the output file and figure:
             - ``file``, ``orientation``, ``figsize``, ``dpi``
         - control user-defined plot positioning:
@@ -51,13 +51,13 @@ def gopen(
         - configure animation session integration:
             - ``animation_session_id``, ``animation_meta_callback``,
               ``animation_frame_callback``
+        - internal use only (do not use):
+            - ``_user_plot``
 
     Args:
         rows (int, optional): Number of plot rows on the page. Defaults to
             ``1``.
         columns (int, optional): Number of plot columns on the page.
-            Defaults to ``1``.
-        _user_plot (int, optional): Internal plot variable. Do not use.
             Defaults to ``1``.
 
         file (str, optional): Output file name. Defaults to
@@ -100,6 +100,9 @@ def gopen(
         animation_frame_callback (Any, optional): Callback for handling
             animation frames. Defaults to ``None``.
 
+        _user_plot (int, optional): Internal plot variable for validation
+            purposes. Do not use. Defaults to ``1``.
+
     Returns:
         None
     """
@@ -110,7 +113,7 @@ def gopen(
     plotvars.orientation = orientation
 
     _open_figure(
-        user_plot=user_plot,
+        user_plot=_user_plot,
         figsize=figsize,
         orientation=orientation,
         left=left,
