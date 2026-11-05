@@ -20,23 +20,92 @@ from .state import plotvars, reset_runtime_state
 def gopen(
     rows: int = 1,
     columns: int = 1,
-    user_plot: int = 1,
     file: str = "cfplot.png",
     orientation: str = "landscape",
     figsize: list[float] | tuple[float, float] = (11.7, 8.3),
+    dpi: float | None = None,
+    user_position: bool = False,
     left: float | None = None,
     right: float | None = None,
     top: float | None = None,
     bottom: float | None = None,
     wspace: float | None = None,
     hspace: float | None = None,
-    dpi: float | None = None,
-    user_position: bool = False,
     animation_session_id: str | None = None,
     animation_meta_callback: Any = None,
     animation_frame_callback: Any = None,
+    _user_plot: int = 1,
 ) -> None:
-    """Open a contour-runtime graphics session compatible with cfplot.gopen."""
+    """Open a graphics file to contain plots.
+
+    Parameter breakdown (see below for full detail). The following parameters:
+        - configure the plot layout:
+            - ``rows``, ``columns``
+        - configure the output file and figure:
+            - ``file``, ``orientation``, ``figsize``, ``dpi``
+        - control user-defined plot positioning:
+            - ``user_position``
+        - configure figure margins and subplot spacing:
+            - ``left``, ``right``, ``top``, ``bottom``, ``wspace``,
+              ``hspace``
+        - configure animation session integration:
+            - ``animation_session_id``, ``animation_meta_callback``,
+              ``animation_frame_callback``
+        - internal use only (do not use):
+            - ``_user_plot``
+
+    Args:
+        rows (int, optional): Number of plot rows on the page. Defaults to
+            ``1``.
+        columns (int, optional): Number of plot columns on the page.
+            Defaults to ``1``.
+
+        file (str, optional): Output file name. Defaults to
+            ``'cfplot.png'``.
+        orientation (str, optional): Figure orientation. Options are
+            ``'landscape'`` and ``'portrait'``. Defaults to
+            ``'landscape'``.
+        figsize (list[float] | tuple[float, float], optional): Figure size
+            in inches, specified as a list or tuple of two values. Defaults
+            to ``(11.7, 8.3)``.
+        dpi (float | None, optional): Resolution in dots per inch. Defaults
+            to ``None`` which defers to the matplotlib default value
+            (normally ``100.0``, see :ref:`matplotlib configuration
+            <matplotlib:customizing>` and the
+            `Matplotlib figure.dpi configuration
+            <https://matplotlib.org/stable/users/explain/configuration.html#figure>`_).
+
+        user_position (bool, optional): If ``True``, allow the plot
+            position to be supplied via the ``gpos`` arguments of ``xmin``,
+            ``xmax``, ``ymin``, ``ymax`` instead of an integer for
+            automatic positioning by cf-plot. Defaults to ``False``.
+
+        left (float | None, optional): Left margin in normalised
+            coordinates. Defaults to ``None`` to use ``0.12``.
+        right (float | None, optional): Right margin in normalised
+            coordinates. Defaults to ``None`` to use ``0.92``.
+        top (float | None, optional): Top margin in normalised coordinates.
+            Defaults to ``None`` to use ``0.08``.
+        bottom (float | None, optional): Bottom margin in normalised
+            coordinates. Defaults to ``None`` to use ``0.08``.
+        wspace (float | None, optional): Width reserved for blank space
+            between subplots. Defaults to ``None`` to use ``0.2``.
+        hspace (float | None, optional): Height reserved for blank space
+            between subplots. Defaults to ``None`` to use ``0.2``.
+
+        animation_session_id (str | None, optional): Identifier for the
+            animation session. Defaults to ``None``.
+        animation_meta_callback (Any, optional): Callback for providing
+            animation metadata. Defaults to ``None``.
+        animation_frame_callback (Any, optional): Callback for handling
+            animation frames. Defaults to ``None``.
+
+        _user_plot (int, optional): Internal plot variable for validation
+            purposes. Do not use. Defaults to ``1``.
+
+    Returns:
+        None
+    """
     plotvars.rows = rows
     plotvars.columns = columns
     if file != "cfplot.png":
@@ -44,7 +113,7 @@ def gopen(
     plotvars.orientation = orientation
 
     _open_figure(
-        user_plot=user_plot,
+        user_plot=_user_plot,
         figsize=figsize,
         orientation=orientation,
         left=left,
@@ -69,7 +138,16 @@ def gopen(
 
 
 def gclose(view: bool = True) -> None:
-    """Close a contour-runtime graphics session and save/view output."""
+    """Close a plot graphics file and save and/or view the output.
+
+    Args:
+        view (bool, optional): If ``True``, view the graphics file after
+            saving. Set to ``False`` to disable viewing.
+            Defaults to ``True``.
+
+    Returns:
+        None
+    """
     plotvars.user_plot = 0
 
     interactive = bool(globals().get("__IPYTHON__", False))
@@ -81,24 +159,24 @@ def gclose(view: bool = True) -> None:
     if plotvars.tight:
         saveargs = {"bbox_inches": "tight"}
 
-    file = plotvars.file
+    file_ = plotvars.file
     figure = plotvars.master_plot or getattr(plotvars.plot, "figure", None)
-    if figure is not None and file is not None:
-        if os.path.splitext(file)[1].lower() not in (
-            ".ps",
-            ".eps",
-            ".png",
-            ".pdf",
-        ):
-            file = file + ".png"
-        figure.savefig(
-            file,
-            orientation=plotvars.orientation,
-            dpi=plotvars.dpi,
-            **saveargs,
-        )
-        plot.close(figure)
-    elif figure is not None:
+    if figure is not None:
+        if file_ is not None:
+            if os.path.splitext(file_)[1].lower() not in (
+                ".ps",
+                ".eps",
+                ".png",
+                ".pdf",
+            ):
+                file_ = file_ + ".png"
+            figure.savefig(
+                file_,
+                orientation=plotvars.orientation,
+                dpi=plotvars.dpi,
+                **saveargs,
+            )
+            plot.close(figure)
         if view and plotvars.viewer == "display" and not interactive:
             disp = shutil.which("display")
             if disp is not None:
@@ -168,7 +246,7 @@ def ensure_runtime_session(pos: int = 1) -> bool:
     """
     auto_session = plotvars.user_plot == 0
     if auto_session:
-        gopen(user_plot=0)
+        gopen(_user_plot=0)
 
     if plotvars.rows > 1 or plotvars.columns > 1:
         if plotvars.gpos_called is False:
@@ -556,17 +634,58 @@ def _reset_closed_figure_state() -> None:
 
 def gpos(
     pos: int = 1,
-    xmin: float | None = None,
-    xmax: float | None = None,
-    ymin: float | None = None,
-    ymax: float | None = None,
+    xmin: float | int | None = None,
+    xmax: float | int | None = None,
+    ymin: float | int | None = None,
+    ymax: float | int | None = None,
 ) -> None:
-    """Select a subplot position, matching the legacy cfplot.gpos API."""
-    if all(val is not None for val in [xmin, xmax, ymin, ymax]):
+    """Set subplot position, starting at 1 for the top-left position.
+
+    Plots start at the top left and increase by one for each plot to the
+    right. When the end of the row has been reached, the next plot will be
+    the leftmost plot on the next row down.
+
+    To obtain full control over the plot position, all of the parameters
+    ``xmin``, ``xmax``, ``ymin`` and ``ymax`` can be specified (all four
+    are required, if any are given). In addition, ``cfp.gopen`` must
+    have the ``user_position=True`` parameter set if these are specified.
+
+    Args:
+        pos (int, optional): Plot position, an integer starting at ``1``.
+            For ``1`` plots at the top left and for the next integer up
+            will plot the next subplot to the right, continuing to the
+            next row down once the end of the row is reached.
+            Defaults to ``1``.
+
+        xmin (float | int | None, optional): Minimum x-coordinate in
+            normalised coordinates. Defaults to ``None``.
+        xmax (float | int | None, optional): Maximum x-coordinate in
+            normalised coordinates. Defaults to ``None``.
+        ymin (float | int | None, optional): Minimum y-coordinate in
+            normalised coordinates. Defaults to ``None``.
+        ymax (float | int | None, optional): Maximum y-coordinate in
+            normalised coordinates. Defaults to ``None``.
+
+    Returns:
+        None
+
+    Raises:
+        ValueError: If only some of ``xmin``, ``xmax``, ``ymin`` and
+            ``ymax`` are specified.
+    """
+    coord_extrema = [xmin, xmax, ymin, ymax]
+    # 'not None' to distinguish None and 0.0 position
+    if all(val is not None for val in coord_extrema):
         plotvars.plot_xmin = xmin
         plotvars.plot_xmax = xmax
         plotvars.plot_ymin = ymin
         plotvars.plot_ymax = ymax
+    elif any(val is not None for val in coord_extrema):
+        raise ValueError(
+            "Must specify all four coordinates (xmin, xmax, ymin, ymax) "
+            "or leave all four as None. Got values of "
+            f"xmin, xmax, ymin, ymax: {xmin, xmax, ymin, ymax}"
+        )
 
     _select_position(pos)
 

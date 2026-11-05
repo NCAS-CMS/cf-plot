@@ -38,6 +38,8 @@ extensions = [
     "sphinx_design",
     # For parsing Google-style docstrings
     "sphinx.ext.napoleon",
+    # To link to other documentation API reference pages etc.
+    "sphinx.ext.intersphinx",
 ]
 
 # Allow parsing of Google-style dostrings as used in the cf-plot codebase
@@ -52,6 +54,12 @@ autosummary_generate = True
 autodoc_default_options = {
     "members": True,
     "private-members": False,
+}
+
+intersphinx_mapping = {
+    "python": ("https://docs.python.org/3", None),
+    "numpy": ("https://numpy.org/doc/stable/", None),
+    "matplotlib": ("https://matplotlib.org/stable/", None),
 }
 
 # Add any paths that contain templates here, relative to this directory.
