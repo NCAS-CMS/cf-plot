@@ -222,10 +222,9 @@ def test_regression_seaice_ortho_bbox_image():
         pytest.skip(f"Missing test data: {seaice_path}")
 
     f = cf.read(str(seaice_path))[0]
-    generated = TEST_GEN_DIR / "gen_fig_seaice_ortho_bbox.png"
-    reference = REF_IMAGE_DIR / "ref_fig_seaice_ortho_bbox.png"
 
-    cfp.setvars(file=str(generated), viewer="matplotlib")
+    _configure_example_output("seaice_ortho_bbox")
+
     cfp.mapset(
         proj="ortho",
         resolution="110m",
@@ -251,10 +250,9 @@ def test_regression_npstere_da193_image():
         pytest.skip(f"Missing test data: {da193_path}")
 
     f = cf.read(str(da193_path))[0]
-    generated = TEST_GEN_DIR / "gen_fig_npstere_da193.png"
-    reference = REF_IMAGE_DIR / "ref_fig_npstere_da193.png"
+ 
+    _configure_example_output("npstere_da193")
 
-    cfp.setvars(file=str(generated), viewer="matplotlib")
     cfp.mapset(
         proj="npstere",
         resolution="110m",
@@ -265,7 +263,7 @@ def test_regression_npstere_da193_image():
         f, fill=True, lines=False, line_labels=False, title="npstere_da193"
     )
 
-    _assert_reference_match("da193")
+    _assert_reference_match("npstere_da193")
 
 
 @pytest.mark.integration
