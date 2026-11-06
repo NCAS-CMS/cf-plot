@@ -29,4 +29,4 @@ Example 26a: Contour plot based on discrete feature values
    )
 
 
-.. figure:: /../../tests/v350-controlled-env-ref-images/ref_fig_26a.png
+.. figure:: /../../docs/_images/ref_fig_26a.png
