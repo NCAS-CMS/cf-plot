@@ -493,10 +493,15 @@
                   
   <section id="multiple-plots">
 <span id="id1"></span><h1>Multiple plots<a class="headerlink" href="#multiple-plots" title="Link to this heading">#</a></h1>
+<p>Plots are arranged over rows and columns with the first plot at the
+top left and the last plot is the bottom right. Here the margin at the
+bottom of the plot is increased with the bottom parameter to <code class="docutils literal notranslate"><span class="pre">gopen</span></code>
+to accomodate a unified colorbar. The colorbars are turned off for
+all plots apart from the last one.</p>
 <section id="example-19a-multiple-plots">
 <span id="example19a"></span><h2>Example 19a: Multiple plots<a class="headerlink" href="#example-19a-multiple-plots" title="Link to this heading">#</a></h2>
-<div class="literal-block-wrapper docutils container" id="id2">
-<div class="code-block-caption"><span class="caption-text">Making a single figure with multiple plots on it</span><a class="headerlink" href="#id2" title="Link to this code">#</a></div>
+<div class="literal-block-wrapper docutils container" id="id3">
+<div class="code-block-caption"><span class="caption-text">Making a single figure with multiple plots on it</span><a class="headerlink" href="#id3" title="Link to this code">#</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fl</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span><span class="si">}</span><span class="s2">/ggap.nc&quot;</span><span class="p">)</span>
 <span class="n">f</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">select_by_identity</span><span class="p">(</span><span class="s2">&quot;eastward_wind&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
@@ -523,17 +528,57 @@
 <figure class="align-default">
 <img alt="_images/ref_fig_19a.png" src="_images/ref_fig_19a.png" />
 </figure>
-<p>Plots are arranged over rows and columns with the first plot at the
-top left and the last plot is the bottom right. Here the margin at the
-bottom of the plot is increased with the bottom parameter to <code class="docutils literal notranslate"><span class="pre">gopen</span></code>
-to accomodate a unified colorbar. The colorbars are turned off for
-all plots apart from the last one.</p>
+<p>An alternative to wrapping with <code class="docutils literal notranslate"><span class="pre">gopen</span></code> and <code class="docutils literal notranslate"><span class="pre">gclose</span></code> is supported
+through use of the <code class="docutils literal notranslate"><span class="pre">gfigure</span></code> context manager which achieves the same
+result through an indented block led with the <code class="docutils literal notranslate"><span class="pre">with</span> <span class="pre">cfp.figure()</span></code>
+statement. The below shows this in practice to produce the same
+result as Example 19a, except using <code class="docutils literal notranslate"><span class="pre">gfigure</span></code> instead of <code class="docutils literal notranslate"><span class="pre">gopen</span></code> and
+<code class="docutils literal notranslate"><span class="pre">gclose</span></code>.</p>
+</section>
+<section id="example-19d-multiple-plots-using-gfigure-context-manager">
+<span id="id2"></span><h2>Example 19d: Multiple plots using <cite>gfigure</cite> context manager<a class="headerlink" href="#example-19d-multiple-plots-using-gfigure-context-manager" title="Link to this heading">#</a></h2>
+<div class="literal-block-wrapper docutils container" id="id4">
+<div class="code-block-caption"><span class="caption-text">Making a single figure with multiple plots on it
+using the context manager <cite>gfigure</cite> instead of
+via wrapping with <cite>gopen</cite> and <cite>gclose</cite></span><a class="headerlink" href="#id4" title="Link to this code">#</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fl</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span><span class="si">}</span><span class="s2">/ggap.nc&quot;</span><span class="p">)</span>
+<span class="n">f</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">select_by_identity</span><span class="p">(</span><span class="s2">&quot;eastward_wind&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="k">with</span> <span class="n">cfp</span><span class="o">.</span><span class="n">gfigure</span><span class="p">(</span><span class="n">rows</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">bottom</span><span class="o">=</span><span class="mf">0.2</span><span class="p">):</span>
+    <span class="n">cfp</span><span class="o">.</span><span class="n">gpos</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">pressure</span><span class="o">=</span><span class="mi">500</span><span class="p">),</span> <span class="n">colorbar</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">cfp</span><span class="o">.</span><span class="n">gpos</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">cfp</span><span class="o">.</span><span class="n">mapset</span><span class="p">(</span><span class="n">proj</span><span class="o">=</span><span class="s2">&quot;moll&quot;</span><span class="p">)</span>
+    <span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">pressure</span><span class="o">=</span><span class="mi">500</span><span class="p">),</span> <span class="n">colorbar</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">cfp</span><span class="o">.</span><span class="n">gpos</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">cfp</span><span class="o">.</span><span class="n">mapset</span><span class="p">(</span><span class="n">proj</span><span class="o">=</span><span class="s2">&quot;npstere&quot;</span><span class="p">,</span> <span class="n">boundinglat</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">lon_0</span><span class="o">=</span><span class="mi">180</span><span class="p">)</span>
+    <span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">pressure</span><span class="o">=</span><span class="mi">500</span><span class="p">),</span> <span class="n">colorbar</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">cfp</span><span class="o">.</span><span class="n">gpos</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+    <span class="n">cfp</span><span class="o">.</span><span class="n">mapset</span><span class="p">(</span><span class="n">proj</span><span class="o">=</span><span class="s2">&quot;spstere&quot;</span><span class="p">,</span> <span class="n">boundinglat</span><span class="o">=-</span><span class="mi">30</span><span class="p">,</span> <span class="n">lon_0</span><span class="o">=</span><span class="mi">180</span><span class="p">)</span>
+    <span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">pressure</span><span class="o">=</span><span class="mi">500</span><span class="p">),</span>
+        <span class="n">colorbar_position</span><span class="o">=</span><span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">],</span>
+        <span class="n">colorbar_orientation</span><span class="o">=</span><span class="s2">&quot;horizontal&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<figure class="align-default">
+<img alt="_images/ref_fig_19d.png" src="_images/ref_fig_19d.png" />
+</figure>
+<p>User specified plot limits are set by first specifying the
+<code class="docutils literal notranslate"><span class="pre">user_position=True</span></code> parameter to gopen and then the plot position to
+the <code class="docutils literal notranslate"><span class="pre">gpos</span></code> routines. The <code class="docutils literal notranslate"><span class="pre">xmin</span></code>, <code class="docutils literal notranslate"><span class="pre">xmax</span></code>, <code class="docutils literal notranslate"><span class="pre">ymin</span></code>, <code class="docutils literal notranslate"><span class="pre">ymax</span></code>
+paramenters for the plot display area are in normalised coordinates.</p>
+<p>Cylidrical projection plots have an additional rider of having a
+degree in longitude and latitude being the same size so plots of
+this type might not fill the plot area specified as expected.</p>
 </section>
 <section id="example-19b-multiple-plots-with-user-specified-plot-positions">
 <span id="example19b"></span><h2>Example 19b: Multiple plots with user-specified plot positions<a class="headerlink" href="#example-19b-multiple-plots-with-user-specified-plot-positions" title="Link to this heading">#</a></h2>
-<div class="literal-block-wrapper docutils container" id="id3">
+<div class="literal-block-wrapper docutils container" id="id5">
 <div class="code-block-caption"><span class="caption-text">Making a single figure with multiple plots on it, where
-the positions of the individual plots are set explicitly</span><a class="headerlink" href="#id3" title="Link to this code">#</a></div>
+the positions of the individual plots are set explicitly</span><a class="headerlink" href="#id5" title="Link to this code">#</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fl</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span><span class="si">}</span><span class="s2">/ggap.nc&quot;</span><span class="p">)</span>
 <span class="n">f</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">select_by_identity</span><span class="p">(</span><span class="s2">&quot;eastward_wind&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
@@ -555,19 +600,16 @@ the positions of the individual plots are set explicitly</span><a class="headerl
 <figure class="align-default">
 <img alt="../../tests/v350-controlled-env-ref-images/ref_fig_19b.png" src="../../tests/v350-controlled-env-ref-images/ref_fig_19b.png" />
 </figure>
-<p>User specified plot limits are set by first specifying the
-<code class="docutils literal notranslate"><span class="pre">user_position=True</span></code> parameter to gopen and then the plot position to
-the <code class="docutils literal notranslate"><span class="pre">gpos</span></code> routines. The <code class="docutils literal notranslate"><span class="pre">xmin</span></code>, <code class="docutils literal notranslate"><span class="pre">xmax</span></code>, <code class="docutils literal notranslate"><span class="pre">ymin</span></code>, <code class="docutils literal notranslate"><span class="pre">ymax</span></code>
-paramenters for the plot display area are in normalised coordinates.</p>
-<p>Cylidrical projection plots have an additional rider of having a
-degree in longitude and latitude being the same size so plots of
-this type might not fill the plot area specified as expected.</p>
+<p>The plot position on the page is set manually with the
+<code class="docutils literal notranslate"><span class="pre">user_position=True</span></code> parameter to <code class="docutils literal notranslate"><span class="pre">cfp.gopen</span></code>
+and then passing the required plot size to <code class="docutils literal notranslate"><span class="pre">cfp.gpos</span></code>.
+Two calls to the <code class="docutils literal notranslate"><span class="pre">cfp.cbar</span></code> routine place colour bars on the plot.</p>
 </section>
 <section id="example-19c-accomodating-more-than-one-colour-bar">
 <span id="example19c"></span><h2>Example 19c: Accomodating more than one colour bar<a class="headerlink" href="#example-19c-accomodating-more-than-one-colour-bar" title="Link to this heading">#</a></h2>
-<div class="literal-block-wrapper docutils container" id="id4">
+<div class="literal-block-wrapper docutils container" id="id6">
 <div class="code-block-caption"><span class="caption-text">Using the approach to make a single figure with multiple plots
-on it to fit an extra colour bar</span><a class="headerlink" href="#id4" title="Link to this code">#</a></div>
+on it to fit an extra colour bar</span><a class="headerlink" href="#id6" title="Link to this code">#</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fl</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span><span class="si">}</span><span class="s2">/ggap.nc&quot;</span><span class="p">)</span>
 <span class="n">f</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">select_by_identity</span><span class="p">(</span><span class="s2">&quot;eastward_wind&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
@@ -603,10 +645,6 @@ on it to fit an extra colour bar</span><a class="headerlink" href="#id4" title="
 <figure class="align-default">
 <img alt="../../tests/v350-controlled-env-ref-images/ref_fig_19c.png" src="../../tests/v350-controlled-env-ref-images/ref_fig_19c.png" />
 </figure>
-<p>The plot position on the page is set manually with the
-<code class="docutils literal notranslate"><span class="pre">user_position=True</span></code> parameter to <code class="docutils literal notranslate"><span class="pre">cfp.gopen</span></code>
-and then passing the required plot size to <code class="docutils literal notranslate"><span class="pre">cfp.gpos</span></code>.
-Two calls to the <code class="docutils literal notranslate"><span class="pre">cfp.cbar</span></code> routine place colour bars on the plot.</p>
 </section>
 </section>
 
@@ -658,6 +696,7 @@ Two calls to the <code class="docutils literal notranslate"><span class="pre">cf
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-19a-multiple-plots">Example 19a: Multiple plots</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-19d-multiple-plots-using-gfigure-context-manager">Example 19d: Multiple plots using <cite>gfigure</cite> context manager</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-19b-multiple-plots-with-user-specified-plot-positions">Example 19b: Multiple plots with user-specified plot positions</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-19c-accomodating-more-than-one-colour-bar">Example 19c: Accomodating more than one colour bar</a></li>
 </ul>

@@ -6,6 +6,7 @@ contour.py while preserving behaviour.
 
 from __future__ import annotations
 
+from contextlib import contextmanager
 import os
 import shutil
 import subprocess
@@ -199,6 +200,58 @@ def gclose(view: bool = True) -> None:
             plot.close(figure)
 
     reset_runtime_state()
+
+
+@contextmanager
+def gfigure(*args, **kwargs):
+    """Manage a figure containing multiple plots and/or layers on one plot.
+
+    The graphical figure is opened on entering the context and closed on
+    exiting it, including when an exception occurs. The context manager
+    is equivalent to calling `gopen` before the code and `gclose`
+    immediately afterwards.
+
+    Args:
+        *args: Positional arguments passed to `gopen`.
+        **kwargs: Keyword arguments passed to `gopen`.
+
+    Yields:
+        None: Allows plotting commands to be executed within the
+            context.
+
+    Examples:
+        Create a figure containing three subplots:
+
+            with cfp.figure():
+                cfp.gpos(1)
+                cfp.con(f1)
+
+                cfp.gpos(2)
+                cfp.con(f2)
+
+                cfp.gpos(3)
+                cfp.con(f3)
+
+        Which is equivalent to:
+
+            cfp.gopen()
+
+            cfp.gpos(1)
+            cfp.con(f1)
+
+            cfp.gpos(2)
+            cfp.con(f2)
+
+            cfp.gpos(3)
+            cfp.con(f3)
+
+            cfp.gclose()
+    """
+    gopen(*args, **kwargs)
+    try:
+        yield
+    finally:
+        gclose()
 
 
 def maybe_autosave() -> None:

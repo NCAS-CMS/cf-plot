@@ -29,6 +29,7 @@ Graphics related
    cfplot.gopen
    cfplot.gclose
    cfplot.gpos
+   cfplot.gfigure
 
 
 Parameter related

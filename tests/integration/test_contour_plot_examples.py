@@ -409,6 +409,39 @@ def test_example_19a_user_positioned_subplots(ggap_file):
 
 
 @pytest.mark.integration
+def test_example_19d_multiple_subplots_via_gfigure(ggap_file):
+    """Test Example 19d: multiple plots as subplots.
+
+    The same test as 19a except using `gfigure` rather than `gopen`-`gclose`,
+    to test that these produce the same result.
+    """
+    if not (DATA_DIR / "ggap.nc").exists():
+        pytest.skip(f"Missing test data: {DATA_DIR / 'ggap.nc'}")
+
+    f = ggap_file["eastward_wind"]
+    _configure_example_output("19d")
+
+    with cfp.gfigure(rows=2, columns=2, bottom=0.2):
+        cfp.gpos(1)
+        cfp.con(f.subspace(pressure=500), colorbar=None)
+        cfp.gpos(2)
+        cfp.mapset(proj="moll")
+        cfp.con(f.subspace(pressure=500), colorbar=None)
+        cfp.gpos(3)
+        cfp.mapset(proj="npstere", boundinglat=30, lon_0=180)
+        cfp.con(f.subspace(pressure=500), colorbar=None)
+        cfp.gpos(4)
+        cfp.mapset(proj="spstere", boundinglat=-30, lon_0=180)
+        cfp.con(
+            f.subspace(pressure=500),
+            colorbar_position=[0.1, 0.1, 0.8, 0.02],
+            colorbar_orientation="horizontal",
+        )
+
+    _assert_reference_match("19d")
+
+
+@pytest.mark.integration
 def test_example_20_rotated_pole_data():
     """Test Example 20: user labelling of axes with rotated pole data."""
     if not (DATA_DIR / "Geostropic_Adjustment.nc").exists():

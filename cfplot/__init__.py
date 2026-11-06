@@ -7,7 +7,7 @@ Documentation is hosted and found at: https://ncas-cms.github.io/cf-plot/
 from .colorbar import cbar
 from .colour import cscale
 from .contour import con, levs
-from .layout_runtime import gclose, gopen, gpos, gset
+from .layout_runtime import gclose, gopen, gpos, gset, gfigure
 from .line import lineplot
 from .map_runtime import mapset
 from .rotated_runtime import _render_rotated_grid_axes
