@@ -441,15 +441,27 @@ def test_example_27_basic_graph_plot(ggap_file):
     g = f.collapse("X: mean")
 
     _configure_example_output("27")
-    cfp.gopen()
     cfp.lineplot(
         g.subspace(pressure=100),
         marker="o",
         color="blue",
         title="Zonal mean zonal wind at 100mb",
     )
-    cfp.gclose()
     _assert_reference_match("27")
+
+
+@pytest.mark.integration
+def test_example_27b_basic_scatter_plot(ggap_file):
+    """Test Example 27b: basic scatter plot."""
+    f = ggap_file["eastward_wind"]
+    g = f.collapse("Y: minimum")
+
+    _configure_example_output("27b")
+    cfp.scatter(
+        g.subspace(pressure=700),
+        title="Minumum meridional wind at 700mb",
+    )
+    _assert_reference_match("27b")
 
 
 @pytest.mark.integration
