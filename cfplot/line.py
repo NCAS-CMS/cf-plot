@@ -707,10 +707,11 @@ def scatter(*args, **kwargs):
 # clarify the lines=False setting on 'scatter' onlt
 scatter.__doc__ = (
     "Create a scatter plot. "
-    "Equivalent to :func:`cfp.lineplot(lines=False, ...)`."
+    "Equivalent to :func:`cfp.lineplot(lines=False, marker='o', ...)`."
     "\n\n"
     "Has the same signature as :func:`cfp.lineplot` except that\n"
-    "`lines=False` is set automatically to produce a plot with scatter\n"
-    "markers and no lines. Lineplot signature:\n\n"
+    "`lines=False` and `marker='o' are set automatically to produce a plot\n"
+    "with scatter markers but no lines. The marker choice can be overwritten\n"
+    "but `lines` is not configurable for `scatter`. Lineplot signature:\n\n"
     + lineplot.__doc__
 )
