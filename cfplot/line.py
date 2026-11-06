@@ -1,3 +1,5 @@
+from functools import wraps
+
 import cf
 import numpy as np
 
@@ -676,15 +678,24 @@ def lineplot(
     finalize_runtime_session(auto_session=auto_session, view=True)
 
 
+@wraps(lineplot)
 def scatter(**kwargs):
-    """Create a scatter plot. Equivalent to `cfp.lineplot(lines=False, ...)`.
-
-    Has the same signature as `cfp.lineplot` except that `lines=False` is
-    set automatically to produce a plot with scatter markers and no lines.
-    """
+    """Docs line here overwritten: see below."""
     if "lines" in kwargs:
         raise ValueError(
             "'lines' is not a valid keyword argument for cfp.scatter."
         )
 
     return lineplot(lines=False, **kwargs)
+
+
+# Amend the scatter docstring which by 'wraps' inherits the lineplot one, to
+# clarify the lines=False setting on 'scatter' onlt
+scatter.__doc__ = (
+    "Create a scatter plot. Equivalent to `cfp.lineplot(lines=False, ...)`."
+    "\n\n"
+    "Has the same signature as `cfp.lineplot` except that `lines=False` is\n"
+    "set automatically to produce a plot with scatter markers and no lines.\n"
+    "Lineplot signature:\n\n"
+    + lineplot.__doc__
+)
