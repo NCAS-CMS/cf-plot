@@ -674,3 +674,17 @@ def lineplot(
     if auto_session and verbose:
         print("Saving or viewing plot")
     finalize_runtime_session(auto_session=auto_session, view=True)
+
+
+def scatter(**kwargs):
+    """Create a scatter plot. Equivalent to `cfp.lineplot(lines=False, ...)`.
+
+    Has the same signature as `cfp.lineplot` except that `lines=False` is
+    set automatically to produce a plot with scatter markers and no lines.
+    """
+    if "lines" in kwargs:
+        raise ValueError(
+            "'lines' is not a valid keyword argument for cfp.scatter."
+        )
+
+    return lineplot(lines=False, **kwargs)
