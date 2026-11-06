@@ -683,7 +683,7 @@ def scatter(**kwargs):
     """Docs line here overwritten: see below."""
     if "lines" in kwargs:
         raise ValueError(
-            "'lines' is not a valid keyword argument for cfp.scatter."
+            "'lines' is not a valid keyword argument for cfp.scatter"
         )
 
     return lineplot(lines=False, **kwargs)
