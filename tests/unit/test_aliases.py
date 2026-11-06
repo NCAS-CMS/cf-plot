@@ -13,7 +13,9 @@ def test_scatter_calls_lineplot_with_lines_false():
     with patch(f"{module}.lineplot") as mock_lineplot:
         cfp.scatter(**kwargs)
 
-    mock_lineplot.assert_called_once_with(lines=False, **kwargs)
+    mock_lineplot.assert_called_once_with(
+        lines=False, marker="o", **kwargs
+    )
 
 
 def test_scatter_accepts_positional_arguments():
@@ -25,15 +27,14 @@ def test_scatter_accepts_positional_arguments():
     with patch(f"{module}.lineplot") as mock_lineplot:
         cfp.scatter(f)
 
-    mock_lineplot.assert_called_once_with(f, lines=False)
+    mock_lineplot.assert_called_once_with(f, lines=False, marker="o")
 
 
 def test_scatter_rejects_lines_argument():
     """Test that scatter does not accept the lines argument."""
     with pytest.raises(
-            ValueError, match=(
-                "'lines' is not a valid keyword argument for cfp.scatter"
-        )
+        ValueError,
+        match="'lines' is not a valid keyword argument for cfp.scatter",
     ):
         cfp.scatter(lines=True)
 
