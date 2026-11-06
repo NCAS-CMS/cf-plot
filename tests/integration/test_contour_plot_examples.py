@@ -360,13 +360,13 @@ def test_example_12_longitude_time_hovmuller():
 
 
 @pytest.mark.integration
-def test_example_19_multiple_subplots(ggap_file):
-    """Test Example 19: multiple plots as subplots."""
+def test_example_19a_multiple_subplots(ggap_file):
+    """Test Example 19a: multiple plots as subplots."""
     if not (DATA_DIR / "ggap.nc").exists():
         pytest.skip(f"Missing test data: {DATA_DIR / 'ggap.nc'}")
 
     f = ggap_file["eastward_wind"]
-    _configure_example_output("19")
+    _configure_example_output("19a")
 
     cfp.gopen(rows=2, columns=2, bottom=0.2)
     cfp.gpos(1)
@@ -385,17 +385,17 @@ def test_example_19_multiple_subplots(ggap_file):
         colorbar_orientation="horizontal",
     )
     cfp.gclose()
-    _assert_reference_match("19")
+    _assert_reference_match("19a")
 
 
 @pytest.mark.integration
-def test_example_19a_user_positioned_subplots(ggap_file):
-    """Test Example 19a: user specified subplot positions."""
+def test_example_19b_user_positioned_subplots(ggap_file):
+    """Test Example 19b: user specified subplot positions."""
     if not (DATA_DIR / "ggap.nc").exists():
         pytest.skip(f"Missing test data: {DATA_DIR / 'ggap.nc'}")
 
     f = ggap_file["eastward_wind"]
-    _configure_example_output("19a")
+    _configure_example_output("19b")
 
     cfp.gopen(user_position=True)
     cfp.gpos(xmin=0.1, xmax=0.5, ymin=0.55, ymax=1.0)
@@ -405,7 +405,46 @@ def test_example_19a_user_positioned_subplots(ggap_file):
     cfp.gpos(xmin=0.3, xmax=0.7, ymin=0.1, ymax=0.55)
     cfp.con(f.subspace(Z=10), title="10mb", lines=False)
     cfp.gclose()
-    _assert_reference_match("19a")
+    _assert_reference_match("19b")
+
+
+@pytest.mark.integration
+def test_example_19c(ggap_file):
+    """Test Example 19c: accomodating more than one colour bar."""
+    if not (DATA_DIR / "ggap.nc").exists():
+        pytest.skip(f"Missing test data: {DATA_DIR / 'ggap.nc'}")
+
+    f = ggap_file["eastward_wind"]
+    _configure_example_output("19c")
+
+    g = f.collapse("X: mean")
+
+    cfp.gopen(user_position=True)
+
+    cfp.gpos(xmin=0.2, ymin=0.2, xmax=0.8, ymax=0.8)
+    cfp.lineplot(
+        g.subspace(pressure=100),
+        marker="o",
+        color="blue",
+        title="Zonal mean zonal wind at 100mb",
+    )
+
+    cfp.cscale("seaice_2", ncols=20)
+    levs = np.arange(282, 320, 2)
+    cfp.cbar(levs=levs, position=[0.2, 0.1, 0.6, 0.02], title="seaice_2")
+
+    cfp.cscale("topo_15lev", ncols=22)
+    levs = np.arange(-100, 2000, 100)
+    cfp.cbar(
+        levs=levs,
+        position=[0.03, 0.2, 0.04, 0.6],
+        orientation="vertical",
+        title="topo_15lev",
+    )
+
+    cfp.gclose()
+
+    _assert_reference_match("19c")
 
 
 @pytest.mark.integration
