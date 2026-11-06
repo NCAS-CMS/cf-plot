@@ -36,3 +36,23 @@ def test_scatter_rejects_lines_argument():
         )
     ):
         cfp.scatter(lines=True)
+
+
+def test_scatter_defaults_to_circle_marker():
+    """Test that scatter defaults to a circle marker."""
+    module = cfp.scatter.__module__
+
+    with patch(f"{module}.lineplot") as mock_lineplot:
+        cfp.scatter()
+
+    mock_lineplot.assert_called_once_with(lines=False, marker="o")
+
+
+def test_scatter_accepts_custom_marker():
+    """Test that scatter accepts a user-defined marker."""
+    module = cfp.scatter.__module__
+
+    with patch(f"{module}.lineplot") as mock_lineplot:
+        cfp.scatter(marker="x")
+
+    mock_lineplot.assert_called_once_with(lines=False, marker="x")

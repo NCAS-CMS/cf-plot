@@ -691,6 +691,11 @@ def scatter(*args, **kwargs):
             "'lines' is not a valid keyword argument for cfp.scatter"
         )
 
+    # Lineplot defaults to no markers but we want a marker set else with
+    # minimal args scatter would show a blank plot (no lines, no markers).
+    # However in this case the user can override it.
+    kwargs.setdefault("marker", "o")
+
     # Include '*args' to allow positional arguments, just as for lineplot.
     # These are matched to the function parameters in order, e.g. lineplot(f)
     # assigns the first argument to 'f'. Without '*args', lineplot(f) would
