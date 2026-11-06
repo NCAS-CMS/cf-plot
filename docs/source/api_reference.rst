@@ -14,6 +14,7 @@ Plotting routines
 
    cfplot.con
    cfplot.lineplot
+   cfplot.scatter
    cfplot.stipple
    cfplot.stream
    cfplot.traj

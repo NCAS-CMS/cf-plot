@@ -1,3 +1,5 @@
+from functools import wraps
+
 import cf
 import numpy as np
 
@@ -50,7 +52,7 @@ def lineplot(
     titles=False,
     zorder=None,
 ):
-    """Create a line (graph) plot.
+    """Create a line (graph) plot with optional markers.
 
     The minimum usage is ``lineplot(f)``, where *f* is a CF field.
     If *x* and *y* are provided, appropriate plots can be made, including
@@ -63,6 +65,11 @@ def lineplot(
         - Set the axis limits with ``gset`` before plotting the lines.
         - Place any axis overrides described below in the final call to
           ``lineplot``.
+
+    .. note::
+
+        Use :func:`cfplot.scatter` to create a scatter plot without
+        connecting lines.
 
     Parameter breakdown (see below for full detail). The following parameters:
         - specify the input data:
@@ -674,3 +681,37 @@ def lineplot(
     if auto_session and verbose:
         print("Saving or viewing plot")
     finalize_runtime_session(auto_session=auto_session, view=True)
+
+
+@wraps(lineplot)
+def scatter(*args, **kwargs):
+    """Docs line here overwritten: see below."""
+    if "lines" in kwargs:
+        raise ValueError(
+            "'lines' is not a valid keyword argument for cfp.scatter"
+        )
+
+    # Lineplot defaults to no markers but we want a marker set else with
+    # minimal args scatter would show a blank plot (no lines, no markers).
+    # However in this case the user can override it.
+    kwargs.setdefault("marker", "o")
+
+    # Include '*args' to allow positional arguments, just as for lineplot.
+    # These are matched to the function parameters in order, e.g. lineplot(f)
+    # assigns the first argument to 'f'. Without '*args', lineplot(f) would
+    # work but scatter(f) would raise a TypeError.
+    return lineplot(*args, lines=False, **kwargs)
+
+
+# Amend the scatter docstring which by 'wraps' inherits the lineplot one, to
+# clarify the lines=False setting on 'scatter' onlt
+scatter.__doc__ = (
+    "Create a scatter plot. "
+    "Equivalent to `cfplot.lineplot(lines=False, marker='o', ...)`."
+    "\n\n"
+    "Has the same signature as :func:`cfplot.lineplot` except that\n"
+    "`lines=False` and `marker='o' are set automatically to produce a plot\n"
+    "with scatter markers but no lines. The marker choice can be overwritten\n"
+    "but `lines=False` is not configurable. Lineplot signature:\n\n"
+    + lineplot.__doc__
+)

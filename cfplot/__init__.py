@@ -8,7 +8,7 @@ from .colorbar import cbar
 from .colour import cscale
 from .contour import con, levs
 from .layout_runtime import gclose, gopen, gpos, gset, gfigure
-from .line import lineplot
+from .line import lineplot, scatter
 from .map_runtime import mapset
 from .rotated_runtime import _render_rotated_grid_axes
 from .state import plotvars, reset_runtime_state, setvars

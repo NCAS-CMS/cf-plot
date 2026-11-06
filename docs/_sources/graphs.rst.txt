@@ -1,7 +1,10 @@
 .. _graphs:
 
-Line plots i.e. graphs
-**********************
+Graph plots: line and scatter
+*****************************
+
+To make a basic line plot with optional markers, use :func:`cfplot.lineplot`,
+as in Example 27 below.
 
 .. include:: examples/example_27.rst
 
@@ -31,7 +34,13 @@ Note other valid markers are:
 |    'd' 	thin_diamond
 
 
-.. include:: examples/example_28.rst
+To make a basic scatter plot without lines, you can use
+:func:`cfplot.lineplot` and set ``lines=False`` with a `marker` value specified,
+or you can use the :func:`cfplot.scatter` which calls :func:`cfplot.lineplot`
+with ``line=False`` and ``marker='o'`` pre-set for you (where you can
+override the latter but not the former), as in Example 27b below.
+
+.. include:: examples/example_27b.rst
 
 
 | When making a multiple line plot:
@@ -42,10 +51,14 @@ Note other valid markers are:
 |    axis overrides should be placed in.
 | c) All calls to lineplot with the label attribute will appear in the legend.
 
+.. include:: examples/example_28.rst
+
+
 The cfp.plotvars.plot object contains the matplotlib plot and will accept
 normal Matplotlib plotting commands. As an example of this the following
-code within a ``cfp.gopen()`` and ``cfp.gclose()`` construct will make a
-legend that is independent of any previously made lines and attached labels.
+code within a :func:`cfplot.gopen()` and :func:`cfplot.gclose()` construct
+will make a legend that is independent of any previously made lines and
+attached labels.
 
 
 |    import matplotlib.lines as mlines

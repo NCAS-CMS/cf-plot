@@ -37,6 +37,9 @@ of being developed elsewhere.
 * New function `gfigure` for use as context manager `with cfp.figure():`
   to make multiple plot calls without need to call `gopen` then `gclose`
   (https://github.com/NCAS-CMS/cf-plot/issues/159)
+* Clarify scatter plot support including new function `scatter` to call
+  `lineplot` with `lines=False` and markers on plus new example (27b)
+  (https://github.com/NCAS-CMS/cf-plot/issues/160)
 
 
 #### Version `3.5.0`, released 2026-10-09
