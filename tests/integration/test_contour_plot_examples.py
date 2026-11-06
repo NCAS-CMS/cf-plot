@@ -507,6 +507,7 @@ def test_example_21_rotated_pole_custom_ticks():
 
     flds = cf.read(str(DATA_DIR / "Geostropic_Adjustment.nc"))
     f = {f.identity(): f for f in flds}["ncvar%v"]
+
     _configure_example_output("21")
 
     cfp.con(
@@ -517,6 +518,7 @@ def test_example_21_rotated_pole_custom_ticks():
         xlabel="x-axis",
         ylabel="z-axis",
     )
+    _assert_reference_match("21")
 
 
 @pytest.mark.integration
@@ -584,21 +586,20 @@ def test_example_23other_incompass_contour_vectors():
     if not incompass_file.exists():
         pytest.skip(f"Missing test data: {incompass_file}")
 
-    flds = cf.read(str(incompass_file))
-    fdict = {f.identity(): f for f in flds}
+    fl = cf.read(str(incompass_file))
     _configure_example_output("23other")
+
+    r = fl.select_by_identity("long_name=Relative humidity")[0]
+    u = fl.select_by_identity("eastward_wind")[0]
+    v = fl.select_by_identity("northward_wind")[0]
 
     cfp.mapset(50, 100, 5, 35)
     cfp.levs(0, 90, 15, extend="neither")
+
     cfp.gopen()
-    cfp.con(fdict["long_name=Relative humidity"], lines=False)
-    cfp.vect(
-        u=fdict["eastward_wind"],
-        v=fdict["northward_wind"],
-        stride=40,
-        key_length=10,
-    )
-    cfp.gclose()
+    cfp.con(r, lines=False)
+    cfp.vect(u=u, v=v, stride=40, key_length=10)
+
     _assert_reference_match("23other")
 
 
