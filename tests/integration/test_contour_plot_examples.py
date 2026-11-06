@@ -612,10 +612,9 @@ def test_example_31_ukcp_projection():
 
     f = cf.read(str(ukcp_file))[0]
 
-    fname = str(TEST_GEN_DIR / "gen_fig_31.png")
+    _configure_example_output("31")
+
     cfp.setvars(
-        file=fname,
-        viewer="matplotlib",
         grid_x_spacing=1,
         grid_y_spacing=1,
     )
@@ -626,7 +625,35 @@ def test_example_31_ukcp_projection():
     # everything.
     cfp.levs(-3, 7, 0.5)
     cfp.con(f, fill=True, blockfill=False, lines=False)
+
     _assert_reference_match("31")
+
+
+@pytest.mark.integration
+def test_example_32_ukcp_projection_with_blockfill():
+    """Test Example 32: UKCP projection with blockfill."""
+    ukcp_file = DATA_DIR / "ukcp_rcm_test.nc"
+    if not ukcp_file.exists():
+        pytest.skip(f"Missing test data: {ukcp_file}")
+
+    f = cf.read(str(ukcp_file))[0]
+
+    cfp.mapset(proj="UKCP", resolution="50m")
+    cfp.levs(-3, 7, 0.5)
+    cfp.setvars(grid_colour="grey")
+
+    _configure_example_output("32")
+
+    cfp.con(
+        f,
+        lines=False,
+        blockfill=True,
+        # Centered over UK region with spacing of 1 each
+        xticks=np.arange(14) - 11,
+        yticks=np.arange(13) + 49,
+    )
+
+    _assert_reference_match("32")
 
 
 @pytest.mark.integration
