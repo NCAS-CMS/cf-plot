@@ -7,7 +7,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Line plots i.e. graphs &#8212; cf-plot 3.5.0 documentation</title>
+    <title>Graph plots: line and scatter &#8212; cf-plot 3.5.0 documentation</title>
   
   
   
@@ -427,7 +427,7 @@
 <li class="toctree-l1"><a class="reference internal" href="user_defined.html">User-defined axes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rotated_pole.html">Rotated pole plots</a></li>
 <li class="toctree-l1"><a class="reference internal" href="unstructured.html">Unstructured grids and UGRID</a></li>
-<li class="toctree-l1 current active"><a aria-current="page" class="current reference internal" href="#">Line plots i.e. graphs</a></li>
+<li class="toctree-l1 current active"><a aria-current="page" class="current reference internal" href="#">Graph plots: line and scatter</a></li>
 <li class="toctree-l1"><a class="reference internal" href="projections.html">Projections</a></li>
 <li class="toctree-l1"><a class="reference internal" href="trajectories.html">Trajectories</a></li>
 <li class="toctree-l1"><a class="reference internal" href="specific_models.html">Specific Models</a></li>
@@ -474,7 +474,7 @@
     
     <li class="breadcrumb-item"><a href="plot_types.html" class="nav-link">Plots by type/theme</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Line plots i.e. graphs</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Graph plots: line and scatter</span></li>
   </ul>
 </nav>
 </div>
@@ -491,8 +491,10 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="line-plots-i-e-graphs">
-<span id="graphs"></span><h1>Line plots i.e. graphs<a class="headerlink" href="#line-plots-i-e-graphs" title="Link to this heading">#</a></h1>
+  <section id="graph-plots-line-and-scatter">
+<span id="graphs"></span><h1>Graph plots: line and scatter<a class="headerlink" href="#graph-plots-line-and-scatter" title="Link to this heading">#</a></h1>
+<p>To make a basic line plot with optional markers, use <a class="reference internal" href="api/lineplot.html#cfplot.lineplot" title="cfplot.lineplot"><code class="xref py py-func docutils literal notranslate"><span class="pre">cfplot.lineplot()</span></code></a>,
+as in Example 27 below.</p>
 <section id="example-27-basic-line-plot">
 <span id="example27"></span><h2>Example 27: Basic line plot<a class="headerlink" href="#example-27-basic-line-plot" title="Link to this heading">#</a></h2>
 <div class="literal-block-wrapper docutils container" id="id1">
@@ -540,12 +542,51 @@
 <div class="line">'D'        diamond</div>
 <div class="line">'d'        thin_diamond</div>
 </div>
+<p>To make a basic scatter plot without lines, you can use
+<a class="reference internal" href="api/lineplot.html#cfplot.lineplot" title="cfplot.lineplot"><code class="xref py py-func docutils literal notranslate"><span class="pre">cfplot.lineplot()</span></code></a> and set <code class="docutils literal notranslate"><span class="pre">lines=False</span></code> with a <cite>marker</cite> value specified,
+or you can use the <a class="reference internal" href="api/scatter.html#cfplot.scatter" title="cfplot.scatter"><code class="xref py py-func docutils literal notranslate"><span class="pre">cfplot.scatter()</span></code></a> which calls <a class="reference internal" href="api/lineplot.html#cfplot.lineplot" title="cfplot.lineplot"><code class="xref py py-func docutils literal notranslate"><span class="pre">cfplot.lineplot()</span></code></a>
+with <code class="docutils literal notranslate"><span class="pre">line=False</span></code> and <code class="docutils literal notranslate"><span class="pre">marker='o'</span></code> pre-set for you (where you can
+override the latter but not the former), as in Example 27b below.</p>
+</section>
+<section id="example-27b-basic-scatter-plot">
+<span id="example27b"></span><h2>Example 27b: Basic scatter plot<a class="headerlink" href="#example-27b-basic-scatter-plot" title="Link to this heading">#</a></h2>
+<div class="literal-block-wrapper docutils container" id="id2">
+<div class="code-block-caption"><span class="caption-text">Making a basic scatter plot</span><a class="headerlink" href="#id2" title="Link to this code">#</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fl</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span><span class="si">}</span><span class="s2">/ggap.nc&quot;</span><span class="p">)</span>
+<span class="n">f</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">select_by_identity</span><span class="p">(</span><span class="s2">&quot;eastward_wind&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s2">&quot;Y: minimum&quot;</span><span class="p">)</span>
+
+<span class="n">_configure_example_output</span><span class="p">(</span><span class="s2">&quot;27b&quot;</span><span class="p">)</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
+    <span class="n">g</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">pressure</span><span class="o">=</span><span class="mi">700</span><span class="p">),</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Meridional minimum of zonal wind at 700mb&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<figure class="align-default">
+<img alt="_images/ref_fig_27b.png" src="_images/ref_fig_27b.png" />
+</figure>
+<div class="line-block">
+<div class="line">When making a multiple line plot:</div>
+<div class="line">a) Set the axis limits if required with cfp.gset before plotting the lines.</div>
+<div class="line-block">
+<div class="line">Using cfp.gset after the last line has been plotted may give unexpected</div>
+<div class="line">axis limits and / or labelling.  This is a feature of matplotlib.</div>
+</div>
+<div class="line">b) The last call to lineplot is the one that any of the above</div>
+<div class="line-block">
+<div class="line">axis overrides should be placed in.</div>
+</div>
+<div class="line">c) All calls to lineplot with the label attribute will appear in the legend.</div>
+</div>
 </section>
 <section id="example-28-line-plot-with-a-legend">
 <span id="example28"></span><h2>Example 28: Line plot with a legend<a class="headerlink" href="#example-28-line-plot-with-a-legend" title="Link to this heading">#</a></h2>
-<div class="literal-block-wrapper docutils container" id="id2">
+<div class="literal-block-wrapper docutils container" id="id3">
 <div class="code-block-caption"><span class="caption-text">Adding a legend to annotate a line plot with multiple
-plotted lines</span><a class="headerlink" href="#id2" title="Link to this code">#</a></div>
+plotted lines</span><a class="headerlink" href="#id3" title="Link to this code">#</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fl</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span><span class="si">}</span><span class="s2">/ggap.nc&quot;</span><span class="p">)</span>
 <span class="n">f</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">select_by_identity</span><span class="p">(</span><span class="s2">&quot;eastward_wind&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
@@ -600,23 +641,11 @@ plotted lines</span><a class="headerlink" href="#id2" title="Link to this code">
 <figure class="align-default">
 <img alt="_images/ref_fig_28.png" src="_images/ref_fig_28.png" />
 </figure>
-<div class="line-block">
-<div class="line">When making a multiple line plot:</div>
-<div class="line">a) Set the axis limits if required with cfp.gset before plotting the lines.</div>
-<div class="line-block">
-<div class="line">Using cfp.gset after the last line has been plotted may give unexpected</div>
-<div class="line">axis limits and / or labelling.  This is a feature of matplotlib.</div>
-</div>
-<div class="line">b) The last call to lineplot is the one that any of the above</div>
-<div class="line-block">
-<div class="line">axis overrides should be placed in.</div>
-</div>
-<div class="line">c) All calls to lineplot with the label attribute will appear in the legend.</div>
-</div>
 <p>The cfp.plotvars.plot object contains the matplotlib plot and will accept
 normal Matplotlib plotting commands. As an example of this the following
-code within a <code class="docutils literal notranslate"><span class="pre">cfp.gopen()</span></code> and <code class="docutils literal notranslate"><span class="pre">cfp.gclose()</span></code> construct will make a
-legend that is independent of any previously made lines and attached labels.</p>
+code within a <a class="reference internal" href="api/gopen.html#cfplot.gopen" title="cfplot.gopen"><code class="xref py py-func docutils literal notranslate"><span class="pre">cfplot.gopen()</span></code></a> and <a class="reference internal" href="api/gclose.html#cfplot.gclose" title="cfplot.gclose"><code class="xref py py-func docutils literal notranslate"><span class="pre">cfplot.gclose()</span></code></a> construct
+will make a legend that is independent of any previously made lines and
+attached labels.</p>
 <div class="line-block">
 <div class="line">import matplotlib.lines as mlines</div>
 <div class="line">green_line = mlines.Line2D([], [], color='green',  label='green')</div>
@@ -653,9 +682,9 @@ predefined CF defaults:</p>
 </section>
 <section id="example-29-time-series-line-plot">
 <span id="example29"></span><h2>Example 29: Time series line plot<a class="headerlink" href="#example-29-time-series-line-plot" title="Link to this heading">#</a></h2>
-<div class="literal-block-wrapper docutils container" id="id3">
+<div class="literal-block-wrapper docutils container" id="id4">
 <div class="code-block-caption"><span class="caption-text">Making a basic line plot for a time series where the
-data shown is global average annual temperature</span><a class="headerlink" href="#id3" title="Link to this code">#</a></div>
+data shown is global average annual temperature</span><a class="headerlink" href="#id4" title="Link to this code">#</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;cfplot_data/tas_A1.nc&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
 <span class="n">temp</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">wi</span><span class="p">(</span><span class="n">cf</span><span class="o">.</span><span class="n">dt</span><span class="p">(</span><span class="s2">&quot;1900-01-01&quot;</span><span class="p">),</span> <span class="n">cf</span><span class="o">.</span><span class="n">dt</span><span class="p">(</span><span class="s2">&quot;1980-01-01&quot;</span><span class="p">)))</span>
@@ -684,8 +713,8 @@ Anything else will give unexpected results.</p>
 </section>
 <section id="example-30-line-plot-with-two-x-axes">
 <span id="example30"></span><h2>Example 30: Line plot with two x axes<a class="headerlink" href="#example-30-line-plot-with-two-x-axes" title="Link to this heading">#</a></h2>
-<div class="literal-block-wrapper docutils container" id="id4">
-<div class="code-block-caption"><span class="caption-text">Adding an extra x axis to a line plot</span><a class="headerlink" href="#id4" title="Link to this code">#</a></div>
+<div class="literal-block-wrapper docutils container" id="id5">
+<div class="code-block-caption"><span class="caption-text">Adding an extra x axis to a line plot</span><a class="headerlink" href="#id5" title="Link to this code">#</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">tol</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">RTOL</span><span class="p">(</span><span class="mf">1e-5</span><span class="p">)</span>
 
 <span class="n">fl</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;cfplot_data/ggap.nc&quot;</span><span class="p">)</span>
@@ -769,6 +798,7 @@ keyword which has been adopted within the cf-plot code.</p>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-27-basic-line-plot">Example 27: Basic line plot</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-27b-basic-scatter-plot">Example 27b: Basic scatter plot</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-28-line-plot-with-a-legend">Example 28: Line plot with a legend</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-29-time-series-line-plot">Example 29: Time series line plot</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-30-line-plot-with-two-x-axes">Example 30: Line plot with two x axes</a></li>

@@ -68,7 +68,7 @@ def lineplot(
 
     .. note::
 
-        Use :func:`cfp.scatter` to create a scatter plot without
+        Use :func:`cfplot.scatter` to create a scatter plot without
         connecting lines.
 
     Parameter breakdown (see below for full detail). The following parameters:
@@ -707,11 +707,11 @@ def scatter(*args, **kwargs):
 # clarify the lines=False setting on 'scatter' onlt
 scatter.__doc__ = (
     "Create a scatter plot. "
-    "Equivalent to :func:`cfp.lineplot(lines=False, marker='o', ...)`."
+    "Equivalent to `cfplot.lineplot(lines=False, marker='o', ...)`."
     "\n\n"
-    "Has the same signature as :func:`cfp.lineplot` except that\n"
+    "Has the same signature as :func:`cfplot.lineplot` except that\n"
     "`lines=False` and `marker='o' are set automatically to produce a plot\n"
     "with scatter markers but no lines. The marker choice can be overwritten\n"
-    "but `lines` is not configurable for `scatter`. Lineplot signature:\n\n"
+    "but `lines=False` is not configurable. Lineplot signature:\n\n"
     + lineplot.__doc__
 )
