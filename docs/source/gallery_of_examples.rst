@@ -220,6 +220,7 @@ Listing of all examples
    examples/example_26a.rst
    examples/example_26b.rst
    examples/example_27.rst
+   examples/example_27b.rst
    examples/example_28.rst
    examples/example_29.rst
    examples/example_30.rst
