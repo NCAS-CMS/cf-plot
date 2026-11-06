@@ -52,7 +52,7 @@ def lineplot(
     titles=False,
     zorder=None,
 ):
-    """Create a line (graph) plot.
+    """Create a line (graph) plot with optional markers.
 
     The minimum usage is ``lineplot(f)``, where *f* is a CF field.
     If *x* and *y* are provided, appropriate plots can be made, including
@@ -65,6 +65,11 @@ def lineplot(
         - Set the axis limits with ``gset`` before plotting the lines.
         - Place any axis overrides described below in the final call to
           ``lineplot``.
+
+    .. note::
+
+        Use :func:`cfp.scatter` to create a scatter plot without
+        connecting lines.
 
     Parameter breakdown (see below for full detail). The following parameters:
         - specify the input data:
@@ -692,10 +697,11 @@ def scatter(**kwargs):
 # Amend the scatter docstring which by 'wraps' inherits the lineplot one, to
 # clarify the lines=False setting on 'scatter' onlt
 scatter.__doc__ = (
-    "Create a scatter plot. Equivalent to `cfp.lineplot(lines=False, ...)`."
+    "Create a scatter plot. "
+    "Equivalent to :func:`cfp.lineplot(lines=False, ...)`."
     "\n\n"
-    "Has the same signature as `cfp.lineplot` except that `lines=False` is\n"
-    "set automatically to produce a plot with scatter markers and no lines.\n"
-    "Lineplot signature:\n\n"
+    "Has the same signature as :func:`cfp.lineplot` except that\n"
+    "`lines=False` is set automatically to produce a plot with scatter\n"
+    "markers and no lines. Lineplot signature:\n\n"
     + lineplot.__doc__
 )
