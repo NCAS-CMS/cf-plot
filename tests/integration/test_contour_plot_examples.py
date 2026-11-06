@@ -560,8 +560,8 @@ def test_example_23_rotated_grid_axes_overlay():
     _configure_example_output("23")
 
     data = f.array
-    xvec = f.construct("ncvar%x").array
-    yvec = f.construct("ncvar%y").array
+    xvec = f.construct("ncvar%x")
+    yvec = f.construct("ncvar%y")
     xpole = 160
     ypole = 30
 

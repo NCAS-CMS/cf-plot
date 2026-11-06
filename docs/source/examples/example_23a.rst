@@ -12,8 +12,8 @@ Example 23a: Rotated pole plot from data which is not CF Compliant
    f = cf.read(f"cfplot_data/rgp.nc")[0]
 
    data = f.array
-   xvec = f.construct("ncvar%x").array
-   yvec = f.construct("ncvar%y").array
+   xvec = f.construct("ncvar%x")
+   yvec = f.construct("ncvar%y")
    xpole = 160
    ypole = 30
 
@@ -30,4 +30,4 @@ Example 23a: Rotated pole plot from data which is not CF Compliant
    cfp.gclose()
 
 
-.. figure:: /../../tests/v350-controlled-env-ref-images/ref_fig_23a.png
+.. figure:: /../../tests/v350-controlled-env-ref-images/ref_fig_23.png
