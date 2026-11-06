@@ -684,14 +684,18 @@ def lineplot(
 
 
 @wraps(lineplot)
-def scatter(**kwargs):
+def scatter(*args, **kwargs):
     """Docs line here overwritten: see below."""
     if "lines" in kwargs:
         raise ValueError(
             "'lines' is not a valid keyword argument for cfp.scatter"
         )
 
-    return lineplot(lines=False, **kwargs)
+    # Include '*args' to allow positional arguments, just as for lineplot.
+    # These are matched to the function parameters in order, e.g. lineplot(f)
+    # assigns the first argument to 'f'. Without '*args', lineplot(f) would
+    # work but scatter(f) would raise a TypeError.
+    return lineplot(*args, lines=False, **kwargs)
 
 
 # Amend the scatter docstring which by 'wraps' inherits the lineplot one, to

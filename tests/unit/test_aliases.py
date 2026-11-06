@@ -16,6 +16,18 @@ def test_scatter_calls_lineplot_with_lines_false():
     mock_lineplot.assert_called_once_with(lines=False, **kwargs)
 
 
+def test_scatter_accepts_positional_arguments():
+    """Test that scatter accepts positional arguments like lineplot."""
+    f = object()
+
+    module = cfp.scatter.__module__
+
+    with patch(f"{module}.lineplot") as mock_lineplot:
+        cfp.scatter(f)
+
+    mock_lineplot.assert_called_once_with(f, lines=False)
+
+
 def test_scatter_rejects_lines_argument():
     """Test that scatter does not accept the lines argument."""
     with pytest.raises(
