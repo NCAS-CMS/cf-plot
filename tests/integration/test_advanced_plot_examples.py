@@ -459,7 +459,7 @@ def test_example_27b_basic_scatter_plot(ggap_file):
     _configure_example_output("27b")
     cfp.scatter(
         g.subspace(pressure=700),
-        title="Minumum meridional wind at 700mb",
+        title="Meridional minimum of zonal wind at 700mb",
     )
     _assert_reference_match("27b")
 
