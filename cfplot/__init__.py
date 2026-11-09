@@ -67,6 +67,7 @@ __version__ = _resolve_version()
 
 
 def reset():
+    """Reset plotting state to the default configuration."""
     gset()
     cscale()
     levs()
