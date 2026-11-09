@@ -18,11 +18,23 @@ from .trajectory import traj
 from .utility import gvals as _gvals_impl
 from .utility import mapaxis as _mapaxis_impl
 from .utility import (
-    regrid,
+    _find_pos_in_array,
+    add_cyclic,
     calculate_levels,
+    cf_var_name,
+    cf_var_name_titles,
+    find_dim_names,
+    find_z,
+    fix_floats,
+    generate_titles,
+    ndecs,
+    polar_regular_grid,
+    regrid,
+    stipple_points,
 )
 from .validate import check_well_formed, orca_check
 from .vector import vect, axes_plot
+
 
 __author__ = "Andy Heaps, Sadie Bartholomew, Bryan Lawrence"
 __maintainer__ = "Sadie Bartholomew"
@@ -127,30 +139,47 @@ def _mapaxis(min=None, max=None, type=None):
 
 
 __all__ = [
+    "_gvals",
+    "_mapaxis",
+    "add_cyclic",
     "axes",
     "axes_plot",
     "calculate_levels",
+    "calculate_levels",
     "cbar",
+    "cf_var_name",
+    "cf_var_name_titles",
     "check_well_formed",
     "con",
     "cscale",
+    "find_dim_names",
+    "find_pos_in_array",
+    "find_z",
+    "fix_floats",
     "gclose",
+    "generate_titles",
     "gopen",
     "gpos",
     "gset",
+    "irregular_window",
     "levs",
     "lineplot",
     "mapset",
+    "max_ndecs_data",
+    "ndecs",
     "orca_check",
+    "pcon",
     "plotvars",
+    "polar_regular_grid",
     "regrid",
     "reset",
     "rgaxes",
+    "rgaxes",
     "setvars",
     "stipple",
+    "stipple_points",
     "stream",
     "traj",
     "vect",
-    "_gvals",
-    "_mapaxis",
+    "vloc",
 ]
