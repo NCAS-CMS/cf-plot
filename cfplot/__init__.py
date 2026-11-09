@@ -7,7 +7,7 @@ Documentation is hosted and found at: https://ncas-cms.github.io/cf-plot/
 from .colorbar import cbar
 from .colour import cscale
 from .contour import con, levs
-from .layout_runtime import gclose, gopen, gpos, gset, gfigure
+from .layout_runtime import axes, gclose, gopen, gpos, gset, gfigure
 from .line import lineplot, scatter
 from .map_runtime import mapset
 from .rotated_runtime import _render_rotated_grid_axes
@@ -17,8 +17,12 @@ from .stream import stream
 from .trajectory import traj
 from .utility import gvals as _gvals_impl
 from .utility import mapaxis as _mapaxis_impl
-from .utility import regrid
-from .vector import vect
+from .utility import (
+    regrid,
+    calculate_levels,
+)
+from .validate import check_well_formed, orca_check
+from .vector import vect, axes_plot
 
 __author__ = "Andy Heaps, Sadie Bartholomew, Bryan Lawrence"
 __maintainer__ = "Sadie Bartholomew"
@@ -123,7 +127,11 @@ def _mapaxis(min=None, max=None, type=None):
 
 
 __all__ = [
+    "axes",
+    "axes_plot",
+    "calculate_levels",
     "cbar",
+    "check_well_formed",
     "con",
     "cscale",
     "gclose",
@@ -133,6 +141,7 @@ __all__ = [
     "levs",
     "lineplot",
     "mapset",
+    "orca_check",
     "plotvars",
     "regrid",
     "reset",

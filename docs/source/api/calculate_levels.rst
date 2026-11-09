@@ -1,3 +1,5 @@
+.. _calculate_levels:
+
 calculate_levels
 ****************
 

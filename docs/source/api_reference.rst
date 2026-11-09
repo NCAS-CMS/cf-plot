@@ -33,13 +33,14 @@ Graphics related
    cfplot.gfigure
 
 
-Parameter related
------------------
+Configuration related
+---------------------
 
 .. autosummary::
    :nosignatures:
 
    cfplot.axes
+   cfplot.axes_plot
    cfplot.cscale
    cfplot.gset
    cfplot.levs
@@ -47,16 +48,6 @@ Parameter related
    cfplot.plotvars
    cfplot.reset
    cfplot.setvars
-
-
-Mapping related
----------------
-
-.. autosummary::
-   :nosignatures:
-
-   cfplot.axes_plot
-   cfplot.map_grid
 
 
 Colour related
@@ -68,15 +59,6 @@ Colour related
    cfplot.cbar
 
 
-Calculations
-------------
-
-.. autosummary::
-   :nosignatures:
-
-   cfplot.calculate_levels
-
-
 Utility Routines
 ----------------
 
@@ -84,6 +66,7 @@ Utility Routines
    :nosignatures:
 
    cfplot.add_cyclic
+   cfplot.calculate_levels
    cfplot.cf_var_name
    cfplot.cf_var_name_titles
    cfplot.find_dim_names
