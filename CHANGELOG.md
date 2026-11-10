@@ -20,6 +20,12 @@ First released (`3.6.0`) `2026-11-10`
 
 #### Version `3.6.0`, released 2026-11-10
 
+* New function `gfigure` for use as context manager `with cfp.figure():`
+  to make multiple plot calls without need to call `gopen` then `gclose`
+  (https://github.com/NCAS-CMS/cf-plot/issues/159)
+* Clarify scatter plot support including new function `scatter` to call
+  `lineplot` with `lines=False` and markers on plus new example (27b)
+  (https://github.com/NCAS-CMS/cf-plot/issues/160)
 * Update code to prevent deprecation-related warnings
   (https://github.com/NCAS-CMS/cf-plot/issues/72)
 * Prevent striped artefacts on curvilinear longitude/latitude grids
@@ -36,12 +42,9 @@ First released (`3.6.0`) `2026-11-10`
   (https://github.com/NCAS-CMS/cf-plot/issues/150)
 * Fix bug whereby `gclose` showed no view after `gopen` call with
   `file` set (https://github.com/NCAS-CMS/cf-plot/issues/53)
-* New function `gfigure` for use as context manager `with cfp.figure():`
-  to make multiple plot calls without need to call `gopen` then `gclose`
-  (https://github.com/NCAS-CMS/cf-plot/issues/159)
-* Clarify scatter plot support including new function `scatter` to call
-  `lineplot` with `lines=False` and markers on plus new example (27b)
-  (https://github.com/NCAS-CMS/cf-plot/issues/160)
+* Fix bug preventing grid layer appearing with `xticks` and/or `yticks`
+  specification for custom lon/lat spacing, as per Example 32
+  (https://github.com/NCAS-CMS/cf-plot/issues/166)
 * Remove some obsolete internal-use routines that were previously exposed
   in the public API: `map_grid`, `find_pos_in_array`, `irregular_window`,
   `max_ndecs_data`, `pcon`, `vloc`
