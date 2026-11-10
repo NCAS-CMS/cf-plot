@@ -613,20 +613,21 @@ def test_example_31_ukcp_projection():
 
     f = cf.read(str(ukcp_file))[0]
 
-
-    cfp.mapset(proj="UKCP", resolution="50m")
-    cfp.levs(-3, 7, 0.5)
-    # TODO The original test set the grid_x_ and _y_spacing to 1,
-    # but this reset all the output, and stopped any output to
-    # file. We need to fix setvars so it doesn't just reset
-    # everything. NOTE: it is fine if it is at the end!
-
-    _configure_example_output("31")
-
+    # NOTE WELL: must not use _configure_example_output("31") here until
+    # we set up a means to use setvars without resetting other config.,
+    # else it resets the viewer so the actual plot doesn't (all) get
+    # plotted on and associated with the test file to compare to.
+    fname = str(TEST_GEN_DIR / "gen_fig_31.png")
     cfp.setvars(
+        file=fname,
+        viewer="matplotlib",
         grid_x_spacing=1,
         grid_y_spacing=1,
     )
+
+    cfp.mapset(proj="UKCP", resolution="50m")
+    cfp.levs(-3, 7, 0.5)
+
     cfp.con(f, fill=True, blockfill=False, lines=False)
 
     _assert_reference_match("31")

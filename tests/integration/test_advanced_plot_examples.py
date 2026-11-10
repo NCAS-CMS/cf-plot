@@ -63,6 +63,7 @@ def _configure_example_output(example_id: str) -> None:
     """Route plot output to the expected generated example filename."""
     fname = str(TEST_GEN_DIR / f"gen_fig_{example_id}.png")
     cfp.setvars(file=fname, viewer="matplotlib")
+    return fname
 
 
 def _assert_reference_match(example_id: str) -> None:
