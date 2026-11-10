@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "cf-plot"
-version = "3.5.0"
+version = "3.6.0"
 description = "Code-light plotting for earth science and aligned research"
 keywords = [
     "visualisation",
