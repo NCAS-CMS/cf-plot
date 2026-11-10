@@ -642,11 +642,19 @@ def test_example_32_ukcp_projection_with_blockfill():
 
     f = cf.read(str(ukcp_file))[0]
 
+    # NOTE WELL: must not use _configure_example_output("31") here until
+    # we set up a means to use setvars without resetting other config.,
+    # else it resets the viewer so the actual plot doesn't (all) get
+    # plotted on and associated with the test file to compare to.
+    fname = str(TEST_GEN_DIR / "gen_fig_32.png")
+    cfp.setvars(
+        file=fname,
+        viewer="matplotlib",
+        grid_colour="grey",
+    )
+
     cfp.mapset(proj="UKCP", resolution="50m")
     cfp.levs(-3, 7, 0.5)
-    cfp.setvars(grid_colour="grey")
-
-    _configure_example_output("32")
 
     cfp.con(
         f,
