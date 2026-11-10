@@ -599,6 +599,7 @@ def test_example_23other_incompass_contour_vectors():
     cfp.gopen()
     cfp.con(r, lines=False)
     cfp.vect(u=u, v=v, stride=40, key_length=10)
+    cfp.gclose()
 
     _assert_reference_match("23other")
 
@@ -612,18 +613,20 @@ def test_example_31_ukcp_projection():
 
     f = cf.read(str(ukcp_file))[0]
 
+
+    cfp.mapset(proj="UKCP", resolution="50m")
+    cfp.levs(-3, 7, 0.5)
+    # TODO The original test set the grid_x_ and _y_spacing to 1,
+    # but this reset all the output, and stopped any output to
+    # file. We need to fix setvars so it doesn't just reset
+    # everything. NOTE: it is fine if it is at the end!
+
     _configure_example_output("31")
 
     cfp.setvars(
         grid_x_spacing=1,
         grid_y_spacing=1,
     )
-    cfp.mapset(proj="UKCP", resolution="50m")
-    # TODO The original test set the grid_x_ and _y_spacing to 1,
-    # but this reset all the output, and stopped any output to
-    # file. We need to fix setvars so it doesn't just reset
-    # everything.
-    cfp.levs(-3, 7, 0.5)
     cfp.con(f, fill=True, blockfill=False, lines=False)
 
     _assert_reference_match("31")
