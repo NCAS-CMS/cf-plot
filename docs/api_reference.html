@@ -7,7 +7,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>API reference &#8212; cf-plot 3.5.0 documentation</title>
+    <title>API reference &#8212; cf-plot 3.6.0 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="_static/documentation_options.js?v=c1362a89"></script>
+    <script src="_static/documentation_options.js?v=5349f462"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/design-tabs.js?v=f930bc37"></script>
@@ -47,12 +47,12 @@
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Versions" href="versions.html" />
+    <link rel="next" title="Releases and changes" href="versions.html" />
     <link rel="prev" title="Advanced use" href="advanced.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="3.5.0" />
+  <meta name="docsearch:version" content="3.6" />
   
     
     <script src="_static/searchtools.js"></script>
@@ -123,7 +123,7 @@
   
   
   
-    <p class="title logo__title">cf-plot 3.5.0 documentation</p>
+    <p class="title logo__title">cf-plot 3.6.0 documentation</p>
   
 </a></div>
     
@@ -195,7 +195,7 @@
 
 <li class=" ">
   <a class="nav-link dropdown-item nav-internal" href="versions.html">
-    Versions
+    Releases and changes
   </a>
 </li>
 
@@ -354,7 +354,7 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="versions.html">
-    Versions
+    Releases and changes
   </a>
 </li>
 
@@ -523,10 +523,16 @@
 </table>
 </div>
 </section>
-<section id="parameter-related">
-<h3>Parameter related<a class="headerlink" href="#parameter-related" title="Link to this heading">#</a></h3>
+<section id="configuration-related">
+<h3>Configuration related<a class="headerlink" href="#configuration-related" title="Link to this heading">#</a></h3>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="api/axes.html#cfplot.axes" title="cfplot.axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.axes</span></code></a></p></td>
+<td><p>Set axes plotting parameters in shared state.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="api/axes_plot.html#cfplot.axes_plot" title="cfplot.axes_plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.axes_plot</span></code></a></p></td>
+<td><p>Specify axes plotting parameters.</p></td>
+</tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="api/cscale.html#cfplot.cscale" title="cfplot.cscale"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.cscale</span></code></a></p></td>
 <td><p>Choose and manipulate colour maps in shared plotting state.</p></td>
 </tr>
@@ -539,23 +545,15 @@
 <tr class="row-even"><td><p><a class="reference internal" href="api/mapset.html#cfplot.mapset" title="cfplot.mapset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.mapset</span></code></a></p></td>
 <td><p>Set map plotting parameters in shared state.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.plotvars</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="api/plotvars.html#cfplot.plotvars" title="cfplot.plotvars"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.plotvars</span></code></a></p></td>
 <td><p>Stores plotting variables in <cite>cfp.plotvars</cite>.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="api/reset.html#cfplot.reset" title="cfplot.reset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.reset</span></code></a></p></td>
-<td><p></p></td>
+<td><p>Reset plotting state to the default configuration.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="api/setvars.html#cfplot.setvars" title="cfplot.setvars"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.setvars</span></code></a></p></td>
 <td><p>Set shared plotting variables from defaults plus explicit overrides.</p></td>
 </tr>
-</tbody>
-</table>
-</div>
-</section>
-<section id="mapping-related">
-<h3>Mapping related<a class="headerlink" href="#mapping-related" title="Link to this heading">#</a></h3>
-<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
-<tbody>
 </tbody>
 </table>
 </div>
@@ -571,20 +569,45 @@
 </table>
 </div>
 </section>
-<section id="calculations">
-<h3>Calculations<a class="headerlink" href="#calculations" title="Link to this heading">#</a></h3>
-<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
-<tbody>
-</tbody>
-</table>
-</div>
-</section>
 <section id="utility-routines">
 <h3>Utility Routines<a class="headerlink" href="#utility-routines" title="Link to this heading">#</a></h3>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="api/add_cyclic.html#cfplot.add_cyclic" title="cfplot.add_cyclic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.add_cyclic</span></code></a></p></td>
+<td><p>Add a cyclic longitude column if the grid doesn't span the full 360°.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="api/calculate_levels.html#cfplot.calculate_levels" title="cfplot.calculate_levels"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.calculate_levels</span></code></a></p></td>
+<td><p>Calculate contour levels automatically from field data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="api/cf_var_name.html#cfplot.cf_var_name" title="cfplot.cf_var_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.cf_var_name</span></code></a></p></td>
+<td><p>Return the best available name for a CF field dimension coordinate.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="api/cf_var_name_titles.html#cfplot.cf_var_name_titles" title="cfplot.cf_var_name_titles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.cf_var_name_titles</span></code></a></p></td>
+<td><p>Return preferred coordinate name/units for dimension-title rendering.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="api/find_dim_names.html#cfplot.find_dim_names" title="cfplot.find_dim_names"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.find_dim_names</span></code></a></p></td>
+<td><p>Return dimension coordinate names in [X, Y, Z, T] order.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="api/find_z.html#cfplot.find_z" title="cfplot.find_z"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.find_z</span></code></a></p></td>
+<td><p>Return the key for the Z coordinate of a CF field, or None.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="api/fix_floats.html#cfplot.fix_floats" title="cfplot.fix_floats"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.fix_floats</span></code></a></p></td>
+<td><p>Fix numpy rounding issues.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="api/generate_titles.html#cfplot.generate_titles" title="cfplot.generate_titles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.generate_titles</span></code></a></p></td>
+<td><p>Generate dimension/cell-method title text for plot annotation.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="api/ndecs.html#cfplot.ndecs" title="cfplot.ndecs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.ndecs</span></code></a></p></td>
+<td><p>Find the maximum number of decimal places in an array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="api/polar_regular_grid.html#cfplot.polar_regular_grid" title="cfplot.polar_regular_grid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.polar_regular_grid</span></code></a></p></td>
+<td><p>Return lon/lat and projected x/y points over a polar stereographic cap.</p></td>
+</tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="api/rgaxes.html#cfplot.rgaxes" title="cfplot.rgaxes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.rgaxes</span></code></a></p></td>
-<td><p></p></td>
+<td><p>Label rotated grid plots.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="api/stipple_points.html#cfplot.stipple_points" title="cfplot.stipple_points"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.stipple_points</span></code></a></p></td>
+<td><p>Generate regular or offset sampling points over a rectangular domain.</p></td>
 </tr>
 </tbody>
 </table>
@@ -594,6 +617,12 @@
 <h3>Validation<a class="headerlink" href="#validation" title="Link to this heading">#</a></h3>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="api/check_well_formed.html#cfplot.check_well_formed" title="cfplot.check_well_formed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.check_well_formed</span></code></a></p></td>
+<td><p>Check the coordinates are all of the form X, Y, Z, T.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="api/orca_check.html#cfplot.orca_check" title="cfplot.orca_check"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot.orca_check</span></code></a></p></td>
+<td><p>Check input data to test if it is on an ORCA ocean grid.</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -616,29 +645,35 @@ functional codebase.</p>
 </section>
 <section id="obsolete-internal-api">
 <h3>Obsolete Internal API<a class="headerlink" href="#obsolete-internal-api" title="Link to this heading">#</a></h3>
-<p>These routines were exposed in the user-facing API at versions 3.3.0 and
-below but were marked as not being intended for user use. They have
-therefore been removed except for under-the-hood processing at version 3.5.0.
-They are listed here for completeness and posterity.</p>
+<p>These routines (or a later counterpart with a leading underscore e.g.
+<cite>_check_data</cite> or <cite>check_data</cite>) were exposed in the user-facing API
+at versions 3.3.0 and below but were marked as not being intended
+for user use. They have therefore been removed except for under-the-hood
+processing at version 3.5.0. They are listed here for completeness and
+posterity.</p>
 <p>If you made use of any of the functionality provided by these internal-use
 routines, and wish to have this in future, please
 <a class="reference internal" href="support.html#ways-to-contact-us"><span class="std std-ref">get in touch</span></a> to let
 us know and we may be able to support them again.</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">_bfill</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">_bfill_ugrid</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">_cf_data_assign</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">_check_data</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">_cscale_get_map</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">_dim_titles</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">_gvals</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">_map_title</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">_mapaxis</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">_plot_map_axes</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">_process_color_scales</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">_set_map</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">_supscr</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">_timeaxis</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">bfill_ugrid</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">bfill</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cf_data_assign</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">check_data</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cscale_get_map</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dim_titles</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">find_pos_in_array</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">irregular_window</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">map_grid</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">map_title</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">max_ndecs_data</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pcon</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">plot_map_axes</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">process_color_scales</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">set_map</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">supscr</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">timeaxis</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">vloc</span></code></p></li>
 </ul>
 </section>
 </section>
@@ -668,7 +703,7 @@ us know and we may be able to support them again.</p>
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Versions</p>
+        <p class="prev-next-title">Releases and changes</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -694,10 +729,8 @@ us know and we may be able to support them again.</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#api">API</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#plotting-routines">Plotting routines</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#graphics-related">Graphics related</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#parameter-related">Parameter related</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mapping-related">Mapping related</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#configuration-related">Configuration related</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#colour-related">Colour related</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#calculations">Calculations</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#utility-routines">Utility Routines</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#validation">Validation</a></li>
 </ul>

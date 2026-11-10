@@ -13,9 +13,7 @@ def test_scatter_calls_lineplot_with_lines_false():
     with patch(f"{module}.lineplot") as mock_lineplot:
         cfp.scatter(**kwargs)
 
-    mock_lineplot.assert_called_once_with(
-        lines=False, marker="o", **kwargs
-    )
+    mock_lineplot.assert_called_once_with(lines=False, marker="o", **kwargs)
 
 
 def test_scatter_accepts_positional_arguments():

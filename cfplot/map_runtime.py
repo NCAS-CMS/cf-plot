@@ -98,8 +98,7 @@ def _apply_map_title(
             fontweight=title_fontweight,
         )
     else:
-        raise ValueError(
-            f"Unable to produce title for projection {proj}")
+        raise ValueError(f"Unable to produce title for projection {proj}")
 
     return mymap.text(
         xpt,
@@ -411,19 +410,28 @@ class MapSet:
 
         pv.mymap = mymap
 
-    def draw_grid(self) -> None:
+    def draw_grid(self, xticks=None, yticks=None) -> None:
         """Plot a graticule on the active map axes."""
         pv = self.plotvars
         if pv.mymap is None:
             return
-        if pv.proj != "cyl":
-            return
 
-        lons = np.arange((360 / pv.grid_x_spacing) + 1) * pv.grid_x_spacing
-        lons = np.concatenate([lons - 360, lons])
-        lats = (
-            np.arange((180 / pv.grid_y_spacing) + 1) * pv.grid_y_spacing - 90
-        )
+        gridline_kwargs = {}
+        if xticks is not None:
+            lons = xticks
+            gridline_kwargs["xlim"] = (np.min(lons), np.max(lons))
+        else:
+            lons = np.arange((360 / pv.grid_x_spacing) + 1) * pv.grid_x_spacing
+            lons = np.concatenate([lons - 360, lons])
+
+        if yticks is not None:
+            lats = yticks
+            gridline_kwargs["ylim"] = (np.min(lats), np.max(lats))
+        else:
+            lats = (
+                np.arange((180 / pv.grid_y_spacing) + 1) * pv.grid_y_spacing
+                - 90
+            )
 
         pv.mymap.gridlines(
             color=pv.grid_colour,
@@ -432,6 +440,7 @@ class MapSet:
             xlocs=lons,
             ylocs=lats,
             zorder=pv.grid_zorder,
+            **gridline_kwargs,
         )
 
     def draw_polar_axes(self) -> None:

@@ -373,7 +373,9 @@ def mapaxis(
 
 
 def fix_floats(data: list) -> list:
-    """Fix numpy rounding issues where e.g. 0.4 becomes 0.3999999999.
+    """Fix numpy rounding issues.
+
+    Issues refer to cases where e.g. 0.4 becomes 0.3999999999.
 
     Returns data unchanged if any values contain an exponent ('e').
     """

@@ -111,8 +111,11 @@ Dependencies
 
 cf-plot has the following dependencies:
 
-* `cf-python <https://ncas-cms.github.io/cf-python/installation.html>`_, ``'cf-python >= 3.17.0'``
-* `Cartopy <https://scitools.org.uk/cartopy/docs/latest/installing.html>`_, ``'cartopy >= 0.22.0'``
+* Python version 3.11 or above (``'>=3.11'``)
+* `cf-python <https://ncas-cms.github.io/cf-python/installation.html>`_,
+  ``'cf-python >= 3.17.0'``
+* `Cartopy <https://scitools.org.uk/cartopy/docs/latest/installing.html>`_,
+  ``'cartopy >= 0.22.0'``
 
 With package/environment managers such as ``conda`` and ``pip`` you
 can install all dependencies

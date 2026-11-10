@@ -7,7 +7,7 @@ Documentation is hosted and found at: https://ncas-cms.github.io/cf-plot/
 from .colorbar import cbar
 from .colour import cscale
 from .contour import con, levs
-from .layout_runtime import gclose, gopen, gpos, gset, gfigure
+from .layout_runtime import axes, gclose, gfigure, gopen, gpos, gset
 from .line import lineplot, scatter
 from .map_runtime import mapset
 from .rotated_runtime import _render_rotated_grid_axes
@@ -15,10 +15,21 @@ from .state import plotvars, reset_runtime_state, setvars
 from .stipple import stipple
 from .stream import stream
 from .trajectory import traj
+from .utility import (
+    add_cyclic,
+    calculate_levels,
+    cf_var_name,
+    cf_var_name_titles,
+    find_dim_names,
+    find_z,
+    fix_floats,
+    generate_titles,
+)
 from .utility import gvals as _gvals_impl
 from .utility import mapaxis as _mapaxis_impl
-from .utility import regrid
-from .vector import vect
+from .utility import ndecs, polar_regular_grid, regrid, stipple_points
+from .validate import check_well_formed, orca_check
+from .vector import axes_plot, vect
 
 __author__ = "Andy Heaps, Sadie Bartholomew, Bryan Lawrence"
 __maintainer__ = "Sadie Bartholomew"
@@ -67,6 +78,7 @@ __version__ = _resolve_version()
 
 
 def reset():
+    """Reset plotting state to the default configuration."""
     gset()
     cscale()
     levs()
@@ -76,6 +88,7 @@ def reset():
 
 
 def _gvals(*args, **kwargs):
+    """Work out a sensible set of values between two limits."""
     return _gvals_impl(*args, **kwargs)
 
 
@@ -95,6 +108,7 @@ def rgaxes(
     xlabel=None,
     ylabel=None,
 ):
+    """Label rotated grid plots."""
     return _render_rotated_grid_axes(
         xpole=xpole,
         ypole=ypole,
@@ -113,6 +127,7 @@ def rgaxes(
 
 
 def _mapaxis(min=None, max=None, type=None):
+    """Work out a sensible set of lon-lat tick marks and labels."""
     return _mapaxis_impl(
         min_val=min,
         max_val=max,
@@ -122,25 +137,42 @@ def _mapaxis(min=None, max=None, type=None):
 
 
 __all__ = [
+    "_gvals",  # Req'd for public API?
+    "_mapaxis",  # Req'd for public API?
+    "add_cyclic",
+    "axes",
+    "axes_plot",
+    "calculate_levels",
     "cbar",
+    "cf_var_name",
+    "cf_var_name_titles",
+    "check_well_formed",
     "con",
     "cscale",
+    "find_dim_names",
+    "find_z",
+    "fix_floats",
     "gclose",
+    "generate_titles",
+    "gfigure",
     "gopen",
     "gpos",
     "gset",
     "levs",
     "lineplot",
     "mapset",
+    "ndecs",
+    "orca_check",
     "plotvars",
+    "polar_regular_grid",
     "regrid",
     "reset",
     "rgaxes",
+    "scatter",
     "setvars",
     "stipple",
+    "stipple_points",
     "stream",
     "traj",
     "vect",
-    "_gvals",
-    "_mapaxis",
 ]

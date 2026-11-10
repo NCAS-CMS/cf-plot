@@ -95,7 +95,7 @@ by clicking through to the category pages.
       :text-align: center
 
    .. grid-item-card:: Unstructured grids (UGRID) support
-      :img-top: /../../tests/v350-controlled-env-ref-images/ref_fig_24a.png
+      :img-top: /../../docs/_images/ref_fig_24a.png
       :link: unstructured.html#example-24a-ugrid-blockfill-plot-with-lfric-cubed-sphere-mesh-output
       :text-align: center
 
@@ -110,7 +110,7 @@ by clicking through to the category pages.
       :text-align: center
 
    .. grid-item-card:: Flexible customisation e.g. user-defined axes
-      :img-top: /../../tests/v350-controlled-env-ref-images/ref_fig_21a.png
+      :img-top: /../../tests/v350-controlled-env-ref-images/ref_fig_21.png
       :link: user_defined.html#example-21a-user-defined-axes
       :text-align: center
 

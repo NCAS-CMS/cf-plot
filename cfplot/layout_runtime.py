@@ -6,10 +6,10 @@ contour.py while preserving behaviour.
 
 from __future__ import annotations
 
-from contextlib import contextmanager
 import os
 import shutil
 import subprocess
+from contextlib import contextmanager
 from typing import Any
 
 import matplotlib
@@ -222,6 +222,8 @@ def gfigure(*args, **kwargs):
     Examples:
         Create a figure containing three subplots:
 
+        .. code-block:: python
+
             with cfp.figure():
                 cfp.gpos(1)
                 cfp.con(f1)
@@ -232,7 +234,9 @@ def gfigure(*args, **kwargs):
                 cfp.gpos(3)
                 cfp.con(f3)
 
-        Which is equivalent to:
+        The above is equivalent to:
+
+        .. code-block:: python
 
             cfp.gopen()
 

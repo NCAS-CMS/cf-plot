@@ -28,4 +28,4 @@ Example 24a: UGRID blockfill plot with LFRic cubed sphere mesh output
    )
 
 
-.. figure:: /../../tests/v350-controlled-env-ref-images/ref_fig_24a.png
+.. figure:: /../../docs/_images/ref_fig_24a.png

@@ -2,7 +2,7 @@
 
 ## cf-plot changelog
 
-**Current release: version `3.5.0`, released `2026-10-09`**
+**Current release: version `3.6.0`, released `2026-11-10`**
 
 *Note*: stated dates of releases correspond to the date a given
 version was tagged on GitHub. Up until 2024 some detail may
@@ -14,10 +14,18 @@ of being developed elsewhere.
 -----
 
 
-### Version `3.5.X`, first released XXXXXX
+### Version `3.6`
 
-#### Version `3.5.1`, released 2026-??-??
+First released (`3.6.0`) `2026-11-10`
 
+#### Version `3.6.0`, released 2026-11-10
+
+* New function `gfigure` for use as context manager `with cfp.figure():`
+  to make multiple plot calls without need to call `gopen` then `gclose`
+  (https://github.com/NCAS-CMS/cf-plot/issues/159)
+* Clarify scatter plot support including new function `scatter` to call
+  `lineplot` with `lines=False` and markers on plus new example (27b)
+  (https://github.com/NCAS-CMS/cf-plot/issues/160)
 * Update code to prevent deprecation-related warnings
   (https://github.com/NCAS-CMS/cf-plot/issues/72)
 * Prevent striped artefacts on curvilinear longitude/latitude grids
@@ -34,13 +42,17 @@ of being developed elsewhere.
   (https://github.com/NCAS-CMS/cf-plot/issues/150)
 * Fix bug whereby `gclose` showed no view after `gopen` call with
   `file` set (https://github.com/NCAS-CMS/cf-plot/issues/53)
-* New function `gfigure` for use as context manager `with cfp.figure():`
-  to make multiple plot calls without need to call `gopen` then `gclose`
-  (https://github.com/NCAS-CMS/cf-plot/issues/159)
-* Clarify scatter plot support including new function `scatter` to call
-  `lineplot` with `lines=False` and markers on plus new example (27b)
-  (https://github.com/NCAS-CMS/cf-plot/issues/160)
+* Fix bug preventing grid layer appearing with `xticks` and/or `yticks`
+  specification for custom lon/lat spacing, as per Example 32
+  (https://github.com/NCAS-CMS/cf-plot/issues/166)
+* Remove some obsolete internal-use routines that were previously exposed
+  in the public API: `map_grid`, `find_pos_in_array`, `irregular_window`,
+  `max_ndecs_data`, `pcon`, `vloc`
 
+
+### Version `3.5`
+
+First released (`3.5.0`) `2026-10-09`
 
 #### Version `3.5.0`, released 2026-10-09
 
@@ -77,7 +89,9 @@ of being developed elsewhere.
   (https://github.com/NCAS-CMS/cf-plot/issues/114)
 
 
-### Version `3.4.X`, first released (`3.4.0`) `2025-04-28`
+### Version `3.4`
+
+First released (`3.4.0`) `2025-04-28`
 
 #### Version `3.4.0`, released `2025-04-28`
 
@@ -128,135 +142,187 @@ of being developed elsewhere.
   dependency cf-python
 
 
-### Version `3.3.X`, first released (`3.3.0`) `2024-01-15`
+### Version `3.3`
+
+First released (`3.3.0`) `2024-01-15`
 
 #### Version `3.3.0`, released `2024-01-15`
 
 * UGRID support added
 
 
-### Version `3.2.X`, first released (`3.2.0`) `2023-03-06`
+### Version `3.2`
+
+First released (`3.2.0`) `2023-03-06`
 
 * Rolling bug fix versions
 
 
-### Version `3.1.X`, first released (`3.1.0`) `2021-04-13`
+### Version `3.1`
+
+First released (`3.1.0`) `2021-04-13`
 
 * UGRID support
 
 
-### Version `3.0.X`, first released (`3.0.2`) `2019-09-23`
+### Version `3.0`
+
+First released (`3.0.2`) `2019-09-23`
 
 * Port to Python 3 and Mac OSX
 
 
-### Version `2.4.X`, first released (`2.4.1`) `2019-04-01`
+### Version `2.4`
+
+First released (`2.4.1`) `2019-04-01`
 
 * Trajectories
 
 
-### Version `2.3.X` first released (`2.3.1`) `2019-03-07`
+### Version `2.3`
+
+First released (`2.3.1`) `2019-03-07`
 
 * Support for the UKCP grid
 
 
-### Version `2.2.X`, first released (`2.2.18`) `2019-01-30`
+### Version `2.2`
+
+First released (`2.2.18`) `2019-01-30`
 
 * Change from Basemap to Cartopy mapping
 
 
-### Version `2.1.X`, first released (`2.1.10`) `2017-01-23`
+### Version `2.1`
+
+First released (`2.1.10`) `2017-01-23`
 
 * Rolling set of small additions and bug fixes
 
 
-### Version `2.0.X`, first released (?) (date unknown)
+### Version `2.0`
+
+First released (?) (date unknown)
 
 * Code base changes
 
 
-### Version `1.9.X`, first released (`1.9.1`) `2016-01-04`
+### Version `1.9`
+
+First released (`1.9.1`) `2016-01-04`
 
 * Rolling update of features
 
 
-### Version `1.8.X`, first released (`1.8.1`) `2015-12-21`
+### Version `1.8`
+
+First released (`1.8.1`) `2015-12-21`
 
 * Graph plots
 
 
-### Version `1.7.X`, first released (`1.7.3`) `2015-03-19`
+### Version `1.7`
+
+First released (`1.7.3`) `2015-03-19`
 
 * Rolling update of features
 
 
-### Version `1.6`, first released (?) (date unknown)
+### Version `1.6`
+
+First released (?) (date unknown)
 
 * Rotated pole plots
 
 
-### Version `1.5`, first released (?) (date unknown)
+### Version `1.5`
+
+First released (?) (date unknown)
 
 * Bug/feature fix
 
 
-### Version `1.4`, first released (?) (date unknown)
+### Version `1.4`
+
+First released (?) (date unknown)
 
 * PDF user guide
 
 
-### Version `1.3.X`, first released (?) (date unknown)
+### Version `1.3`
+
+First released (?) (date unknown)
 
 * Bug/feature fix
 
 
-### Version `1.2`, first released (?) (date unknown)
+### Version `1.2`
+
+First released (?) (date unknown)
 
 * Hovmoller plots
 
 
-### Version `1.1`, first released (?) (date unknown)
+### Version `1.1`
+
+First released (?) (date unknown)
 
 * Error handling
 
 
-### Version `1.0`, first released (?) (date unknown)
+### Version `1.0`
+
+First released (?) (date unknown)
 
 * Data interface improvements
 
 
-### Version `0.9`, first released (?) (date unknown)
+### Version `0.9`
+
+First released (?) (date unknown)
 
 * `vect` for vector plotting
 
 
-### Version `0.8`, first released (?) (date unknown)
+### Version `0.8`
+
+First released (?) (date unknown)
 
 * `stipple` for significance plots
 
 
-### Version `0.7`, first released (?) (date unknown)
+### Version `0.7`
+
+First released (?) (date unknown)
 
 * `cscale` for colour scales
 
 
-### Version `0.6`, first released (?) (date unknown)
+### Version `0.6`
+
+First released (?) (date unknown)
 
 * `gopen`, `gclose`, `gpos` opening and closing of output files/plot
   positioning
 
 
-### Version `0.5`, first released (?) (date unknown)
+### Version `0.5`
+
+First released (?) (date unknown)
 
 * latitude-height plots
 
 
-### Version `0.4`, first released (?) (date unknown)
+### Version `0.4`
+
+First released (?) (date unknown)
 
 * `gset`, `axes` for setting plot limits and plotting axes
 
 
-### Version `0.3`, released `2012-12-10`
+### Version `0.3`
+
+Released `2012-12-10`
 
 * Initial release (first version on GitHub).
 

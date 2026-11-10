@@ -2305,8 +2305,15 @@ def _render_with_new_xy(
                 pv_runtime._contour_animation_map_feature_artists = (
                     map_feature_artists
                 )
-            if kwargs.get("grid", pv_dec.grid):
-                map_runtime.draw_grid()
+
+            xticks = kwargs.get("xticks", None)
+            yticks = kwargs.get("yticks", None)
+            if (
+                kwargs.get("grid", pv_dec.grid)
+                or xticks is not None
+                or yticks is not None
+            ):
+                map_runtime.draw_grid(xticks, yticks)
 
             map_runtime.draw_polar_axes()
 

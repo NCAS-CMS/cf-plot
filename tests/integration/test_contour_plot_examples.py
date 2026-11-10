@@ -250,7 +250,7 @@ def test_regression_npstere_da193_image():
         pytest.skip(f"Missing test data: {da193_path}")
 
     f = cf.read(str(da193_path))[0]
- 
+
     _configure_example_output("npstere_da193")
 
     cfp.mapset(
@@ -360,13 +360,13 @@ def test_example_12_longitude_time_hovmuller():
 
 
 @pytest.mark.integration
-def test_example_19_multiple_subplots(ggap_file):
-    """Test Example 19: multiple plots as subplots."""
+def test_example_19a_multiple_subplots(ggap_file):
+    """Test Example 19a: multiple plots as subplots."""
     if not (DATA_DIR / "ggap.nc").exists():
         pytest.skip(f"Missing test data: {DATA_DIR / 'ggap.nc'}")
 
     f = ggap_file["eastward_wind"]
-    _configure_example_output("19")
+    _configure_example_output("19a")
 
     cfp.gopen(rows=2, columns=2, bottom=0.2)
     cfp.gpos(1)
@@ -385,17 +385,17 @@ def test_example_19_multiple_subplots(ggap_file):
         colorbar_orientation="horizontal",
     )
     cfp.gclose()
-    _assert_reference_match("19")
+    _assert_reference_match("19a")
 
 
 @pytest.mark.integration
-def test_example_19a_user_positioned_subplots(ggap_file):
-    """Test Example 19a: user specified subplot positions."""
+def test_example_19b_user_positioned_subplots(ggap_file):
+    """Test Example 19b: user specified subplot positions."""
     if not (DATA_DIR / "ggap.nc").exists():
         pytest.skip(f"Missing test data: {DATA_DIR / 'ggap.nc'}")
 
     f = ggap_file["eastward_wind"]
-    _configure_example_output("19a")
+    _configure_example_output("19b")
 
     cfp.gopen(user_position=True)
     cfp.gpos(xmin=0.1, xmax=0.5, ymin=0.55, ymax=1.0)
@@ -405,7 +405,46 @@ def test_example_19a_user_positioned_subplots(ggap_file):
     cfp.gpos(xmin=0.3, xmax=0.7, ymin=0.1, ymax=0.55)
     cfp.con(f.subspace(Z=10), title="10mb", lines=False)
     cfp.gclose()
-    _assert_reference_match("19a")
+    _assert_reference_match("19b")
+
+
+@pytest.mark.integration
+def test_example_19c(ggap_file):
+    """Test Example 19c: accomodating more than one colour bar."""
+    if not (DATA_DIR / "ggap.nc").exists():
+        pytest.skip(f"Missing test data: {DATA_DIR / 'ggap.nc'}")
+
+    f = ggap_file["eastward_wind"]
+    _configure_example_output("19c")
+
+    g = f.collapse("X: mean")
+
+    cfp.gopen(user_position=True)
+
+    cfp.gpos(xmin=0.2, ymin=0.2, xmax=0.8, ymax=0.8)
+    cfp.lineplot(
+        g.subspace(pressure=100),
+        marker="o",
+        color="blue",
+        title="Zonal mean zonal wind at 100mb",
+    )
+
+    cfp.cscale("seaice_2", ncols=20)
+    levs = np.arange(282, 320, 2)
+    cfp.cbar(levs=levs, position=[0.2, 0.1, 0.6, 0.02], title="seaice_2")
+
+    cfp.cscale("topo_15lev", ncols=22)
+    levs = np.arange(-100, 2000, 100)
+    cfp.cbar(
+        levs=levs,
+        position=[0.03, 0.2, 0.04, 0.6],
+        orientation="vertical",
+        title="topo_15lev",
+    )
+
+    cfp.gclose()
+
+    _assert_reference_match("19c")
 
 
 @pytest.mark.integration
@@ -468,6 +507,7 @@ def test_example_21_rotated_pole_custom_ticks():
 
     flds = cf.read(str(DATA_DIR / "Geostropic_Adjustment.nc"))
     f = {f.identity(): f for f in flds}["ncvar%v"]
+
     _configure_example_output("21")
 
     cfp.con(
@@ -478,6 +518,7 @@ def test_example_21_rotated_pole_custom_ticks():
         xlabel="x-axis",
         ylabel="z-axis",
     )
+    _assert_reference_match("21")
 
 
 @pytest.mark.integration
@@ -519,8 +560,8 @@ def test_example_23_rotated_grid_axes_overlay():
     _configure_example_output("23")
 
     data = f.array
-    xvec = f.construct("ncvar%x").array
-    yvec = f.construct("ncvar%y").array
+    xvec = f.construct("ncvar%x")
+    yvec = f.construct("ncvar%y")
     xpole = 160
     ypole = 30
 
@@ -545,21 +586,21 @@ def test_example_23other_incompass_contour_vectors():
     if not incompass_file.exists():
         pytest.skip(f"Missing test data: {incompass_file}")
 
-    flds = cf.read(str(incompass_file))
-    fdict = {f.identity(): f for f in flds}
+    fl = cf.read(str(incompass_file))
     _configure_example_output("23other")
+
+    r = fl.select_by_identity("long_name=Relative humidity")[0]
+    u = fl.select_by_identity("eastward_wind")[0]
+    v = fl.select_by_identity("northward_wind")[0]
 
     cfp.mapset(50, 100, 5, 35)
     cfp.levs(0, 90, 15, extend="neither")
+
     cfp.gopen()
-    cfp.con(fdict["long_name=Relative humidity"], lines=False)
-    cfp.vect(
-        u=fdict["eastward_wind"],
-        v=fdict["northward_wind"],
-        stride=40,
-        key_length=10,
-    )
+    cfp.con(r, lines=False)
+    cfp.vect(u=u, v=v, stride=40, key_length=10)
     cfp.gclose()
+
     _assert_reference_match("23other")
 
 
@@ -572,6 +613,10 @@ def test_example_31_ukcp_projection():
 
     f = cf.read(str(ukcp_file))[0]
 
+    # NOTE WELL: must not use _configure_example_output("31") here until
+    # we set up a means to use setvars without resetting other config.,
+    # else it resets the viewer so the actual plot doesn't (all) get
+    # plotted on and associated with the test file to compare to.
     fname = str(TEST_GEN_DIR / "gen_fig_31.png")
     cfp.setvars(
         file=fname,
@@ -579,14 +624,48 @@ def test_example_31_ukcp_projection():
         grid_x_spacing=1,
         grid_y_spacing=1,
     )
+
     cfp.mapset(proj="UKCP", resolution="50m")
-    # TODO The original test set the grid_x_ and _y_spacing to 1,
-    # but this reset all the output, and stopped any output to
-    # file. We need to fix setvars so it doesn't just reset
-    # everything.
     cfp.levs(-3, 7, 0.5)
+
     cfp.con(f, fill=True, blockfill=False, lines=False)
+
     _assert_reference_match("31")
+
+
+@pytest.mark.integration
+def test_example_32_ukcp_projection_with_blockfill():
+    """Test Example 32: UKCP projection with blockfill."""
+    ukcp_file = DATA_DIR / "ukcp_rcm_test.nc"
+    if not ukcp_file.exists():
+        pytest.skip(f"Missing test data: {ukcp_file}")
+
+    f = cf.read(str(ukcp_file))[0]
+
+    # NOTE WELL: must not use _configure_example_output("31") here until
+    # we set up a means to use setvars without resetting other config.,
+    # else it resets the viewer so the actual plot doesn't (all) get
+    # plotted on and associated with the test file to compare to.
+    fname = str(TEST_GEN_DIR / "gen_fig_32.png")
+    cfp.setvars(
+        file=fname,
+        viewer="matplotlib",
+        grid_colour="grey",
+    )
+
+    cfp.mapset(proj="UKCP", resolution="50m")
+    cfp.levs(-3, 7, 0.5)
+
+    cfp.con(
+        f,
+        lines=False,
+        blockfill=True,
+        # Centered over UK region with spacing of 1 each
+        xticks=np.arange(14) - 11,
+        yticks=np.arange(13) + 49,
+    )
+
+    _assert_reference_match("32")
 
 
 @pytest.mark.integration
@@ -731,15 +810,17 @@ def test_example_nemo_1():
     cfp.cscale("precip2_17lev")
     cfp.gpos(1)
     cfp.con(
-        f, colorbar=None, lines=False,
+        f,
+        colorbar=None,
+        lines=False,
         title=(
             "Total precipitation flux at midnight 1979-02-15 highlighted "
             "over the Tropical Indo-Pacific"
-        ))
+        ),
+    )
     cfp.gpos(2)
     cfp.con(
-        f.subspace(
-            X=cf.wi(120, 180), Y=cf.wi(-25, 5)),
+        f.subspace(X=cf.wi(120, 180), Y=cf.wi(-25, 5)),
         lines=False,
     )
     cfp.gclose()
@@ -798,6 +879,7 @@ def test_example_45_all_titles():
 
     _assert_reference_match("45titles")
 
+
 @pytest.mark.integration
 def test_example_46_uk_euro_proj_titles():
     """Test Example 45: test title for the UKCP, OSGB and EuroPP projections.
@@ -835,8 +917,7 @@ def test_example_46_uk_euro_proj_titles():
         # https://github.com/NCAS-CMS/cf-plot/issues/76
         cfp.gpos(index + 1)
 
-        cfp.con(
-            f, title=f"Title for {proj_name} projection")
+        cfp.con(f, title=f"Title for {proj_name} projection")
 
     cfp.gclose()
 

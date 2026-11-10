@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "cf-plot"
-version = "3.5.0"
+version = "3.6.0"
 description = "Code-light plotting for earth science and aligned research"
 keywords = [
     "visualisation",
@@ -27,9 +27,13 @@ keywords = [
 readme = "README.md"
 license = "MIT"
 license-files = ["LICENSE.txt"]
-authors = [{ name = "Andy Heaps", email = "andy.heaps@ncas.ac.uk" }]
+authors = [
+    {name = "Andy Heaps"},
+    {name = "Sadie Bartholomew", email = "sadie.bartholomew@ncas.ac.uk"},
+    {name = "Bryan Lawrence"},
+]
 maintainers = [
-    {name = "Sadie Bartholomew", email = "sadie.bartholomew@ncas.ac.uk" },
+    {name = "Sadie Bartholomew", email = "sadie.bartholomew@ncas.ac.uk"},
 ]
 classifiers = [
     "Development Status :: 5 - Production/Stable",

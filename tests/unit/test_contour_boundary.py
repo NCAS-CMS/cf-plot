@@ -79,7 +79,8 @@ def test_maybe_autosave_skips_when_session_open(monkeypatch):
     calls: list[bool] = []
 
     monkeypatch.setattr(
-        layout_runtime.plotvars.runtime, "_contour_session_open", True)
+        layout_runtime.plotvars.runtime, "_contour_session_open", True
+    )
     monkeypatch.setattr(
         layout_runtime, "gclose", lambda view=True: calls.append(view)
     )
@@ -103,13 +104,15 @@ def test_curvilinear_defaults_enable_fast_blockfill():
         ptype=1,
     )
 
-    fill, lines, blockfill, blockfill_fast = contour._resolve_curvilinear_render_defaults(
-        data=data,
-        kwargs={},
-        fill=True,
-        lines=True,
-        blockfill=False,
-        blockfill_fast=None,
+    fill, lines, blockfill, blockfill_fast = (
+        contour._resolve_curvilinear_render_defaults(
+            data=data,
+            kwargs={},
+            fill=True,
+            lines=True,
+            blockfill=False,
+            blockfill_fast=None,
+        )
     )
 
     # TODO: this test is very confusing (setting values against the test
@@ -128,13 +131,15 @@ def test_curvilinear_defaults_respect_explicit_user_choices():
         ptype=1,
     )
 
-    fill, lines, blockfill, blockfill_fast = contour._resolve_curvilinear_render_defaults(
-        data=data,
-        kwargs={"blockfill": False, "lines": True},
-        fill=True,
-        lines=True,
-        blockfill=False,
-        blockfill_fast=None,
+    fill, lines, blockfill, blockfill_fast = (
+        contour._resolve_curvilinear_render_defaults(
+            data=data,
+            kwargs={"blockfill": False, "lines": True},
+            fill=True,
+            lines=True,
+            blockfill=False,
+            blockfill_fast=None,
+        )
     )
 
     assert fill is True
@@ -150,9 +155,7 @@ def test_curvilinear_contours_mask_both_sides_of_seam(axis):
         x = x.T
     field = np.ma.array(np.ones((4, 4)), mask=False)
     field.mask[0, 0] = True
-    data = contour.ContourData(
-        field=field, x=x, y=np.ones((4, 4)), ptype=1
-    )
+    data = contour.ContourData(field=field, x=x, y=np.ones((4, 4)), ptype=1)
 
     result = contour._mask_curvilinear_contour_seams(data)
 
@@ -264,9 +267,7 @@ def test_nemo_contours_do_not_interpolate_across_longitude_seam(filled):
                 for points, boundaries in zip(vertices, offsets):
                     paths.extend(
                         points[start:end]
-                        for start, end in zip(
-                            boundaries[:-1], boundaries[1:]
-                        )
+                        for start, end in zip(boundaries[:-1], boundaries[1:])
                     )
         else:
             paths = [

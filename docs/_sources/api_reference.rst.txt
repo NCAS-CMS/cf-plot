@@ -33,13 +33,14 @@ Graphics related
    cfplot.gfigure
 
 
-Parameter related
------------------
+Configuration related
+---------------------
 
 .. autosummary::
    :nosignatures:
 
    cfplot.axes
+   cfplot.axes_plot
    cfplot.cscale
    cfplot.gset
    cfplot.levs
@@ -47,16 +48,6 @@ Parameter related
    cfplot.plotvars
    cfplot.reset
    cfplot.setvars
-
-
-Mapping related
----------------
-
-.. autosummary::
-   :nosignatures:
-
-   cfplot.axes_plot
-   cfplot.map_grid
 
 
 Colour related
@@ -68,15 +59,6 @@ Colour related
    cfplot.cbar
 
 
-Calculations
-------------
-
-.. autosummary::
-   :nosignatures:
-
-   cfplot.calculate_levels
-
-
 Utility Routines
 ----------------
 
@@ -84,21 +66,17 @@ Utility Routines
    :nosignatures:
 
    cfplot.add_cyclic
+   cfplot.calculate_levels
    cfplot.cf_var_name
    cfplot.cf_var_name_titles
    cfplot.find_dim_names
-   cfplot.find_pos_in_array
    cfplot.find_z
    cfplot.fix_floats
    cfplot.generate_titles
-   cfplot.irregular_window
-   cfplot.max_ndecs_data
    cfplot.ndecs
-   cfplot.pcon
    cfplot.polar_regular_grid
    cfplot.rgaxes
    cfplot.stipple_points
-   cfplot.vloc
 
 
 Validation
@@ -133,27 +111,34 @@ functional codebase.
 Obsolete Internal API
 ---------------------
 
-These routines were exposed in the user-facing API at versions 3.3.0 and
-below but were marked as not being intended for user use. They have
-therefore been removed except for under-the-hood processing at version 3.5.0.
-They are listed here for completeness and posterity.
+These routines (or a later counterpart with a leading underscore e.g.
+`_check_data` or `check_data`) were exposed in the user-facing API
+at versions 3.3.0 and below but were marked as not being intended
+for user use. They have therefore been removed except for under-the-hood
+processing at version 3.5.0. They are listed here for completeness and
+posterity.
 
 If you made use of any of the functionality provided by these internal-use
 routines, and wish to have this in future, please
 :ref:`get in touch <ways-to-contact-us>` to let
 us know and we may be able to support them again.
 
-* ``_bfill``
-* ``_bfill_ugrid``
-* ``_cf_data_assign``
-* ``_check_data``
-* ``_cscale_get_map``
-* ``_dim_titles``
-* ``_gvals``
-* ``_map_title``
-* ``_mapaxis``
-* ``_plot_map_axes``
-* ``_process_color_scales``
-* ``_set_map``
-* ``_supscr``
-* ``_timeaxis``
+
+* ``bfill_ugrid``
+* ``bfill``
+* ``cf_data_assign``
+* ``check_data``
+* ``cscale_get_map``
+* ``dim_titles``
+* ``find_pos_in_array``
+* ``irregular_window``
+* ``map_grid``
+* ``map_title``
+* ``max_ndecs_data``
+* ``pcon``
+* ``plot_map_axes``
+* ``process_color_scales``
+* ``set_map``
+* ``supscr``
+* ``timeaxis``
+* ``vloc``

@@ -1,4 +1,0 @@
-pcon
-****
-
-.. autofunction:: cfplot.pcon
