@@ -165,4 +165,5 @@ cython_debug/
 #.idea/
 
 # Test-generated plot outputs
-/generated-example-images/
+/generated-example-images-adv/
+/generated-example-images-cont/
