@@ -18,7 +18,6 @@ from .trajectory import traj
 from .utility import gvals as _gvals_impl
 from .utility import mapaxis as _mapaxis_impl
 from .utility import (
-    _find_pos_in_array,
     add_cyclic,
     calculate_levels,
     cf_var_name,
@@ -93,6 +92,7 @@ def reset():
 
 
 def _gvals(*args, **kwargs):
+    """TODO"""
     return _gvals_impl(*args, **kwargs)
 
 
@@ -112,6 +112,7 @@ def rgaxes(
     xlabel=None,
     ylabel=None,
 ):
+    """TODO"""
     return _render_rotated_grid_axes(
         xpole=xpole,
         ypole=ypole,
@@ -130,6 +131,7 @@ def rgaxes(
 
 
 def _mapaxis(min=None, max=None, type=None):
+    """TODO"""
     return _mapaxis_impl(
         min_val=min,
         max_val=max,
@@ -139,12 +141,11 @@ def _mapaxis(min=None, max=None, type=None):
 
 
 __all__ = [
-    "_gvals",
-    "_mapaxis",
+    "_gvals",  # Req'd for public API?
+    "_mapaxis",  # Req'd for public API?
     "add_cyclic",
     "axes",
     "axes_plot",
-    "calculate_levels",
     "calculate_levels",
     "cbar",
     "cf_var_name",
@@ -158,6 +159,7 @@ __all__ = [
     "fix_floats",
     "gclose",
     "generate_titles",
+    "gfigure",
     "gopen",
     "gpos",
     "gset",
@@ -174,7 +176,7 @@ __all__ = [
     "regrid",
     "reset",
     "rgaxes",
-    "rgaxes",
+    "scatter",
     "setvars",
     "stipple",
     "stipple_points",
