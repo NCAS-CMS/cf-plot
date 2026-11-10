@@ -4,8 +4,12 @@ Versions
 Summary of changes
 ------------------
 
+- 3.6: numerous updates and bug fixes, see
+  `Changelog entry for 3.6.X <https://github.com/NCAS-CMS/cf-plot/blob/main/CHANGELOG.md#version-36x>`_
+- 3.5: numerous updates and bug fixes, see
+  `Changelog entry for 3.5.X <https://github.com/NCAS-CMS/cf-plot/blob/main/CHANGELOG.md#version-35x>`_
 - 3.4: numerous updates and bug fixes, see
-  `Changelog entry for 3.4.X <https://github.com/NCAS-CMS/cf-plot/blob/main/CHANGELOG.md#version-34x-first-released-340-2025-04-28>`_
+  `Changelog entry for 3.4.X <https://github.com/NCAS-CMS/cf-plot/blob/main/CHANGELOG.md#version-34x>`_
 - 3.3 UGRID support updated :ref:`version_3.3`
 - 3.2 Rolling bugfix version :ref:`version_3.2`
 - 3.1 UGRID support :ref:`version_3.1`

@@ -14,9 +14,9 @@ of being developed elsewhere.
 -----
 
 
-### Version `3.5.X`, first released XXXXXX
+### Version `3.6.X`, first released 2026-11-10
 
-#### Version `3.5.1`, released 2026-??-??
+#### Version `3.6.0`, released 2026-11-10
 
 * Update code to prevent deprecation-related warnings
   (https://github.com/NCAS-CMS/cf-plot/issues/72)
@@ -41,6 +41,8 @@ of being developed elsewhere.
   `lineplot` with `lines=False` and markers on plus new example (27b)
   (https://github.com/NCAS-CMS/cf-plot/issues/160)
 
+
+### Version `3.5.X`, first released 2026-10-09
 
 #### Version `3.5.0`, released 2026-10-09
 
