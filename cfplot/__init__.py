@@ -33,7 +33,7 @@ from .vector import axes_plot, vect
 
 __author__ = "Andy Heaps, Sadie Bartholomew, Bryan Lawrence"
 __maintainer__ = "Sadie Bartholomew"
-__date__ = "2026-10-09"
+__date__ = "2026-11-10"
 
 
 from importlib.metadata import PackageNotFoundError

@@ -7,29 +7,7 @@ Is cf-plot already installed?
 =============================
 
 cf-plot my already be avaiable to you, if you have access to a some tier of
-HPC system. For example (though note these commands may be out of date and
-will be checked for updates in the near future):
-
-.. code-block:: console
-   :caption: On JASMIN
-
-   $ export PATH=/home/users/ajh/anaconda3/bin:$PATH
-   $ ln -s /home/users/ajh/cfplot_data ~
-
-
-.. code-block:: console
-   :caption: On ARCHER
-
-   $ export PATH=/home/n02/n02/ajh/anaconda3/bin:$PATH
-   $ export QT_XCB_NO_XI2=true
-   $ ln -s /home/n02/n02/ajh/cfplot_data ~
-
-
-.. code-block:: console
-   :caption: On Reading Academic Computing Cluster (RACC)
-             
-   $ module load ncas_anaconda3
-   $ ln -s /share/apps/NCAS/cfplot_data ~
+HPC system. For example, on JASMIN there is 
 
 
 To install cf-plot
