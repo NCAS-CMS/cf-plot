@@ -6,10 +6,10 @@ contour.py while preserving behaviour.
 
 from __future__ import annotations
 
-from contextlib import contextmanager
 import os
 import shutil
 import subprocess
+from contextlib import contextmanager
 from typing import Any
 
 import matplotlib

@@ -7,7 +7,7 @@ Documentation is hosted and found at: https://ncas-cms.github.io/cf-plot/
 from .colorbar import cbar
 from .colour import cscale
 from .contour import con, levs
-from .layout_runtime import axes, gclose, gopen, gpos, gset, gfigure
+from .layout_runtime import axes, gclose, gfigure, gopen, gpos, gset
 from .line import lineplot, scatter
 from .map_runtime import mapset
 from .rotated_runtime import _render_rotated_grid_axes
@@ -15,8 +15,6 @@ from .state import plotvars, reset_runtime_state, setvars
 from .stipple import stipple
 from .stream import stream
 from .trajectory import traj
-from .utility import gvals as _gvals_impl
-from .utility import mapaxis as _mapaxis_impl
 from .utility import (
     add_cyclic,
     calculate_levels,
@@ -26,14 +24,12 @@ from .utility import (
     find_z,
     fix_floats,
     generate_titles,
-    ndecs,
-    polar_regular_grid,
-    regrid,
-    stipple_points,
 )
+from .utility import gvals as _gvals_impl
+from .utility import mapaxis as _mapaxis_impl
+from .utility import ndecs, polar_regular_grid, regrid, stipple_points
 from .validate import check_well_formed, orca_check
-from .vector import vect, axes_plot
-
+from .vector import axes_plot, vect
 
 __author__ = "Andy Heaps, Sadie Bartholomew, Bryan Lawrence"
 __maintainer__ = "Sadie Bartholomew"

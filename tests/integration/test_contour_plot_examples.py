@@ -250,7 +250,7 @@ def test_regression_npstere_da193_image():
         pytest.skip(f"Missing test data: {da193_path}")
 
     f = cf.read(str(da193_path))[0]
- 
+
     _configure_example_output("npstere_da193")
 
     cfp.mapset(
@@ -810,15 +810,17 @@ def test_example_nemo_1():
     cfp.cscale("precip2_17lev")
     cfp.gpos(1)
     cfp.con(
-        f, colorbar=None, lines=False,
+        f,
+        colorbar=None,
+        lines=False,
         title=(
             "Total precipitation flux at midnight 1979-02-15 highlighted "
             "over the Tropical Indo-Pacific"
-        ))
+        ),
+    )
     cfp.gpos(2)
     cfp.con(
-        f.subspace(
-            X=cf.wi(120, 180), Y=cf.wi(-25, 5)),
+        f.subspace(X=cf.wi(120, 180), Y=cf.wi(-25, 5)),
         lines=False,
     )
     cfp.gclose()
@@ -877,6 +879,7 @@ def test_example_45_all_titles():
 
     _assert_reference_match("45titles")
 
+
 @pytest.mark.integration
 def test_example_46_uk_euro_proj_titles():
     """Test Example 45: test title for the UKCP, OSGB and EuroPP projections.
@@ -914,8 +917,7 @@ def test_example_46_uk_euro_proj_titles():
         # https://github.com/NCAS-CMS/cf-plot/issues/76
         cfp.gpos(index + 1)
 
-        cfp.con(
-            f, title=f"Title for {proj_name} projection")
+        cfp.con(f, title=f"Title for {proj_name} projection")
 
     cfp.gclose()
 
