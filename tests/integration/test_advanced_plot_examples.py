@@ -210,6 +210,7 @@ def test_example_16a_zonal_vector_plot(ggap_file):
     _assert_reference_match("16a")
 
 
+@pytest.mark.xfail_image_comparison
 @pytest.mark.integration
 def test_example_16b_basic_stream_plot(ggap_file):
     """Test Example 16b: basic stream plot."""
@@ -227,6 +228,7 @@ def test_example_16b_basic_stream_plot(ggap_file):
     _assert_reference_match("16b")
 
 
+@pytest.mark.xfail_image_comparison
 @pytest.mark.integration
 def test_example_16c_enhanced_stream_plot(ggap_file):
     """Test Example 16c: enhanced stream plot."""

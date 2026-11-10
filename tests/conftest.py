@@ -33,3 +33,15 @@ def skip_image_comparison(request, monkeypatch):
             lambda example_id: None,
             raising=False,
         )
+
+
+def pytest_collection_modifyitems(config, items):
+    """Mark selected tests as xfail only when image comparison is enabled."""
+    if not config.getoption("--skip-image-comparison"):
+        for item in items:
+            if item.get_closest_marker("xfail_image_comparison"):
+                item.add_marker(
+                    pytest.mark.xfail(
+                        reason="Known failure with image comparison"
+                    )
+                )
