@@ -92,7 +92,7 @@ def reset():
 
 
 def _gvals(*args, **kwargs):
-    """TODO"""
+    """Work out a sensible set of values between two limits."""
     return _gvals_impl(*args, **kwargs)
 
 
@@ -112,7 +112,7 @@ def rgaxes(
     xlabel=None,
     ylabel=None,
 ):
-    """TODO"""
+    """Label rotated grid plots."""
     return _render_rotated_grid_axes(
         xpole=xpole,
         ypole=ypole,
@@ -131,7 +131,7 @@ def rgaxes(
 
 
 def _mapaxis(min=None, max=None, type=None):
-    """TODO"""
+    """Work out a sensible set of lon-lat tick marks and labels."""
     return _mapaxis_impl(
         min_val=min,
         max_val=max,

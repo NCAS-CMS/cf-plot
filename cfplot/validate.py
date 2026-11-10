@@ -116,7 +116,7 @@ def _check_data(field=None, x=None, y=None):
 
 
 def orca_check(x, verbose=False):
-    """Check input data to see if it is an orca ocean grid.
+    """Check input data to test if it is on an ORCA ocean grid.
 
     We look for a single discontinuity in longitude where the data changes by
     greater that 120 degrees.

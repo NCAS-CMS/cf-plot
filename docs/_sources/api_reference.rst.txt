@@ -70,18 +70,13 @@ Utility Routines
    cfplot.cf_var_name
    cfplot.cf_var_name_titles
    cfplot.find_dim_names
-   cfplot.find_pos_in_array
    cfplot.find_z
    cfplot.fix_floats
    cfplot.generate_titles
-   cfplot.irregular_window
-   cfplot.max_ndecs_data
    cfplot.ndecs
-   cfplot.pcon
    cfplot.polar_regular_grid
    cfplot.rgaxes
    cfplot.stipple_points
-   cfplot.vloc
 
 
 Validation

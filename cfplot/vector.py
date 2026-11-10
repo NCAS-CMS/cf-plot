@@ -47,6 +47,7 @@ def axes_plot(
     xaxis=True,
     yaxis=True,
 ):
+    """Specify axes plotting parameters."""
     apply_axes(
         plot_type=plotvars.plot_type,
         xticks=xticks,
