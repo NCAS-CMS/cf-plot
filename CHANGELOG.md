@@ -42,6 +42,9 @@ First released (`3.6.0`) `2026-11-10`
 * Clarify scatter plot support including new function `scatter` to call
   `lineplot` with `lines=False` and markers on plus new example (27b)
   (https://github.com/NCAS-CMS/cf-plot/issues/160)
+* Remove some obsolete internal-use routines that were previously exposed
+  in the public API: `map_grid`, `find_pos_in_array`, `irregular_window`,
+  `max_ndecs_data`, `pcon`, `vloc`
 
 
 ### Version `3.5`
