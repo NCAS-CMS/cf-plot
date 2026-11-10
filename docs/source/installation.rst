@@ -6,8 +6,10 @@ Installation
 Is cf-plot already installed?
 =============================
 
-cf-plot my already be avaiable to you, if you have access to a some tier of
-HPC system. For example, on JASMIN there is 
+cf-plot may already be available to you if you have access to an HPC system.
+For example, on `JASMIN <https://help.jasmin.ac.uk/>`_, cf-plot is available
+as part of the `Jaspy Software Environments
+<https://help.jasmin.ac.uk/docs/software-on-jasmin/jaspy-envs/>`_.
 
 
 To install cf-plot

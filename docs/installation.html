@@ -474,31 +474,9 @@
 <span id="install"></span><h1>Installation<a class="headerlink" href="#installation" title="Link to this heading">#</a></h1>
 <section id="is-cf-plot-already-installed">
 <h2>Is cf-plot already installed?<a class="headerlink" href="#is-cf-plot-already-installed" title="Link to this heading">#</a></h2>
-<p>cf-plot my already be avaiable to you, if you have access to a some tier of
-HPC system. For example (though note these commands may be out of date and
-will be checked for updates in the near future):</p>
-<div class="literal-block-wrapper docutils container" id="id1">
-<div class="code-block-caption"><span class="caption-text">On JASMIN</span><a class="headerlink" href="#id1" title="Link to this code">#</a></div>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">export</span><span class="w"> </span><span class="nv">PATH</span><span class="o">=</span>/home/users/ajh/anaconda3/bin:<span class="nv">$PATH</span>
-<span class="gp">$ </span>ln<span class="w"> </span>-s<span class="w"> </span>/home/users/ajh/cfplot_data<span class="w"> </span>~
-</pre></div>
-</div>
-</div>
-<div class="literal-block-wrapper docutils container" id="id2">
-<div class="code-block-caption"><span class="caption-text">On ARCHER</span><a class="headerlink" href="#id2" title="Link to this code">#</a></div>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">export</span><span class="w"> </span><span class="nv">PATH</span><span class="o">=</span>/home/n02/n02/ajh/anaconda3/bin:<span class="nv">$PATH</span>
-<span class="gp">$ </span><span class="nb">export</span><span class="w"> </span><span class="nv">QT_XCB_NO_XI2</span><span class="o">=</span><span class="nb">true</span>
-<span class="gp">$ </span>ln<span class="w"> </span>-s<span class="w"> </span>/home/n02/n02/ajh/cfplot_data<span class="w"> </span>~
-</pre></div>
-</div>
-</div>
-<div class="literal-block-wrapper docutils container" id="id3">
-<div class="code-block-caption"><span class="caption-text">On Reading Academic Computing Cluster (RACC)</span><a class="headerlink" href="#id3" title="Link to this code">#</a></div>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>module<span class="w"> </span>load<span class="w"> </span>ncas_anaconda3
-<span class="gp">$ </span>ln<span class="w"> </span>-s<span class="w"> </span>/share/apps/NCAS/cfplot_data<span class="w"> </span>~
-</pre></div>
-</div>
-</div>
+<p>cf-plot may already be available to you if you have access to an HPC system.
+For example, on <a class="reference external" href="https://help.jasmin.ac.uk/">JASMIN</a>, cf-plot is available
+as part of the <a class="reference external" href="https://help.jasmin.ac.uk/docs/software-on-jasmin/jaspy-envs/">Jaspy Software Environments</a>.</p>
 </section>
 <section id="to-install-cf-plot">
 <h2>To install cf-plot<a class="headerlink" href="#to-install-cf-plot" title="Link to this heading">#</a></h2>
@@ -512,8 +490,8 @@ from such systems, as detailed below.</p>
 command through an
 <a class="reference external" href="https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html">Anaconda or 'miniconda' distribution (etc.)</a>
 and run:</p>
-<div class="literal-block-wrapper docutils container" id="id4">
-<div class="code-block-caption"><span class="caption-text">Installing cf-plot and its dependencies with <code class="docutils literal notranslate"><span class="pre">conda</span></code></span><a class="headerlink" href="#id4" title="Link to this code">#</a></div>
+<div class="literal-block-wrapper docutils container" id="id1">
+<div class="code-block-caption"><span class="caption-text">Installing cf-plot and its dependencies with <code class="docutils literal notranslate"><span class="pre">conda</span></code></span><a class="headerlink" href="#id1" title="Link to this code">#</a></div>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span>cf-python<span class="w"> </span>cf-plot<span class="w"> </span>udunits2
 <span class="gp">$ </span>conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span><span class="s2">&quot;esmpy&gt;=8.7.0&quot;</span><span class="w">  </span><span class="c1"># if you need to use regridding functionality</span>
 </pre></div>
@@ -526,8 +504,8 @@ together which cf-python uses for regridding data.</p>
 <section id="via-pypi">
 <h4>Via PyPI<a class="headerlink" href="#via-pypi" title="Link to this heading">#</a></h4>
 <p>You can use <cite>pip</cite> to install from <a class="reference external" href="https://pypi.org/">PyPI</a>:</p>
-<div class="literal-block-wrapper docutils container" id="id5">
-<div class="code-block-caption"><span class="caption-text">Installing cf-plot and its dependencies with <code class="docutils literal notranslate"><span class="pre">pip</span></code></span><a class="headerlink" href="#id5" title="Link to this code">#</a></div>
+<div class="literal-block-wrapper docutils container" id="id2">
+<div class="code-block-caption"><span class="caption-text">Installing cf-plot and its dependencies with <code class="docutils literal notranslate"><span class="pre">pip</span></code></span><a class="headerlink" href="#id2" title="Link to this code">#</a></div>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>pip<span class="w"> </span>install<span class="w"> </span>cf-python<span class="w"> </span>cf-plot
 </pre></div>
 </div>
@@ -538,8 +516,8 @@ version can be installed using pip install <code class="docutils literal notrans
 </section>
 <section id="from-source-via-github">
 <h4>From source via GitHub<a class="headerlink" href="#from-source-via-github" title="Link to this heading">#</a></h4>
-<div class="literal-block-wrapper docutils container" id="id6">
-<div class="code-block-caption"><span class="caption-text">Installing cf-plot from source via <code class="docutils literal notranslate"><span class="pre">git</span></code> and GitHub</span><a class="headerlink" href="#id6" title="Link to this code">#</a></div>
+<div class="literal-block-wrapper docutils container" id="id3">
+<div class="code-block-caption"><span class="caption-text">Installing cf-plot from source via <code class="docutils literal notranslate"><span class="pre">git</span></code> and GitHub</span><a class="headerlink" href="#id3" title="Link to this code">#</a></div>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/NCAS-CMS/cf-plot.git
 <span class="gp">$ </span><span class="nb">cd</span><span class="w"> </span>cf-plot
 <span class="gp">$ </span>python<span class="w"> </span>setup.py<span class="w"> </span>install<span class="w">  </span><span class="c1"># or &#39;pip install -e .&#39;</span>
@@ -590,8 +568,8 @@ total size ~125 MB) available from
 <a class="reference download external" download="" href="https://github.com/NCAS-CMS/cf-plot/raw/main/docs/source/_downloads/example-datasets.z01"><code class="xref download docutils literal notranslate"><span class="pre">here</span> <span class="pre">(part</span> <span class="pre">1</span> <span class="pre">of</span> <span class="pre">2)</span></code></a> and
 <a class="reference download external" download="" href="https://github.com/NCAS-CMS/cf-plot/raw/main/docs/source/_downloads/example-datasets.zip"><code class="xref download docutils literal notranslate"><span class="pre">here</span> <span class="pre">(part</span> <span class="pre">2</span> <span class="pre">of</span> <span class="pre">2)</span></code></a> which can be
 unzipped together to the full dataset directory as follows:</p>
-<div class="literal-block-wrapper docutils container" id="id7">
-<div class="code-block-caption"><span class="caption-text"><em>Accessing all of the datasets for the cf-plot examples</em></span><a class="headerlink" href="#id7" title="Link to this code">#</a></div>
+<div class="literal-block-wrapper docutils container" id="id4">
+<div class="code-block-caption"><span class="caption-text"><em>Accessing all of the datasets for the cf-plot examples</em></span><a class="headerlink" href="#id4" title="Link to this code">#</a></div>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Download the split zip parts: either use &#39;wget&#39; as below or</span>
 <span class="c1"># download both files from the links above</span>
 wget<span class="w"> </span>https://github.com/NCAS-CMS/cf-plot/tree/main/docs/source/_downloads/example-datasets.z01
