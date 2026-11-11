@@ -3,7 +3,7 @@
 Specific Models
 ***************
 
-Data from many commonly-used earth system or ocean models wil be handled
+Data from many commonly-used earth system or ocean models will be handled
 natively by cf-plot  cf-python, with no need to process or coerce the
 underlying grid or metadata in any special way. Some examples are given
 below.

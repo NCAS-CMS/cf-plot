@@ -1,7 +1,7 @@
 .. _example19c:
 
-Example 19c: Accomodating more than one colour bar
---------------------------------------------------
+Example 19c: Accommodating more than one colour bar
+---------------------------------------------------
 
 
 .. code-block:: python
