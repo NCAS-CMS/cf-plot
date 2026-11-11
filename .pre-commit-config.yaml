@@ -2,7 +2,7 @@
 # style issues and prompt for these to be corrected before committing.
 
 repos:
-  # isort for importing sorting
+  # isort for importing sorting - run before black
   - repo: https://github.com/pycqa/isort
     rev: 6.1.0
     hooks:
