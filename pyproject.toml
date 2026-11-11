@@ -1,6 +1,4 @@
-[build-system]
-requires = ["setuptools>=77", "wheel"]
-build-backend = "setuptools.build_meta"
+# ------------------------- Project information -------------------------
 
 [project]
 name = "cf-plot"
@@ -98,6 +96,13 @@ Installation = "https://ncas-cms.github.io/cf-plot/installation.html"
 Issues = "https://github.com/NCAS-CMS/cf-plot/issues"
 
 
+# ------------------------- Packaging information -------------------------
+
+[build-system]
+requires = ["setuptools>=77", "wheel"]
+build-backend = "setuptools.build_meta"
+
+
 [tool.setuptools]
 include-package-data = true
 
@@ -111,15 +116,25 @@ include = ["cfplot*"]
 cfplot = ["colour/colourmaps/*"]
 
 
-# To run the black checker with this configuration, execute 'black .' in the
-# root of this repository. See https://black.readthedocs.io/en/stable/ for
-# the 'black' documentation.
+# ------------------------- Configuration of linting -------------------------
+# Note we use a line length max of 79, so this needs to be enforced on the
+# linting tools that check against this.
+
+# black: see https://black.readthedocs.io/en/stable/
 [tool.black]
 line-length = 79
-
+target-version = ["py311"]
 
 [tool.isort]
-# Set for compatibility of 'black' and 'isort' auto-formatting tools
 profile = "black"
-# ... and since we set this against the black default line length:
-line_length=79
+line_length = 79
+skip_gitignore = true
+
+[tool.flake8]
+max-line-length = 79
+extend-ignore = [
+    "E203",
+]
+
+[tool.codespell]
+skip = ".git,.venv,build,dist"
