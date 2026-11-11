@@ -64,6 +64,30 @@ dependencies = [
     "cartopy>=0.22.0",
 ]
 
+
+[project.optional-dependencies]
+tests = [
+    "pytest",
+    # The following are compulsory via the Cartopy dependency but imported
+    # explicitly by the tests so best to list them explicitly here:
+    "matplotlib",
+    "contourpy",
+    "netCDF4",
+]
+dev = [
+    "black",
+    "isort",
+    "flake8",
+    "codespell",
+]
+docs = [
+    "sphinx",
+    "sphinx-argparse",
+    "sphinx-design",
+    "pydata-sphinx-theme",
+]
+
+
 [project.urls]
 Homepage = "https://ncas-cms.github.io/cf-plot/"
 Documentation = "https://ncas-cms.github.io/cf-plot/"
@@ -73,21 +97,26 @@ Installation = "https://ncas-cms.github.io/cf-plot/installation.html"
 "Release Notes" = "https://github.com/NCAS-CMS/cf-plot/blob/main/CHANGELOG.md"
 Issues = "https://github.com/NCAS-CMS/cf-plot/issues"
 
+
 [tool.setuptools]
 include-package-data = true
+
 
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["cfplot*"]
 
+
 [tool.setuptools.package-data]
 cfplot = ["colour/colourmaps/*"]
+
 
 # To run the black checker with this configuration, execute 'black .' in the
 # root of this repository. See https://black.readthedocs.io/en/stable/ for
 # the 'black' documentation.
 [tool.black]
 line-length = 79
+
 
 [tool.isort]
 # Set for compatibility of 'black' and 'isort' auto-formatting tools
