@@ -76,7 +76,9 @@ dev = [
     "black",
     "isort",
     "flake8",
+    "flake8-pyproject",  # to detect flake8 pyproject.toml config
     "codespell",
+    "pre-commit",
 ]
 docs = [
     "sphinx",
