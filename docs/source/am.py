@@ -1,6 +1,8 @@
-import cf, cfplot as cfp
+import cf
 import numpy as np
 from netCDF4 import Dataset as NetCDFFile
+
+import cfplot as cfp
 
 NJ = 108
 NI = 168

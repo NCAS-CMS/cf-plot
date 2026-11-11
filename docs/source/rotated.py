@@ -1,5 +1,6 @@
 # example 1
 import cf
+
 import cfplot as cfp
 
 f = cf.read("cfplot_data/rgp.nc")[0]
@@ -14,6 +15,7 @@ f.construct("dimensioncoordinate1").array
 
 # example 2
 import cf
+
 import cfplot as cfp
 
 f = cf.read("cfplot_data/rgp.nc")[0]
@@ -24,6 +26,7 @@ cfp.con(f)
 
 # example 3
 import cf
+
 import cfplot as cfp
 
 f = cf.read("cfplot_data/20160601-05T0000Z_INCOMPASS_km4p4_uv_RH_500.nc")
@@ -37,7 +40,9 @@ cfp.gclose()
 
 
 # David's issue
-import cf, cfplot as cfp
+import cf
+
+import cfplot as cfp
 
 x = cf.read("aaaaoa.pmh8dec.pp")[0]
 print(x)
@@ -53,7 +58,9 @@ humidity
 
 
 # Sam's issue
-import cf, cfplot as cfp
+import cf
+
+import cfplot as cfp
 
 sst = cf.read("nemo_ay652o_1m_19500901-19501001_grid-T.nc")[-8]
 sst2 = sst.subspace(X=cf.wi(-30, 30), Y=cf.wi(20, 80))

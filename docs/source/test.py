@@ -1,5 +1,6 @@
 import cf
 import numpy as np
+
 import cfplot as cfp
 
 f = cf.read("test.nc")
@@ -15,6 +16,7 @@ cfp.gclose()
 
 
 import cf
+
 import cfplot as cfp
 
 f = cf.read("cfplot_data/tas_A1.nc")[0]
@@ -27,6 +29,7 @@ cfp.con(f.subspace(time=15), colorbar_labels=["1", "2", "3", "4"])
 
 import cf
 import numpy as np
+
 import cfplot as cfp
 
 f = cf.read("test.nc")
@@ -46,7 +49,9 @@ cfp.gclose()
 
 
 # Sadie's plot - wrong colorbar spacing
-import cf, cfplot as cfp
+import cf
+
+import cfplot as cfp
 
 i = cf.read("chess_landfrac.nc")[0]
 cfp.con(i)
@@ -56,6 +61,7 @@ cfp.con(f=i.array, x=i.dim("X").array, y=i.dim("Y").array, blockfill=True)
 
 # wrong colorbar label spacing
 import cf
+
 import cfplot as cfp
 
 f = cf.read("cfplot_data/tas_A1.nc")[0]
@@ -64,6 +70,7 @@ cfp.con(f.subspace(time=15), lines=False, colorbar_label_skip=2)
 
 # northern hemisphere lcc
 import cf
+
 import cfplot as cfp
 
 f = cf.read("cfplot_data/tas_A1.nc")[0]
@@ -72,6 +79,7 @@ cfp.con(f.subspace(time=15))
 
 # southern hemisphere lcc
 import cf
+
 import cfplot as cfp
 
 f = cf.read("cfplot_data/tas_A1.nc")[0]
@@ -79,8 +87,8 @@ cfp.mapset(proj="lcc", lonmin=-50, lonmax=50, latmin=-80, latmax=-10)
 cfp.con(f.subspace(time=15))
 
 
-import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
+import matplotlib.pyplot as plt
 
 lonmin = 0
 lonmax = 90
@@ -107,7 +115,9 @@ ax = plt.axes(projection=proj)
 ax.set_extent((lonmin, lonmax, latmin, latmax), crs=ccrs.PlateCarree())
 
 
-import cf, cfplot as cfp
+import cf
+
+import cfplot as cfp
 
 f = cf.read("cr.nc")[0]
 cfp.con(f)

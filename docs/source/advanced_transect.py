@@ -1,7 +1,8 @@
-import cf
-import cfplot as cfp
-import numpy as np
 import cartopy.crs as ccrs
+import cf
+import numpy as np
+
+import cfplot as cfp
 
 f = cf.read("cfplot_data/ggap.nc")[1]
 g = f.subspace(pressure=1000)  # g is a 2D eastward wind field at 500mb
