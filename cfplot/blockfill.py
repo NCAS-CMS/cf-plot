@@ -432,8 +432,8 @@ def _bfill_ugrid(
     |
     | f=None - field
     | face_lons=None - longitude points for face vertices
-    | face_lats=None - latitude points for face verticies
-    | face_connectivity=None - connectivity for face verticies
+    | face_lats=None - latitude points for face vertices
+    | face_connectivity=None - connectivity for face vertices
     | clevs=None - levels for filling
     | lonlat=False - lonlat data
     | bound=False - x and y are cf data boundaries

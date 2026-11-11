@@ -160,7 +160,7 @@ def orca_check(x, verbose=False):
                 f"orca_check spread is {np.max(np.abs(np.diff([v1, v2, v3])))}"
             )
 
-        # Check for discontinuity spead of less than 20 places
+        # Check for discontinuity spread of less than 20 places
         if spread <= 20:
             retval = True
 

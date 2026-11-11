@@ -26,7 +26,7 @@ Tell us how to reproduce this issue.
 The version of cf-plot and its dependencies in which you are encountering an issue.
 
 The best and preferred way to share this is by sharing the output of `cf.environment(paths=False)`
-run within the code you have noticed the bug in. Iif you aren't also using cf-python and haven't
+run within the code you have noticed the bug in. If you aren't also using cf-python and haven't
 imported `cf`, do `import cf` first (note the reason this is useful
 is because cf-plot and cf-python share a large amount of dependencies so it makes
 sense to have one call which can report back on dependencies for both libraries).

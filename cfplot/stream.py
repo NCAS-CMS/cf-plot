@@ -126,7 +126,7 @@ def stream(
         ndims = np.squeeze(u.data).ndim
         if ndims != 2:
             errstr = (
-                "\n\ncfp.vect error need a 2 dimensonal u field to make vectors\n"
+                "\n\ncfp.vect error need a 2 dimensional u field to make vectors\n"
                 f"received {ndims}"
             )
             if ndims == 1:
@@ -165,7 +165,7 @@ def stream(
         ndims = np.squeeze(v.data).ndim
         if ndims != 2:
             errstr = (
-                "\n\ncfp.vect error need a 2 dimensonal v field to make vectors\n"
+                "\n\ncfp.vect error need a 2 dimensional v field to make vectors\n"
                 f"received {ndims}"
             )
             if ndims == 1:
