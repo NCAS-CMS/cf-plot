@@ -527,10 +527,10 @@ to them as the plot size will be changed to fit within the plot area.  The aspec
 
 User specified plot limits are set by first specifying the **user_position=True** parameter to
 **cfp.gopen** and then the plot position to the gpos routines.  The **xmin, xmax, ymin, ymax**
-paramenters for the plot display area are in plot extent normalised coordinates. These are 0.0
+parameters for the plot display area are in plot extent normalised coordinates. These are 0.0
 for bottom or left and 1.0 for top or right of the plot area.
 
-Cylidrical projection plots have an additional rider of having a degree in longitude and latitude
+Cylindrical projection plots have an additional rider of having a degree in longitude and latitude
 being the same size so plots of this type might not fill the plot area specified as expected.
 
 .. image::  images/fig19a.png
@@ -629,7 +629,7 @@ Data stored in contiguous ragged array format, such as from Kevin Hodges's TRACK
 Stipple plots
 ^^^^^^^^^^^^^
 
-A stipple plot is usually used to show areas of significance such as 95% or greater confidence. These plots use the overlay technique as used in the previous contour/vector plot.  In these plots we show a coutour plot and a stipple plot between varous contour levels to show that the stippling works correctly.  For different significance levels such as confidences of 95% and 99% chosing a different sized or colour marker is a common plot technique.
+A stipple plot is usually used to show areas of significance such as 95% or greater confidence. These plots use the overlay technique as used in the previous contour/vector plot.  In these plots we show a coutour plot and a stipple plot between various contour levels to show that the stippling works correctly.  For different significance levels such as confidences of 95% and 99% choosing a different sized or colour marker is a common plot technique.
 
 ::
 
@@ -1158,7 +1158,7 @@ scale44 .. image:: images/colour_scales/scale44.png
 Colour bars
 ^^^^^^^^^^^
 
-Colour bars are often associated with filled colour contour plots and the options for the colour bar are described in the :ref:`cbar<cbar>` .  If the colour bar options are changed within the call to **cfp.con** then prepend ``colorbar`` to the appropriate colour bar option.  cf-plot has used the American spelling for colorbar for compatability with the spelling and usage within the Matplotlib Python package.
+Colour bars are often associated with filled colour contour plots and the options for the colour bar are described in the :ref:`cbar<cbar>` .  If the colour bar options are changed within the call to **cfp.con** then prepend ``colorbar`` to the appropriate colour bar option.  cf-plot has used the American spelling for colorbar for compatibility with the spelling and usage within the Matplotlib Python package.
 
 
 
@@ -1318,7 +1318,7 @@ In one case
 
 |   **cfp.lineplot(f.subspace(latitude=50.17530806))**
 
-caused an error as the latitude with 50.17530806 wasn\'t found.
+caused an error as the latitude with 50.17530806 wasn't found.
 
 In cf-python the tolerance for equivalence is
 
@@ -1335,7 +1335,7 @@ To swap back use
 
 |   **cf.RTOL(g)**
 
-After swapping the tolerance to 1e-5 the following finds the latitide as expected.
+After swapping the tolerance to 1e-5 the following finds the latitude as expected.
 
 |   **cfp.lineplot(f.subspace(latitude=50.17530806))**
 
@@ -1441,7 +1441,7 @@ The first two lines of the Python script enable cf-plot to run without requiring
 Changing defaults via the ~/.cfplot_defaults file
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-A ~/.cfplot_defaults default overide file in the user home directory may contain three
+A ~/.cfplot_defaults default override file in the user home directory may contain three
 values affecting contour plots initially. Please contact andy.heaps@ncas.ac.uk if you would like any more defaults changed in this manner.
 
 |   blockfill True
@@ -1450,7 +1450,7 @@ values affecting contour plots initially. Please contact andy.heaps@ncas.ac.uk i
 
 This changes the default cfplot con options from contour fill with contour lines
 on top to blockfill with no contour lines on top.  The blockfill, fill and line
-options to the con routine override any of these preset values.  The delimter beween the
+options to the con routine override any of these preset values.  The delimiter between the
 option and the value must be a space.
 
 
@@ -1797,7 +1797,7 @@ Adding **ptype=4** to the **cfp.con** allows cf-plot to recognise the data as ha
 Appendix C - map projections and options
 ########################################
 
-The default map plotting projection is the cyclindrical equidistant
+The default map plotting projection is the cylindrical equidistant
 projection from -180 to 180 in longitude and -90 to 90 in latitude.
 To change the map view in this projection to over the United Kingdom,
 for example, you would use
@@ -1813,7 +1813,7 @@ Pacific you could use
 |   or
 |   **mapset(lonmin=-270, lonmax=-60, latmin=-30, latmax=30)**
 
-Note that Cartopy forces the restriction that in the cyclindrical
+Note that Cartopy forces the restriction that in the cylindrical
 equidistant projection a degrees of longitude has the same size as a
 degree of latitude.
 
