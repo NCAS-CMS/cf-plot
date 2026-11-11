@@ -12,7 +12,7 @@ Rolling set of small additions and bug fixes.
 Log pressure axis labelling was changed from the in-built Matplotlib labelling with used 10^3, 10^2 10^1 to 1000, 10, 1.
 
  ::
-
+_
    Done
 
 
@@ -106,7 +106,7 @@ Lambert conformal projections can now be cropped as in the following code:
 7. Better determination of up on the Z axis
 ===========================================
 
-The CF metadata attribute of postitive for the Z coordinate is now used in the con and lineplot routines.
+The CF metadata attribute of positive for the Z coordinate is now used in the con and lineplot routines.
 
  ::
 
@@ -381,7 +381,7 @@ When plotting a CF field with a Z axis the data wasn't correctly plotted
 30. con - blockfill rewritten
 =============================
 
-Blockfill plots in the con routine were rewitten to use PolyCollection from matplotlib.collections rather than
+Blockfill plots in the con routine were rewritten to use PolyCollection from matplotlib.collections rather than
 pcolormesh.  The new method allows better control of the various colorbar extension behaviour and data masking.
 It is slower for larger grids than pcolormesh but more accurate.
 
@@ -544,7 +544,7 @@ a set number of colours this matches the number of levels that are being contour
 43. lineplot - wrong time axis annotation plotted
 =================================================
 
-In lineplot an incorrect generic time axis annotation wass plotted.  This was corrected to time, time(years),
+In lineplot an incorrect generic time axis annotation was plotted.  This was corrected to time, time(years),
 time(months) etc.
 
 
@@ -580,7 +580,7 @@ are generated internally on a basis of 0 to number of axis points -1.
 46. con and stipple transparency
 ================================
 
-con and stipple now have an alpha keyword indicating the tranparency for the plot.  The default is set to
+con and stipple now have an alpha keyword indicating the transparency for the plot.  The default is set to
 1 giving no transparency.
 
 ::
@@ -657,7 +657,7 @@ to produce reasonable levels between -1.0 and 0.1.
 =====================================================
 
 Code was added to the levs and con routines to allow step to generate the levels for the contour field without having to
-specify the min and max for the levels genration.
+specify the min and max for the levels generation.
 
 
 ::
@@ -759,7 +759,7 @@ Added new functionality to the colorbar in con:
 |                               labels top and bottom starting in the up position
 | colorbar_text_down_up=False - on a horizontal colorbar alternate the
 |                               labels bottom and top starting in the bottom position
-| colorbar_drawedges=True - draw internal delimeter lines in the colorbar
+| colorbar_drawedges=True - draw internal delimiter lines in the colorbar
 
 
 ::
@@ -784,7 +784,7 @@ data.
 63. Introduced a ~/.cfplot_defaults file
 ========================================
 
-A ~/.cfplot_defaults default overide file in the user home directory may contain three
+A ~/.cfplot_defaults default override file in the user home directory may contain three
 values initially. Please contact me if you would like any more defaults changed in this manner.
 
 | blockfill True
@@ -793,7 +793,7 @@ values initially. Please contact me if you would like any more defaults changed 
 
 This changes the default cfplot con options from contour fill with contour lines
 on top to blockfill with no contour lines on top.  The blockfill, fill and line
-options to the con routine override any of these preset values.  The delimter beween the
+options to the con routine override any of these preset values.  The delimiter between the
 option and the value must be a space.
 
 

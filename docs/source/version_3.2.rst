@@ -170,7 +170,7 @@ add titles code, add stipples, colorbar fails, colorbar in incorrect place
 13. cfp.generate_titles - error if cell_method has no associated axis
 =====================================================================
 
-An error occured if a cell_method had no associated axis.  A check was put in place to detect this.
+An error occurred if a cell_method had no associated axis.  A check was put in place to detect this.
 
 
 ::
@@ -193,7 +193,7 @@ In cfp.con the ugrid keyword was changed to irregular as this is more appropriat
 15. cfp.bfill - map transform now passed through to blockfill_fast code
 =======================================================================
 
-In cfp.bfill the map transform wasn;t passed through to the blockfill_fast code and this has now been corrected.
+In cfp.bfill the map transform wasn't passed through to the blockfill_fast code and this has now been corrected.
 
 
 ::
