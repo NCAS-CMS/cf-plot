@@ -148,3 +148,4 @@ ignore = [
 # codespell for spelling checks: https://github.com/codespell-project/codespell
 [tool.codespell]
 skip = ".git,.venv,build,dist,docs/_static/*,docs/_sources/*,docs/searchindex.js,docs/*.html"
+ignore-words-list = "nd"
