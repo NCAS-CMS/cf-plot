@@ -2,6 +2,18 @@
 
 ## Code-light plotting for earth science and aligned research
 
+
+| Category      | Click badge for further information... |
+| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Package       | [![PyPI](https://img.shields.io/pypi/v/cf-plot?color=orange&label=PyPI&logo=python&logoColor=white)](https://pypi.org/project/cf-plot/) [![Conda](https://img.shields.io/conda/vn/conda-forge/cf-plot?color=orange&label=Conda)](https://anaconda.org/conda-forge/cf-plot) [![Python versions](https://img.shields.io/pypi/pyversions/cf-plot.svg?color=orange&logo=python&label=Python&logoColor=white)](https://pypi.org/project/cf-plot/) |
+| Documentation | [![Documentation](https://img.shields.io/badge/docs-latest-blue)](https://ncas-cms.github.io/cf-plot/) |
+| Repository    | [![release](https://img.shields.io/github/v/release/NCAS-CMS/cf-plot?color=green)](https://github.com/NCAS-CMS/cf-plot/releases) [![contributors](https://img.shields.io/github/contributors/NCAS-CMS/cf-plot?color=green)](https://github.com/NCAS-CMS/cf-plot/graphs/contributors) [![commits-since](https://img.shields.io/github/commits-since/NCAS-CMS/cf-plot/latest.svg?color=green)](https://github.com/NCAS-CMS/cf-plot/commits/main) |
+| Testing & CI  | [![Tests](https://github.com/NCAS-CMS/cf-plot/actions/workflows/run-tests.yml/badge.svg)](https://github.com/NCAS-CMS/cf-plot/actions/workflows/run-tests.yml) [![Image comparison tests](https://github.com/NCAS-CMS/cf-plot/actions/workflows/run-image-comparison.yml/badge.svg)](https://github.com/NCAS-CMS/cf-plot/actions/workflows/run-image-comparison.yml) [![Linting and formatting](https://github.com/NCAS-CMS/cf-plot/actions/workflows/linting.yml/badge.svg)](https://github.com/NCAS-CMS/cf-plot/actions/workflows/linting.yml) |
+| Quality       | [![Status](https://img.shields.io/badge/status-Production%2FStable-F2C94C)](https://pypi.org/project/cf-plot/) |
+| Community     | [![Contributing](https://img.shields.io/badge/contributing-guidelines-pink)](https://github.com/NCAS-CMS/cf-plot/blob/main/CONTRIBUTING.md) [![Code of Conduct](https://img.shields.io/badge/code%20of%20conduct-pink.svg)](https://github.com/NCAS-CMS/cf-plot/blob/main/CODE_OF_CONDUCT.md) |
+| Licence       | [![MIT Licence](https://img.shields.io/github/license/NCAS-CMS/cf-plot?color=grey)](https://github.com/NCAS-CMS/cf-plot/blob/main/LICENSE.txt) |
+
+
 ### Overview
 
 ![cf-plot example gallery of plots](docs/source/images/new_gallery_view.png "Examples Gallery of plots made with the cf-plot library")
