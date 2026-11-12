@@ -410,7 +410,7 @@ def test_example_19b_user_positioned_subplots(ggap_file):
 
 @pytest.mark.integration
 def test_example_19c(ggap_file):
-    """Test Example 19c: accomodating more than one colour bar."""
+    """Test Example 19c: accommodating more than one colour bar."""
     if not (DATA_DIR / "ggap.nc").exists():
         pytest.skip(f"Missing test data: {DATA_DIR / 'ggap.nc'}")
 

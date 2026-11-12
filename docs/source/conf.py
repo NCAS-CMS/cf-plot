@@ -11,9 +11,8 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-import sys
 import os
-
+import sys
 from importlib.metadata import version as get_version
 
 # If extensions (or modules to document with autodoc) are in another directory,
@@ -170,12 +169,9 @@ html_static_path = ["_downloads"]
 smartquotes = False
 
 # Custom sidebar templates, maps document names to template names.
-# html_sidebars = {'**': ['my_con.html', 'globaltoc.html', 'sourcelink.html']}
 html_sidebars = {"**": ["sidebar-nav-bs.html"]}
 
 html_theme_options = {
-    ###"show_nav_level": 2,
-    ###"sidebarwidth": 150,
     "show_version_warning_banner": True,
     "announcement": (
         "This is the new permanent home of the cf-plot documentation: please "
@@ -225,11 +221,11 @@ htmlhelp_basename = "cf-plotdoc"
 
 latex_elements = {
     # The paper size ('letterpaper' or 'a4paper').
-    #'papersize': 'letterpaper',
+    # 'papersize': 'letterpaper',
     # The font size ('10pt', '11pt' or '12pt').
-    #'pointsize': '10pt',
+    # 'pointsize': '10pt',
     # Additional stuff for the LaTeX preamble.
-    #'preamble': '',
+    # 'preamble': '',
 }
 
 # Grouping the document tree into LaTeX files. List of tuples

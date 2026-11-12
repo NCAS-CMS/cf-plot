@@ -68,7 +68,7 @@ Automatic colour scales are broken.  Remove call to cscale() in gpos.
 6. Colorbar labels overwrite each other
 =======================================
 
-Colour bar labels overwite each other when large number of contour levels are used or when more plot columns are used.   Include code to take account of these based on the total number of characters in the contour labels and the number of
+Colour bar labels overwrite each other when large number of contour levels are used or when more plot columns are used.   Include code to take account of these based on the total number of characters in the contour labels and the number of
 columns.  If the user hasn't supplied a value for colorbar_label_skip to the con routine then the calculated value is
 used.  The labels used will start at the lowest for a continuous data set and from zero for a diverging one.
 
@@ -116,7 +116,7 @@ These have now been added.
 10. Documentation change
 ========================
 
-The web and user guide documentation has chaged so that the examples reference data in cfplot_data.  This is so the gallery examples work as written and to prevent multiple copies of the example data being on local disks.
+The web and user guide documentation has changed so that the examples reference data in cfplot_data.  This is so the gallery examples work as written and to prevent multiple copies of the example data being on local disks.
 
  ::
 
@@ -140,7 +140,7 @@ A reset command was added to the code to reset all the graphics options in one s
 =================================
 
 A lot of internal work was done on the axes command to make it write the passed data into the plotvars array.
-The data from here then superceeds any automatically generated axis labels.
+The data from here then supersedes any automatically generated axis labels.
 
  ::
 

@@ -18,7 +18,7 @@ of this warping.
 
 
 In this plot a cylindrical projection plot of rotated pole data is
-overlayed with wind vectors.
+overlaid with wind vectors.
 
 |   Care is needed when making vector plots as the vectors can be of two forms:
 |   a) eastward wind and westward wind are relative to longitude and

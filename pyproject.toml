@@ -1,6 +1,4 @@
-[build-system]
-requires = ["setuptools>=77", "wheel"]
-build-backend = "setuptools.build_meta"
+# ------------------------- Project information -------------------------
 
 [project]
 name = "cf-plot"
@@ -64,6 +62,32 @@ dependencies = [
     "cartopy>=0.22.0",
 ]
 
+
+[project.optional-dependencies]
+tests = [
+    "pytest",
+    # The following are compulsory via the Cartopy dependency but imported
+    # explicitly by the tests so best to list them explicitly here:
+    "matplotlib",
+    "contourpy",
+    "netCDF4",
+]
+dev = [
+    "black",
+    "isort",
+    "flake8",
+    "flake8-pyproject",  # to detect flake8 pyproject.toml config
+    "codespell",
+    "pre-commit",
+]
+docs = [
+    "sphinx",
+    "sphinx-argparse",
+    "sphinx-design",
+    "pydata-sphinx-theme",
+]
+
+
 [project.urls]
 Homepage = "https://ncas-cms.github.io/cf-plot/"
 Documentation = "https://ncas-cms.github.io/cf-plot/"
@@ -73,24 +97,55 @@ Installation = "https://ncas-cms.github.io/cf-plot/installation.html"
 "Release Notes" = "https://github.com/NCAS-CMS/cf-plot/blob/main/CHANGELOG.md"
 Issues = "https://github.com/NCAS-CMS/cf-plot/issues"
 
+
+# ------------------------- Packaging information -------------------------
+
+[build-system]
+requires = ["setuptools>=77", "wheel"]
+build-backend = "setuptools.build_meta"
+
+
 [tool.setuptools]
 include-package-data = true
+
 
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["cfplot*"]
 
+
 [tool.setuptools.package-data]
 cfplot = ["colour/colourmaps/*"]
 
-# To run the black checker with this configuration, execute 'black .' in the
-# root of this repository. See https://black.readthedocs.io/en/stable/ for
-# the 'black' documentation.
+
+# ------------------------- Configuration of linting -------------------------
+# Note we use a line length max of 79, so this needs to be enforced on the
+# linting tools that check against this.
+
+# black for code formatting: https://github.com/psf/black/
 [tool.black]
 line-length = 79
+target-version = ["py311"]
 
+
+# isort for importing sorting: https://github.com/PyCQA/isort/
 [tool.isort]
-# Set for compatibility of 'black' and 'isort' auto-formatting tools
 profile = "black"
-# ... and since we set this against the black default line length:
-line_length=79
+line_length = 79
+skip_gitignore = true
+
+
+# flake8 for detecting potential code errors: https://github.com/pycqa/flake8
+[tool.flake8]
+max-line-length = 79
+ignore = [
+    "W503",  # Incompatible with PEP 8
+    "E203",  # Incompatible with Black
+    "E501",  # Line length handled by Black
+]
+
+
+# codespell for spelling checks: https://github.com/codespell-project/codespell
+[tool.codespell]
+skip = ".git,.venv,build,dist,docs/_static/*,docs/_sources/*,docs/searchindex.js,docs/*.html"
+ignore-words-list = "nd"

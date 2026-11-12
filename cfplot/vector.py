@@ -258,7 +258,7 @@ def vect(
         ndims = np.squeeze(u.data).ndim
         if ndims != 2:
             errstr = (
-                "\n\ncfp.vect error need a 2 dimensonal u field to make "
+                "\n\ncfp.vect error need a 2 dimensional u field to make "
                 "vectors\n"
                 f"received {np.squeeze(u.data).ndim}"
             )
@@ -300,7 +300,7 @@ def vect(
         ndims = np.squeeze(v.data).ndim
         if ndims != 2:
             errstr = (
-                "\n\ncfp.vect error need a 2 dimensonal v field to make "
+                "\n\ncfp.vect error need a 2 dimensional v field to make "
                 "vectors\n"
                 "received {np.squeeze(v.data).ndim}"
             )

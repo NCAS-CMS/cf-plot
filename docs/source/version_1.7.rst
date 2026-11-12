@@ -82,7 +82,7 @@ Change import section at start of cf-plot code so that version 1.0.1 or greater 
 9. Add reverse keyword to cscale routine
 ========================================
 
-Added the reverse keyword to the cscale routine to rever the colour scale
+Added the reverse keyword to the cscale routine to reverse the colour scale
 
  ::
 
@@ -155,7 +155,7 @@ later versions of numpy.
 ===========================================================
 
 
-The cf-plot documentation was chaged to reflect the adoption of viridis as the new sequential
+The cf-plot documentation was changed to reflect the adoption of viridis as the new sequential
 data colour map.  Other examples were also changed to show the new magma, inferno, plasma,
 parula and gray colour scales.
 

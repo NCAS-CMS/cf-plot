@@ -27,7 +27,12 @@ from .utility import (
 )
 from .utility import gvals as _gvals_impl
 from .utility import mapaxis as _mapaxis_impl
-from .utility import ndecs, polar_regular_grid, regrid, stipple_points
+from .utility import (
+    ndecs,
+    polar_regular_grid,
+    regrid,
+    stipple_points,
+)
 from .validate import check_well_formed, orca_check
 from .vector import axes_plot, vect
 

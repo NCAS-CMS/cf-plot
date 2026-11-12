@@ -473,7 +473,7 @@ def cbar(
     | fontweight - font weight for the colorbar text
     | text_up_down - label division text up and down starting with up
     | text_down_up - label division text down and up starting with down
-    | drawedges - Draw internal delimeter lines in colorbar
+    | drawedges - Draw internal delimiter lines in colorbar
     | levs - colorbar levels
     | thick - set height of colorbar - default = 0.015,
     |         in normalised plot coordinates
@@ -665,7 +665,7 @@ def cbar(
         # Change boundaries to floats
         boundaries = levs.astype(float)
 
-        # Add colorbar extensions if definded by levs.  Using boundaries[0]-1
+        # Add colorbar extensions if defined by levs.  Using boundaries[0]-1
         # for the lower and boundaries[-1]+1 is just for the colorbar and
         # has no meaning for the plot.
         extremes = {}

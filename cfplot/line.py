@@ -198,7 +198,7 @@ def lineplot(
             ndims = np.squeeze(f.data).ndim
             if ndims != 1:
                 errstr = (
-                    "\n\ncfp.lineplot error need a 1 dimensonal field to "
+                    "\n\ncfp.lineplot error need a 1 dimensional field to "
                     "make a line\n"
                     f"received {np.squeeze(f.data).ndim} dimensions\n\n"
                 )
