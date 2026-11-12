@@ -1,0 +1,39 @@
+# A GitHub Action to lint the cf-plot codebase.
+name: Linting and code formatting as per pre-commit checks
+
+# Trigger on PR events targeting main.
+on:
+  # For now, do not enable on push to save on limited usage resource.
+  # push:
+  #   branches:
+  #     - main
+  pull_request:
+    # 'reopened' enables manual retrigger via close & re-open.
+    types: [opened, reopened, ready_for_review]
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout cf-plot
+        uses: actions/checkout@v7
+        with:
+          path: main
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+
+      - name: Install pre-commit
+        run: python -m pip install pre-commit
+
+      - name: Run pre-commit hooks
+        working-directory: ${{ github.workspace }}/main
+        run: pre-commit run --all-files --show-diff-on-failure
