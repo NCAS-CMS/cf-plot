@@ -66,14 +66,14 @@ See [the cf-plot homepage](https://ncas-cms.github.io/cf-plot/)
 To install cf-plot with its required dependencies, you can use `pip`:
 
 ```bash
-pip install cf-python cf-plot
+pip install cf-plot
 ```
 
 or you can use `conda` (or similar package managers such
 as `mamba`) as follows (or equivalent):
 
 ```bash
-conda install -c ncas -c conda-forge cf-python cf-plot udunits2
+conda install -c conda-forge cf-python cf-plot udunits2
 ```
 
 More detail about installation is provided on the
