@@ -1,15 +1,13 @@
 # A GitHub Action to lint the cf-plot codebase.
 name: Linting and code formatting as per pre-commit checks
 
-# Trigger on PR events targeting main.
+# Trigger on all commits for any branch
 on:
-  # For now, do not enable on push to save on limited usage resource.
-  # push:
-  #   branches:
-  #     - main
+  push:
+    branches:
+      - '**'
   pull_request:
-    # 'reopened' enables manual retrigger via close & re-open.
-    types: [opened, reopened, ready_for_review]
+    types: [opened, synchronize, reopened, ready_for_review]
     branches:
       - main
 
