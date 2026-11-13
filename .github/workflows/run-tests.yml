@@ -2,16 +2,11 @@
 # A GitHub Action to run the cf-plot test suite after PR events on main.
 name: Run all testing excluding image comparison aspect
 
-# Triggers the workflow on PR events targeting main.
+# Trigger on main PRs when (re-)opened, marked ready for review, and with any
+# push of commits on the latest state of the PR branch after opening
 on:
-  # For now, at least, do not enable on push to save on limited usage resource
-  #push:
-  #  branches:
-  #    - main
   pull_request:
-    # 'reopened' enables manual retrigger via close & re-open. Disable for all
-    # edits to manage limited resource (PRs often change before merge-ready).
-    types: [opened, reopened, ready_for_review]
+    types: [opened, synchronize, reopened, ready_for_review]
     branches:
       - main
 

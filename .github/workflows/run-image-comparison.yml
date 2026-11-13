@@ -1,9 +1,11 @@
 # Run cf-plot tests including image comparison, in the reference environment
 name: Run image comparison testing
 
+# Trigger on main PRs when (re-)opened, marked ready for review, and with any
+# push of commits on the latest state of the PR branch after opening
 on:
   pull_request:
-    types: [opened, reopened, ready_for_review]
+    types: [opened, synchronize, reopened, ready_for_review]
     branches:
       - main
 
