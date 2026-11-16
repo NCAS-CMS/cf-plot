@@ -371,10 +371,12 @@ def test_example_19a_multiple_subplots(ggap_file):
     _configure_example_output("19a")
 
     cfp.gopen(rows=2, columns=2, bottom=0.2)
+
     proj_list = ["cyl", "moll", "npstere", "spstere"]
     for index, proj_name in enumerate(proj_list):
         cfp.gpos(index + 1)  # gpos(1), gpos(2), etc. to position each
         cfp.mapset(proj=proj_name)
+
         if index < len(proj_list) - 1:  # all but last plot
             cfp.con(f_500, lines=False, colorbar=None)
         else:
@@ -384,6 +386,7 @@ def test_example_19a_multiple_subplots(ggap_file):
                 colorbar_position=[0.1, 0.1, 0.8, 0.02],
                 colorbar_orientation="horizontal",
             )
+
     cfp.gclose()
 
     _assert_reference_match("19a")
@@ -468,6 +471,7 @@ def test_example_19d_multiple_subplots_via_gfigure(ggap_file):
         for index, proj_name in enumerate(proj_list):
             cfp.gpos(index + 1)  # gpos(1), gpos(2), etc. to position each
             cfp.mapset(proj=proj_name)
+
             if index < len(proj_list) - 1:  # all but last plot
                 cfp.con(f_500, lines=False, colorbar=None)
             else:
