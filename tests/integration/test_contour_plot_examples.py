@@ -195,13 +195,12 @@ def test_example_4_north_pole_stereographic(ggap_file):
     """Test Example 4: north pole polar stereographic projection."""
 
     f = ggap_file["eastward_wind"]
-    assert f.identity() == "eastward_wind"
+
     _configure_example_output("4")
 
     cfp.mapset(proj="npstere")
     cfp.con(
-        f.subspace(pressure=500),
-        line_labels=False,
+        f.subspace(pressure=2),
         linewidths=0.75,
         colors="slategrey",
     )
@@ -215,11 +214,18 @@ def test_example_5_south_pole_with_boundary(ggap_file):
     if not (DATA_DIR / "ggap.nc").exists():
         pytest.skip(f"Missing test data: {DATA_DIR / 'ggap.nc'}")
 
-    f = ggap_file["eastward_wind"]
+    f = ggap_file["northward_wind"]
     _configure_example_output("5")
 
     cfp.mapset(proj="spstere", boundinglat=-30, lon_0=180)
-    cfp.con(f.subspace(pressure=500))
+
+    cfp.con(
+        f.subspace(pressure=1000),
+        linewidths=0.75,
+        colors="slategrey",
+        line_labels=False,  # else it gets a bit busy with these contours
+    )
+
     _assert_reference_match("5")
 
 

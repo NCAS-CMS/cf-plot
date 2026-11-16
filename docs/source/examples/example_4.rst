@@ -13,8 +13,7 @@ Example 4: North Pole polar stereographic projection contour plot
 
    cfp.mapset(proj="npstere")
    cfp.con(
-       f.subspace(pressure=500),
-       line_labels=False,
+       f.subspace(pressure=2),
        linewidths=0.75,
        colors="slategrey",
    )
