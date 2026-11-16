@@ -548,10 +548,12 @@ def test_example_21other_rgp_plasma():
         pytest.skip(f"Missing test data: {DATA_DIR / 'rgp.nc'}")
 
     f = cf.read(str(DATA_DIR / "rgp.nc"))[0]
+
     _configure_example_output("21other")
 
     cfp.cscale("plasma")
-    cfp.con(f)
+    cfp.con(f, lines=False)
+
     _assert_reference_match("21other")
 
 
@@ -566,7 +568,12 @@ def test_example_22_rgp_rotated_projection():
 
     cfp.cscale("plasma")
     cfp.mapset(proj="rotated")
-    cfp.con(f)
+    cfp.con(
+        f,
+        linewidths=0.5,
+        linestyle="dashed",
+    )
+
     _assert_reference_match("22")
 
 
