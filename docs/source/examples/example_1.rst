@@ -11,7 +11,7 @@ Example 1: Basic contour plot in default projection
 
    f = cf.read(f"cfplot_data/tas_A1.nc")[0]
 
-   cfp.con(f.subspace(time=15))
+   cfp.con(f.subspace(time=15), linestyles="dashed", linewidths=0.75)
 
 
 .. figure:: /../../tests/v350-controlled-env-ref-images/ref_fig_1.png
