@@ -16,6 +16,14 @@ Example 13: Basic vector plot
    u = u.subspace(pressure=500)
    v = v.subspace(pressure=500)
 
-   cfp.vect(u=u, v=v, key_length=10, scale=100, stride=5)
+   cfp.vect(
+       u=u,
+       v=v,
+       key_length=10,
+       scale=100,
+       stride=5,
+       color="royalblue",
+   )
+
 
 .. figure:: /../../tests/v350-controlled-env-ref-images/ref_fig_13.png

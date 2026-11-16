@@ -120,7 +120,14 @@ def test_example_13_basic_vector_plot(ggap_file):
     v = v.subspace(pressure=500)
 
     _configure_example_output("13")
-    cfp.vect(u=u, v=v, key_length=10, scale=100, stride=5)
+    cfp.vect(
+        u=u,
+        v=v,
+        key_length=10,
+        scale=100,
+        stride=5,
+        color="royalblue",
+    )
     _assert_reference_match("13")
 
 
