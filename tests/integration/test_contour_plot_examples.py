@@ -179,11 +179,14 @@ def test_example_3_map_limits_and_levels():
         pytest.skip(f"Missing test data: {DATA_DIR / 'tas_A1.nc'}")
 
     f = cf.read(str(DATA_DIR / "tas_A1.nc"))[0]
+
     _configure_example_output("3")
 
-    cfp.mapset(lonmin=-15, lonmax=3, latmin=48, latmax=60)
-    cfp.levs(min=265, max=285, step=1)
-    cfp.con(f.subspace(time=15))
+    cfp.mapset(lonmin=-90, lonmax=-30, latmin=-60, latmax=20, resolution="10m")
+    cfp.levs(min=280, max=300, step=2)
+
+    cfp.con(f.subspace(time=15), linestyles="dotted")
+
     _assert_reference_match("3")
 
 
