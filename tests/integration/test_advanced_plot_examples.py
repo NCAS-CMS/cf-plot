@@ -173,25 +173,37 @@ def test_example_15_polar_vector_plot(ggap_file):
     u = u.subspace(Z=500)
     v = v.subspace(Z=500)
 
-    _configure_example_output("15")
+    # NOTE WELL: must not use _configure_example_output("15") here until
+    # we set up a means to use setvars without resetting other config.,
+    # else it resets the viewer so the actual plot doesn't (all) get
+    # plotted on and associated with the test file to compare to.
+    fname = str(TEST_GEN_DIR / "gen_fig_15.png")
+    cfp.setvars(
+        file=fname,
+        viewer="matplotlib",
+        land_color="rosybrown",
+        ocean_color="lightsteelblue",
+        feature_zorder=2,
+    )
     cfp.mapset(proj="npstere")
 
     cfp.gopen(columns=2)
     cfp.vect(
         u=u,
         v=v,
-        key_length=10,
-        scale=100,
-        stride=4,
+        key_length=25,
+        scale=160,
+        stride=6,
         title="Polar plot using data grid",
     )
     cfp.gpos(2)
     cfp.vect(
         u=u,
         v=v,
-        key_length=10,
-        scale=100,
-        pts=40,
+        pts=40,  # difference to other plot
+        key_length=25,
+        scale=160,
+        stride=6,
         title="Polar plot with regular point distribution",
     )
     cfp.gclose()
