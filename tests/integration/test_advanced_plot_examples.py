@@ -131,17 +131,28 @@ def test_example_14_vector_with_colour_contour(ggap_file):
     v = ggap_file["northward_wind"]
     t = ggap_file["air_temperature"]
 
-    # Subspace to get values for a specified pressure, here 500 mbar
-    u = u.subspace(pressure=500)
-    v = v.subspace(pressure=500)
-    t = t.subspace(pressure=500)
+    # Subspace to get values for a specified pressure, here 700 mbar
+    u = u.subspace(pressure=700)
+    v = v.subspace(pressure=700)
+    t = t.subspace(pressure=700)
 
-    _configure_example_output("14")
+    # NOTE WELL: must not use _configure_example_output("14") here until
+    # we set up a means to use setvars without resetting other config.,
+    # else it resets the viewer so the actual plot doesn't (all) get
+    # plotted on and associated with the test file to compare to.
+    fname = str(TEST_GEN_DIR / "gen_fig_14.png")
+    cfp.setvars(
+        file=fname,
+        viewer="matplotlib",
+        land_color="darkgreen",
+        feature_zorder=2,
+    )
+
     cfp.gopen()
     cfp.mapset(lonmin=10, lonmax=120, latmin=-30, latmax=30)
-    cfp.levs(min=254, max=270, step=1)
-    cfp.con(t)
-    cfp.vect(u=u, v=v, key_length=10, scale=50, stride=2)
+    cfp.levs(min=270, max=290, step=1)
+    cfp.con(t, lines=False)
+    cfp.vect(u=u, v=v, key_length=10, scale=40, stride=2, color="cyan")
     cfp.gclose()
 
     _assert_reference_match("14")
