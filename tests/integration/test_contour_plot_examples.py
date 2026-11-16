@@ -153,8 +153,8 @@ def test_example_1_basic_cylindrical():
     f = cf.read(str(DATA_DIR / "tas_A1.nc"))[0]
     _configure_example_output("1")
 
-    # This should not raise
-    cfp.con(f.subspace(time=15))
+    cfp.con(f.subspace(time=15), linestyles="dashed", linewidths=0.75)
+
     _assert_reference_match("1")
 
 
@@ -199,7 +199,13 @@ def test_example_4_north_pole_stereographic(ggap_file):
     _configure_example_output("4")
 
     cfp.mapset(proj="npstere")
-    cfp.con(f.subspace(pressure=500))
+    cfp.con(
+        f.subspace(pressure=500),
+        linewidths=0.5,
+        line_labels=False,
+        colors="slategrey",
+    )
+
     _assert_reference_match("4")
 
 
