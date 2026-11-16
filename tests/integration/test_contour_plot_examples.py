@@ -201,8 +201,8 @@ def test_example_4_north_pole_stereographic(ggap_file):
     cfp.mapset(proj="npstere")
     cfp.con(
         f.subspace(pressure=500),
-        linewidths=0.5,
         line_labels=False,
+        linewidths=0.75,
         colors="slategrey",
     )
 
