@@ -11,10 +11,10 @@ Example 3: Contour plot with altered map limits and levels
 
    f = cf.read(f"cfplot_data/tas_A1.nc")[0]
 
-   cfp.mapset(lonmin=-15, lonmax=3, latmin=48, latmax=60)
-   cfp.levs(min=265, max=285, step=1)
+   cfp.mapset(lonmin=-90, lonmax=-30, latmin=-60, latmax=20, resolution="10m")
+   cfp.levs(min=280, max=300, step=2)
 
-   cfp.con(f.subspace(time=15))
+   cfp.con(f.subspace(time=15), linestyles="dotted")
 
 
 .. figure:: /../../tests/v350-controlled-env-ref-images/ref_fig_3.png
