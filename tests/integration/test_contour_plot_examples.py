@@ -733,6 +733,7 @@ def test_example_33_osgb_and_europp():
     cfp.mapset(proj="EuroPP", resolution="50m")
     cfp.con(f, fill=True, blockfill=False, lines=False, colorbar_label_skip=2)
     cfp.gclose()
+
     _assert_reference_match("33")
 
 
@@ -746,7 +747,13 @@ def test_example_34_lambert_conformal():
     _configure_example_output("34")
 
     cfp.mapset(proj="lcc", lonmin=-50, lonmax=50, latmin=20, latmax=85)
-    cfp.con(f.subspace(time=15))
+    cfp.con(
+        f.subspace(time=15),
+        linestyles="dashed",
+        linewidths=0.75,
+        title="Cropped Lambert conformal conic (LCC) projection",
+    )
+
     _assert_reference_match("34")
 
 
@@ -760,7 +767,13 @@ def test_example_35_mollweide_projection():
     _configure_example_output("35")
 
     cfp.mapset(proj="moll")
-    cfp.con(f.subspace(time=15))
+    cfp.con(
+        f.subspace(time=15),
+        linestyles="dashed",
+        linewidths=0.75,
+        title="Mollweide projection",
+    )
+
     _assert_reference_match("35")
 
 
@@ -774,7 +787,13 @@ def test_example_36_mercator_projection():
     _configure_example_output("36")
 
     cfp.mapset(proj="merc")
-    cfp.con(f.subspace(time=15))
+    cfp.con(
+        f.subspace(time=15),
+        linestyles="dashed",
+        linewidths=0.75,
+        title="Mercator projection",
+    )
+
     _assert_reference_match("36")
 
 
@@ -788,7 +807,13 @@ def test_example_37_orthographic_projection():
     _configure_example_output("37")
 
     cfp.mapset(proj="ortho")
-    cfp.con(f.subspace(time=15))
+    cfp.con(
+        f.subspace(time=15),
+        linestyles="dashed",
+        linewidths=0.75,
+        title="Orthographic projection",
+    )
+
     _assert_reference_match("37")
 
 
@@ -802,7 +827,13 @@ def test_example_38_robinson_projection():
     _configure_example_output("38")
 
     cfp.mapset(proj="robin")
-    cfp.con(f.subspace(time=15))
+    cfp.con(
+        f.subspace(time=15),
+        linestyles="dashed",
+        linewidths=0.75,
+        title="Robinson projection",
+    )
+
     _assert_reference_match("38")
 
 
