@@ -9,7 +9,11 @@ Example 39: Basic track plotting
 
    f = cf.read(f"cfplot_data/ff_trs_pos.nc")[0]
 
-   cfp.traj(f)
+   cfp.traj(
+       f,
+       markeredgecolor="maroon",
+       linecolor="maroon",
+   )
 
 
 .. figure:: /../../tests/v350-controlled-env-ref-images/ref_fig_39.png

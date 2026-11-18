@@ -667,7 +667,11 @@ def test_example_39_basic_track_plotting_trajectory():
     f = cf.read(str(DATA_DIR / "ff_trs_pos.nc"))[0]
 
     _configure_example_output("39")
-    cfp.traj(f)
+    cfp.traj(
+        f,
+        markeredgecolor="maroon",
+        linecolor="maroon",
+    )
     _assert_reference_match("39")
 
 
@@ -679,11 +683,34 @@ def test_example_39b_single_dsg_trajectory_no_dimension():
 
     f = cf.read(str(DATA_DIR / "dsg_trajectory.nc"))[0]
 
-    # This is over a small part of France so focus in on that area
-    cfp.mapset(lonmin=3, lonmax=6, latmin=51, latmax=54, resolution="10m")
+    # NOTE WELL: must not use _configure_example_output("31") here until
+    # we set up a means to use setvars without resetting other config.,
+    # else it resets the viewer so the actual plot doesn't (all) get
+    # plotted on and associated with the test file to compare to.
+    fname = str(TEST_GEN_DIR / "gen_fig_39b.png")
+    cfp.setvars(
+        file=fname,
+        viewer="matplotlib",
+        land_color="darkseagreen",
+        ocean_color="lightsteelblue",
+        feature_zorder=0,
+    )
 
-    _configure_example_output("39b")
-    cfp.traj(f)
+    # Ends over a small part of the Netherlands so focus in on that area
+    cfp.mapset(
+        lonmin=4.5, lonmax=5.0, latmin=52.6, latmax=53.3, resolution="10m"
+    )
+
+    cfp.traj(
+        f,
+        marker="D",
+        markeredgecolor="maroon",
+        linecolor="maroon",
+        # np.round avoids floating point rounding values, e.g. .99999... -> 1.0
+        xticks=np.round(np.arange(4.5, 5.05, 0.05), 2),
+        yticks=np.round(np.arange(52.6, 53.35, 0.05), 2),
+    )
+
     _assert_reference_match("39b")
 
 
@@ -698,7 +725,11 @@ def test_example_40_tracks_polar_stereographic():
     cfp.mapset(proj="npstere")
 
     _configure_example_output("40")
-    cfp.traj(f)
+    cfp.traj(
+        f,
+        markeredgecolor="maroon",
+        linecolor="maroon",
+    )
     _assert_reference_match("40")
 
 
