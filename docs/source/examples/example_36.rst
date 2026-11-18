@@ -10,8 +10,12 @@ Example 36: Mercator projection
    f = cf.read(f"cfplot_data/tas_A1.nc")[0]
 
    cfp.mapset(proj="merc")
-
-   cfp.con(f.subspace(time=15))
+   cfp.con(
+       f.subspace(time=15),
+       linestyles="dashed",
+       linewidths=0.75,
+       title="Mercator projection",
+   )
 
 
 .. figure:: /../../tests/v350-controlled-env-ref-images/ref_fig_36.png

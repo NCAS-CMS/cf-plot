@@ -11,8 +11,12 @@ Example 34: Cropping the Lambert Conformal Conic (LCC) projection
    f = cf.read(f"cfplot_data/tas_A1.nc")[0]
 
    cfp.mapset(proj="lcc", lonmin=-50, lonmax=50, latmin=20, latmax=85)
-
-   cfp.con(f.subspace(time=15))
+   cfp.con(
+       f.subspace(time=15),
+       linestyles="dashed",
+       linewidths=0.75,
+       title="Cropped Lambert Conformal Conic (LCC) projection",
+   )
 
 
 .. figure:: /../../tests/v350-controlled-env-ref-images/ref_fig_34.png

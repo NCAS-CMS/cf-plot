@@ -739,7 +739,7 @@ def test_example_33_osgb_and_europp():
 
 @pytest.mark.integration
 def test_example_34_lambert_conformal():
-    """Test Example 34: Cropped Lambert conformal projection."""
+    """Test Example 34: Cropped Lambert Conformal Conic projection."""
     if not (DATA_DIR / "tas_A1.nc").exists():
         pytest.skip(f"Missing test data: {DATA_DIR / 'tas_A1.nc'}")
 
@@ -751,7 +751,7 @@ def test_example_34_lambert_conformal():
         f.subspace(time=15),
         linestyles="dashed",
         linewidths=0.75,
-        title="Cropped Lambert conformal conic (LCC) projection",
+        title="Cropped Lambert Conformal Conic (LCC) projection",
     )
 
     _assert_reference_match("34")
