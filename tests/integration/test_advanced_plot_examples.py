@@ -126,7 +126,7 @@ def test_example_13_basic_vector_plot(ggap_file):
         key_length=10,
         scale=100,
         stride=5,
-        color="royalblue",
+        color="tab:blue",  # helps to distinguish vectors from land lines
     )
     _assert_reference_match("13")
 
