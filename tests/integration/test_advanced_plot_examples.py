@@ -285,7 +285,7 @@ def test_example_16c_enhanced_stream_plot(ggap_file):
     )
 
     magnitude = (u**2 + v**2) ** 0.5
-    mag = np.squeeze(magnitude.array)
+    mag = magnitude.squeeze().data.array
 
     cfp.levs(0, 60, 5, extend="max")
     cfp.cscale("viridis", ncols=13)

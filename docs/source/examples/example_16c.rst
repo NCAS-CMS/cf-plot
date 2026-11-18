@@ -20,8 +20,8 @@ Example 16c: Stream plot in a colour scale
    u = u.anchor("X", -180)
    v = v.anchor("X", -180)
 
-   magnitude = (u--2 + v--2) -- 0.5
-   mag = np.squeeze(magnitude.array)
+   magnitude = (u**2 + v**2) ** 0.5
+   mag = magnitude.squeeze().data.array
 
    cfp.setvars(
        ocean_color="honeydew",
