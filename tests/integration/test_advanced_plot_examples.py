@@ -533,9 +533,8 @@ def test_example_27_basic_graph_plot(ggap_file):
     _configure_example_output("27")
     cfp.lineplot(
         g.subspace(pressure=100),
-        marker="o",
-        color="blue",
-        title="Zonal mean zonal wind at 100mb",
+        marker="x",
+        title="Zonal mean zonal wind at 100 mb",
     )
     _assert_reference_match("27")
 
@@ -549,7 +548,7 @@ def test_example_27b_basic_scatter_plot(ggap_file):
     _configure_example_output("27b")
     cfp.scatter(
         g.subspace(pressure=700),
-        title="Meridional minimum of zonal wind at 700mb",
+        title="Meridional minimum of zonal wind at 700 mb",
     )
     _assert_reference_match("27b")
 
@@ -588,13 +587,13 @@ def test_example_28_line_and_legend_plot(ggap_file):
         marker="o",
         color="blue",
         title="Zonal mean zonal wind",
-        label="100mb",
+        label="100 mb",
     )
     cfp.lineplot(
         g.subspace(pressure=200),
         marker="D",
         color="red",
-        label="200mb",
+        label="200 mb",
         xticks=xticks,
         xticklabels=xticklabels,
         legend_location="upper right",
@@ -624,7 +623,6 @@ def test_example_29_global_average_annual_temperature():
     cfp.lineplot(
         temp_annual_global,
         title="Global average annual temperature",
-        color="blue",
     )
     _assert_reference_match("29")
 

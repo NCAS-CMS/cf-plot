@@ -40,13 +40,13 @@ Example 28: Line plot with a legend
        marker="o",
        color="blue",
        title="Zonal mean zonal wind",
-       label="100mb",
+       label="100 mb",
    )
    cfp.lineplot(
        g.subspace(pressure=200),
        marker="D",
        color="red",
-       label="200mb",
+       label="200 mb",
        xticks=xticks,
        xticklabels=xticklabels,
        legend_location="upper right",

@@ -15,9 +15,8 @@ Example 27: Basic line plot
    cfp.gopen()
    cfp.lineplot(
        g.subspace(pressure=100),
-       marker="o",
-       color="blue",
-       title="Zonal mean zonal wind at 100mb",
+       marker="x",
+       title="Zonal mean zonal wind at 100 mb",
    )
    cfp.gclose()
 
