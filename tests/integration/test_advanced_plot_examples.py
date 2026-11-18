@@ -240,7 +240,7 @@ def test_example_16a_zonal_vector_plot(ggap_file):
     _assert_reference_match("16a")
 
 
-@pytest.mark.xfail_image_comparison
+# @pytest.mark.xfail_image_comparison  # re-mark if req'd for next release
 @pytest.mark.integration
 def test_example_16b_basic_stream_plot(ggap_file):
     """Test Example 16b: basic stream plot."""
@@ -258,7 +258,7 @@ def test_example_16b_basic_stream_plot(ggap_file):
     _assert_reference_match("16b")
 
 
-@pytest.mark.xfail_image_comparison
+# @pytest.mark.xfail_image_comparison  # re-mark if req'd for next release
 @pytest.mark.integration
 def test_example_16c_enhanced_stream_plot(ggap_file):
     """Test Example 16c: enhanced stream plot."""
@@ -271,12 +271,25 @@ def test_example_16c_enhanced_stream_plot(ggap_file):
     u = u.anchor("X", -180)
     v = v.anchor("X", -180)
 
+    # NOTE WELL: must not use _configure_example_output("16c") here until
+    # we set up a means to use setvars without resetting other config.,
+    # else it resets the viewer so the actual plot doesn't (all) get
+    # plotted on and associated with the test file to compare to.
+    fname = str(TEST_GEN_DIR / "gen_fig_16c.png")
+    cfp.setvars(
+        file=fname,
+        viewer="matplotlib",
+        ocean_color="honeydew",
+        feature_zorder=0,
+        continent_thickness=0.75,
+    )
+
     magnitude = (u**2 + v**2) ** 0.5
     mag = np.squeeze(magnitude.array)
 
-    _configure_example_output("16c")
     cfp.levs(0, 60, 5, extend="max")
     cfp.cscale("viridis", ncols=13)
+
     cfp.gopen()
     cfp.stream(u=u, v=v, density=2, color=mag)
     cfp.cbar(
@@ -312,6 +325,7 @@ def test_example_17_basic_stipple_plot():
     maxim = g.max().datum()
 
     _configure_example_output("17")
+
     cfp.gopen()
     cfp.cscale("magma")
     cfp.con(g, lines=False)

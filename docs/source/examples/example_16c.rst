@@ -23,8 +23,14 @@ Example 16c: Stream plot in a colour scale
    magnitude = (u--2 + v--2) -- 0.5
    mag = np.squeeze(magnitude.array)
 
+   cfp.setvars(
+       ocean_color="honeydew",
+       feature_zorder=0,
+       continent_thickness=0.75,
+    )
    cfp.levs(0, 60, 5, extend="max")
    cfp.cscale("viridis", ncols=13)
+
    cfp.gopen()
    cfp.stream(u=u, v=v, density=2, color=mag)
    cfp.cbar(

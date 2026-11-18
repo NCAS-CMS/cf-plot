@@ -641,6 +641,8 @@ def test_example_23other_incompass_contour_vectors():
     v = fl.select_by_identity("northward_wind")[0]
 
     cfp.mapset(50, 100, 5, 35)
+    # Blues for humidity, with darkest not too dark as to obscure land lines
+    cfp.cscale("scale24")
     cfp.levs(0, 90, 15, extend="neither")
 
     cfp.gopen()
@@ -849,7 +851,10 @@ def test_example_37b_orthographic_full_globe():
     if not data_file.exists():
         pytest.skip(f"Missing test data: {data_file}")
 
-    pfld = cf.read(str(data_file))[0]
+    f = cf.read(str(data_file))[0]
+    # Get subspace time to use in title of plot
+    time = f.coordinate("time").datetime_array.item(0)
+
     _configure_example_output("37b")
 
     cfp.mapset(
@@ -863,12 +868,13 @@ def test_example_37b_orthographic_full_globe():
         lat_0=0.0,
     )
     cfp.con(
-        pfld,
+        f,
         fill=True,
         lines=False,
         line_labels=False,
-        title="time=3080592000.0",
+        title=f"At datetime {time!s}",
     )
+
     _assert_reference_match("37b")
 
 
