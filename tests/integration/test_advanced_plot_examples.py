@@ -741,7 +741,10 @@ def test_example_42a_intensity_legend():
     cfp.traj(
         g,
         legend=True,
-        markersize=40.0,
+        markersize=50.0,
+        markeredgecolor="black",
+        linecolor="black",
+        linewidth=2.0,
         colorbar_title="Relative Vorticity (Hz) * 1e5",
     )
     _assert_reference_match("42a")
