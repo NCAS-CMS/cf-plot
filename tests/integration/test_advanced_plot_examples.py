@@ -634,14 +634,18 @@ def test_example_30_two_axis_plotting(ggap_file):
     f_t = ggap_file["air_temperature"]
 
     u = f_u.collapse("X: mean")
-    u1 = u.subspace(Y=cf.isclose(-61.12099075))
-    u2 = u.subspace(Y=cf.isclose(0.56074494))
+    # Use cf.isclose with an absolute tolerance corresponding to the final
+    # decimal place we specify, so we can choose a certain value without having
+    # to specify all digits in each (they are far from being round numbers).
+    u1 = u.subspace(Y=cf.isclose(-61.1, atol=0.1))
+    u2 = u.subspace(Y=cf.isclose(0.561, atol=0.001))
 
     t = f_t.collapse("X: mean")
-    t1 = t.subspace(Y=cf.isclose(-61.12099075))
-    t2 = t.subspace(Y=cf.isclose(0.56074494))
+    t1 = t.subspace(Y=cf.isclose(-61.1, atol=0.1))
+    t2 = t.subspace(Y=cf.isclose(0.561, atol=0.001))
 
     _configure_example_output("30")
+
     cfp.gopen()
     cfp.gset(-30, 30, 1000, 0)
     cfp.lineplot(u1, color="r")
@@ -650,6 +654,7 @@ def test_example_30_two_axis_plotting(ggap_file):
     cfp.lineplot(t1, color="b")
     cfp.lineplot(t2, color="b")
     cfp.gclose()
+
     _assert_reference_match("30")
 
 
