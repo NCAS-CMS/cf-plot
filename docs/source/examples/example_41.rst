@@ -14,8 +14,8 @@ Example 41: Feature propagation over Europe
         f,
         vector=True,
         markersize=0,
-        ec="tab:blue",  # helps to distinguish track from land lines
-        fc="tab:blue",
+        ec="darkslateblue",  # helps to distinguish track from land lines
+        fc="darkslateblue",
     )
 
 

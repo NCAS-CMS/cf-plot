@@ -18,7 +18,7 @@ Example 16b: Basic stream plot
    u = u.anchor("X", -180)
    v = v.anchor("X", -180)
 
-   cfp.stream(u=u, v=v, density=2)
+   cfp.stream(u=u, v=v, density=2, color="darkslateblue")
 
 
 .. figure:: /../../tests/v350-controlled-env-ref-images/ref_fig_16b.png

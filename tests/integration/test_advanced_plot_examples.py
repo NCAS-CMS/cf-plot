@@ -126,7 +126,7 @@ def test_example_13_basic_vector_plot(ggap_file):
         key_length=10,
         scale=100,
         stride=5,
-        color="tab:blue",  # helps to distinguish vectors from land lines
+        color="darkslateblue",  # helps to distinguish vectors from land lines
     )
     _assert_reference_match("13")
 
@@ -254,7 +254,7 @@ def test_example_16b_basic_stream_plot(ggap_file):
     v = v.anchor("X", -180)
 
     _configure_example_output("16b")
-    cfp.stream(u=u, v=v, density=2)
+    cfp.stream(u=u, v=v, density=2, color="darkslateblue")
     _assert_reference_match("16b")
 
 
@@ -362,6 +362,8 @@ def test_example_18_polar_stipple_plot():
 
     f = cf.read(str(DATA_DIR / "tas_A1.nc"))[0]
     g = f[0, :, :]  # first time value subspace, same as shorthand f[0]
+
+    _configure_example_output("18")
 
     cfp.gopen()
 
@@ -753,8 +755,8 @@ def test_example_41_feature_propagation():
         f,
         vector=True,
         markersize=0,
-        ec="tab:blue",  # helps to distinguish track from land lines
-        fc="tab:blue",
+        ec="darkslateblue",  # helps to distinguish track from land lines
+        fc="darkslateblue",
     )
     _assert_reference_match("41")
 
@@ -789,8 +791,6 @@ def test_example_42a_intensity_legend():
 @pytest.mark.integration
 def test_example_42b_intensity_legend_with_lines():
     """Test Example 42b: intensity legend with lines."""
-    # TODO I think this is right, even though it is different from legacy.
-    # Legacy has 42a and 42b the same, which can't be right.
     if not (DATA_DIR / "ff_trs_pos.nc").exists():
         pytest.skip(f"Missing test data: {DATA_DIR / 'ff_trs_pos.nc'}")
 

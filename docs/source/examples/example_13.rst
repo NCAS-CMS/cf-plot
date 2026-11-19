@@ -22,7 +22,7 @@ Example 13: Basic vector plot
        key_length=10,
        scale=100,
        stride=5,
-       color="tab:blue",  # helps to distinguish vectors from land lines
+       color="darkslateblue",  # helps to distinguish vectors from land lines
    )
 
 
