@@ -439,33 +439,57 @@ def test_example_19c(ggap_file):
     if not (DATA_DIR / "ggap.nc").exists():
         pytest.skip(f"Missing test data: {DATA_DIR / 'ggap.nc'}")
 
-    f = ggap_file["eastward_wind"]
-    _configure_example_output("19c")
+    u = ggap_file["eastward_wind"]
+    v = ggap_file["northward_wind"]
 
-    g = f.collapse("X: mean")
+    # Process fields to prepare for plotting
+    u = u.subspace(pressure=500)
+    v = v.subspace(pressure=500)
+    u = u.anchor("X", -180)
+    v = v.anchor("X", -180)
+
+    # Calculate magnitude to pass to the streamplot
+    magnitude = (u**2 + v**2) ** 0.5
+    mag = magnitude.squeeze().data.array
+
+    # NOTE WELL: must not use _configure_example_output("19c") here until
+    # we set up a means to use setvars without resetting other config.,
+    # else it resets the viewer so the actual plot doesn't (all) get
+    # plotted on and associated with the test file to compare to.
+    fname = str(TEST_GEN_DIR / "gen_fig_19c.png")
+    cfp.setvars(
+        file=fname,
+        viewer="matplotlib",
+        continent_thickness=0.75,
+    )
 
     cfp.gopen(user_position=True)
+    cfp.gpos()
 
-    cfp.gpos(xmin=0.2, ymin=0.2, xmax=0.8, ymax=0.8)
-    cfp.lineplot(
-        g.subspace(pressure=100),
-        marker="o",
-        color="blue",
-        title="Zonal mean zonal wind at 100mb",
-    )
+    cfp.cscale("GreenYellow", ncols=20)
+    levs2 = np.arange(-36, 40, 4)
+    cfp.levs(levs2)
 
-    cfp.cscale("seaice_2", ncols=20)
-    levs = np.arange(282, 320, 2)
-    cfp.cbar(levs=levs, position=[0.2, 0.1, 0.6, 0.02], title="seaice_2")
-
-    cfp.cscale("topo_15lev", ncols=22)
-    levs = np.arange(-100, 2000, 100)
+    # Place first colour bar, to be used for the next plot call (cfp.con)
     cfp.cbar(
-        levs=levs,
-        position=[0.03, 0.2, 0.04, 0.6],
-        orientation="vertical",
-        title="topo_15lev",
+        levs=levs2,
+        position=[0.2, 0.1, 0.6, 0.02],
+        title="Contour fill: eastward wind component magnitude",
     )
+    cfp.con(u, lines=False, colorbar=False, zorder=0)
+
+    cfp.cscale("viridis", ncols=8)
+    levs1 = np.arange(-20, 50, 10)
+    cfp.levs(levs1)
+
+    # Place second colour bar, to be used for the next plot call (cfp.stream)
+    cfp.cbar(
+        levs=levs1,
+        position=[0.01, 0.2, 0.02, 0.6],
+        orientation="vertical",
+        title="Stream lines: full wind magnitude",
+    )
+    cfp.stream(u=u, v=v, density=2, color=mag, zorder=3)
 
     cfp.gclose()
 
