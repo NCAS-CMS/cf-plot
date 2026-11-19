@@ -23,7 +23,7 @@ cf-plot allows you to produce and customise publication-quality contour, vector,
 line and more plots with the power of Python, `matplotlib`_,
 `Cartopy`_ and `cf-python`_ in as few lines of code as possible.
 
-.. image:: images/new_gallery_view.png
+.. image:: images/gallery_v360plus.png
    :target: gallery_of_examples.html
 
 It is designed to be a useful visualisation tool for environmental, earth and
