@@ -318,11 +318,11 @@ def test_example_17_basic_stipple_plot():
 
     # Calculate spatial mean and standard deviation
     mean = g.mean().datum()
+    minim = g.min().datum()
+    maxim = g.max().datum()
     std = g.sd().datum()
     upper = mean + std
     lower = mean - std
-    minim = g.min().datum()
-    maxim = g.max().datum()
 
     _configure_example_output("17")
 
@@ -337,8 +337,8 @@ def test_example_17_basic_stipple_plot():
         max=lower,
         size=12,
         marker="v",
-        color="#ffffff",
-        edgecolors="#ffffff",
+        color="white",
+        edgecolors="white",
     )
     cfp.stipple(
         f=g,
@@ -346,8 +346,8 @@ def test_example_17_basic_stipple_plot():
         max=maxim,
         size=12,
         marker="^",
-        color="#1f4e79",
-        edgecolors="#1f4e79",
+        color="steelblue",
+        edgecolors="steelblue",
     )
     cfp.gclose()
 
