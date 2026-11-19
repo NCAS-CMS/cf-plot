@@ -12,8 +12,11 @@ Example 4: North Pole polar stereographic projection contour plot
    f = fl.select_by_identity("eastward_wind")[0]
 
    cfp.mapset(proj="npstere")
-
-   cfp.con(f.subspace(pressure=500))
+   cfp.con(
+       f.subspace(pressure=2),
+       linewidths=0.75,
+       colors="slategrey",
+   )
 
 
 .. figure:: /../../tests/v350-controlled-env-ref-images/ref_fig_4.png

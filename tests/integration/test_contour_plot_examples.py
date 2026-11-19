@@ -153,8 +153,8 @@ def test_example_1_basic_cylindrical():
     f = cf.read(str(DATA_DIR / "tas_A1.nc"))[0]
     _configure_example_output("1")
 
-    # This should not raise
-    cfp.con(f.subspace(time=15))
+    cfp.con(f.subspace(time=15), linestyles="dashed", linewidths=0.75)
+
     _assert_reference_match("1")
 
 
@@ -179,11 +179,14 @@ def test_example_3_map_limits_and_levels():
         pytest.skip(f"Missing test data: {DATA_DIR / 'tas_A1.nc'}")
 
     f = cf.read(str(DATA_DIR / "tas_A1.nc"))[0]
+
     _configure_example_output("3")
 
-    cfp.mapset(lonmin=-15, lonmax=3, latmin=48, latmax=60)
-    cfp.levs(min=265, max=285, step=1)
-    cfp.con(f.subspace(time=15))
+    cfp.mapset(lonmin=-90, lonmax=-30, latmin=-60, latmax=20, resolution="10m")
+    cfp.levs(min=280, max=300, step=2)
+
+    cfp.con(f.subspace(time=15), linestyles="dotted")
+
     _assert_reference_match("3")
 
 
@@ -192,11 +195,16 @@ def test_example_4_north_pole_stereographic(ggap_file):
     """Test Example 4: north pole polar stereographic projection."""
 
     f = ggap_file["eastward_wind"]
-    assert f.identity() == "eastward_wind"
+
     _configure_example_output("4")
 
     cfp.mapset(proj="npstere")
-    cfp.con(f.subspace(pressure=500))
+    cfp.con(
+        f.subspace(pressure=2),
+        linewidths=0.75,
+        colors="slategrey",
+    )
+
     _assert_reference_match("4")
 
 
@@ -206,11 +214,18 @@ def test_example_5_south_pole_with_boundary(ggap_file):
     if not (DATA_DIR / "ggap.nc").exists():
         pytest.skip(f"Missing test data: {DATA_DIR / 'ggap.nc'}")
 
-    f = ggap_file["eastward_wind"]
+    f = ggap_file["northward_wind"]
     _configure_example_output("5")
 
     cfp.mapset(proj="spstere", boundinglat=-30, lon_0=180)
-    cfp.con(f.subspace(pressure=500))
+
+    cfp.con(
+        f.subspace(pressure=1000),
+        linewidths=0.75,
+        colors="slategrey",
+        line_labels=False,  # else it gets a bit busy with these contours
+    )
+
     _assert_reference_match("5")
 
 
@@ -366,25 +381,29 @@ def test_example_19a_multiple_subplots(ggap_file):
         pytest.skip(f"Missing test data: {DATA_DIR / 'ggap.nc'}")
 
     f = ggap_file["eastward_wind"]
+    f_500 = f.subspace(pressure=500)
+
     _configure_example_output("19a")
 
     cfp.gopen(rows=2, columns=2, bottom=0.2)
-    cfp.gpos(1)
-    cfp.con(f.subspace(pressure=500), colorbar=None)
-    cfp.gpos(2)
-    cfp.mapset(proj="moll")
-    cfp.con(f.subspace(pressure=500), colorbar=None)
-    cfp.gpos(3)
-    cfp.mapset(proj="npstere", boundinglat=30, lon_0=180)
-    cfp.con(f.subspace(pressure=500), colorbar=None)
-    cfp.gpos(4)
-    cfp.mapset(proj="spstere", boundinglat=-30, lon_0=180)
-    cfp.con(
-        f.subspace(pressure=500),
-        colorbar_position=[0.1, 0.1, 0.8, 0.02],
-        colorbar_orientation="horizontal",
-    )
+
+    proj_list = ["cyl", "moll", "npstere", "spstere"]
+    for index, proj_name in enumerate(proj_list):
+        cfp.gpos(index + 1)  # gpos(1), gpos(2), etc. to position each
+        cfp.mapset(proj=proj_name)
+
+        if index < len(proj_list) - 1:  # all but last plot
+            cfp.con(f_500, lines=False, colorbar=None)
+        else:
+            cfp.con(
+                f_500,
+                lines=False,
+                colorbar_position=[0.1, 0.1, 0.8, 0.02],
+                colorbar_orientation="horizontal",
+            )
+
     cfp.gclose()
+
     _assert_reference_match("19a")
 
 
@@ -397,14 +416,20 @@ def test_example_19b_user_positioned_subplots(ggap_file):
     f = ggap_file["eastward_wind"]
     _configure_example_output("19b")
 
+    cfp.cscale("cmp_haxby")
     cfp.gopen(user_position=True)
+
     cfp.gpos(xmin=0.1, xmax=0.5, ymin=0.55, ymax=1.0)
-    cfp.con(f.subspace(Z=500), title="500mb", lines=False)
+    cfp.con(f.subspace(Z=500), title="At 500 mb pressure", lines=False)
+
     cfp.gpos(xmin=0.55, xmax=0.95, ymin=0.55, ymax=1.0)
-    cfp.con(f.subspace(Z=100), title="100mb", lines=False)
+    cfp.con(f.subspace(Z=100), title="At 100 mb", lines=False)
+
     cfp.gpos(xmin=0.3, xmax=0.7, ymin=0.1, ymax=0.55)
-    cfp.con(f.subspace(Z=10), title="10mb", lines=False)
+    cfp.con(f.subspace(Z=10), title="At 10 mb", lines=False)
+
     cfp.gclose()
+
     _assert_reference_match("19b")
 
 
@@ -414,33 +439,57 @@ def test_example_19c(ggap_file):
     if not (DATA_DIR / "ggap.nc").exists():
         pytest.skip(f"Missing test data: {DATA_DIR / 'ggap.nc'}")
 
-    f = ggap_file["eastward_wind"]
-    _configure_example_output("19c")
+    u = ggap_file["eastward_wind"]
+    v = ggap_file["northward_wind"]
 
-    g = f.collapse("X: mean")
+    # Process fields to prepare for plotting
+    u = u.subspace(pressure=500)
+    v = v.subspace(pressure=500)
+    u = u.anchor("X", -180)
+    v = v.anchor("X", -180)
+
+    # Calculate magnitude to pass to the streamplot
+    magnitude = (u**2 + v**2) ** 0.5
+    mag = magnitude.squeeze().data.array
+
+    # NOTE WELL: must not use _configure_example_output("19c") here until
+    # we set up a means to use setvars without resetting other config.,
+    # else it resets the viewer so the actual plot doesn't (all) get
+    # plotted on and associated with the test file to compare to.
+    fname = str(TEST_GEN_DIR / "gen_fig_19c.png")
+    cfp.setvars(
+        file=fname,
+        viewer="matplotlib",
+        continent_thickness=0.75,
+    )
 
     cfp.gopen(user_position=True)
+    cfp.gpos()
 
-    cfp.gpos(xmin=0.2, ymin=0.2, xmax=0.8, ymax=0.8)
-    cfp.lineplot(
-        g.subspace(pressure=100),
-        marker="o",
-        color="blue",
-        title="Zonal mean zonal wind at 100mb",
-    )
+    cfp.cscale("GreenYellow", ncols=20)
+    levs2 = np.arange(-36, 40, 4)
+    cfp.levs(levs2)
 
-    cfp.cscale("seaice_2", ncols=20)
-    levs = np.arange(282, 320, 2)
-    cfp.cbar(levs=levs, position=[0.2, 0.1, 0.6, 0.02], title="seaice_2")
-
-    cfp.cscale("topo_15lev", ncols=22)
-    levs = np.arange(-100, 2000, 100)
+    # Place first colour bar, to be used for the next plot call (cfp.con)
     cfp.cbar(
-        levs=levs,
-        position=[0.03, 0.2, 0.04, 0.6],
-        orientation="vertical",
-        title="topo_15lev",
+        levs=levs2,
+        position=[0.2, 0.1, 0.6, 0.02],
+        title="Contour fill: eastward wind component magnitude",
     )
+    cfp.con(u, lines=False, colorbar=False, zorder=0)
+
+    cfp.cscale("viridis", ncols=8)
+    levs1 = np.arange(-20, 50, 10)
+    cfp.levs(levs1)
+
+    # Place second colour bar, to be used for the next plot call (cfp.stream)
+    cfp.cbar(
+        levs=levs1,
+        position=[0.01, 0.2, 0.02, 0.6],
+        orientation="vertical",
+        title="Stream lines: full wind magnitude",
+    )
+    cfp.stream(u=u, v=v, density=2, color=mag, zorder=3)
 
     cfp.gclose()
 
@@ -458,24 +507,25 @@ def test_example_19d_multiple_subplots_via_gfigure(ggap_file):
         pytest.skip(f"Missing test data: {DATA_DIR / 'ggap.nc'}")
 
     f = ggap_file["eastward_wind"]
+    f_500 = f.subspace(pressure=500)
+
     _configure_example_output("19d")
 
     with cfp.gfigure(rows=2, columns=2, bottom=0.2):
-        cfp.gpos(1)
-        cfp.con(f.subspace(pressure=500), colorbar=None)
-        cfp.gpos(2)
-        cfp.mapset(proj="moll")
-        cfp.con(f.subspace(pressure=500), colorbar=None)
-        cfp.gpos(3)
-        cfp.mapset(proj="npstere", boundinglat=30, lon_0=180)
-        cfp.con(f.subspace(pressure=500), colorbar=None)
-        cfp.gpos(4)
-        cfp.mapset(proj="spstere", boundinglat=-30, lon_0=180)
-        cfp.con(
-            f.subspace(pressure=500),
-            colorbar_position=[0.1, 0.1, 0.8, 0.02],
-            colorbar_orientation="horizontal",
-        )
+        proj_list = ["cyl", "moll", "npstere", "spstere"]
+        for index, proj_name in enumerate(proj_list):
+            cfp.gpos(index + 1)  # gpos(1), gpos(2), etc. to position each
+            cfp.mapset(proj=proj_name)
+
+            if index < len(proj_list) - 1:  # all but last plot
+                cfp.con(f_500, lines=False, colorbar=None)
+            else:
+                cfp.con(
+                    f_500,
+                    lines=False,
+                    colorbar_position=[0.1, 0.1, 0.8, 0.02],
+                    colorbar_orientation="horizontal",
+                )
 
     _assert_reference_match("19d")
 
@@ -528,10 +578,12 @@ def test_example_21other_rgp_plasma():
         pytest.skip(f"Missing test data: {DATA_DIR / 'rgp.nc'}")
 
     f = cf.read(str(DATA_DIR / "rgp.nc"))[0]
+
     _configure_example_output("21other")
 
     cfp.cscale("plasma")
-    cfp.con(f)
+    cfp.con(f, lines=False)
+
     _assert_reference_match("21other")
 
 
@@ -546,7 +598,12 @@ def test_example_22_rgp_rotated_projection():
 
     cfp.cscale("plasma")
     cfp.mapset(proj="rotated")
-    cfp.con(f)
+    cfp.con(
+        f,
+        linewidths=0.5,
+        linestyle="dashed",
+    )
+
     _assert_reference_match("22")
 
 
@@ -557,23 +614,37 @@ def test_example_23_rotated_grid_axes_overlay():
         pytest.skip(f"Missing test data: {DATA_DIR / 'rgp.nc'}")
 
     f = cf.read(str(DATA_DIR / "rgp.nc"))[0]
-    _configure_example_output("23")
-
     data = f.array
     xvec = f.construct("ncvar%x")
     yvec = f.construct("ncvar%y")
-    xpole = 160
-    ypole = 30
+
+    _configure_example_output("23")
 
     cfp.gopen()
-    cfp.cscale("plasma")
+
+    # Set up the data
     xpts = np.arange(np.size(xvec))
     ypts = np.arange(np.size(yvec))
     cfp.gset(xmin=0, xmax=np.size(xvec) - 1, ymin=0, ymax=np.size(yvec) - 1)
-    cfp.levs(min=980, max=1035, step=2.5)
-    cfp.con(data, xpts, ypts[::-1])
+
+    # Configure the plot
+    cfp.cscale("plasma")
+    cfp.levs(min=680, max=1020, step=20)
+    cfp.con(
+        data,
+        xpts,
+        ypts[::-1],
+        linewidths=0.5,
+        linestyle="dashed",
+    )
+
+    # Add the rotated pole axes grid and labels separately
+    xpole = 160
+    ypole = 30
     cfp.rgaxes(xpole=xpole, ypole=ypole, xvec=xvec, yvec=yvec)
+
     cfp.gclose()
+
     _assert_reference_match("23")
 
 
@@ -594,6 +665,8 @@ def test_example_23other_incompass_contour_vectors():
     v = fl.select_by_identity("northward_wind")[0]
 
     cfp.mapset(50, 100, 5, 35)
+    # Blues for humidity, with darkest not too dark as to obscure land lines
+    cfp.cscale("scale24")
     cfp.levs(0, 90, 15, extend="neither")
 
     cfp.gopen()
@@ -686,12 +759,13 @@ def test_example_33_osgb_and_europp():
     cfp.mapset(proj="EuroPP", resolution="50m")
     cfp.con(f, fill=True, blockfill=False, lines=False, colorbar_label_skip=2)
     cfp.gclose()
+
     _assert_reference_match("33")
 
 
 @pytest.mark.integration
 def test_example_34_lambert_conformal():
-    """Test Example 34: Cropped Lambert conformal projection."""
+    """Test Example 34: Cropped Lambert Conformal Conic projection."""
     if not (DATA_DIR / "tas_A1.nc").exists():
         pytest.skip(f"Missing test data: {DATA_DIR / 'tas_A1.nc'}")
 
@@ -699,7 +773,13 @@ def test_example_34_lambert_conformal():
     _configure_example_output("34")
 
     cfp.mapset(proj="lcc", lonmin=-50, lonmax=50, latmin=20, latmax=85)
-    cfp.con(f.subspace(time=15))
+    cfp.con(
+        f.subspace(time=15),
+        linestyles="dashed",
+        linewidths=0.75,
+        title="Cropped Lambert Conformal Conic (LCC) projection",
+    )
+
     _assert_reference_match("34")
 
 
@@ -713,7 +793,13 @@ def test_example_35_mollweide_projection():
     _configure_example_output("35")
 
     cfp.mapset(proj="moll")
-    cfp.con(f.subspace(time=15))
+    cfp.con(
+        f.subspace(time=15),
+        linestyles="dashed",
+        linewidths=0.75,
+        title="Mollweide projection",
+    )
+
     _assert_reference_match("35")
 
 
@@ -727,7 +813,13 @@ def test_example_36_mercator_projection():
     _configure_example_output("36")
 
     cfp.mapset(proj="merc")
-    cfp.con(f.subspace(time=15))
+    cfp.con(
+        f.subspace(time=15),
+        linestyles="dashed",
+        linewidths=0.75,
+        title="Mercator projection",
+    )
+
     _assert_reference_match("36")
 
 
@@ -741,7 +833,13 @@ def test_example_37_orthographic_projection():
     _configure_example_output("37")
 
     cfp.mapset(proj="ortho")
-    cfp.con(f.subspace(time=15))
+    cfp.con(
+        f.subspace(time=15),
+        linestyles="dashed",
+        linewidths=0.75,
+        title="Orthographic projection",
+    )
+
     _assert_reference_match("37")
 
 
@@ -755,7 +853,13 @@ def test_example_38_robinson_projection():
     _configure_example_output("38")
 
     cfp.mapset(proj="robin")
-    cfp.con(f.subspace(time=15))
+    cfp.con(
+        f.subspace(time=15),
+        linestyles="dashed",
+        linewidths=0.75,
+        title="Robinson projection",
+    )
+
     _assert_reference_match("38")
 
 
@@ -771,7 +875,10 @@ def test_example_37b_orthographic_full_globe():
     if not data_file.exists():
         pytest.skip(f"Missing test data: {data_file}")
 
-    pfld = cf.read(str(data_file))[0]
+    f = cf.read(str(data_file))[0]
+    # Get subspace time to use in title of plot
+    time = f.coordinate("time").datetime_array.item(0)
+
     _configure_example_output("37b")
 
     cfp.mapset(
@@ -785,12 +892,13 @@ def test_example_37b_orthographic_full_globe():
         lat_0=0.0,
     )
     cfp.con(
-        pfld,
+        f,
         fill=True,
         lines=False,
         line_labels=False,
-        title="time=3080592000.0",
+        title=f"At datetime {time!s}",
     )
+
     _assert_reference_match("37b")
 
 

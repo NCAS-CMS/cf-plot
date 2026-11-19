@@ -18,7 +18,6 @@ Example 29: Time series line plot
    cfp.lineplot(
        temp_annual_global,
        title="Global average annual temperature",
-       color="blue",
    )
 
 

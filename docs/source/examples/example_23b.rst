@@ -15,6 +15,8 @@ Example 23b: Overlaying vectors over a rotated pole data plot
    v = fl.select_by_identity("northward_wind")[0]
 
    cfp.mapset(50, 100, 5, 35)
+   # Blues for humidity, with darkest not too dark as to obscure land lines
+   cfp.cscale("scale24")
    cfp.levs(0, 90, 15, extend="neither")
 
    cfp.gopen()

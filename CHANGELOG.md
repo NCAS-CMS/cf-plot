@@ -13,6 +13,15 @@ of being developed elsewhere.
 
 -----
 
+### Version `3.7`
+
+Unreleased development version
+
+#### Version `3.7.0`, released ???
+
+* Update examples in the documentation to showcase clearer and more
+  enticing plots (https://github.com/NCAS-CMS/cf-plot/issues/175)
+
 
 ### Version `3.6`
 

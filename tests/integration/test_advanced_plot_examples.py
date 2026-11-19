@@ -120,7 +120,14 @@ def test_example_13_basic_vector_plot(ggap_file):
     v = v.subspace(pressure=500)
 
     _configure_example_output("13")
-    cfp.vect(u=u, v=v, key_length=10, scale=100, stride=5)
+    cfp.vect(
+        u=u,
+        v=v,
+        key_length=10,
+        scale=100,
+        stride=5,
+        color="darkslateblue",  # helps to distinguish vectors from land lines
+    )
     _assert_reference_match("13")
 
 
@@ -131,17 +138,28 @@ def test_example_14_vector_with_colour_contour(ggap_file):
     v = ggap_file["northward_wind"]
     t = ggap_file["air_temperature"]
 
-    # Subspace to get values for a specified pressure, here 500 mbar
-    u = u.subspace(pressure=500)
-    v = v.subspace(pressure=500)
-    t = t.subspace(pressure=500)
+    # Subspace to get values for a specified pressure, here 700 mbar
+    u = u.subspace(pressure=700)
+    v = v.subspace(pressure=700)
+    t = t.subspace(pressure=700)
 
-    _configure_example_output("14")
+    # NOTE WELL: must not use _configure_example_output("14") here until
+    # we set up a means to use setvars without resetting other config.,
+    # else it resets the viewer so the actual plot doesn't (all) get
+    # plotted on and associated with the test file to compare to.
+    fname = str(TEST_GEN_DIR / "gen_fig_14.png")
+    cfp.setvars(
+        file=fname,
+        viewer="matplotlib",
+        land_color="darkgreen",
+        feature_zorder=2,
+    )
+
     cfp.gopen()
     cfp.mapset(lonmin=10, lonmax=120, latmin=-30, latmax=30)
-    cfp.levs(min=254, max=270, step=1)
-    cfp.con(t)
-    cfp.vect(u=u, v=v, key_length=10, scale=50, stride=2)
+    cfp.levs(min=270, max=290, step=1)
+    cfp.con(t, lines=False)
+    cfp.vect(u=u, v=v, key_length=10, scale=40, stride=2, color="cyan")
     cfp.gclose()
 
     _assert_reference_match("14")
@@ -155,25 +173,37 @@ def test_example_15_polar_vector_plot(ggap_file):
     u = u.subspace(Z=500)
     v = v.subspace(Z=500)
 
-    _configure_example_output("15")
+    # NOTE WELL: must not use _configure_example_output("15") here until
+    # we set up a means to use setvars without resetting other config.,
+    # else it resets the viewer so the actual plot doesn't (all) get
+    # plotted on and associated with the test file to compare to.
+    fname = str(TEST_GEN_DIR / "gen_fig_15.png")
+    cfp.setvars(
+        file=fname,
+        viewer="matplotlib",
+        land_color="rosybrown",
+        ocean_color="lightsteelblue",
+        feature_zorder=2,
+    )
     cfp.mapset(proj="npstere")
 
     cfp.gopen(columns=2)
     cfp.vect(
         u=u,
         v=v,
-        key_length=10,
-        scale=100,
-        stride=4,
+        key_length=25,
+        scale=160,
+        stride=6,
         title="Polar plot using data grid",
     )
     cfp.gpos(2)
     cfp.vect(
         u=u,
         v=v,
-        key_length=10,
-        scale=100,
-        pts=40,
+        pts=40,  # difference to other plot
+        key_length=25,
+        scale=160,
+        stride=6,
         title="Polar plot with regular point distribution",
     )
     cfp.gclose()
@@ -210,7 +240,7 @@ def test_example_16a_zonal_vector_plot(ggap_file):
     _assert_reference_match("16a")
 
 
-@pytest.mark.xfail_image_comparison
+# @pytest.mark.xfail_image_comparison  # re-mark if req'd for next release
 @pytest.mark.integration
 def test_example_16b_basic_stream_plot(ggap_file):
     """Test Example 16b: basic stream plot."""
@@ -224,11 +254,11 @@ def test_example_16b_basic_stream_plot(ggap_file):
     v = v.anchor("X", -180)
 
     _configure_example_output("16b")
-    cfp.stream(u=u, v=v, density=2)
+    cfp.stream(u=u, v=v, density=2, color="darkslateblue")
     _assert_reference_match("16b")
 
 
-@pytest.mark.xfail_image_comparison
+# @pytest.mark.xfail_image_comparison  # re-mark if req'd for next release
 @pytest.mark.integration
 def test_example_16c_enhanced_stream_plot(ggap_file):
     """Test Example 16c: enhanced stream plot."""
@@ -241,12 +271,25 @@ def test_example_16c_enhanced_stream_plot(ggap_file):
     u = u.anchor("X", -180)
     v = v.anchor("X", -180)
 
-    magnitude = (u**2 + v**2) ** 0.5
-    mag = np.squeeze(magnitude.array)
+    # NOTE WELL: must not use _configure_example_output("16c") here until
+    # we set up a means to use setvars without resetting other config.,
+    # else it resets the viewer so the actual plot doesn't (all) get
+    # plotted on and associated with the test file to compare to.
+    fname = str(TEST_GEN_DIR / "gen_fig_16c.png")
+    cfp.setvars(
+        file=fname,
+        viewer="matplotlib",
+        ocean_color="honeydew",
+        feature_zorder=0,
+        continent_thickness=0.75,
+    )
 
-    _configure_example_output("16c")
+    magnitude = (u**2 + v**2) ** 0.5
+    mag = magnitude.squeeze().data.array
+
     cfp.levs(0, 60, 5, extend="max")
     cfp.cscale("viridis", ncols=13)
+
     cfp.gopen()
     cfp.stream(u=u, v=v, density=2, color=mag)
     cfp.cbar(
@@ -271,14 +314,41 @@ def test_example_17_basic_stipple_plot():
         pytest.skip(f"Missing test data: {DATA_DIR / 'tas_A1.nc'}")
 
     f = cf.read(str(DATA_DIR / "tas_A1.nc"))[0]
-    g = f.subspace(time=15)
+    g = f[-1, :, :]  # final time value subspace, same as shorthand f[-1]
+
+    # Calculate spatial mean and standard deviation
+    mean = g.mean().datum()
+    minim = g.min().datum()
+    maxim = g.max().datum()
+    std = g.sd().datum()
+    upper = mean + std
+    lower = mean - std
 
     _configure_example_output("17")
+
     cfp.gopen()
     cfp.cscale("magma")
-    cfp.con(g)
-    cfp.stipple(f=g, min=220, max=260, size=100, color="#00ff00")
-    cfp.stipple(f=g, min=300, max=330, size=50, color="#0000ff", marker="s")
+    cfp.con(g, lines=False)
+
+    # Stipple regions over one standard deviation below or above spatial mean
+    cfp.stipple(
+        f=g,
+        min=minim,
+        max=lower,
+        size=12,
+        marker="v",
+        color="white",
+        edgecolors="white",
+    )
+    cfp.stipple(
+        f=g,
+        min=upper,
+        max=maxim,
+        size=12,
+        marker="^",
+        color="steelblue",
+        edgecolors="steelblue",
+    )
     cfp.gclose()
 
     _assert_reference_match("17")
@@ -291,15 +361,34 @@ def test_example_18_polar_stipple_plot():
         pytest.skip(f"Missing test data: {DATA_DIR / 'tas_A1.nc'}")
 
     f = cf.read(str(DATA_DIR / "tas_A1.nc"))[0]
-    g = f.subspace(time=15)
+    g = f[0, :, :]  # first time value subspace, same as shorthand f[0]
 
     _configure_example_output("18")
+
     cfp.gopen()
 
-    cfp.cscale("magma")
+    cfp.cscale("WhiteBlue")
     cfp.mapset(proj="npstere")
-    cfp.con(g)
-    cfp.stipple(f=g, min=265, max=295, size=100, color="#00ff00")
+    cfp.con(
+        g,
+        lines=False,
+        title=(
+            "Northern polar temperature distribution with cold-region "
+            "(<-20 degC) stippling"
+        ),
+    )
+
+    # Highlight particularly cold regions (below <-20 degC)
+    cfp.stipple(
+        f=g,
+        min=g.min().datum(),
+        max=253.15,  # i.e. 20 degrees Celsius
+        size=20,
+        color="red",
+        marker="x",
+        edgecolors="red",
+    )
+
     cfp.gclose()
 
     _assert_reference_match("18")
@@ -446,9 +535,8 @@ def test_example_27_basic_graph_plot(ggap_file):
     _configure_example_output("27")
     cfp.lineplot(
         g.subspace(pressure=100),
-        marker="o",
-        color="blue",
-        title="Zonal mean zonal wind at 100mb",
+        marker="x",
+        title="Zonal mean zonal wind at 100 mb",
     )
     _assert_reference_match("27")
 
@@ -462,7 +550,7 @@ def test_example_27b_basic_scatter_plot(ggap_file):
     _configure_example_output("27b")
     cfp.scatter(
         g.subspace(pressure=700),
-        title="Meridional minimum of zonal wind at 700mb",
+        title="Meridional minimum of zonal wind at 700 mb",
     )
     _assert_reference_match("27b")
 
@@ -493,30 +581,34 @@ def test_example_28_line_and_legend_plot(ggap_file):
     ypts = [-8, -8, 5, 5, -8]
 
     _configure_example_output("28")
-    cfp.gset(xmin=-90, xmax=90, ymin=-10, ymax=50)
 
+    cfp.gset(xmin=-90, xmax=90, ymin=-10, ymax=50)
     cfp.gopen()
+
     cfp.lineplot(
         g.subspace(pressure=100),
         marker="o",
-        color="blue",
+        color="slateblue",
         title="Zonal mean zonal wind",
-        label="100mb",
+        label="100 mb",
     )
     cfp.lineplot(
         g.subspace(pressure=200),
         marker="D",
-        color="red",
-        label="200mb",
+        color="indianred",
+        label="200 mb",
         xticks=xticks,
         xticklabels=xticklabels,
         legend_location="upper right",
     )
-    cfp.plotvars.plot.plot(xpts, ypts, linewidth=3.0, color="green")
+
+    cfp.plotvars.plot.plot(xpts, ypts, linewidth=3.0, color="mediumseagreen")
     cfp.plotvars.plot.text(
-        35, -2, "Region of interest", horizontalalignment="left"
+        2, -7, "Region of interest", horizontalalignment="left"
     )
+
     cfp.gclose()
+
     _assert_reference_match("28")
 
 
@@ -537,7 +629,6 @@ def test_example_29_global_average_annual_temperature():
     cfp.lineplot(
         temp_annual_global,
         title="Global average annual temperature",
-        color="blue",
     )
     _assert_reference_match("29")
 
@@ -549,22 +640,27 @@ def test_example_30_two_axis_plotting(ggap_file):
     f_t = ggap_file["air_temperature"]
 
     u = f_u.collapse("X: mean")
-    u1 = u.subspace(Y=cf.isclose(-61.12099075))
-    u2 = u.subspace(Y=cf.isclose(0.56074494))
+    # Use cf.isclose with an absolute tolerance corresponding to the final
+    # decimal place we specify, so we can choose a certain value without having
+    # to specify all digits in each (they are far from being round numbers).
+    u1 = u.subspace(Y=cf.isclose(-61.1, atol=0.1))
+    u2 = u.subspace(Y=cf.isclose(0.561, atol=0.001))
 
     t = f_t.collapse("X: mean")
-    t1 = t.subspace(Y=cf.isclose(-61.12099075))
-    t2 = t.subspace(Y=cf.isclose(0.56074494))
+    t1 = t.subspace(Y=cf.isclose(-61.1, atol=0.1))
+    t2 = t.subspace(Y=cf.isclose(0.561, atol=0.001))
 
     _configure_example_output("30")
+
     cfp.gopen()
     cfp.gset(-30, 30, 1000, 0)
-    cfp.lineplot(u1, color="r")
-    cfp.lineplot(u2, color="r")
+    cfp.lineplot(u1, color="indianred")
+    cfp.lineplot(u2, color="indianred")
     cfp.gset(190, 300, 1000, 0, twiny=True)
-    cfp.lineplot(t1, color="b")
-    cfp.lineplot(t2, color="b")
+    cfp.lineplot(t1, color="slateblue")
+    cfp.lineplot(t2, color="slateblue")
     cfp.gclose()
+
     _assert_reference_match("30")
 
 
@@ -582,7 +678,11 @@ def test_example_39_basic_track_plotting_trajectory():
     f = cf.read(str(DATA_DIR / "ff_trs_pos.nc"))[0]
 
     _configure_example_output("39")
-    cfp.traj(f)
+    cfp.traj(
+        f,
+        markeredgecolor="maroon",
+        linecolor="maroon",
+    )
     _assert_reference_match("39")
 
 
@@ -594,11 +694,34 @@ def test_example_39b_single_dsg_trajectory_no_dimension():
 
     f = cf.read(str(DATA_DIR / "dsg_trajectory.nc"))[0]
 
-    # This is over a small part of France so focus in on that area
-    cfp.mapset(lonmin=3, lonmax=6, latmin=51, latmax=54, resolution="10m")
+    # NOTE WELL: must not use _configure_example_output("31") here until
+    # we set up a means to use setvars without resetting other config.,
+    # else it resets the viewer so the actual plot doesn't (all) get
+    # plotted on and associated with the test file to compare to.
+    fname = str(TEST_GEN_DIR / "gen_fig_39b.png")
+    cfp.setvars(
+        file=fname,
+        viewer="matplotlib",
+        land_color="darkseagreen",
+        ocean_color="lightsteelblue",
+        feature_zorder=0,
+    )
 
-    _configure_example_output("39b")
-    cfp.traj(f)
+    # Ends over a small part of the Netherlands so focus in on that area
+    cfp.mapset(
+        lonmin=4.5, lonmax=5.0, latmin=52.6, latmax=53.3, resolution="10m"
+    )
+
+    cfp.traj(
+        f,
+        marker="D",
+        markeredgecolor="maroon",
+        linecolor="maroon",
+        # np.round avoids floating point rounding values, e.g. .99999... -> 1.0
+        xticks=np.round(np.arange(4.5, 5.05, 0.05), 2),
+        yticks=np.round(np.arange(52.6, 53.35, 0.05), 2),
+    )
+
     _assert_reference_match("39b")
 
 
@@ -613,7 +736,11 @@ def test_example_40_tracks_polar_stereographic():
     cfp.mapset(proj="npstere")
 
     _configure_example_output("40")
-    cfp.traj(f)
+    cfp.traj(
+        f,
+        markeredgecolor="maroon",
+        linecolor="maroon",
+    )
     _assert_reference_match("40")
 
 
@@ -625,10 +752,16 @@ def test_example_41_feature_propagation():
 
     f = cf.read(str(DATA_DIR / "ff_trs_pos.nc"))[0]
 
-    cfp.mapset(lonmin=-20, lonmax=20, latmin=30, latmax=70)
-
     _configure_example_output("41")
-    cfp.traj(f, vector=True, markersize=0.0, fc="b", ec="b")
+
+    cfp.mapset(lonmin=-20, lonmax=20, latmin=35, latmax=60, resolution="50m")
+    cfp.traj(
+        f,
+        vector=True,
+        markersize=0,
+        ec="darkslateblue",  # helps to distinguish track from land lines
+        fc="darkslateblue",
+    )
     _assert_reference_match("41")
 
 
@@ -650,7 +783,10 @@ def test_example_42a_intensity_legend():
     cfp.traj(
         g,
         legend=True,
-        markersize=40.0,
+        markersize=50.0,
+        markeredgecolor="black",
+        linecolor="black",
+        linewidth=2.0,
         colorbar_title="Relative Vorticity (Hz) * 1e5",
     )
     _assert_reference_match("42a")
@@ -659,8 +795,6 @@ def test_example_42a_intensity_legend():
 @pytest.mark.integration
 def test_example_42b_intensity_legend_with_lines():
     """Test Example 42b: intensity legend with lines."""
-    # TODO I think this is right, even though it is different from legacy.
-    # Legacy has 42a and 42b the same, which can't be right.
     if not (DATA_DIR / "ff_trs_pos.nc").exists():
         pytest.skip(f"Missing test data: {DATA_DIR / 'ff_trs_pos.nc'}")
 
