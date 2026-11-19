@@ -507,9 +507,8 @@ as in Example 27 below.</p>
 <span class="n">cfp</span><span class="o">.</span><span class="n">gopen</span><span class="p">()</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">lineplot</span><span class="p">(</span>
     <span class="n">g</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">pressure</span><span class="o">=</span><span class="mi">100</span><span class="p">),</span>
-    <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span>
-    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span>
-    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Zonal mean zonal wind at 100mb&quot;</span><span class="p">,</span>
+    <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Zonal mean zonal wind at 100 mb&quot;</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">gclose</span><span class="p">()</span>
 </pre></div>
@@ -560,7 +559,7 @@ override the latter but not the former), as in Example 27b below.</p>
 <span class="n">_configure_example_output</span><span class="p">(</span><span class="s2">&quot;27b&quot;</span><span class="p">)</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
     <span class="n">g</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">pressure</span><span class="o">=</span><span class="mi">700</span><span class="p">),</span>
-    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Meridional minimum of zonal wind at 700mb&quot;</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Meridional minimum of zonal wind at 700 mb&quot;</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -612,28 +611,30 @@ plotted lines</span><a class="headerlink" href="#id3" title="Link to this code">
 <span class="n">ypts</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">8</span><span class="p">,</span> <span class="o">-</span><span class="mi">8</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="o">-</span><span class="mi">8</span><span class="p">]</span>
 
 <span class="n">cfp</span><span class="o">.</span><span class="n">gset</span><span class="p">(</span><span class="n">xmin</span><span class="o">=-</span><span class="mi">90</span><span class="p">,</span> <span class="n">xmax</span><span class="o">=</span><span class="mi">90</span><span class="p">,</span> <span class="n">ymin</span><span class="o">=-</span><span class="mi">10</span><span class="p">,</span> <span class="n">ymax</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
-
 <span class="n">cfp</span><span class="o">.</span><span class="n">gopen</span><span class="p">()</span>
+
 <span class="n">cfp</span><span class="o">.</span><span class="n">lineplot</span><span class="p">(</span>
     <span class="n">g</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">pressure</span><span class="o">=</span><span class="mi">100</span><span class="p">),</span>
     <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span>
-    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;slateblue&quot;</span><span class="p">,</span>
     <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Zonal mean zonal wind&quot;</span><span class="p">,</span>
-    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;100mb&quot;</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;100 mb&quot;</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">lineplot</span><span class="p">(</span>
     <span class="n">g</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">pressure</span><span class="o">=</span><span class="mi">200</span><span class="p">),</span>
     <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;D&quot;</span><span class="p">,</span>
-    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>
-    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;200mb&quot;</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;indianred&quot;</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;200 mb&quot;</span><span class="p">,</span>
     <span class="n">xticks</span><span class="o">=</span><span class="n">xticks</span><span class="p">,</span>
     <span class="n">xticklabels</span><span class="o">=</span><span class="n">xticklabels</span><span class="p">,</span>
     <span class="n">legend_location</span><span class="o">=</span><span class="s2">&quot;upper right&quot;</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="n">cfp</span><span class="o">.</span><span class="n">plotvars</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xpts</span><span class="p">,</span> <span class="n">ypts</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">)</span>
+
+<span class="n">cfp</span><span class="o">.</span><span class="n">plotvars</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xpts</span><span class="p">,</span> <span class="n">ypts</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;mediumseagreen&quot;</span><span class="p">)</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">plotvars</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>
-    <span class="mi">35</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;Region of interest&quot;</span><span class="p">,</span> <span class="n">horizontalalignment</span><span class="o">=</span><span class="s2">&quot;left&quot;</span>
+    <span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">7</span><span class="p">,</span> <span class="s2">&quot;Region of interest&quot;</span><span class="p">,</span> <span class="n">horizontalalignment</span><span class="o">=</span><span class="s2">&quot;left&quot;</span>
 <span class="p">)</span>
+
 <span class="n">cfp</span><span class="o">.</span><span class="n">gclose</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -666,7 +667,7 @@ attached labels.</p>
 <div class="line">'upper center'</div>
 <div class="line">'lower center'</div>
 </div>
-<p>When making a call to lineplot the following parameters overide any
+<p>When making a call to lineplot the following parameters override any
 predefined CF defaults:</p>
 <div class="line-block">
 <div class="line">title=None - plot title</div>
@@ -695,7 +696,6 @@ data shown is global average annual temperature</span><a class="headerlink" href
 <span class="n">cfp</span><span class="o">.</span><span class="n">lineplot</span><span class="p">(</span>
     <span class="n">temp_annual_global</span><span class="p">,</span>
     <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Global average annual temperature&quot;</span><span class="p">,</span>
-    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -715,19 +715,21 @@ Anything else will give unexpected results.</p>
 <span id="example30"></span><h2>Example 30: Line plot with two x axes<a class="headerlink" href="#example-30-line-plot-with-two-x-axes" title="Link to this heading">#</a></h2>
 <div class="literal-block-wrapper docutils container" id="id5">
 <div class="code-block-caption"><span class="caption-text">Adding an extra x axis to a line plot</span><a class="headerlink" href="#id5" title="Link to this code">#</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">tol</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">RTOL</span><span class="p">(</span><span class="mf">1e-5</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fl</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;cfplot_data/ggap.nc&quot;</span><span class="p">)</span>
 
-<span class="n">fl</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;cfplot_data/ggap.nc&quot;</span><span class="p">)</span>
+<span class="n">f_u</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">select_by_identity</span><span class="p">(</span><span class="s2">&quot;eastward_wind&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">f_t</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">select_by_identity</span><span class="p">(</span><span class="s2">&quot;air_temperature&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
-<span class="n">f</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">select_by_identity</span><span class="p">(</span><span class="s2">&quot;eastward_wind&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-<span class="n">u</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s2">&quot;X: mean&quot;</span><span class="p">)</span>
-<span class="n">u1</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">Y</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="o">-</span><span class="mf">61.12099075</span><span class="p">))</span>
-<span class="n">u2</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">Y</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="mf">0.56074494</span><span class="p">))</span>
+<span class="n">u</span> <span class="o">=</span> <span class="n">f_u</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s2">&quot;X: mean&quot;</span><span class="p">)</span>
+<span class="c1"># Use cf.isclose with an absolute tolerance corresponding to the final</span>
+<span class="c1"># decimal place we specify, so we can choose a certain value without having</span>
+<span class="c1"># to specify all digits in each (they are far from being round numbers).</span>
+<span class="n">u1</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">Y</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="o">-</span><span class="mf">61.1</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">0.1</span><span class="p">))</span>
+<span class="n">u2</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">Y</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="mf">0.561</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">0.001</span><span class="p">))</span>
 
-<span class="n">g</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">select_by_identity</span><span class="p">(</span><span class="s2">&quot;air_temperature&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-<span class="n">t</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s2">&quot;X: mean&quot;</span><span class="p">)</span>
-<span class="n">t1</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">Y</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="o">-</span><span class="mf">61.12099075</span><span class="p">))</span>
-<span class="n">t2</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">Y</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="mf">0.56074494</span><span class="p">))</span>
+<span class="n">t</span> <span class="o">=</span> <span class="n">f_t</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s2">&quot;X: mean&quot;</span><span class="p">)</span>
+<span class="n">t1</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">Y</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="o">-</span><span class="mf">61.1</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">0.1</span><span class="p">))</span>
+<span class="n">t2</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">Y</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="mf">0.561</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">0.001</span><span class="p">))</span>
 
 <span class="n">cfp</span><span class="o">.</span><span class="n">gopen</span><span class="p">()</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">gset</span><span class="p">(</span><span class="o">-</span><span class="mi">30</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>

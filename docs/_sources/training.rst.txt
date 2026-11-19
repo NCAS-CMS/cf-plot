@@ -14,7 +14,7 @@ one's own time. Links to this are as follows:
 
 * Repository with instructions: https://github.com/NCAS-CMS/cf-tools-training
 * 'New course' which is the most recent form of the course and has been
-  updated for more recent verisons of cf-python and cf-plot, hence is the
+  updated for more recent versions of cf-python and cf-plot, hence is the
   **recommended sub-directory to use** for training with the repository as-is.
 
 The training is mostly in the form of Jupyter Notebooks. See the

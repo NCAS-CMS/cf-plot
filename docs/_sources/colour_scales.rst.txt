@@ -16,7 +16,7 @@ There are two default colour scales in cf-plot:
 
 2) A diverging scale ('scale1') that goes from blue to red and suits data with a zero in it.  For example temperature in Celsius or zonal wind - see example 4 in the plot gallery.  The colour scale is automatically adjusted so that blue hues are below zero and red hues above zero.
 
-When no calls have been made to **cfp.cscale** cf-plot selects one of theses scales based on whether there is a zero in the data passed for contouring.  If a call is made to **cfp.cscale** with just a colour scale name  **cfp.cscale('radar')**, for example, then this colour scale is used for all subsequent plots.  The colour scale is adjusted automatically to fit the number of contour levels in the plot.
+When no calls have been made to **cfp.cscale** cf-plot selects one of these scales based on whether there is a zero in the data passed for contouring.  If a call is made to **cfp.cscale** with just a colour scale name  **cfp.cscale('radar')**, for example, then this colour scale is used for all subsequent plots.  The colour scale is adjusted automatically to fit the number of contour levels in the plot.
 
 If a call to **cfp.cscale** specifies additional parameters to the colour scale, then the automatic colour adjustment is turned off giving the user fine tuning of colours as below.
 
@@ -86,7 +86,7 @@ To reverse a colour scale use the **reverse=1** option to **cscale** and specify
 
 
 
-As a short example to show the flexibilty of the colour scale routines we will make a orography plot using the wiki_2_0.rgb orography/bathymetry colour scale. This has as many colours for bathymetry as for the oroggraphy but in this case we just need a blue ocean as we are really only interested in the orography.  So in this case we will define a set of levels using *levs* and then match the colour scale to them.  The wiki_2_0.rgb colour scale has as many colours for the ocean as for the land so we can use the above and below options
+As a short example to show the flexibility of the colour scale routines we will make a orography plot using the wiki_2_0.rgb orography/bathymetry colour scale. This has as many colours for bathymetry as for the oroggraphy but in this case we just need a blue ocean as we are really only interested in the orography.  So in this case we will define a set of levels using *levs* and then match the colour scale to them.  The wiki_2_0.rgb colour scale has as many colours for the ocean as for the land so we can use the above and below options
 
 
 .. image::  images/orog.png

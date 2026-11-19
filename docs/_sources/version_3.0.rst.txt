@@ -160,7 +160,7 @@ An issue with a short time axis on a Hovmuller plot was found and fixed.
 11. con - multiple plot spacing incorrect
 =========================================
 
-Fixed a variety of issues when using cfp.con and mutiple plots using the rows and columns
+Fixed a variety of issues when using cfp.con and multiple plots using the rows and columns
 spacing options to cfp.gopen.
 
 
@@ -174,7 +174,7 @@ spacing options to cfp.gopen.
 ===========================================
 
 When adding an extra cyclic point in longitude and the data the cartopy_util.add_cyclic_point
-routine sometimes fails when the data isn't quite regularly spaced.  Generally this happends
+routine sometimes fails when the data isn't quite regularly spaced.  Generally this happens
 when the numpy value for the data has a lot of decimal points.  A numeric fix for this
 incorrect spacing was put in place.
 
@@ -261,7 +261,7 @@ Basic data size and shape checking is now done for the inputs of CF data to con,
 16. lineplot - multiple lines on a single graph can have incorrect axis limits
 ==============================================================================
 
-When making muliple lines on a single graph it can have incorrect axis limits as by
+When making multiple lines on a single graph it can have incorrect axis limits as by
 default the axis limits and labelling were chosen from the last made line.  This was changed so
 that the the min and max of X and Y for the lines in accumulated and applied to the graph.
 
@@ -425,7 +425,7 @@ Streamplots are now available in cf-plot.  Examples are in the user guide under 
 =================================
 
 cfp.levs(step=20) sets the step to 20 for contour level generation.  This was inadvertenty cleared
-inbetween plots and also generated a step of a float of 20.0 rather than the integer 20.
+between plots and also generated a step of a float of 20.0 rather than the integer 20.
 
 
 ::
@@ -566,7 +566,7 @@ An incorrect version number was set in setup.py.
 38. con - No contour levels data throws an error in Matplotlib line labelling
 =============================================================================
 
-The default behaviour of Matplotlib has changed such that if the data is all the same the contour labelling scheme in Matplotlib throws an error.  This is in Matplotlib 3.3.2 and may well have been in previous versions. cf-plot was changed so that in thie case of min(data) == max(data) the contour labels are turned off so a plot can be made.
+The default behaviour of Matplotlib has changed such that if the data is all the same the contour labelling scheme in Matplotlib throws an error.  This is in Matplotlib 3.3.2 and may well have been in previous versions. cf-plot was changed so that in the case of min(data) == max(data) the contour labels are turned off so a plot can be made.
 
 
 ::

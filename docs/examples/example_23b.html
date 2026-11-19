@@ -437,7 +437,7 @@
 <li class="toctree-l1"><a class="reference internal" href="example_18.html">Example 18: Polar stipple plot</a></li>
 <li class="toctree-l1"><a class="reference internal" href="example_19a.html">Example 19a: Multiple plots</a></li>
 <li class="toctree-l1"><a class="reference internal" href="example_19b.html">Example 19b: Multiple plots with user-specified plot positions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="example_19c.html">Example 19c: Accomodating more than one colour bar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_19c.html">Example 19c: Accommodating more than one colour bar</a></li>
 <li class="toctree-l1"><a class="reference internal" href="example_19d.html">Example 19d: Multiple plots using <cite>gfigure</cite> context manager</a></li>
 <li class="toctree-l1"><a class="reference internal" href="example_20.html">Example 20: Case where user-defined axis labels are required</a></li>
 <li class="toctree-l1"><a class="reference internal" href="example_21a.html">Example 21a: User-defined axes</a></li>
@@ -543,6 +543,8 @@
 <span class="n">v</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">select_by_identity</span><span class="p">(</span><span class="s2">&quot;northward_wind&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
 <span class="n">cfp</span><span class="o">.</span><span class="n">mapset</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">35</span><span class="p">)</span>
+<span class="c1"># Blues for humidity, with darkest not too dark as to obscure land lines</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">cscale</span><span class="p">(</span><span class="s2">&quot;scale24&quot;</span><span class="p">)</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">levs</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="n">extend</span><span class="o">=</span><span class="s2">&quot;neither&quot;</span><span class="p">)</span>
 
 <span class="n">cfp</span><span class="o">.</span><span class="n">gopen</span><span class="p">()</span>

@@ -502,7 +502,11 @@ multidimensional-arrays with a trajectory dimension can be plotted, as below.</p
 <div class="code-block-caption"><span class="caption-text">A basic example of plotting a track i.e. trajectory</span><a class="headerlink" href="#id2" title="Link to this code">#</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;cfplot_data/ff_trs_pos.nc&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
-<span class="n">cfp</span><span class="o">.</span><span class="n">traj</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">traj</span><span class="p">(</span>
+    <span class="n">f</span><span class="p">,</span>
+    <span class="n">markeredgecolor</span><span class="o">=</span><span class="s2">&quot;maroon&quot;</span><span class="p">,</span>
+    <span class="n">linecolor</span><span class="o">=</span><span class="s2">&quot;maroon&quot;</span><span class="p">,</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -521,7 +525,24 @@ one-dimensional array, as
 <a class="reference external" href="https://cfconventions.org/cf-conventions/cf-conventions.html#_single_trajectory">standard</a>)</span><a class="headerlink" href="#id3" title="Link to this code">#</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;cfplot_data/dsg_trajectory.nc&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
-<span class="n">cfp</span><span class="o">.</span><span class="n">traj</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">setvars</span><span class="p">(</span>
+    <span class="n">land_color</span><span class="o">=</span><span class="s2">&quot;darkseagreen&quot;</span><span class="p">,</span>
+    <span class="n">ocean_color</span><span class="o">=</span><span class="s2">&quot;lightsteelblue&quot;</span><span class="p">,</span>
+    <span class="n">feature_zorder</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Ends over a small part of the Netherlands so focus in on that area</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">mapset</span><span class="p">(</span><span class="n">lonmin</span><span class="o">=</span><span class="mf">4.5</span><span class="p">,</span> <span class="n">lonmax</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span> <span class="n">latmin</span><span class="o">=</span><span class="mf">52.6</span><span class="p">,</span> <span class="n">latmax</span><span class="o">=</span><span class="mf">53.3</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="s2">&quot;10m&quot;</span><span class="p">)</span>
+
+<span class="n">cfp</span><span class="o">.</span><span class="n">traj</span><span class="p">(</span>
+    <span class="n">f</span><span class="p">,</span>
+    <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;D&quot;</span><span class="p">,</span>
+    <span class="n">markeredgecolor</span><span class="o">=</span><span class="s2">&quot;maroon&quot;</span><span class="p">,</span>
+    <span class="n">linecolor</span><span class="o">=</span><span class="s2">&quot;maroon&quot;</span><span class="p">,</span>
+    <span class="c1"># np.round avoids floating point rounding values, e.g. .99999... -&gt; 1.0</span>
+    <span class="n">xticks</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">4.5</span><span class="p">,</span> <span class="mf">5.05</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">),</span> <span class="mi">2</span><span class="p">),</span>
+    <span class="n">yticks</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">52.6</span><span class="p">,</span> <span class="mf">53.35</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">),</span> <span class="mi">2</span><span class="p">),</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -538,7 +559,6 @@ stereographic projection</span><a class="headerlink" href="#id4" title="Link to 
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;cfplot_data/ff_trs_pos.nc&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
 <span class="n">cfp</span><span class="o">.</span><span class="n">mapset</span><span class="p">(</span><span class="n">proj</span><span class="o">=</span><span class="s2">&quot;npstere&quot;</span><span class="p">)</span>
-
 <span class="n">cfp</span><span class="o">.</span><span class="n">traj</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -553,9 +573,14 @@ stereographic projection</span><a class="headerlink" href="#id4" title="Link to 
 <div class="code-block-caption"><span class="caption-text">Plotting the propagation of features over Europe</span><a class="headerlink" href="#id5" title="Link to this code">#</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;cfplot_data/ff_trs_pos.nc&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
-<span class="n">cfp</span><span class="o">.</span><span class="n">mapset</span><span class="p">(</span><span class="n">lonmin</span><span class="o">=-</span><span class="mi">20</span><span class="p">,</span> <span class="n">lonmax</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">latmin</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">latmax</span><span class="o">=</span><span class="mi">70</span><span class="p">)</span>
-
-<span class="n">cfp</span><span class="o">.</span><span class="n">traj</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">vector</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">fc</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="n">ec</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">)</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">mapset</span><span class="p">(</span><span class="n">lonmin</span><span class="o">=-</span><span class="mi">20</span><span class="p">,</span> <span class="n">lonmax</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">latmin</span><span class="o">=</span><span class="mi">35</span><span class="p">,</span> <span class="n">latmax</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="s2">&quot;50m&quot;</span><span class="p">)</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">traj</span><span class="p">(</span>
+     <span class="n">f</span><span class="p">,</span>
+     <span class="n">vector</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+     <span class="n">markersize</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+     <span class="n">ec</span><span class="o">=</span><span class="s2">&quot;darkslateblue&quot;</span><span class="p">,</span>  <span class="c1"># helps to distinguish track from land lines</span>
+     <span class="n">fc</span><span class="o">=</span><span class="s2">&quot;darkslateblue&quot;</span><span class="p">,</span>
+ <span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -581,7 +606,10 @@ the <cite>legend</cite> keyword</span><a class="headerlink" href="#id6" title="L
 <span class="n">cfp</span><span class="o">.</span><span class="n">traj</span><span class="p">(</span>
     <span class="n">g</span><span class="p">,</span>
     <span class="n">legend</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">markersize</span><span class="o">=</span><span class="mf">40.0</span><span class="p">,</span>
+    <span class="n">markersize</span><span class="o">=</span><span class="mf">50.0</span><span class="p">,</span>
+    <span class="n">markeredgecolor</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span>
+    <span class="n">linecolor</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span>
+    <span class="n">linewidth</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
     <span class="n">colorbar_title</span><span class="o">=</span><span class="s2">&quot;Relative Vorticity (Hz) * 1e5&quot;</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>

@@ -208,7 +208,7 @@ Cartopy version 0.20.0 and possibly later cause a contour over maps issue in cf-
 =====================================
 
 Additional code was added to cfp.con to cope with data which has one axis of longitude, latitude, pressure, time
-and another that isn't recogised as one of these.
+and another that isn't recognised as one of these.
 
 ::
 
@@ -303,7 +303,7 @@ An error occurs in cartopy.add_cyclic_point if the longitudes aren't regular.  A
 26. plot titles - change cell methods to cell_methods
 =====================================================
 
-In the plot titles section cell methds was corrected to cell_methods.
+In the plot titles section cell methods was corrected to cell_methods.
 
 
 ::

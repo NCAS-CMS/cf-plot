@@ -437,7 +437,7 @@
 <li class="toctree-l1"><a class="reference internal" href="example_18.html">Example 18: Polar stipple plot</a></li>
 <li class="toctree-l1"><a class="reference internal" href="example_19a.html">Example 19a: Multiple plots</a></li>
 <li class="toctree-l1"><a class="reference internal" href="example_19b.html">Example 19b: Multiple plots with user-specified plot positions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="example_19c.html">Example 19c: Accomodating more than one colour bar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_19c.html">Example 19c: Accommodating more than one colour bar</a></li>
 <li class="toctree-l1"><a class="reference internal" href="example_19d.html">Example 19d: Multiple plots using <cite>gfigure</cite> context manager</a></li>
 <li class="toctree-l1"><a class="reference internal" href="example_20.html">Example 20: Case where user-defined axis labels are required</a></li>
 <li class="toctree-l1"><a class="reference internal" href="example_21a.html">Example 21a: User-defined axes</a></li>
@@ -542,19 +542,30 @@ than for CF Compliant data (see Example 21b)</span><a class="headerlink" href="#
 <span class="n">data</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">array</span>
 <span class="n">xvec</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span><span class="s2">&quot;ncvar</span><span class="si">%x</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="n">yvec</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span><span class="s2">&quot;ncvar%y&quot;</span><span class="p">)</span>
-<span class="n">xpole</span> <span class="o">=</span> <span class="mi">160</span>
-<span class="n">ypole</span> <span class="o">=</span> <span class="mi">30</span>
+
+<span class="n">_configure_example_output</span><span class="p">(</span><span class="s2">&quot;23&quot;</span><span class="p">)</span>
 
 <span class="n">cfp</span><span class="o">.</span><span class="n">gopen</span><span class="p">()</span>
-<span class="n">cfp</span><span class="o">.</span><span class="n">cscale</span><span class="p">(</span><span class="s2">&quot;plasma&quot;</span><span class="p">)</span>
+
+<span class="c1"># Set up the data</span>
 <span class="n">xpts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">xvec</span><span class="p">))</span>
 <span class="n">ypts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">yvec</span><span class="p">))</span>
-<span class="n">cfp</span><span class="o">.</span><span class="n">gset</span><span class="p">(</span>
-    <span class="n">xmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">xmax</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">xvec</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">ymin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ymax</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">yvec</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">gset</span><span class="p">(</span><span class="n">xmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">xmax</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">xvec</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">ymin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ymax</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">yvec</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># Configure the plot</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">cscale</span><span class="p">(</span><span class="s2">&quot;plasma&quot;</span><span class="p">)</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">levs</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mi">680</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">1020</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span>
+    <span class="n">data</span><span class="p">,</span> <span class="n">xpts</span><span class="p">,</span> <span class="n">ypts</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+    <span class="n">linewidths</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;dashed&quot;</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="n">cfp</span><span class="o">.</span><span class="n">levs</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mi">980</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">1035</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">2.5</span><span class="p">)</span>
-<span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xpts</span><span class="p">,</span> <span class="n">ypts</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+<span class="c1"># Add the rotated pole axes grid and labels separately</span>
+<span class="n">xpole</span> <span class="o">=</span> <span class="mi">160</span>
+<span class="n">ypole</span> <span class="o">=</span> <span class="mi">30</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">rgaxes</span><span class="p">(</span><span class="n">xpole</span><span class="o">=</span><span class="n">xpole</span><span class="p">,</span> <span class="n">ypole</span><span class="o">=</span><span class="n">ypole</span><span class="p">,</span> <span class="n">xvec</span><span class="o">=</span><span class="n">xvec</span><span class="p">,</span> <span class="n">yvec</span><span class="o">=</span><span class="n">yvec</span><span class="p">)</span>
+
 <span class="n">cfp</span><span class="o">.</span><span class="n">gclose</span><span class="p">()</span>
 </pre></div>
 </div>

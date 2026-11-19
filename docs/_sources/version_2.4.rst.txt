@@ -71,7 +71,7 @@ A test release to fix a bug in the markup in the README.txt file for cf-plot
 5. traj - fix missing trajectories
 ==================================
 
-An incorrect loop index was used leading to not all teh trajectories being plotted.
+An incorrect loop index was used leading to not all the trajectories being plotted.
 
 
 

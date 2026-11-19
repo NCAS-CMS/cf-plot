@@ -437,7 +437,7 @@
 <li class="toctree-l1"><a class="reference internal" href="example_18.html">Example 18: Polar stipple plot</a></li>
 <li class="toctree-l1"><a class="reference internal" href="example_19a.html">Example 19a: Multiple plots</a></li>
 <li class="toctree-l1"><a class="reference internal" href="example_19b.html">Example 19b: Multiple plots with user-specified plot positions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="example_19c.html">Example 19c: Accomodating more than one colour bar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_19c.html">Example 19c: Accommodating more than one colour bar</a></li>
 <li class="toctree-l1"><a class="reference internal" href="example_19d.html">Example 19d: Multiple plots using <cite>gfigure</cite> context manager</a></li>
 <li class="toctree-l1"><a class="reference internal" href="example_20.html">Example 20: Case where user-defined axis labels are required</a></li>
 <li class="toctree-l1"><a class="reference internal" href="example_21a.html">Example 21a: User-defined axes</a></li>
@@ -537,15 +537,40 @@
 <div class="code-block-caption"><span class="caption-text">A stipple plot, whereby stippling is applied to a contour
 plot to indicate areas of statistical significance.</span><a class="headerlink" href="#id1" title="Link to this code">#</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;cfplot_data/tas_A1.nc&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># last time value subspace</span>
 
-<span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+<span class="c1"># Calculate spatial mean and standard deviation</span>
+<span class="n">mean</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">datum</span><span class="p">()</span>
+<span class="n">minim</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="o">.</span><span class="n">datum</span><span class="p">()</span>
+<span class="n">maxim</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">datum</span><span class="p">()</span>
+<span class="n">std</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">sd</span><span class="p">()</span><span class="o">.</span><span class="n">datum</span><span class="p">()</span>
+<span class="n">upper</span> <span class="o">=</span> <span class="n">mean</span> <span class="o">+</span> <span class="n">std</span>
+<span class="n">lower</span> <span class="o">=</span> <span class="n">mean</span> <span class="o">-</span> <span class="n">std</span>
+
+<span class="n">_configure_example_output</span><span class="p">(</span><span class="s2">&quot;17&quot;</span><span class="p">)</span>
 
 <span class="n">cfp</span><span class="o">.</span><span class="n">gopen</span><span class="p">()</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">cscale</span><span class="p">(</span><span class="s2">&quot;magma&quot;</span><span class="p">)</span>
-<span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
-<span class="n">cfp</span><span class="o">.</span><span class="n">stipple</span><span class="p">(</span><span class="n">f</span><span class="o">=</span><span class="n">g</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">220</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">260</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#00ff00&quot;</span><span class="p">)</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">lines</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># Stipple regions over one standard deviation below or above spatial mean</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">stipple</span><span class="p">(</span>
-    <span class="n">f</span><span class="o">=</span><span class="n">g</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">330</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#0000ff&quot;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;s&quot;</span>
+    <span class="n">f</span><span class="o">=</span><span class="n">g</span><span class="p">,</span>
+    <span class="nb">min</span><span class="o">=</span><span class="n">minim</span><span class="p">,</span>
+    <span class="nb">max</span><span class="o">=</span><span class="n">lower</span><span class="p">,</span>
+    <span class="n">size</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
+    <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;v&quot;</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span>
+    <span class="n">edgecolors</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">stipple</span><span class="p">(</span>
+    <span class="n">f</span><span class="o">=</span><span class="n">g</span><span class="p">,</span>
+    <span class="nb">min</span><span class="o">=</span><span class="n">upper</span><span class="p">,</span>
+    <span class="nb">max</span><span class="o">=</span><span class="n">maxim</span><span class="p">,</span>
+    <span class="n">size</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
+    <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;^&quot;</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;steelblue&quot;</span><span class="p">,</span>
+    <span class="n">edgecolors</span><span class="o">=</span><span class="s2">&quot;steelblue&quot;</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">gclose</span><span class="p">()</span>
 </pre></div>

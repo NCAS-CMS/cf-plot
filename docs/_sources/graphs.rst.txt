@@ -80,7 +80,7 @@ Valid locations for the legend_location keyword are:
 |	'upper center'
 |	'lower center'
 
-When making a call to lineplot the following parameters overide any
+When making a call to lineplot the following parameters override any
 predefined CF defaults:
 
 | title=None - plot title

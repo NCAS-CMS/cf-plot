@@ -437,7 +437,7 @@
 <li class="toctree-l1"><a class="reference internal" href="example_18.html">Example 18: Polar stipple plot</a></li>
 <li class="toctree-l1"><a class="reference internal" href="example_19a.html">Example 19a: Multiple plots</a></li>
 <li class="toctree-l1"><a class="reference internal" href="example_19b.html">Example 19b: Multiple plots with user-specified plot positions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="example_19c.html">Example 19c: Accomodating more than one colour bar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_19c.html">Example 19c: Accommodating more than one colour bar</a></li>
 <li class="toctree-l1"><a class="reference internal" href="example_19d.html">Example 19d: Multiple plots using <cite>gfigure</cite> context manager</a></li>
 <li class="toctree-l1"><a class="reference internal" href="example_20.html">Example 20: Case where user-defined axis labels are required</a></li>
 <li class="toctree-l1"><a class="reference internal" href="example_21a.html">Example 21a: User-defined axes</a></li>
@@ -535,34 +535,40 @@
 <span id="example15"></span><h1>Example 15: Polar projection vector plot<a class="headerlink" href="#example-15-polar-projection-vector-plot" title="Link to this heading">#</a></h1>
 <div class="literal-block-wrapper docutils container" id="id1">
 <div class="code-block-caption"><span class="caption-text">Making a vector plot on a North Pole polar projection</span><a class="headerlink" href="#id1" title="Link to this code">#</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;cfplot_data/ggap.nc&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span> <span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;cfplot_data/ggap.nc&quot;</span><span class="p">)</span>
 
-<span class="n">u</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">select_by_identity</span><span class="p">(</span><span class="s2">&quot;eastward_wind&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-<span class="n">v</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">select_by_identity</span><span class="p">(</span><span class="s2">&quot;northward_wind&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-<span class="n">u</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">Z</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
-<span class="n">v</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">Z</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
+ <span class="n">u</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">select_by_identity</span><span class="p">(</span><span class="s2">&quot;eastward_wind&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+ <span class="n">v</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">select_by_identity</span><span class="p">(</span><span class="s2">&quot;northward_wind&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+ <span class="n">u</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">Z</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
+ <span class="n">v</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">Z</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
 
-<span class="n">cfp</span><span class="o">.</span><span class="n">mapset</span><span class="p">(</span><span class="n">proj</span><span class="o">=</span><span class="s2">&quot;npstere&quot;</span><span class="p">)</span>
+ <span class="n">cfp</span><span class="o">.</span><span class="n">setvars</span><span class="p">(</span>
+     <span class="n">land_color</span><span class="o">=</span><span class="s2">&quot;rosybrown&quot;</span><span class="p">,</span>
+     <span class="n">ocean_color</span><span class="o">=</span><span class="s2">&quot;lightsteelblue&quot;</span><span class="p">,</span>
+     <span class="n">feature_zorder</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+ <span class="p">)</span>
+ <span class="n">cfp</span><span class="o">.</span><span class="n">mapset</span><span class="p">(</span><span class="n">proj</span><span class="o">=</span><span class="s2">&quot;npstere&quot;</span><span class="p">)</span>
 
-<span class="n">cfp</span><span class="o">.</span><span class="n">gopen</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-<span class="n">cfp</span><span class="o">.</span><span class="n">vect</span><span class="p">(</span>
-    <span class="n">u</span><span class="o">=</span><span class="n">u</span><span class="p">,</span>
-    <span class="n">v</span><span class="o">=</span><span class="n">v</span><span class="p">,</span>
-    <span class="n">key_length</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
-    <span class="n">scale</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
-    <span class="n">stride</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
-    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Polar plot using data grid&quot;</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">cfp</span><span class="o">.</span><span class="n">gpos</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-<span class="n">cfp</span><span class="o">.</span><span class="n">vect</span><span class="p">(</span>
-    <span class="n">u</span><span class="o">=</span><span class="n">u</span><span class="p">,</span>
-    <span class="n">v</span><span class="o">=</span><span class="n">v</span><span class="p">,</span>
-    <span class="n">key_length</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
-    <span class="n">scale</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
-    <span class="n">pts</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span>
-    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Polar plot with regular point distribution&quot;</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">cfp</span><span class="o">.</span><span class="n">gclose</span><span class="p">()</span>
+ <span class="n">cfp</span><span class="o">.</span><span class="n">gopen</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+ <span class="n">cfp</span><span class="o">.</span><span class="n">vect</span><span class="p">(</span>
+     <span class="n">u</span><span class="o">=</span><span class="n">u</span><span class="p">,</span>
+     <span class="n">v</span><span class="o">=</span><span class="n">v</span><span class="p">,</span>
+     <span class="n">key_length</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span>
+     <span class="n">scale</span><span class="o">=</span><span class="mi">160</span><span class="p">,</span>
+     <span class="n">stride</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
+     <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Polar plot using data grid&quot;</span><span class="p">,</span>
+ <span class="p">)</span>
+ <span class="n">cfp</span><span class="o">.</span><span class="n">gpos</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+ <span class="n">cfp</span><span class="o">.</span><span class="n">vect</span><span class="p">(</span>
+     <span class="n">u</span><span class="o">=</span><span class="n">u</span><span class="p">,</span>
+     <span class="n">v</span><span class="o">=</span><span class="n">v</span><span class="p">,</span>
+     <span class="n">pts</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span>  <span class="c1"># difference to other plot</span>
+     <span class="n">key_length</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span>
+     <span class="n">scale</span><span class="o">=</span><span class="mi">160</span><span class="p">,</span>
+     <span class="n">stride</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
+     <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Polar plot with regular point distribution&quot;</span><span class="p">,</span>
+ <span class="p">)</span>
+ <span class="n">cfp</span><span class="o">.</span><span class="n">gclose</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
