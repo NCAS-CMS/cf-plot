@@ -581,30 +581,34 @@ def test_example_28_line_and_legend_plot(ggap_file):
     ypts = [-8, -8, 5, 5, -8]
 
     _configure_example_output("28")
-    cfp.gset(xmin=-90, xmax=90, ymin=-10, ymax=50)
 
+    cfp.gset(xmin=-90, xmax=90, ymin=-10, ymax=50)
     cfp.gopen()
+
     cfp.lineplot(
         g.subspace(pressure=100),
         marker="o",
-        color="blue",
+        color="slateblue",
         title="Zonal mean zonal wind",
         label="100 mb",
     )
     cfp.lineplot(
         g.subspace(pressure=200),
         marker="D",
-        color="red",
+        color="indianred",
         label="200 mb",
         xticks=xticks,
         xticklabels=xticklabels,
         legend_location="upper right",
     )
-    cfp.plotvars.plot.plot(xpts, ypts, linewidth=3.0, color="green")
+
+    cfp.plotvars.plot.plot(xpts, ypts, linewidth=3.0, color="mediumseagreen")
     cfp.plotvars.plot.text(
-        35, -2, "Region of interest", horizontalalignment="left"
+        2, -7, "Region of interest", horizontalalignment="left"
     )
+
     cfp.gclose()
+
     _assert_reference_match("28")
 
 
@@ -650,11 +654,11 @@ def test_example_30_two_axis_plotting(ggap_file):
 
     cfp.gopen()
     cfp.gset(-30, 30, 1000, 0)
-    cfp.lineplot(u1, color="r")
-    cfp.lineplot(u2, color="r")
+    cfp.lineplot(u1, color="indianred")
+    cfp.lineplot(u2, color="indianred")
     cfp.gset(190, 300, 1000, 0, twiny=True)
-    cfp.lineplot(t1, color="b")
-    cfp.lineplot(t2, color="b")
+    cfp.lineplot(t1, color="slateblue")
+    cfp.lineplot(t2, color="slateblue")
     cfp.gclose()
 
     _assert_reference_match("30")

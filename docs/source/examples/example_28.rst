@@ -33,28 +33,30 @@ Example 28: Line plot with a legend
    ypts = [-8, -8, 5, 5, -8]
 
    cfp.gset(xmin=-90, xmax=90, ymin=-10, ymax=50)
-
    cfp.gopen()
+
    cfp.lineplot(
        g.subspace(pressure=100),
        marker="o",
-       color="blue",
+       color="slateblue",
        title="Zonal mean zonal wind",
        label="100 mb",
    )
    cfp.lineplot(
        g.subspace(pressure=200),
        marker="D",
-       color="red",
+       color="indianred",
        label="200 mb",
        xticks=xticks,
        xticklabels=xticklabels,
        legend_location="upper right",
    )
-   cfp.plotvars.plot.plot(xpts, ypts, linewidth=3.0, color="green")
+
+   cfp.plotvars.plot.plot(xpts, ypts, linewidth=3.0, color="mediumseagreen")
    cfp.plotvars.plot.text(
-       35, -2, "Region of interest", horizontalalignment="left"
+       2, -7, "Region of interest", horizontalalignment="left"
    )
+
    cfp.gclose()
 
 
