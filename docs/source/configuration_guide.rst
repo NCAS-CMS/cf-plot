@@ -48,18 +48,55 @@ What map projections can I use?
 cf-plot supports several map projections, which can be selected using the
 ``proj`` parameter. The available options are:
 
-* ``"cyl"``: Cylindrical equidistant (default);
-* ``"rotated"``: Rotated latitude-longitude;
-* ``"merc"``: Mercator;
-* ``"robin"``: Robinson;
-* ``"ortho"``: Orthographic;
-* ``"moll"``: Mollweide;
-* ``"lcc"``: Lambert Conformal Conic (cropped);
-* ``"npstere"``: North Pole polar stereographic;
-* ``"spstere"``: South Pole polar stereographic;
-* ``"UKCP"``: UK Climate Projections;
-* ``"OSGB"``: British National Grid (Ordnance Survey);
-* ``"EuroPP"``: European polar stereographic.
+What map projections can I use?
+===============================
+
+cf-plot supports several map projections, which can be selected using the
+``proj`` parameter. The available options are:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 15 35 50
+
+   * - ``proj`` string identifier
+     - Projection Full Name
+     - Reference Documentation
+   * - ``"cyl"``
+     - Cylindrical equidistant (default)
+     - `Cartopy: PlateCarree <https://cartopy.readthedocs.io/stable/reference/projections.html#cartopy.crs.PlateCarree>`_
+   * - ``"rotated"``
+     - Rotated latitude-longitude
+     - `Cartopy: PlateCarree <https://cartopy.readthedocs.io/stable/reference/projections.html#cartopy.crs.PlateCarree>`_
+   * - ``"merc"``
+     - Mercator
+     - `Cartopy: Mercator <https://cartopy.readthedocs.io/stable/reference/projections.html#cartopy.crs.Mercator>`_
+   * - ``"robin"``
+     - Robinson
+     - `Cartopy: Robinson <https://cartopy.readthedocs.io/stable/reference/projections.html#cartopy.crs.Robinson>`_
+   * - ``"ortho"``
+     - Orthographic
+     - `Cartopy: Orthographic <https://cartopy.readthedocs.io/stable/reference/projections.html#cartopy.crs.Orthographic>`_
+   * - ``"moll"``
+     - Mollweide
+     - `Cartopy: Mollweide <https://cartopy.readthedocs.io/stable/reference/projections.html#cartopy.crs.Mollweide>`_
+   * - ``"lcc"``
+     - Lambert Conformal Conic (cropped)
+     - `Cartopy: LambertConformal <https://cartopy.readthedocs.io/stable/reference/projections.html#cartopy.crs.LambertConformal>`_
+   * - ``"npstere"``
+     - North Pole polar stereographic
+     - `Cartopy: NorthPolarStereo <https://cartopy.readthedocs.io/stable/reference/projections.html#cartopy.crs.NorthPolarStereo>`_
+   * - ``"spstere"``
+     - South Pole polar stereographic
+     - `Cartopy: SouthPolarStereo <https://cartopy.readthedocs.io/stable/reference/projections.html#cartopy.crs.SouthPolarStereo>`_
+   * - ``"UKCP"``
+     - UK Climate Projections
+     - `cf-plot: UKCP examples <https://ncas-cms.github.io/cf-plot/projections.html>`_; `Cartopy: TransverseMercator <https://cartopy.readthedocs.io/stable/reference/projections.html#cartopy.crs.TransverseMercator>`_
+   * - ``"OSGB"``
+     - British National Grid (Ordnance Survey)
+     - `Cartopy: OSGB <https://cartopy.readthedocs.io/stable/reference/projections.html#cartopy.crs.OSGB>`_
+   * - ``"EuroPP"``
+     - European polar stereographic
+     - `Cartopy: EuroPP <https://cartopy.readthedocs.io/stable/reference/projections.html#cartopy.crs.EuroPP>`_
 
 For examples, see the :doc:`projections` page.
 
