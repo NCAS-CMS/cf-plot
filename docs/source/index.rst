@@ -1,6 +1,6 @@
-*********************
-cf-plot documentation
-*********************
+*************************
+Documentation for cf-plot
+*************************
 
 **cf-plot: code-light plotting for earth science and aligned research**
 
@@ -25,7 +25,7 @@ It is designed to be a useful visualisation tool for environmental, earth and
 aligned sciences, for example to facilitate climate and meteorological research.
 cf-plot is developed and maintained by the `NCAS-CMS`_ group, part of `NCAS`_.
 
-.. image:: images/new_gallery_view.png
+.. image:: images/gallery_v360plus.png
    :target: gallery_of_examples.html
 
 Learn more about cf-plot in the :ref:`intro` section, else navigate via
@@ -44,14 +44,16 @@ Contents
    installation
    plot_types
    gallery_of_examples
-   user_guide
-   advanced
    api_reference
+   configuration_guide
    versions
    support
    training
    license
 
+   .. Temporarily removed, since these are old and need updating:
+      user_guide
+      advanced
 
 ----
 
