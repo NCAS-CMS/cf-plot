@@ -46,6 +46,7 @@ Contents
    gallery_of_examples
    api_reference
    configuration_guide
+   colour_scales
    versions
    support
    training
