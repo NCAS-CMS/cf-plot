@@ -10,6 +10,7 @@ cf-plot supports a variety of **colour values**, where a distinct colour
 choice is required, and **colour scales**, for mapping data values to a
 well-defined and ordered range of colours. These are described below.
 
+
 Possible colour values
 ----------------------
 
@@ -31,8 +32,6 @@ cf-plot.
 
 Defaults used for the various plotted components are quoted across the
 :ref:`apiref`.
-
-.. TODO document defaults!
 
 
 Possible colour scales
@@ -98,6 +97,7 @@ cf-plot supports several map projections, which can be selected using the
 
 For examples, see the :doc:`projections` page.
 
+
 What line and marker styling can I use?
 =======================================
 
@@ -116,6 +116,3 @@ options, see the
 
 Defaults used for the lines and markers are quoted for the line- and
 marker-related  keyword arguments of the :ref:`apiref`.
-
-
-.. TODO document defaults!
