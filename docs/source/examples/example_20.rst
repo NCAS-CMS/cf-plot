@@ -9,7 +9,7 @@ Example 20: Case where user-defined axis labels are required
              that are too dense and overlap, such that user-defined
              axis labels are required (see Example 21)
 
-   fl = cf.read(f"{self.data_dir}/Geostropic_Adjustment.nc")
+   fl = cf.read("cfplot_data/Geostropic_Adjustment.nc")
    f = fl.select_by_identity("ncvar%v")[0]
 
    cfp.con(f.subspace[9])

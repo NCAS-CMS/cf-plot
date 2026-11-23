@@ -8,7 +8,7 @@ Example 25: UGRID contour plot with ORCA 2 output
    :caption: Making a contour plot of UGRID data, specifically ORCA 2
              ocean-only grid data
 
-   f = cf.read(f"cfplot_data/orca2.nc")
+   f = cf.read("cfplot_data/orca2.nc")
 
    # Get an Orca grid and flatten the arrays
    lons = f.select_by_identity("ncvar%longitude")[0]

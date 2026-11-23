@@ -7,7 +7,7 @@ Example 39: Basic track plotting
 .. code-block:: python
    :caption: A basic example of plotting a track i.e. trajectory
 
-   f = cf.read(f"cfplot_data/ff_trs_pos.nc")[0]
+   f = cf.read("cfplot_data/ff_trs_pos.nc")[0]
 
    cfp.traj(
        f,

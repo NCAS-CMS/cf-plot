@@ -8,7 +8,7 @@ Example 44: NEMO data on a curvilinear T grid
    :caption: Making a global and close-up contour plot of NEMO data
              defined on a curvilinear T grid, shown on a single figure
 
-   fl = cf.read(f"cfplot_data/nemo_eg260916.nc")
+   fl = cf.read("cfplot_data/nemo_eg260916.nc")
    f = fl[0].squeeze()
 
    cfp.gopen(rows=2, columns=1, bottom=0.2)

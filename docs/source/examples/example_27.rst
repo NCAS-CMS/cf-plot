@@ -7,7 +7,7 @@ Example 27: Basic line plot
 .. code-block:: python
    :caption: Making a basic line plot
 
-   fl = cf.read(f"{self.data_dir}/ggap.nc")
+   fl = cf.read("cfplot_data/ggap.nc")
    f = fl.select_by_identity("eastward_wind")[0]
 
    g = f.collapse("X: mean")

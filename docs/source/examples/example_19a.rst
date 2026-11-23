@@ -7,7 +7,7 @@ Example 19a: Multiple plots
 .. code-block:: python
    :caption: Making a single figure with multiple plots on it
 
-   fl = cf.read(f"{self.data_dir}/ggap.nc")
+   fl = cf.read("cfplot_data/ggap.nc")
    f = fl.select_by_identity("eastward_wind")[0]
    f_500 = f.subspace(pressure=500)
 

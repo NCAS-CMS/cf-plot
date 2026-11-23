@@ -8,7 +8,7 @@ Example 28: Line plot with a legend
    :caption: Adding a legend to annotate a line plot with multiple
              plotted lines
 
-   fl = cf.read(f"{self.data_dir}/ggap.nc")
+   fl = cf.read("cfplot_data/ggap.nc")
    f = fl.select_by_identity("eastward_wind")[0]
 
    g = f.collapse("X: mean")

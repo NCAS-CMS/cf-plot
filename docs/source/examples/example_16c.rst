@@ -9,7 +9,7 @@ Example 16c: Stream plot in a colour scale
              shown in colours mapped to a colour scale corresponding to
              the magnitude of the underlying data
 
-   f = cf.read(f"cfplot_data/ggap.nc")
+   f = cf.read("cfplot_data/ggap.nc")
 
    u = f.select_by_identity("eastward_wind")[0]
    v = f.select_by_identity("northward_wind")[0]

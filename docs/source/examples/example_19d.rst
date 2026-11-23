@@ -9,7 +9,7 @@ Example 19d: Multiple plots using `gfigure` context manager
              using the context manager `gfigure` instead of
              via wrapping with `gopen` and `gclose`
 
-   fl = cf.read(f"{self.data_dir}/ggap.nc")
+   fl = cf.read("cfplot_data/ggap.nc")
    f = fl.select_by_identity("eastward_wind")[0]
    f_500 = f.subspace(pressure=500)
 

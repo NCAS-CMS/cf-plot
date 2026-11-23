@@ -7,7 +7,7 @@ Example 14: Vector plot overlaid on a contour map
 .. code-block:: python
    :caption: Overlaying a vector plot on a contoured temperature field
 
-   f = cf.read(f"cfplot_data/ggap.nc")
+   f = cf.read("cfplot_data/ggap.nc")
 
    u = ggap_file["eastward_wind"]
    v = ggap_file["northward_wind"]

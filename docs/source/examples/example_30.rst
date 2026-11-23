@@ -7,7 +7,7 @@ Example 30: Line plot with two x axes
 .. code-block:: python
    :caption: Adding an extra x axis to a line plot
 
-   fl = cf.read(f"cfplot_data/ggap.nc")
+   fl = cf.read("cfplot_data/ggap.nc")
 
    f_u = fl.select_by_identity("eastward_wind")[0]
    f_t = fl.select_by_identity("air_temperature")[0]

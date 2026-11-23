@@ -10,7 +10,7 @@ Example 42b: Tracks displayed in a colour scale
              the value of the underlying data by setting the
              `legend_lines` keyword to `True`
 
-   f = cf.read(f"cfplot_data/ff_trs_pos.nc")[0]
+   f = cf.read("cfplot_data/ff_trs_pos.nc")[0]
 
    cfp.mapset(lonmin=-50, lonmax=50, latmin=20, latmax=80)
    g = f.subspace(time=cf.wi(cf.dt("1979-12-01"), cf.dt("1979-12-10")))

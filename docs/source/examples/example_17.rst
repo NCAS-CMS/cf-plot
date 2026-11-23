@@ -8,7 +8,7 @@ Example 17: Basic stipple plot
    :caption: A stipple plot, whereby stippling is applied to a contour
              plot to indicate areas of statistical significance.
 
-   f = cf.read(f"cfplot_data/tas_A1.nc")[0]
+   f = cf.read("cfplot_data/tas_A1.nc")[0]
    g = f[-1]  # last time value subspace
 
    # Calculate spatial mean and standard deviation
