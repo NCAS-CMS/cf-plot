@@ -29,6 +29,9 @@ For a full description of the available options, see the
 If a colour value is accepted by Matplotlib, it will also be accepted by
 cf-plot.
 
+Defaults used for the various plotted components are quoted across the
+:ref:`apiref`.
+
 .. TODO document defaults!
 
 
@@ -42,11 +45,6 @@ These include a selection of colour scales supported by Matplotlib, as well
 as additional scales originating from the NCAR Command Language (NCL) and
 IDL.
 
-What map projections can I use?
-===============================
-
-cf-plot supports several map projections, which can be selected using the
-``proj`` parameter. The available options are:
 
 What map projections can I use?
 ===============================
@@ -104,9 +102,8 @@ What line and marker styling can I use?
 =======================================
 
 cf-plot supports numerous ways to customise the appearance of plotted lines
-and markers.
-In addition to changing the colour (see above), you can adjust properties
-such as, for lines:
+and markers. In addition to changing the colour (see above), you can
+adjust properties such as, for lines:
 
 * **Line style**: the appearance of the line, e.g. solid, dashed or dotted;
 * **Line width**: the thickness of the line;
@@ -116,5 +113,9 @@ For a full description of the available line styles and other styling
 options, see the
 `Matplotlib documentation for lines and markers
 <https://matplotlib.org/stable/api/_as_gen/matplotlib.lines.Line2D.html>`_.
+
+Defaults used for the lines and markers are quoted for the line- and
+marker-related  keyword arguments of the :ref:`apiref`.
+
 
 .. TODO document defaults!
