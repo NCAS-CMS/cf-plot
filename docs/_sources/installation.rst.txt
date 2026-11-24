@@ -67,7 +67,7 @@ From source via GitHub
    $ cd cf-plot
    $ python setup.py install  # or 'pip install -e .'
 
-Note you will need to ensure all dependencies are avialable, such as
+Note you will need to ensure all dependencies are available, such as
 cf-python. See below for guidance on this.
 
 

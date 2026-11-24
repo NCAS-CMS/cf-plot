@@ -8,7 +8,7 @@ Example 21b: Plot of rotated pole data
    :caption: Making a plot of data defined on a rotated pole coordinate
              system
 
-   f = cf.read(f"cfplot_data/rgp.nc")[0]
+   f = cf.read("cfplot_data/rgp.nc")[0]
 
    cfp.cscale("plasma")
 

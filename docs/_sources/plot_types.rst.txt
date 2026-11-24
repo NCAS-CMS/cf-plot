@@ -13,7 +13,6 @@ Plots by type/theme
    vectors
    stipple_plots
    multiple_plots
-   colour_scales
    user_defined
    rotated_pole
    unstructured

@@ -10,7 +10,7 @@ UKCP grid plotting
 
 Support has been added for the UKCP grid which is an instance of the tranveverse mercator projection.
 
-cfp.mapset(proj='UKCP') will give a transverse mercator projection with the limts of lonmin = -11,
+cfp.mapset(proj='UKCP') will give a transverse mercator projection with the limits of lonmin = -11,
 lonmax = 3, latmin = 49 and latmax = 61.
 
 Some examples of this and other pavailable projections have been added at :ref:`projections<projections>`
@@ -55,8 +55,8 @@ The cf-plot colourmaps directory was inadvertently removed.
 
 
 
-3. Bug with cyclindrical projection map xlabel and ylabel
-=========================================================
+3. Bug with cylindrical projection map xlabel and ylabel
+========================================================
 
 A bug with labelling of x and y axes in the cylindrical (PlateCarree) projection
 has been fixed.

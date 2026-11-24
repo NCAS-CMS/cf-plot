@@ -8,7 +8,7 @@ Example 7: Latitude-pressure plot over zonal mean
    :caption: Making a plot with latitude and pressure as the axes
              for a zonal mean (mean over longitude)
 
-   fl = cf.read(f"{self.data_dir}/ggap.nc")
+   fl = cf.read("cfplot_data/ggap.nc")
    f = fl.select_by_identity("eastward_wind")[0]
 
    cfp.con(f.collapse("mean", "longitude"))

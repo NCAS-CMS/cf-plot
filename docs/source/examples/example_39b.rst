@@ -10,7 +10,7 @@ Example 39b: plotting a single (1D) DSG trajectory
              one-dimensional array, as
              `standard <https://cfconventions.org/cf-conventions/cf-conventions.html#_single_trajectory>`_)
 
-   f = cf.read(f"cfplot_data/dsg_trajectory.nc")[0]
+   f = cf.read("cfplot_data/dsg_trajectory.nc")[0]
 
    cfp.setvars(
        land_color="darkseagreen",

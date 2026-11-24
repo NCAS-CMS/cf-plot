@@ -166,8 +166,8 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="user_guide.html">
-    User guide
+  <a class="nav-link nav-internal" href="api_reference.html">
+    API reference
   </a>
 </li>
 
@@ -180,15 +180,15 @@
                 <ul id="pst-nav-more-links" class="dropdown-menu">
                     
 <li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="advanced.html">
-    Advanced use
+  <a class="nav-link dropdown-item nav-internal" href="configuration_guide.html">
+    Configuration guide
   </a>
 </li>
 
 
 <li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="api_reference.html">
-    API reference
+  <a class="nav-link dropdown-item nav-internal" href="colour_scales.html">
+    Colour scales
   </a>
 </li>
 
@@ -332,22 +332,22 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="user_guide.html">
-    User guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="advanced.html">
-    Advanced use
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="api_reference.html">
     API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="configuration_guide.html">
+    Configuration guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="colour_scales.html">
+    Colour scales
   </a>
 </li>
 
@@ -423,7 +423,6 @@
 <li class="toctree-l1"><a class="reference internal" href="vectors.html">Vector and stream plots</a></li>
 <li class="toctree-l1"><a class="reference internal" href="stipple_plots.html">Stipple plots</a></li>
 <li class="toctree-l1"><a class="reference internal" href="multiple_plots.html">Multiple plots</a></li>
-<li class="toctree-l1"><a class="reference internal" href="colour_scales.html">Colour scales</a></li>
 <li class="toctree-l1"><a class="reference internal" href="user_defined.html">User-defined axes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rotated_pole.html">Rotated pole plots</a></li>
 <li class="toctree-l1"><a class="reference internal" href="unstructured.html">Unstructured grids and UGRID</a></li>
@@ -500,7 +499,7 @@ separately in <a class="reference internal" href="cylindrical.html#cylindrical">
 <span id="example31"></span><h2>Example 31: UKCP projection<a class="headerlink" href="#example-31-ukcp-projection" title="Link to this heading">#</a></h2>
 <div class="literal-block-wrapper docutils container" id="id2">
 <div class="code-block-caption"><span class="caption-text">Plotting using the UKCP projection</span><a class="headerlink" href="#id2" title="Link to this code">#</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;cfplot_data/ukcp_rcm_test.nc&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;cfplot_data/ukcp_rcm_test.nc&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
 <span class="n">cfp</span><span class="o">.</span><span class="n">mapset</span><span class="p">(</span><span class="n">proj</span><span class="o">=</span><span class="s2">&quot;UKCP&quot;</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="s2">&quot;50m&quot;</span><span class="p">)</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">levs</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
@@ -524,7 +523,7 @@ supplied bounds.</p>
 <span id="example32"></span><h2>Example 32: UKCP projection with blockfill<a class="headerlink" href="#example-32-ukcp-projection-with-blockfill" title="Link to this heading">#</a></h2>
 <div class="literal-block-wrapper docutils container" id="id3">
 <div class="code-block-caption"><span class="caption-text">Plotting a blockfill plot using the UKCP projection</span><a class="headerlink" href="#id3" title="Link to this code">#</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;cfplot_data/ukcp_rcm_test.nc&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;cfplot_data/ukcp_rcm_test.nc&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
 <span class="n">cfp</span><span class="o">.</span><span class="n">mapset</span><span class="p">(</span><span class="n">proj</span><span class="o">=</span><span class="s2">&quot;UKCP&quot;</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="s2">&quot;50m&quot;</span><span class="p">)</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">levs</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
@@ -560,7 +559,7 @@ and make a blockfill plot.</p>
 <span id="example33"></span><h2>Example 33: OSGB and EuroPP projections<a class="headerlink" href="#example-33-osgb-and-europp-projections" title="Link to this heading">#</a></h2>
 <div class="literal-block-wrapper docutils container" id="id4">
 <div class="code-block-caption"><span class="caption-text">Plotting using the projections OSGB and EuroPP</span><a class="headerlink" href="#id4" title="Link to this code">#</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;cfplot_data/ukcp_rcm_test.nc&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;cfplot_data/ukcp_rcm_test.nc&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
 <span class="n">cfp</span><span class="o">.</span><span class="n">levs</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
 
@@ -583,11 +582,15 @@ and make a blockfill plot.</p>
 <div class="literal-block-wrapper docutils container" id="id5">
 <div class="code-block-caption"><span class="caption-text">Plotting using the Lambert Conformal Conic (LCC) projection
 and cropping the displayed boundaries.</span><a class="headerlink" href="#id5" title="Link to this code">#</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;cfplot_data/tas_A1.nc&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;cfplot_data/tas_A1.nc&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
 <span class="n">cfp</span><span class="o">.</span><span class="n">mapset</span><span class="p">(</span><span class="n">proj</span><span class="o">=</span><span class="s2">&quot;lcc&quot;</span><span class="p">,</span> <span class="n">lonmin</span><span class="o">=-</span><span class="mi">50</span><span class="p">,</span> <span class="n">lonmax</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">latmin</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">latmax</span><span class="o">=</span><span class="mi">85</span><span class="p">)</span>
-
-<span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">15</span><span class="p">))</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">15</span><span class="p">),</span>
+    <span class="n">linestyles</span><span class="o">=</span><span class="s2">&quot;dashed&quot;</span><span class="p">,</span>
+    <span class="n">linewidths</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Cropped Lambert Conformal Conic (LCC) projection&quot;</span><span class="p">,</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -600,11 +603,15 @@ and cropping the displayed boundaries.</span><a class="headerlink" href="#id5" t
 <span id="example35"></span><h2>Example 35: Mollweide projection<a class="headerlink" href="#example-35-mollweide-projection" title="Link to this heading">#</a></h2>
 <div class="literal-block-wrapper docutils container" id="id6">
 <div class="code-block-caption"><span class="caption-text">Plotting using the Mollweide projection</span><a class="headerlink" href="#id6" title="Link to this code">#</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;cfplot_data/tas_A1.nc&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;cfplot_data/tas_A1.nc&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
 <span class="n">cfp</span><span class="o">.</span><span class="n">mapset</span><span class="p">(</span><span class="n">proj</span><span class="o">=</span><span class="s2">&quot;moll&quot;</span><span class="p">)</span>
-
-<span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">15</span><span class="p">))</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">15</span><span class="p">),</span>
+    <span class="n">linestyles</span><span class="o">=</span><span class="s2">&quot;dashed&quot;</span><span class="p">,</span>
+    <span class="n">linewidths</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Mollweide projection&quot;</span><span class="p">,</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -616,11 +623,15 @@ and cropping the displayed boundaries.</span><a class="headerlink" href="#id5" t
 <span id="example36"></span><h2>Example 36: Mercator projection<a class="headerlink" href="#example-36-mercator-projection" title="Link to this heading">#</a></h2>
 <div class="literal-block-wrapper docutils container" id="id7">
 <div class="code-block-caption"><span class="caption-text">Plotting using the Mercator projection</span><a class="headerlink" href="#id7" title="Link to this code">#</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;cfplot_data/tas_A1.nc&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;cfplot_data/tas_A1.nc&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
 <span class="n">cfp</span><span class="o">.</span><span class="n">mapset</span><span class="p">(</span><span class="n">proj</span><span class="o">=</span><span class="s2">&quot;merc&quot;</span><span class="p">)</span>
-
-<span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">15</span><span class="p">))</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">15</span><span class="p">),</span>
+    <span class="n">linestyles</span><span class="o">=</span><span class="s2">&quot;dashed&quot;</span><span class="p">,</span>
+    <span class="n">linewidths</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Mercator projection&quot;</span><span class="p">,</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -632,11 +643,15 @@ and cropping the displayed boundaries.</span><a class="headerlink" href="#id5" t
 <span id="example37"></span><h2>Example 37: Orthographic projection<a class="headerlink" href="#example-37-orthographic-projection" title="Link to this heading">#</a></h2>
 <div class="literal-block-wrapper docutils container" id="id8">
 <div class="code-block-caption"><span class="caption-text">Plotting using the Orthographic projection</span><a class="headerlink" href="#id8" title="Link to this code">#</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;cfplot_data/tas_A1.nc&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;cfplot_data/tas_A1.nc&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
 <span class="n">cfp</span><span class="o">.</span><span class="n">mapset</span><span class="p">(</span><span class="n">proj</span><span class="o">=</span><span class="s2">&quot;ortho&quot;</span><span class="p">)</span>
-
-<span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">15</span><span class="p">))</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">15</span><span class="p">),</span>
+    <span class="n">linestyles</span><span class="o">=</span><span class="s2">&quot;dashed&quot;</span><span class="p">,</span>
+    <span class="n">linewidths</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Orthographic projection&quot;</span><span class="p">,</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -648,11 +663,15 @@ and cropping the displayed boundaries.</span><a class="headerlink" href="#id5" t
 <span id="example38"></span><h2>Example 38: Robinson projection<a class="headerlink" href="#example-38-robinson-projection" title="Link to this heading">#</a></h2>
 <div class="literal-block-wrapper docutils container" id="id9">
 <div class="code-block-caption"><span class="caption-text">Plotting using the Robinson projection</span><a class="headerlink" href="#id9" title="Link to this code">#</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;cfplot_data/tas_A1.nc&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;cfplot_data/tas_A1.nc&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
 <span class="n">cfp</span><span class="o">.</span><span class="n">mapset</span><span class="p">(</span><span class="n">proj</span><span class="o">=</span><span class="s2">&quot;robin&quot;</span><span class="p">)</span>
-
-<span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">15</span><span class="p">))</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">15</span><span class="p">),</span>
+    <span class="n">linestyles</span><span class="o">=</span><span class="s2">&quot;dashed&quot;</span><span class="p">,</span>
+    <span class="n">linewidths</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Robinson projection&quot;</span><span class="p">,</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </div>

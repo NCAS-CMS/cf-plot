@@ -8,7 +8,7 @@ Example 19b: Multiple plots with user-specified plot positions
    :caption: Making a single figure with multiple plots on it, where
              the positions of the individual plots are set explicitly
 
-   fl = cf.read(f"{self.data_dir}/ggap.nc")
+   fl = cf.read("cfplot_data/ggap.nc")
    f = fl.select_by_identity("eastward_wind")[0]
 
    cfp.cscale("cmp_haxby")

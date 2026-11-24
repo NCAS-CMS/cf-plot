@@ -39,7 +39,7 @@ by clicking through to the category pages.
    :margin: 0
    :gutter: 1
 
-   .. grid-item-card:: Contour plots
+   .. grid-item-card:: Contour and fill plots
       :img-top: /../../tests/v350-controlled-env-ref-images/ref_fig_1.png
       :link: cylindrical.html#example-1-basic-contour-plot-in-default-projection
       :text-align: center
@@ -64,7 +64,7 @@ by clicking through to the category pages.
       :link: stipple_plots.html#example-17-basic-stipple-plot
       :text-align: center
 
-   .. grid-item-card:: Trajectories
+   .. grid-item-card:: Trajectories and paths
       :img-top: /../../tests/v350-controlled-env-ref-images/ref_fig_42b.png
       :link: trajectories.html#example-42b-tracks-displayed-in-a-colour-scale
       :text-align: center
@@ -79,14 +79,14 @@ by clicking through to the category pages.
       :link: pressure.html#example-8-latitude-against-log-of-pressure-over-longitude-zonal-mean
       :text-align: center
 
-   .. grid-item-card:: Lineplots
-      :img-top: /../../tests/v350-controlled-env-ref-images/ref_fig_27.png
-      :link: graphs.html#example-27-basic-line-plot
+   .. grid-item-card:: Graph (line and scatter) plots
+      :img-top: /../../tests/v350-controlled-env-ref-images/ref_fig_28.png
+      :link: graphs.html#example-28-line-plot-with-a-legend
       :text-align: center
 
    .. grid-item-card:: Support for multiple projections
-      :img-top: /../../tests/v350-controlled-env-ref-images/ref_fig_34.png
-      :link: projections.html#example-34-cropping-the-lambert-conformal-conic-lcc-projection
+      :img-top: /../../tests/v350-controlled-env-ref-images/ref_fig_37.png
+      :link: projections.html#example-37-orthographic-projection
       :text-align: center
 
    .. grid-item-card:: Polar projection views
@@ -104,7 +104,7 @@ by clicking through to the category pages.
       :link: rotated_pole.html#example-22-plot-of-rotated-pole-data-on-its-native-grid
       :text-align: center
 
-   .. grid-item-card:: Multiple plots on one figure
+   .. grid-item-card:: Multiple plots and layers on one figure
       :img-top: /../../tests/v350-controlled-env-ref-images/ref_fig_19b.png
       :link: multiple_plots.html#example-19b-multiple-plots-with-user-specified-plot-positions
       :text-align: center

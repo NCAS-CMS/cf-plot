@@ -9,7 +9,7 @@ Example 1: Basic contour plot in default projection
              projection, Cylindrical, and has contour lines explicitly
              filled and shown with value labels
 
-   f = cf.read(f"cfplot_data/tas_A1.nc")[0]
+   f = cf.read("cfplot_data/tas_A1.nc")[0]
 
    cfp.con(f.subspace(time=15), linestyles="dashed", linewidths=0.75)
 

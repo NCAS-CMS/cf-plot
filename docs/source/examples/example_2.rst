@@ -8,7 +8,7 @@ Example 2: Basic blockfill plot in default projection
    :caption: Making a basic blockfill plot which uses the default,
              Cylindrical, projection
 
-   f = cf.read(f"cfplot_data/tas_A1.nc")[0]
+   f = cf.read("cfplot_data/tas_A1.nc")[0]
 
    cfp.con(f.subspace(time=15), blockfill=True, lines=False)
 

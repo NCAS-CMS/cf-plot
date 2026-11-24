@@ -166,8 +166,8 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../user_guide.html">
-    User guide
+  <a class="nav-link nav-internal" href="../api_reference.html">
+    API reference
   </a>
 </li>
 
@@ -180,15 +180,15 @@
                 <ul id="pst-nav-more-links" class="dropdown-menu">
                     
 <li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../advanced.html">
-    Advanced use
+  <a class="nav-link dropdown-item nav-internal" href="../configuration_guide.html">
+    Configuration guide
   </a>
 </li>
 
 
 <li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../api_reference.html">
-    API reference
+  <a class="nav-link dropdown-item nav-internal" href="../colour_scales.html">
+    Colour scales
   </a>
 </li>
 
@@ -332,22 +332,22 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../user_guide.html">
-    User guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../advanced.html">
-    Advanced use
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../api_reference.html">
     API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../configuration_guide.html">
+    Configuration guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../colour_scales.html">
+    Colour scales
   </a>
 </li>
 
@@ -437,7 +437,7 @@
 <li class="toctree-l1"><a class="reference internal" href="example_18.html">Example 18: Polar stipple plot</a></li>
 <li class="toctree-l1"><a class="reference internal" href="example_19a.html">Example 19a: Multiple plots</a></li>
 <li class="toctree-l1"><a class="reference internal" href="example_19b.html">Example 19b: Multiple plots with user-specified plot positions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="example_19c.html">Example 19c: Accomodating more than one colour bar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_19c.html">Example 19c: Accommodating more than one colour bar</a></li>
 <li class="toctree-l1"><a class="reference internal" href="example_19d.html">Example 19d: Multiple plots using <cite>gfigure</cite> context manager</a></li>
 <li class="toctree-l1"><a class="reference internal" href="example_20.html">Example 20: Case where user-defined axis labels are required</a></li>
 <li class="toctree-l1"><a class="reference internal" href="example_21a.html">Example 21a: User-defined axes</a></li>
@@ -535,22 +535,27 @@
 <span id="example14"></span><h1>Example 14: Vector plot overlaid on a contour map<a class="headerlink" href="#example-14-vector-plot-overlaid-on-a-contour-map" title="Link to this heading">#</a></h1>
 <div class="literal-block-wrapper docutils container" id="id1">
 <div class="code-block-caption"><span class="caption-text">Overlaying a vector plot on a contoured temperature field</span><a class="headerlink" href="#id1" title="Link to this code">#</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;cfplot_data/ggap.nc&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;cfplot_data/ggap.nc&quot;</span><span class="p">)</span>
 
-<span class="n">u</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">select_by_identity</span><span class="p">(</span><span class="s2">&quot;eastward_wind&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-<span class="n">v</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">select_by_identity</span><span class="p">(</span><span class="s2">&quot;northward_wind&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-<span class="n">t</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">select_by_identity</span><span class="p">(</span><span class="s2">&quot;air_temperature&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">u</span> <span class="o">=</span> <span class="n">ggap_file</span><span class="p">[</span><span class="s2">&quot;eastward_wind&quot;</span><span class="p">]</span>
+<span class="n">v</span> <span class="o">=</span> <span class="n">ggap_file</span><span class="p">[</span><span class="s2">&quot;northward_wind&quot;</span><span class="p">]</span>
+<span class="n">t</span> <span class="o">=</span> <span class="n">ggap_file</span><span class="p">[</span><span class="s2">&quot;air_temperature&quot;</span><span class="p">]</span>
 
-<span class="c1"># Subspace to get values for a specified pressure, here 500 mbar</span>
-<span class="n">u</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">pressure</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
-<span class="n">v</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">pressure</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
-<span class="n">t</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">pressure</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
+<span class="c1"># Subspace to get values for a specified pressure, here 700 mbar</span>
+<span class="n">u</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">pressure</span><span class="o">=</span><span class="mi">700</span><span class="p">)</span>
+<span class="n">v</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">pressure</span><span class="o">=</span><span class="mi">700</span><span class="p">)</span>
+<span class="n">t</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">pressure</span><span class="o">=</span><span class="mi">700</span><span class="p">)</span>
+
+<span class="n">cfp</span><span class="o">.</span><span class="n">setvars</span><span class="p">(</span>
+    <span class="n">land_color</span><span class="o">=</span><span class="s2">&quot;darkgreen&quot;</span><span class="p">,</span>
+    <span class="n">feature_zorder</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+<span class="p">)</span>
 
 <span class="n">cfp</span><span class="o">.</span><span class="n">gopen</span><span class="p">()</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">mapset</span><span class="p">(</span><span class="n">lonmin</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">lonmax</span><span class="o">=</span><span class="mi">120</span><span class="p">,</span> <span class="n">latmin</span><span class="o">=-</span><span class="mi">30</span><span class="p">,</span> <span class="n">latmax</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
-<span class="n">cfp</span><span class="o">.</span><span class="n">levs</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mi">254</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">270</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
-<span class="n">cfp</span><span class="o">.</span><span class="n">vect</span><span class="p">(</span><span class="n">u</span><span class="o">=</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="o">=</span><span class="n">v</span><span class="p">,</span> <span class="n">key_length</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">levs</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mi">270</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">290</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">lines</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">vect</span><span class="p">(</span><span class="n">u</span><span class="o">=</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="o">=</span><span class="n">v</span><span class="p">,</span> <span class="n">key_length</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;cyan&quot;</span><span class="p">)</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">gclose</span><span class="p">()</span>
 </pre></div>
 </div>

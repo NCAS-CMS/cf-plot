@@ -9,7 +9,7 @@ Example 11: Latitude-time subset view Hovmöller plot
              where the plot is set to display only a subset of the
              latitude axes
 
-   f = cf.read(f"cfplot_data/tas_A1.nc")[0]
+   f = cf.read("cfplot_data/tas_A1.nc")[0]
 
    cfp.gset(-30, 30, "1960-1-1", "1980-1-1")
    cfp.levs(min=280, max=305, step=1)

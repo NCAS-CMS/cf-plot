@@ -16,7 +16,7 @@
 
 ### Overview
 
-![cf-plot example gallery of plots](docs/source/images/new_gallery_view.png "Examples Gallery of plots made with the cf-plot library")
+![cf-plot example gallery of plots](docs/source/images/gallery_v360plus.png "Examples Gallery of plots made with the cf-plot library")
 
 **cf-plot allows you to produce and customise publication-quality contour,
 vector, line and more plots with the power of Python,

@@ -7,7 +7,7 @@ Example 32: UKCP projection with blockfill
 .. code-block:: python
    :caption: Plotting a blockfill plot using the UKCP projection
 
-   f = cf.read(f"cfplot_data/ukcp_rcm_test.nc")[0]
+   f = cf.read("cfplot_data/ukcp_rcm_test.nc")[0]
 
    cfp.mapset(proj="UKCP", resolution="50m")
    cfp.levs(-3, 7, 0.5)

@@ -126,7 +126,7 @@ Add plot.close() to gclose routine to properly close each plot when it is finish
 12. levs - change in floating point levels calculation
 ======================================================
 
-Floating point levels were calculated using numpy.arange and this can sometimes give stange contour levels.
+Floating point levels were calculated using numpy.arange and this can sometimes give strange contour levels.
 For example,
 
 |
@@ -182,7 +182,7 @@ Recent changes in the 1.5.x version of Matplotlib causes issues with the con rou
 16. con - xlog / log specification
 ==================================
 
-Amended the xlog and ylog specification so that it now accpets True as well as 1 to give a log plot.
+Amended the xlog and ylog specification so that it now accepts True as well as 1 to give a log plot.
 
 
 ::
@@ -247,7 +247,7 @@ One of the colour scales had an incorrect extension and this caused an issue in 
 ==========================
 
 If the display command from ImageMagick is available this is now used in conjunction with subprocess
-in preference to build-in Matplotlib viewer. This gets around the problem of a plot blocking the command prompt
+in preference to built-in Matplotlib viewer. This gets around the problem of a plot blocking the command prompt
 preventing further plots from being made.  Using cfp.setvars(viewer='matplotlib') will revert to using the
 built-in matplotlib picture viewer.
 

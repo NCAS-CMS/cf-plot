@@ -166,8 +166,8 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="user_guide.html">
-    User guide
+  <a class="nav-link nav-internal" href="api_reference.html">
+    API reference
   </a>
 </li>
 
@@ -180,15 +180,15 @@
                 <ul id="pst-nav-more-links" class="dropdown-menu">
                     
 <li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="advanced.html">
-    Advanced use
+  <a class="nav-link dropdown-item nav-internal" href="configuration_guide.html">
+    Configuration guide
   </a>
 </li>
 
 
 <li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="api_reference.html">
-    API reference
+  <a class="nav-link dropdown-item nav-internal" href="colour_scales.html">
+    Colour scales
   </a>
 </li>
 
@@ -332,22 +332,22 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="user_guide.html">
-    User guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="advanced.html">
-    Advanced use
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="api_reference.html">
     API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="configuration_guide.html">
+    Configuration guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="colour_scales.html">
+    Colour scales
   </a>
 </li>
 
@@ -594,7 +594,7 @@ the grid to be uniformly spaced when viewed.</p>
 </section>
 <section id="levs-change-in-floating-point-levels-calculation">
 <h2>12. levs - change in floating point levels calculation<a class="headerlink" href="#levs-change-in-floating-point-levels-calculation" title="Link to this heading">#</a></h2>
-<p>Floating point levels were calculated using numpy.arange and this can sometimes give stange contour levels.
+<p>Floating point levels were calculated using numpy.arange and this can sometimes give strange contour levels.
 For example,</p>
 <div class="line-block">
 <div class="line"><br /></div>
@@ -639,7 +639,7 @@ to adopt this method.</p>
 </section>
 <section id="con-xlog-log-specification">
 <h2>16. con - xlog / log specification<a class="headerlink" href="#con-xlog-log-specification" title="Link to this heading">#</a></h2>
-<p>Amended the xlog and ylog specification so that it now accpets True as well as 1 to give a log plot.</p>
+<p>Amended the xlog and ylog specification so that it now accepts True as well as 1 to give a log plot.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>
 </pre></div>
 </div>
@@ -682,7 +682,7 @@ to adopt this method.</p>
 <section id="plot-blocking-resolved">
 <h2>22. Plot blocking resolved<a class="headerlink" href="#plot-blocking-resolved" title="Link to this heading">#</a></h2>
 <p>If the display command from ImageMagick is available this is now used in conjunction with subprocess
-in preference to build-in Matplotlib viewer. This gets around the problem of a plot blocking the command prompt
+in preference to built-in Matplotlib viewer. This gets around the problem of a plot blocking the command prompt
 preventing further plots from being made.  Using cfp.setvars(viewer='matplotlib') will revert to using the
 built-in matplotlib picture viewer.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Done</span>

@@ -166,8 +166,8 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="user_guide.html">
-    User guide
+  <a class="nav-link nav-internal" href="api_reference.html">
+    API reference
   </a>
 </li>
 
@@ -180,15 +180,15 @@
                 <ul id="pst-nav-more-links" class="dropdown-menu">
                     
 <li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="advanced.html">
-    Advanced use
+  <a class="nav-link dropdown-item nav-internal" href="configuration_guide.html">
+    Configuration guide
   </a>
 </li>
 
 
 <li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="api_reference.html">
-    API reference
+  <a class="nav-link dropdown-item nav-internal" href="colour_scales.html">
+    Colour scales
   </a>
 </li>
 
@@ -332,22 +332,22 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="user_guide.html">
-    User guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="advanced.html">
-    Advanced use
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="api_reference.html">
     API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="configuration_guide.html">
+    Configuration guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="colour_scales.html">
+    Colour scales
   </a>
 </li>
 
@@ -591,7 +591,7 @@ as one degree of latitude.  This can now be changed with the aspect option to ma
 </section>
 <section id="con-multiple-plot-spacing-incorrect">
 <h2>11. con - multiple plot spacing incorrect<a class="headerlink" href="#con-multiple-plot-spacing-incorrect" title="Link to this heading">#</a></h2>
-<p>Fixed a variety of issues when using cfp.con and mutiple plots using the rows and columns
+<p>Fixed a variety of issues when using cfp.con and multiple plots using the rows and columns
 spacing options to cfp.gopen.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
 </pre></div>
@@ -600,7 +600,7 @@ spacing options to cfp.gopen.</p>
 <section id="con-and-vect-adding-cyclic-data-issue">
 <h2>12. con and vect - adding cyclic data issue<a class="headerlink" href="#con-and-vect-adding-cyclic-data-issue" title="Link to this heading">#</a></h2>
 <p>When adding an extra cyclic point in longitude and the data the cartopy_util.add_cyclic_point
-routine sometimes fails when the data isn't quite regularly spaced.  Generally this happends
+routine sometimes fails when the data isn't quite regularly spaced.  Generally this happens
 when the numpy value for the data has a lot of decimal points.  A numeric fix for this
 incorrect spacing was put in place.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
@@ -686,7 +686,7 @@ For example the following data has monthly data points but bounds of ten years f
 </section>
 <section id="lineplot-multiple-lines-on-a-single-graph-can-have-incorrect-axis-limits">
 <h2>16. lineplot - multiple lines on a single graph can have incorrect axis limits<a class="headerlink" href="#lineplot-multiple-lines-on-a-single-graph-can-have-incorrect-axis-limits" title="Link to this heading">#</a></h2>
-<p>When making muliple lines on a single graph it can have incorrect axis limits as by
+<p>When making multiple lines on a single graph it can have incorrect axis limits as by
 default the axis limits and labelling were chosen from the last made line.  This was changed so
 that the the min and max of X and Y for the lines in accumulated and applied to the graph.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
@@ -789,7 +789,7 @@ interpret.</p>
 <section id="cfp-levs-step-option-bugfix">
 <h2>27. cfp.levs - step option bugfix<a class="headerlink" href="#cfp-levs-step-option-bugfix" title="Link to this heading">#</a></h2>
 <p>cfp.levs(step=20) sets the step to 20 for contour level generation.  This was inadvertenty cleared
-inbetween plots and also generated a step of a float of 20.0 rather than the integer 20.</p>
+between plots and also generated a step of a float of 20.0 rather than the integer 20.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
 </pre></div>
 </div>
@@ -883,7 +883,7 @@ of the input data.</p>
 </section>
 <section id="con-no-contour-levels-data-throws-an-error-in-matplotlib-line-labelling">
 <h2>38. con - No contour levels data throws an error in Matplotlib line labelling<a class="headerlink" href="#con-no-contour-levels-data-throws-an-error-in-matplotlib-line-labelling" title="Link to this heading">#</a></h2>
-<p>The default behaviour of Matplotlib has changed such that if the data is all the same the contour labelling scheme in Matplotlib throws an error.  This is in Matplotlib 3.3.2 and may well have been in previous versions. cf-plot was changed so that in thie case of min(data) == max(data) the contour labels are turned off so a plot can be made.</p>
+<p>The default behaviour of Matplotlib has changed such that if the data is all the same the contour labelling scheme in Matplotlib throws an error.  This is in Matplotlib 3.3.2 and may well have been in previous versions. cf-plot was changed so that in the case of min(data) == max(data) the contour labels are turned off so a plot can be made.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Fixed</span>
 </pre></div>
 </div>

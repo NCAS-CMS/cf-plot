@@ -8,7 +8,7 @@ Example 19c: Accommodating more than one colour bar
    :caption: Using the approach to make a single figure with multiple plots
              on it to fit an extra colour bar
 
-   fl = cf.read(f"{self.data_dir}/ggap.nc")
+   fl = cf.read("cfplot_data/ggap.nc")
    u = fl.select_by_identity("eastward_wind")[0]
    v = fl.select_by_identity("northward_wind")[0]
 

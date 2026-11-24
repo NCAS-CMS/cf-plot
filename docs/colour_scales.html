@@ -47,8 +47,8 @@
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="User-defined axes" href="user_defined.html" />
-    <link rel="prev" title="Multiple plots" href="multiple_plots.html" />
+    <link rel="next" title="Releases and changes" href="versions.html" />
+    <link rel="prev" title="Configuration guide" href="configuration_guide.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
@@ -151,7 +151,7 @@
 </li>
 
 
-<li class="nav-item current active">
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="plot_types.html">
     Plots by type/theme
   </a>
@@ -166,8 +166,8 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="user_guide.html">
-    User guide
+  <a class="nav-link nav-internal" href="api_reference.html">
+    API reference
   </a>
 </li>
 
@@ -180,15 +180,15 @@
                 <ul id="pst-nav-more-links" class="dropdown-menu">
                     
 <li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="advanced.html">
-    Advanced use
+  <a class="nav-link dropdown-item nav-internal" href="configuration_guide.html">
+    Configuration guide
   </a>
 </li>
 
 
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="api_reference.html">
-    API reference
+<li class=" current active">
+  <a class="nav-link dropdown-item nav-internal" href="#" aria-current="page">
+    Colour scales
   </a>
 </li>
 
@@ -317,7 +317,7 @@
 </li>
 
 
-<li class="nav-item current active">
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="plot_types.html">
     Plots by type/theme
   </a>
@@ -332,22 +332,22 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="user_guide.html">
-    User guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="advanced.html">
-    Advanced use
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="api_reference.html">
     API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="configuration_guide.html">
+    Configuration guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#" aria-current="page">
+    Colour scales
   </a>
 </li>
 
@@ -414,25 +414,7 @@
 <nav class="bd-docs-nav bd-links"
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
-  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Contents</span></p>
-<ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="cylindrical.html">Cylindrical projection contour plots</a></li>
-<li class="toctree-l1"><a class="reference internal" href="polar.html">Polar stereographic projections</a></li>
-<li class="toctree-l1"><a class="reference internal" href="pressure.html">Plots of latitude/longitude against pressure</a></li>
-<li class="toctree-l1"><a class="reference internal" href="hovmuller.html">Hovmöller plots</a></li>
-<li class="toctree-l1"><a class="reference internal" href="vectors.html">Vector and stream plots</a></li>
-<li class="toctree-l1"><a class="reference internal" href="stipple_plots.html">Stipple plots</a></li>
-<li class="toctree-l1"><a class="reference internal" href="multiple_plots.html">Multiple plots</a></li>
-<li class="toctree-l1 current active"><a aria-current="page" class="current reference internal" href="#">Colour scales</a></li>
-<li class="toctree-l1"><a class="reference internal" href="user_defined.html">User-defined axes</a></li>
-<li class="toctree-l1"><a class="reference internal" href="rotated_pole.html">Rotated pole plots</a></li>
-<li class="toctree-l1"><a class="reference internal" href="unstructured.html">Unstructured grids and UGRID</a></li>
-<li class="toctree-l1"><a class="reference internal" href="graphs.html">Graph plots: line and scatter</a></li>
-<li class="toctree-l1"><a class="reference internal" href="projections.html">Projections</a></li>
-<li class="toctree-l1"><a class="reference internal" href="trajectories.html">Trajectories</a></li>
-<li class="toctree-l1"><a class="reference internal" href="specific_models.html">Specific Models</a></li>
-</ul>
-</div>
+  <div class="bd-toc-item navbar-nav"></div>
 </nav></div>
     </div>
   
@@ -471,9 +453,6 @@
         <i class="fa-solid fa-home"></i>
       </a>
     </li>
-    
-    <li class="breadcrumb-item"><a href="plot_types.html" class="nav-link">Plots by type/theme</a></li>
-    
     <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Colour scales</span></li>
   </ul>
 </nav>
@@ -506,7 +485,7 @@ only work for older versions of cf-plot.</p>
 <li><p>A continuous scale ('viridis') that goes from blue to green and then yellow and suits data that has no zero in it.  For example air temperature in Kelvin or geopotential height - see example 1 in the plot gallery.</p></li>
 <li><p>A diverging scale ('scale1') that goes from blue to red and suits data with a zero in it.  For example temperature in Celsius or zonal wind - see example 4 in the plot gallery.  The colour scale is automatically adjusted so that blue hues are below zero and red hues above zero.</p></li>
 </ol>
-<p>When no calls have been made to <strong>cfp.cscale</strong> cf-plot selects one of theses scales based on whether there is a zero in the data passed for contouring.  If a call is made to <strong>cfp.cscale</strong> with just a colour scale name  <strong>cfp.cscale('radar')</strong>, for example, then this colour scale is used for all subsequent plots.  The colour scale is adjusted automatically to fit the number of contour levels in the plot.</p>
+<p>When no calls have been made to <strong>cfp.cscale</strong> cf-plot selects one of these scales based on whether there is a zero in the data passed for contouring.  If a call is made to <strong>cfp.cscale</strong> with just a colour scale name  <strong>cfp.cscale('radar')</strong>, for example, then this colour scale is used for all subsequent plots.  The colour scale is adjusted automatically to fit the number of contour levels in the plot.</p>
 <p>If a call to <strong>cfp.cscale</strong> specifies additional parameters to the colour scale, then the automatic colour adjustment is turned off giving the user fine tuning of colours as below.</p>
 <a class="reference internal image-reference" href="_images/cs1.png"><img alt="_images/cs1.png" height="32" src="_images/cs1.png" width="628" />
 </a>
@@ -553,7 +532,7 @@ only work for older versions of cf-plot.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cfp</span><span class="o">.</span><span class="n">cscale</span><span class="p">(</span><span class="s1">&#39;scale1&#39;</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>As a short example to show the flexibilty of the colour scale routines we will make a orography plot using the wiki_2_0.rgb orography/bathymetry colour scale. This has as many colours for bathymetry as for the oroggraphy but in this case we just need a blue ocean as we are really only interested in the orography.  So in this case we will define a set of levels using <em>levs</em> and then match the colour scale to them.  The wiki_2_0.rgb colour scale has as many colours for the ocean as for the land so we can use the above and below options</p>
+<p>As a short example to show the flexibility of the colour scale routines we will make a orography plot using the wiki_2_0.rgb orography/bathymetry colour scale. This has as many colours for bathymetry as for the oroggraphy but in this case we just need a blue ocean as we are really only interested in the orography.  So in this case we will define a set of levels using <em>levs</em> and then match the colour scale to them.  The wiki_2_0.rgb colour scale has as many colours for the ocean as for the land so we can use the above and below options</p>
 <a class="reference internal image-reference" href="_images/orog.png"><img alt="_images/orog.png" height="343" src="_images/orog.png" width="487" />
 </a>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">cf</span>
@@ -1419,20 +1398,20 @@ only work for older versions of cf-plot.</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="multiple_plots.html"
+       href="configuration_guide.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Multiple plots</p>
+        <p class="prev-next-title">Configuration guide</p>
       </div>
     </a>
     <a class="right-next"
-       href="user_defined.html"
+       href="versions.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">User-defined axes</p>
+        <p class="prev-next-title">Releases and changes</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

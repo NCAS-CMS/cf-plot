@@ -203,7 +203,7 @@ of the original data.  Care is needed to ensure that the field coordinates go fr
 Manually changing colours in a colour scale
 *******************************************
 
-The simplest way to do this without writing any code is to modify the internal colour scale before plotting.  The colours most people work with are stored as red green blue intensities on a scale of 0 to 255, with 0 being no intesity and 255 full intensity.
+The simplest way to do this without writing any code is to modify the internal colour scale before plotting.  The colours most people work with are stored as red green blue intensities on a scale of 0 to 255, with 0 being no intensity and 255 full intensity.
 
 White will be represented as 255 255 255 and black as 0 0 0.
 

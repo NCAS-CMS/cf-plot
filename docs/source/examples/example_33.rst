@@ -7,7 +7,7 @@ Example 33: OSGB and EuroPP projections
 .. code-block:: python
    :caption: Plotting using the projections OSGB and EuroPP
 
-   f = cf.read(f"cfplot_data/ukcp_rcm_test.nc")[0]
+   f = cf.read("cfplot_data/ukcp_rcm_test.nc")[0]
 
    cfp.levs(-3, 7, 0.5)
 

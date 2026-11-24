@@ -9,7 +9,7 @@ Example 5: South Pole polar projection contour plot with bounding latitude
              polar stereographic projection by setting the latitude limit to
              30 degrees south
 
-   fl = cf.read(f"{self.data_dir}/ggap.nc")
+   fl = cf.read("cfplot_data/ggap.nc")
    f = fl.select_by_identity("northward_wind")[0]
    
    cfp.mapset(proj="spstere", boundinglat=-30, lon_0=180)

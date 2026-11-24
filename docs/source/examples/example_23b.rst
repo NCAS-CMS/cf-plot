@@ -8,7 +8,7 @@ Example 23b: Overlaying vectors over a rotated pole data plot
    :caption: *TODO describe Example 23 Other*
 
    f = cf.read(
-       f"cfplot_data/20160601-05T0000Z_INCOMPASS_km4p4_uv_RH_500.nc"
+       "cfplot_data/20160601-05T0000Z_INCOMPASS_km4p4_uv_RH_500.nc"
    )
    r = fl.select_by_identity("long_name=Relative humidity")[0]
    u = fl.select_by_identity("eastward_wind")[0]

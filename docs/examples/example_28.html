@@ -166,8 +166,8 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../user_guide.html">
-    User guide
+  <a class="nav-link nav-internal" href="../api_reference.html">
+    API reference
   </a>
 </li>
 
@@ -180,15 +180,15 @@
                 <ul id="pst-nav-more-links" class="dropdown-menu">
                     
 <li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../advanced.html">
-    Advanced use
+  <a class="nav-link dropdown-item nav-internal" href="../configuration_guide.html">
+    Configuration guide
   </a>
 </li>
 
 
 <li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../api_reference.html">
-    API reference
+  <a class="nav-link dropdown-item nav-internal" href="../colour_scales.html">
+    Colour scales
   </a>
 </li>
 
@@ -332,22 +332,22 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../user_guide.html">
-    User guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../advanced.html">
-    Advanced use
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../api_reference.html">
     API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../configuration_guide.html">
+    Configuration guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../colour_scales.html">
+    Colour scales
   </a>
 </li>
 
@@ -437,7 +437,7 @@
 <li class="toctree-l1"><a class="reference internal" href="example_18.html">Example 18: Polar stipple plot</a></li>
 <li class="toctree-l1"><a class="reference internal" href="example_19a.html">Example 19a: Multiple plots</a></li>
 <li class="toctree-l1"><a class="reference internal" href="example_19b.html">Example 19b: Multiple plots with user-specified plot positions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="example_19c.html">Example 19c: Accomodating more than one colour bar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_19c.html">Example 19c: Accommodating more than one colour bar</a></li>
 <li class="toctree-l1"><a class="reference internal" href="example_19d.html">Example 19d: Multiple plots using <cite>gfigure</cite> context manager</a></li>
 <li class="toctree-l1"><a class="reference internal" href="example_20.html">Example 20: Case where user-defined axis labels are required</a></li>
 <li class="toctree-l1"><a class="reference internal" href="example_21a.html">Example 21a: User-defined axes</a></li>
@@ -536,7 +536,7 @@
 <div class="literal-block-wrapper docutils container" id="id1">
 <div class="code-block-caption"><span class="caption-text">Adding a legend to annotate a line plot with multiple
 plotted lines</span><a class="headerlink" href="#id1" title="Link to this code">#</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fl</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span><span class="si">}</span><span class="s2">/ggap.nc&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fl</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;cfplot_data/ggap.nc&quot;</span><span class="p">)</span>
 <span class="n">f</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">select_by_identity</span><span class="p">(</span><span class="s2">&quot;eastward_wind&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
 <span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s2">&quot;X: mean&quot;</span><span class="p">)</span>
@@ -561,28 +561,30 @@ plotted lines</span><a class="headerlink" href="#id1" title="Link to this code">
 <span class="n">ypts</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">8</span><span class="p">,</span> <span class="o">-</span><span class="mi">8</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="o">-</span><span class="mi">8</span><span class="p">]</span>
 
 <span class="n">cfp</span><span class="o">.</span><span class="n">gset</span><span class="p">(</span><span class="n">xmin</span><span class="o">=-</span><span class="mi">90</span><span class="p">,</span> <span class="n">xmax</span><span class="o">=</span><span class="mi">90</span><span class="p">,</span> <span class="n">ymin</span><span class="o">=-</span><span class="mi">10</span><span class="p">,</span> <span class="n">ymax</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
-
 <span class="n">cfp</span><span class="o">.</span><span class="n">gopen</span><span class="p">()</span>
+
 <span class="n">cfp</span><span class="o">.</span><span class="n">lineplot</span><span class="p">(</span>
     <span class="n">g</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">pressure</span><span class="o">=</span><span class="mi">100</span><span class="p">),</span>
     <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span>
-    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;slateblue&quot;</span><span class="p">,</span>
     <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Zonal mean zonal wind&quot;</span><span class="p">,</span>
-    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;100mb&quot;</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;100 mb&quot;</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">lineplot</span><span class="p">(</span>
     <span class="n">g</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">pressure</span><span class="o">=</span><span class="mi">200</span><span class="p">),</span>
     <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;D&quot;</span><span class="p">,</span>
-    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>
-    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;200mb&quot;</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;indianred&quot;</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;200 mb&quot;</span><span class="p">,</span>
     <span class="n">xticks</span><span class="o">=</span><span class="n">xticks</span><span class="p">,</span>
     <span class="n">xticklabels</span><span class="o">=</span><span class="n">xticklabels</span><span class="p">,</span>
     <span class="n">legend_location</span><span class="o">=</span><span class="s2">&quot;upper right&quot;</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="n">cfp</span><span class="o">.</span><span class="n">plotvars</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xpts</span><span class="p">,</span> <span class="n">ypts</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">)</span>
+
+<span class="n">cfp</span><span class="o">.</span><span class="n">plotvars</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xpts</span><span class="p">,</span> <span class="n">ypts</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;mediumseagreen&quot;</span><span class="p">)</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">plotvars</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>
-    <span class="mi">35</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;Region of interest&quot;</span><span class="p">,</span> <span class="n">horizontalalignment</span><span class="o">=</span><span class="s2">&quot;left&quot;</span>
+    <span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">7</span><span class="p">,</span> <span class="s2">&quot;Region of interest&quot;</span><span class="p">,</span> <span class="n">horizontalalignment</span><span class="o">=</span><span class="s2">&quot;left&quot;</span>
 <span class="p">)</span>
+
 <span class="n">cfp</span><span class="o">.</span><span class="n">gclose</span><span class="p">()</span>
 </pre></div>
 </div>

@@ -7,7 +7,7 @@ Example 16b: Basic stream plot
 .. code-block:: python
    :caption: Making a basic stream plot
 
-   f = cf.read(f"cfplot_data/ggap.nc")
+   f = cf.read("cfplot_data/ggap.nc")
 
    u = f.select_by_identity("eastward_wind")[0]
    v = f.select_by_identity("northward_wind")[0]

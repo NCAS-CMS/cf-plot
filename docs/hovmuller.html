@@ -166,8 +166,8 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="user_guide.html">
-    User guide
+  <a class="nav-link nav-internal" href="api_reference.html">
+    API reference
   </a>
 </li>
 
@@ -180,15 +180,15 @@
                 <ul id="pst-nav-more-links" class="dropdown-menu">
                     
 <li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="advanced.html">
-    Advanced use
+  <a class="nav-link dropdown-item nav-internal" href="configuration_guide.html">
+    Configuration guide
   </a>
 </li>
 
 
 <li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="api_reference.html">
-    API reference
+  <a class="nav-link dropdown-item nav-internal" href="colour_scales.html">
+    Colour scales
   </a>
 </li>
 
@@ -332,22 +332,22 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="user_guide.html">
-    User guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="advanced.html">
-    Advanced use
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="api_reference.html">
     API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="configuration_guide.html">
+    Configuration guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="colour_scales.html">
+    Colour scales
   </a>
 </li>
 
@@ -423,7 +423,6 @@
 <li class="toctree-l1"><a class="reference internal" href="vectors.html">Vector and stream plots</a></li>
 <li class="toctree-l1"><a class="reference internal" href="stipple_plots.html">Stipple plots</a></li>
 <li class="toctree-l1"><a class="reference internal" href="multiple_plots.html">Multiple plots</a></li>
-<li class="toctree-l1"><a class="reference internal" href="colour_scales.html">Colour scales</a></li>
 <li class="toctree-l1"><a class="reference internal" href="user_defined.html">User-defined axes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rotated_pole.html">Rotated pole plots</a></li>
 <li class="toctree-l1"><a class="reference internal" href="unstructured.html">Unstructured grids and UGRID</a></li>
@@ -497,7 +496,7 @@
 <span id="example10"></span><h2>Example 10: Latitude-time Hovmöller plot<a class="headerlink" href="#example-10-latitude-time-hovmoller-plot" title="Link to this heading">#</a></h2>
 <div class="literal-block-wrapper docutils container" id="id1">
 <div class="code-block-caption"><span class="caption-text">Making a Hovmöller plot with latitude and time as the axes</span><a class="headerlink" href="#id1" title="Link to this code">#</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;cfplot_data/tas_A1.nc&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;cfplot_data/tas_A1.nc&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
 <span class="n">cfp</span><span class="o">.</span><span class="n">cscale</span><span class="p">(</span><span class="s2">&quot;plasma&quot;</span><span class="p">)</span>
 
@@ -515,7 +514,7 @@
 <div class="code-block-caption"><span class="caption-text">Making a Hovmöller plot with latitude and time as the axes
 where the plot is set to display only a subset of the
 latitude axes</span><a class="headerlink" href="#id2" title="Link to this code">#</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;cfplot_data/tas_A1.nc&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;cfplot_data/tas_A1.nc&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
 <span class="n">cfp</span><span class="o">.</span><span class="n">gset</span><span class="p">(</span><span class="o">-</span><span class="mi">30</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="s2">&quot;1960-1-1&quot;</span><span class="p">,</span> <span class="s2">&quot;1980-1-1&quot;</span><span class="p">)</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">levs</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mi">280</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">305</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
@@ -535,7 +534,7 @@ latitude axes</span><a class="headerlink" href="#id2" title="Link to this code">
 <span id="example12"></span><h2>Example 12: Longitude-time Hovmöller plot<a class="headerlink" href="#example-12-longitude-time-hovmoller-plot" title="Link to this heading">#</a></h2>
 <div class="literal-block-wrapper docutils container" id="id3">
 <div class="code-block-caption"><span class="caption-text">Making a Hovmöller plot with longitude and time as the axes</span><a class="headerlink" href="#id3" title="Link to this code">#</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;cfplot_data/tas_A1.nc&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;cfplot_data/tas_A1.nc&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
 <span class="n">cfp</span><span class="o">.</span><span class="n">cscale</span><span class="p">(</span><span class="s2">&quot;plasma&quot;</span><span class="p">)</span>
 

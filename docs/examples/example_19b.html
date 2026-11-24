@@ -47,7 +47,7 @@
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Example 19c: Accomodating more than one colour bar" href="example_19c.html" />
+    <link rel="next" title="Example 19c: Accommodating more than one colour bar" href="example_19c.html" />
     <link rel="prev" title="Example 19a: Multiple plots" href="example_19a.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
@@ -166,8 +166,8 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../user_guide.html">
-    User guide
+  <a class="nav-link nav-internal" href="../api_reference.html">
+    API reference
   </a>
 </li>
 
@@ -180,15 +180,15 @@
                 <ul id="pst-nav-more-links" class="dropdown-menu">
                     
 <li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../advanced.html">
-    Advanced use
+  <a class="nav-link dropdown-item nav-internal" href="../configuration_guide.html">
+    Configuration guide
   </a>
 </li>
 
 
 <li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../api_reference.html">
-    API reference
+  <a class="nav-link dropdown-item nav-internal" href="../colour_scales.html">
+    Colour scales
   </a>
 </li>
 
@@ -332,22 +332,22 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../user_guide.html">
-    User guide
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../advanced.html">
-    Advanced use
-  </a>
-</li>
-
-
-<li class="nav-item ">
   <a class="nav-link nav-internal" href="../api_reference.html">
     API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../configuration_guide.html">
+    Configuration guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../colour_scales.html">
+    Colour scales
   </a>
 </li>
 
@@ -437,7 +437,7 @@
 <li class="toctree-l1"><a class="reference internal" href="example_18.html">Example 18: Polar stipple plot</a></li>
 <li class="toctree-l1"><a class="reference internal" href="example_19a.html">Example 19a: Multiple plots</a></li>
 <li class="toctree-l1 current active"><a aria-current="page" class="current reference internal" href="#">Example 19b: Multiple plots with user-specified plot positions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="example_19c.html">Example 19c: Accomodating more than one colour bar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_19c.html">Example 19c: Accommodating more than one colour bar</a></li>
 <li class="toctree-l1"><a class="reference internal" href="example_19d.html">Example 19d: Multiple plots using <cite>gfigure</cite> context manager</a></li>
 <li class="toctree-l1"><a class="reference internal" href="example_20.html">Example 20: Case where user-defined axis labels are required</a></li>
 <li class="toctree-l1"><a class="reference internal" href="example_21a.html">Example 21a: User-defined axes</a></li>
@@ -536,19 +536,20 @@
 <div class="literal-block-wrapper docutils container" id="id1">
 <div class="code-block-caption"><span class="caption-text">Making a single figure with multiple plots on it, where
 the positions of the individual plots are set explicitly</span><a class="headerlink" href="#id1" title="Link to this code">#</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fl</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span><span class="si">}</span><span class="s2">/ggap.nc&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fl</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;cfplot_data/ggap.nc&quot;</span><span class="p">)</span>
 <span class="n">f</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">select_by_identity</span><span class="p">(</span><span class="s2">&quot;eastward_wind&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
+<span class="n">cfp</span><span class="o">.</span><span class="n">cscale</span><span class="p">(</span><span class="s2">&quot;cmp_haxby&quot;</span><span class="p">)</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">gopen</span><span class="p">(</span><span class="n">user_position</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <span class="n">cfp</span><span class="o">.</span><span class="n">gpos</span><span class="p">(</span><span class="n">xmin</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">xmax</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">ymin</span><span class="o">=</span><span class="mf">0.55</span><span class="p">,</span> <span class="n">ymax</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
-<span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">Z</span><span class="o">=</span><span class="mi">500</span><span class="p">),</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;500mb&quot;</span><span class="p">,</span> <span class="n">lines</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">Z</span><span class="o">=</span><span class="mi">500</span><span class="p">),</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;At 500 mb pressure&quot;</span><span class="p">,</span> <span class="n">lines</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
 <span class="n">cfp</span><span class="o">.</span><span class="n">gpos</span><span class="p">(</span><span class="n">xmin</span><span class="o">=</span><span class="mf">0.55</span><span class="p">,</span> <span class="n">xmax</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span> <span class="n">ymin</span><span class="o">=</span><span class="mf">0.55</span><span class="p">,</span> <span class="n">ymax</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
-<span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">Z</span><span class="o">=</span><span class="mi">100</span><span class="p">),</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;100mb&quot;</span><span class="p">,</span> <span class="n">lines</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">Z</span><span class="o">=</span><span class="mi">100</span><span class="p">),</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;At 100 mb&quot;</span><span class="p">,</span> <span class="n">lines</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
 <span class="n">cfp</span><span class="o">.</span><span class="n">gpos</span><span class="p">(</span><span class="n">xmin</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">xmax</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span> <span class="n">ymin</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">ymax</span><span class="o">=</span><span class="mf">0.55</span><span class="p">)</span>
-<span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">Z</span><span class="o">=</span><span class="mi">10</span><span class="p">),</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;10mb&quot;</span><span class="p">,</span> <span class="n">lines</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">cfp</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">Z</span><span class="o">=</span><span class="mi">10</span><span class="p">),</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;At 10 mb&quot;</span><span class="p">,</span> <span class="n">lines</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
 <span class="n">cfp</span><span class="o">.</span><span class="n">gclose</span><span class="p">()</span>
 </pre></div>
@@ -583,7 +584,7 @@ the positions of the individual plots are set explicitly</span><a class="headerl
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Example 19c: Accomodating more than one colour bar</p>
+        <p class="prev-next-title">Example 19c: Accommodating more than one colour bar</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

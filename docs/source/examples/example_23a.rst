@@ -9,7 +9,7 @@ Example 23a: Rotated pole plot from data which is not CF Compliant
              very CF Compliant, noting that this takes more set up
              than for CF Compliant data (see Example 21b)
 
-   f = cf.read(f"cfplot_data/rgp.nc")[0]
+   f = cf.read("cfplot_data/rgp.nc")[0]
 
    data = f.array
    xvec = f.construct("ncvar%x")
