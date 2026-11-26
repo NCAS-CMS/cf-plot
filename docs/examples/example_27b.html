@@ -539,8 +539,6 @@
 <span class="n">f</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">select_by_identity</span><span class="p">(</span><span class="s2">&quot;eastward_wind&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
 <span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s2">&quot;Y: minimum&quot;</span><span class="p">)</span>
-
-<span class="n">_configure_example_output</span><span class="p">(</span><span class="s2">&quot;27b&quot;</span><span class="p">)</span>
 <span class="n">cfp</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
     <span class="n">g</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">pressure</span><span class="o">=</span><span class="mi">700</span><span class="p">),</span>
     <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Meridional minimum of zonal wind at 700 mb&quot;</span><span class="p">,</span>

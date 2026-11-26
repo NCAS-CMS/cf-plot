@@ -22,16 +22,7 @@ Example 19c: Accommodating more than one colour bar
    magnitude = (u**2 + v**2) ** 0.5
    mag = magnitude.squeeze().data.array
 
-   # NOTE WELL: must not use _configure_example_output("19c") here until
-   # we set up a means to use setvars without resetting other config.,
-   # else it resets the viewer so the actual plot doesn't (all) get
-   # plotted on and associated with the test file to compare to.
-   fname = str(TEST_GEN_DIR / "gen_fig_19c.png")
-   cfp.setvars(
-       file=fname,
-       viewer="matplotlib",
-       continent_thickness=0.75,
-   )
+   cfp.setvars(continent_thickness=0.75)
 
    cfp.gopen(user_position=True)
    cfp.gpos()

@@ -19,8 +19,6 @@ Example 17: Basic stipple plot
    upper = mean + std
    lower = mean - std
 
-   _configure_example_output("17")
-
    cfp.gopen()
    cfp.cscale("magma")
    cfp.con(g, lines=False)

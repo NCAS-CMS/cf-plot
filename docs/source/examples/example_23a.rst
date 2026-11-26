@@ -15,8 +15,6 @@ Example 23a: Rotated pole plot from data which is not CF Compliant
    xvec = f.construct("ncvar%x")
    yvec = f.construct("ncvar%y")
 
-   _configure_example_output("23")
-
    cfp.gopen()
 
    # Set up the data

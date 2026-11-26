@@ -11,8 +11,6 @@ Example 27b: Basic scatter plot
    f = fl.select_by_identity("eastward_wind")[0]
 
    g = f.collapse("Y: minimum")
-
-   _configure_example_output("27b")
    cfp.scatter(
        g.subspace(pressure=700),
        title="Meridional minimum of zonal wind at 700 mb",
